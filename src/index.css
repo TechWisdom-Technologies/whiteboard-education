@@ -1,0 +1,166 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ── en.your-uni.com design system ──
+       #ffa300  →  primary amber (Apply Now, highlights)
+       #181d29  →  dark navy (headings, dark surfaces)
+       #515768  →  muted body text / nav
+       #a2a6b0  →  light muted text
+       #cacdd4  →  borders
+       #fef1da  →  warm cream surface
+       #f0f2f5  →  page background
+       #dddddd  →  dividers
+       #999999  →  placeholder text
+       #444444  →  body text
+       #9273b6  →  secondary purple
+    */
+
+    --background: 220 14% 95%;          /* #f0f2f5 — page bg */
+    --foreground: 225 24% 13%;          /* #181d29 — dark navy text */
+
+    --card: 0 0% 100%;                  /* #ffffff */
+    --card-foreground: 225 24% 13%;     /* #181d29 */
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 225 24% 13%;
+
+    --primary: 39 100% 50%;             /* #ffa300 — amber */
+    --primary-foreground: 225 24% 13%;  /* #181d29 — dark on amber */
+
+    --secondary: 270 30% 58%;           /* #9273b6 — purple */
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 14% 93%;              /* slightly off-white */
+    --muted-foreground: 222 7% 66%;    /* #a2a6b0 */
+
+    --accent: 39 100% 50%;             /* amber */
+    --accent-foreground: 225 24% 13%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 216 10% 82%;             /* #cacdd4 */
+    --input: 216 10% 82%;
+    --ring: 39 100% 50%;
+
+    --radius: 0.625rem;                /* 10px per design system */
+
+    --sidebar-background: 225 24% 13%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 39 100% 50%;
+    --sidebar-primary-foreground: 225 24% 13%;
+    --sidebar-accent: 225 15% 37%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 225 15% 22%;
+    --sidebar-ring: 39 100% 50%;
+
+    --success: 145 64% 49%;            /* #25d366 */
+    --success-foreground: 0 0% 100%;
+    --warning: 39 93% 69%;             /* #f9c569 */
+    --warning-foreground: 0 0% 8%;
+    --gold: 39 100% 50%;
+    --gold-foreground: 225 24% 13%;
+  }
+
+  .dark {
+    --background: 225 24% 13%;
+    --foreground: 0 0% 100%;
+
+    --card: 225 20% 16%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 225 20% 16%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 39 100% 50%;
+    --primary-foreground: 225 24% 13%;
+
+    --secondary: 270 30% 58%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 225 18% 20%;
+    --muted-foreground: 222 7% 66%;
+
+    --accent: 39 100% 50%;
+    --accent-foreground: 225 24% 13%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 225 15% 24%;
+    --input: 225 15% 24%;
+    --ring: 39 100% 50%;
+
+    --sidebar-background: 225 28% 9%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 39 100% 50%;
+    --sidebar-primary-foreground: 225 24% 13%;
+    --sidebar-accent: 225 15% 37%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 225 15% 18%;
+    --sidebar-ring: 39 100% 50%;
+
+    --gold: 39 100% 50%;
+    --gold-foreground: 225 24% 13%;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  html {
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Manrope', sans-serif;
+  }
+
+  @media (min-width: 1280px) {
+    .container {
+      max-width: 92% !important;
+    }
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to right, #181d29, #515768);
+  }
+
+  .intro-surface {
+    position: relative;
+    overflow: hidden;
+    color: white;
+    background: #181d29;
+  }
+
+  .route-fade-in {
+    animation: route-fade-in 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+@keyframes route-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
