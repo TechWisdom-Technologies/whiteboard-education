@@ -190,7 +190,7 @@ export default function EligibilityWizard() {
                           </div>
                           <div className="mt-3 space-y-1.5">
                             {matchedCourses.slice(0, 3).map((c) => (
-                              <div key={c.id} className="flex items-center justify-between text-sm bg-muted/50 rounded-md px-3 py-2">
+                              <div key={c.id} className="flex items-center justify-between text-sm bg-muted/50 rounded-sm px-3 py-2">
                                 <span>{c.title} <Badge variant="outline" className="ml-2 text-xs">{c.degree_level}</Badge></span>
                                 <span className="font-semibold text-[#ffa300]">${c.tuition_fee.toLocaleString()}/yr</span>
                               </div>

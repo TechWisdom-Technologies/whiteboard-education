@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -123,12 +123,12 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Poppins', sans-serif;
   }
 
   @media (min-width: 1280px) {
     .container {
-      max-width: 92% !important;
+      max-width: 92%;
     }
   }
 }

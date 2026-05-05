@@ -151,7 +151,7 @@ export default function PartnerProfile() {
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
-                className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
+                className="absolute inset-0 rounded-sm bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
               >
                 {uploading ? (
                   <Loader2 className="h-6 w-6 text-white animate-spin" />

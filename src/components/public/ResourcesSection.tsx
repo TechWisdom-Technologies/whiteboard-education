@@ -57,7 +57,7 @@ export function ResourcesSection() {
             </DialogHeader>
             {downloadItem && (
               <div className="space-y-4 pt-2">
-                <div className="bg-muted/50 rounded-md p-4 text-center">
+                <div className="bg-muted/50 rounded-sm p-4 text-center">
                   <span className="text-3xl block mb-2">{downloadItem.icon}</span>
                   <p className="font-bold text-sm">{downloadItem.title}</p>
                 </div>

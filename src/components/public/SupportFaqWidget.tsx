@@ -157,7 +157,7 @@ export function SupportFaqWidget({ bannerVisible = false }: SupportFaqWidgetProp
     return (
       <button
         onClick={() => setOpen(true)}
-        className="fixed right-2 xl:right-3 z-[60] h-11 w-11 rounded-full bg-[#181d29] text-white flex items-center justify-center hover:bg-[#181d29]/90 transition-all duration-200 shadow-md"
+        className="fixed right-2 xl:right-3 z-[60] h-11 w-11 rounded-sm bg-[#181d29] text-white flex items-center justify-center hover:bg-[#181d29]/90 transition-all duration-200 shadow-md"
         style={{ bottom: `${supportBottomPx}px` }}
         aria-label="Open support FAQs"
       >
@@ -185,11 +185,11 @@ export function SupportFaqWidget({ bannerVisible = false }: SupportFaqWidgetProp
               <X className="h-4 w-4" />
             </Button>
           </div>
-          <div className="mt-2 flex items-center gap-2 rounded-md bg-muted p-1">
+          <div className="mt-2 flex items-center gap-2 rounded-sm bg-muted p-1">
             <button
               type="button"
               onClick={() => setAudience("student")}
-              className={`h-8 px-3 rounded-md text-xs font-semibold transition-colors ${
+              className={`h-8 px-3 rounded-sm text-xs font-semibold transition-colors ${
                 audience === "student"
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
@@ -200,7 +200,7 @@ export function SupportFaqWidget({ bannerVisible = false }: SupportFaqWidgetProp
             <button
               type="button"
               onClick={() => setAudience("partner")}
-              className={`h-8 px-3 rounded-md text-xs font-semibold transition-colors ${
+              className={`h-8 px-3 rounded-sm text-xs font-semibold transition-colors ${
                 audience === "partner"
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"

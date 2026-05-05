@@ -76,7 +76,7 @@ export default function VisaGuide() {
               <div key={i} className="flex gap-4 animate-fade-in" style={{ animationDelay: `${i * 80}ms` }}>
                 {/* Line */}
                 <div className="flex flex-col items-center">
-                  <div className="h-10 w-10 rounded-full bg-[#ffa300]/10 flex items-center justify-center border-2 border-[#ffa300]">
+                  <div className="h-10 w-10 rounded-sm bg-[#ffa300]/10 flex items-center justify-center border-2 border-[#ffa300]">
                     <step.icon className="h-5 w-5 text-[#ffa300]" />
                   </div>
                   {i < steps.length - 1 && <div className="w-0.5 flex-1 bg-border my-1" />}

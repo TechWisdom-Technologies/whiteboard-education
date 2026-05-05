@@ -128,7 +128,7 @@ export function AccommodationMap({ accommodations, universities = [], onSelect }
 
   if (mappable.length === 0 && uniMappable.length === 0) {
     return (
-      <div className="h-[500px] rounded-md border bg-muted/30 flex items-center justify-center">
+      <div className="h-[500px] rounded-sm border bg-muted/30 flex items-center justify-center">
         <div className="text-center text-muted-foreground">
           <MapPin className="h-10 w-10 mx-auto mb-3 opacity-30" />
           <p className="font-medium">No locations with coordinates</p>
@@ -138,5 +138,5 @@ export function AccommodationMap({ accommodations, universities = [], onSelect }
     );
   }
 
-  return <div ref={mapRef} className="h-[500px] rounded-md overflow-hidden border shadow-sm z-0" />;
+  return <div ref={mapRef} className="h-[500px] rounded-sm overflow-hidden border shadow-sm z-0" />;
 }

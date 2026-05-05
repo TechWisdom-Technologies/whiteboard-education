@@ -44,15 +44,15 @@ export default function PartnerMarketing() {
             </Button>
           </div>
           <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="text-center p-3 bg-muted/50 rounded-md">
+            <div className="text-center p-3 bg-muted/50 rounded-sm">
               <p className="text-lg font-extrabold">247</p>
               <p className="text-xs text-muted-foreground">Total Clicks</p>
             </div>
-            <div className="text-center p-3 bg-muted/50 rounded-md">
+            <div className="text-center p-3 bg-muted/50 rounded-sm">
               <p className="text-lg font-extrabold">38</p>
               <p className="text-xs text-muted-foreground">Applications</p>
             </div>
-            <div className="text-center p-3 bg-muted/50 rounded-md">
+            <div className="text-center p-3 bg-muted/50 rounded-sm">
               <p className="text-lg font-extrabold">15.4%</p>
               <p className="text-xs text-muted-foreground">Conversion Rate</p>
             </div>
@@ -68,7 +68,7 @@ export default function PartnerMarketing() {
             <Card key={asset.id} className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-fade-in" style={{ animationDelay: `${i * 80}ms` }}>
               <CardContent className="p-5">
                 <div className="flex items-start justify-between mb-3">
-                  <div className={`h-10 w-10 rounded-md flex items-center justify-center ${asset.color}`}>
+                  <div className={`h-10 w-10 rounded-sm flex items-center justify-center ${asset.color}`}>
                     <asset.icon className="h-5 w-5" />
                   </div>
                   <Badge variant="outline" className="text-xs">{asset.type}</Badge>

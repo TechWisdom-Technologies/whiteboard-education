@@ -115,11 +115,11 @@ export default function AdminPartners() {
       </div>
 
       {registrations.length === 0 ? (
-        <div className="rounded-md border bg-card p-12 text-center text-muted-foreground">
+        <div className="rounded-sm border bg-card p-12 text-center text-muted-foreground">
           No partner registrations yet.
         </div>
       ) : (
-        <div className="rounded-md border bg-card overflow-x-auto">
+        <div className="rounded-sm border bg-card overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -191,7 +191,7 @@ export default function AdminPartners() {
                 <div className="space-y-3">
                   {selectedReg.nid_document_url && (
                     <a href={selectedReg.nid_document_url} target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 rounded-md border hover:bg-muted/50 transition-colors">
+                      className="flex items-center gap-3 p-3 rounded-sm border hover:bg-muted/50 transition-colors">
                       <FileText className="h-5 w-5 text-secondary" />
                       <div className="flex-1">
                         <p className="font-medium text-sm">National ID (NID)</p>
@@ -202,7 +202,7 @@ export default function AdminPartners() {
                   )}
                   {selectedReg.trade_license_url && (
                     <a href={selectedReg.trade_license_url} target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 rounded-md border hover:bg-muted/50 transition-colors">
+                      className="flex items-center gap-3 p-3 rounded-sm border hover:bg-muted/50 transition-colors">
                       <FileText className="h-5 w-5 text-secondary" />
                       <div className="flex-1">
                         <p className="font-medium text-sm">Trade License</p>
@@ -213,7 +213,7 @@ export default function AdminPartners() {
                   )}
                   {(selectedReg.certificate_urls as string[])?.map((url, i) => (
                     <a key={i} href={url} target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 rounded-md border hover:bg-muted/50 transition-colors">
+                      className="flex items-center gap-3 p-3 rounded-sm border hover:bg-muted/50 transition-colors">
                       <FileText className="h-5 w-5 text-secondary" />
                       <div className="flex-1">
                         <p className="font-medium text-sm">Certificate #{i + 1}</p>

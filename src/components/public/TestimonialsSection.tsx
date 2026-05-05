@@ -17,7 +17,7 @@ export function TestimonialsSection() {
                 <Quote className="h-8 w-8 text-[#ffa300]/30 mb-3" />
                 <p className="text-sm text-muted-foreground mb-4 italic">"{t.quote}"</p>
                 <div className="flex items-center gap-3">
-                  <img src={t.avatar} alt={t.name} className="h-10 w-10 rounded-full object-cover" />
+                  <img src={t.avatar} alt={t.name} className="h-10 w-10 rounded-sm object-cover" />
                   <div>
                     <p className="text-sm font-semibold">{t.name}</p>
                     <p className="text-xs text-muted-foreground">{t.country} • {t.university}</p>

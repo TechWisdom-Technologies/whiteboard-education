@@ -83,7 +83,7 @@ export default function PartnerOverview() {
         {metrics.map((m, i) => (
           <Card key={m.label} className="hover:shadow-lg transition-shadow animate-fade-in" style={{ animationDelay: `${i * 80}ms` }}>
             <CardContent className="p-6 flex items-center gap-4">
-              <div className={`h-12 w-12 rounded-md bg-muted flex items-center justify-center ${m.color}`}>
+              <div className={`h-12 w-12 rounded-sm bg-muted flex items-center justify-center ${m.color}`}>
                 <m.icon className="h-6 w-6" />
               </div>
               <div>
@@ -114,7 +114,7 @@ export default function PartnerOverview() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {p.students.map(s => (
-                      <div key={s.id} className="p-3 rounded-md border bg-card hover:bg-muted/30 transition-colors">
+                      <div key={s.id} className="p-3 rounded-sm border bg-card hover:bg-muted/30 transition-colors">
                         <p className="font-medium text-sm">{s.full_name}</p>
                         <p className="text-xs text-muted-foreground">{s.target_university || "No university"} · {s.target_course || "No course"}</p>
                         <p className="text-xs text-muted-foreground mt-1">{s.degree_level} · Added {new Date(s.created_at).toLocaleDateString()}</p>
@@ -131,7 +131,7 @@ export default function PartnerOverview() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {students.filter(s => s.status === "rejected").map(s => (
-                      <div key={s.id} className="p-3 rounded-md border border-destructive/20 bg-destructive/5">
+                      <div key={s.id} className="p-3 rounded-sm border border-destructive/20 bg-destructive/5">
                         <p className="font-medium text-sm">{s.full_name}</p>
                         <p className="text-xs text-muted-foreground">{s.target_university || "No university"}</p>
                       </div>

@@ -165,7 +165,7 @@ export default function Housing() {
                           {amenities.length > 0 && (
                             <div className="flex flex-wrap gap-1">
                               {amenities.slice(0, 4).map((am: string, i: number) => (
-                                <span key={i} className="text-[10px] text-muted-foreground bg-muted/60 rounded-md px-1.5 py-0.5">{am}</span>
+                                <span key={i} className="text-[10px] text-muted-foreground bg-muted/60 rounded-sm px-1.5 py-0.5">{am}</span>
                               ))}
                               {amenities.length > 4 && <span className="text-[10px] text-muted-foreground">+{amenities.length - 4}</span>}
                             </div>
@@ -198,7 +198,7 @@ export default function Housing() {
               </DialogHeader>
 
               {selected.image_url && (
-                <div className="rounded-md overflow-hidden h-56">
+                <div className="rounded-sm overflow-hidden h-56">
                   <img src={selected.image_url} alt={selected.name} className="w-full h-full object-cover" />
                 </div>
               )}
@@ -218,7 +218,7 @@ export default function Housing() {
 
                 {/* Travel Distance */}
                 {selected.travel_distance && (
-                  <div className="flex items-center gap-2 p-3 rounded-md bg-[#ffa300]/10 border border-[#ffa300]/20">
+                  <div className="flex items-center gap-2 p-3 rounded-sm bg-[#ffa300]/10 border border-[#ffa300]/20">
                     <Clock className="h-4 w-4 text-[#ffa300]" />
                     <span className="text-sm font-medium">{selected.travel_distance}</span>
                     <span className="text-xs text-muted-foreground">from nearest university</span>

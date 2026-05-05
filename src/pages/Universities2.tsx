@@ -114,8 +114,9 @@ const UNIVERSITY_LOGOS: Record<string, string> = {
   "Newcastle University Medicine Malaysia (NUMed)": "https://en.your-uni.com/assets/images/university/-newcastle-university-medicine-malaysia.png",
   "Universiti Malaya (UM)": "https://en.your-uni.com/assets/images/university/universiti-malaya-um.png",
   "Kings University College Malaysia": "https://en.your-uni.com/assets/images/university/kings-university-college.png",
-  "Tunku Abdul Rahman University of Management and Technology (TAR UMT)": "https://en.your-uni.com/assets/images/university/tunku-abdul-rahman-university-of-management-and-technology-tar-umt.png",
-  "Universiti Putra Malaysia (UPM)": "https://en.your-uni.com/assets/images/university/upm-university.jpg"
+  "Tunku Abdul Rahman University of Management and Technology (TAR UMT)": "https://www.tarc.edu.my/images/tarumt-logo1.png?v=beyongEducation2",
+  "Universiti Putra Malaysia (UPM)": "https://en.your-uni.com/assets/images/university/upm-university.jpg",
+  "Swinburne University of Technology Sarawak": "https://en.your-uni.com/assets/images/university/swinburne-university-of-technology-malaysia.webp",
 };
 
 export default function Universities() {
@@ -219,10 +220,10 @@ export default function Universities() {
 
       {/* Page Header */}
       <div className="container mx-auto px-4 pt-10 pb-6 flex items-center justify-between">
-        <h1 className="text-[28px] font-extrabold" style={{ fontFamily: "Manrope, sans-serif", color: "#181d29" }}>
+        <h1 className="text-[28px] font-extrabold" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>
           Universities
         </h1>
-        <div className="text-[15px] font-bold" style={{ color: "#515768", fontFamily: "Manrope, sans-serif" }}>
+        <div className="text-[15px] font-bold" style={{ color: "#515768", fontFamily: "Poppins, sans-serif" }}>
           Total universities: <span style={{ color: "#ffa300" }}>{filtered.length}</span>
         </div>
       </div>
@@ -242,14 +243,14 @@ export default function Universities() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="pr-10 h-11 text-[12.5px]"
-                  style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Manrope, sans-serif", color: "#444444" }}
+                  style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Poppins, sans-serif", color: "#444444" }}
                 />
                 <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "#999999" }} />
               </div>
 
               <div className="w-full lg:w-[200px]">
                 <Select value={selectedLevel} onValueChange={setSelectedLevel} modal={false}>
-                  <SelectTrigger className="h-11 text-[12.5px]" style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Manrope, sans-serif", color: selectedLevel === "All Levels" ? "#999999" : "#444444" }}>
+                  <SelectTrigger className="h-11 text-[12.5px]" style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Poppins, sans-serif", color: selectedLevel === "All Levels" ? "#999999" : "#444444" }}>
                     <SelectValue placeholder="Level of Interest" />
                   </SelectTrigger>
                   <SelectContent>
@@ -262,7 +263,7 @@ export default function Universities() {
 
               <div className="w-full lg:w-[200px]">
                 <Select value={selectedField} onValueChange={setSelectedField} modal={false}>
-                  <SelectTrigger className="h-11 text-[12.5px]" style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Manrope, sans-serif", color: selectedField === "All Fields" ? "#999999" : "#444444" }}>
+                  <SelectTrigger className="h-11 text-[12.5px]" style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Poppins, sans-serif", color: selectedField === "All Fields" ? "#999999" : "#444444" }}>
                     <SelectValue placeholder="Field of Study" />
                   </SelectTrigger>
                   <SelectContent>
@@ -275,7 +276,7 @@ export default function Universities() {
 
               <div className="w-full lg:w-[180px]">
                 <Select value={selectedCity} onValueChange={setSelectedCity} modal={false}>
-                  <SelectTrigger className="h-11 text-[12.5px]" style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Manrope, sans-serif", color: selectedCity === "all" ? "#999999" : "#444444" }}>
+                  <SelectTrigger className="h-11 text-[12.5px]" style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Poppins, sans-serif", color: selectedCity === "all" ? "#999999" : "#444444" }}>
                     <SelectValue placeholder="Locations" />
                   </SelectTrigger>
                   <SelectContent>
@@ -289,7 +290,7 @@ export default function Universities() {
 
               <div className="w-full lg:w-[220px]">
                 <Select value={selectedOfferLetter} onValueChange={setSelectedOfferLetter} modal={false}>
-                  <SelectTrigger className="h-11 text-[12.5px]" style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Manrope, sans-serif", color: selectedOfferLetter === "all" ? "#999999" : "#444444" }}>
+                  <SelectTrigger className="h-11 text-[12.5px]" style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Poppins, sans-serif", color: selectedOfferLetter === "all" ? "#999999" : "#444444" }}>
                     <SelectValue placeholder="Offer Letter Fee" />
                   </SelectTrigger>
                   <SelectContent>
@@ -318,7 +319,7 @@ export default function Universities() {
               {paged.length === 0 ? (
                 <div
                   className="text-center py-20"
-                  style={{ color: "#999999", fontFamily: "Manrope, sans-serif" }}
+                  style={{ color: "#999999", fontFamily: "Poppins, sans-serif" }}
                 >
                   <GraduationCap className="h-12 w-12 mx-auto mb-4 opacity-40" />
                   <p className="font-semibold text-lg mb-1" style={{ color: "#515768" }}>
@@ -367,7 +368,7 @@ export default function Universities() {
                             <h3
                               className="font-bold hover:underline mb-4"
                               style={{
-                                fontFamily: "Manrope, sans-serif",
+                                fontFamily: "Poppins, sans-serif",
                                 fontSize: "24px",
                                 lineHeight: "32px",
                                 color: "#181d29",
@@ -383,7 +384,7 @@ export default function Universities() {
                               <MapPin className="h-5 w-5 shrink-0" style={{ color: "#ffa300" }} />
                               <span
                                 style={{
-                                  fontFamily: "Manrope, sans-serif",
+                                  fontFamily: "Poppins, sans-serif",
                                   fontSize: "16px",
                                   color: "#444444",
                                 }}
@@ -397,7 +398,7 @@ export default function Universities() {
                               <FileText className="h-5 w-5 shrink-0" style={{ color: "#515768" }} />
                               <span
                                 style={{
-                                  fontFamily: "Manrope, sans-serif",
+                                  fontFamily: "Poppins, sans-serif",
                                   fontSize: "16px",
                                   color: "#444444",
                                 }}
@@ -412,7 +413,7 @@ export default function Universities() {
                               <span
                                 className="font-bold"
                                 style={{
-                                  fontFamily: "Manrope, sans-serif",
+                                  fontFamily: "Poppins, sans-serif",
                                   fontSize: "16px",
                                   color: "#444444",
                                 }}

@@ -91,7 +91,7 @@ export default function AdminLeads() {
           {filtered.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">No leads found.</p>
           ) : (
-            <div className="overflow-x-auto rounded-md border">
+            <div className="overflow-x-auto rounded-sm border">
               <Table>
                 <TableHeader>
                   <TableRow>

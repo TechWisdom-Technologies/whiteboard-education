@@ -69,7 +69,7 @@ export default function BlogPost() {
           <span className="flex items-center gap-1.5"><Clock className="h-4 w-4" />{post.read_time}</span>
         </div>
         {post.cover_image && (
-          <div className="rounded-md overflow-hidden mb-10">
+          <div className="rounded-sm overflow-hidden mb-10">
             <img src={post.cover_image} alt={post.title} className="w-full h-64 md:h-96 object-cover" />
           </div>
         )}

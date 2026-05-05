@@ -60,7 +60,7 @@ export function ReminderModal({ open, onOpenChange, universityName, intakeLabel,
       <DialogContent className="sm:max-w-sm">
         {success ? (
           <div className="py-8 text-center space-y-4">
-            <div className="mx-auto h-16 w-16 rounded-full bg-[#ffa300]/15 flex items-center justify-center">
+            <div className="mx-auto h-16 w-16 rounded-sm bg-[#ffa300]/15 flex items-center justify-center">
               <CheckCircle className="h-8 w-8 text-[#ffa300]" />
             </div>
             <DialogTitle className="text-xl">Reminder Requested!</DialogTitle>

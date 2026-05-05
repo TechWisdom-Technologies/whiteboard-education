@@ -200,7 +200,7 @@ export default function AdminStudents() {
             <Card key={p.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setFilterPartner(filterPartner === p.user_id ? "all" : p.user_id)}>
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-md bg-secondary/10 flex items-center justify-center">
+                  <div className="h-10 w-10 rounded-sm bg-secondary/10 flex items-center justify-center">
                     <Users className="h-5 w-5 text-secondary" />
                   </div>
                   <div>
@@ -240,7 +240,7 @@ export default function AdminStudents() {
       {filtered.length === 0 ? (
         <Card><CardContent className="p-12 text-center text-muted-foreground">No students found.</CardContent></Card>
       ) : (
-        <div className="rounded-md border bg-card overflow-x-auto">
+        <div className="rounded-sm border bg-card overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -286,7 +286,7 @@ export default function AdminStudents() {
           {selected && (
             <div className="space-y-6">
               {/* Partner Info */}
-              <div className="p-3 rounded-md bg-muted/50 border">
+              <div className="p-3 rounded-sm bg-muted/50 border">
                 <p className="text-xs text-muted-foreground">Submitted by Partner</p>
                 <p className="font-semibold text-sm">{getPartner(selected.partner_id)?.agency_name || "Unknown"} — {getPartner(selected.partner_id)?.contact_person}</p>
               </div>
@@ -341,7 +341,7 @@ export default function AdminStudents() {
                     const isImage = url && /\.(jpg|jpeg|png|gif|webp|svg)(\?|$)/i.test(url);
                     const isPdf = url && /\.pdf(\?|$)/i.test(url);
                     return (
-                      <div key={doc.field} className="rounded-md border overflow-hidden">
+                      <div key={doc.field} className="rounded-sm border overflow-hidden">
                         <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-2">
                           {isImage ? <Image className="h-4 w-4 text-primary" /> : isPdf ? <File className="h-4 w-4 text-destructive" /> : <FileText className={`h-4 w-4 ${url ? "text-green-600" : "text-muted-foreground/40"}`} />}
                           <span className="text-sm flex-1 font-medium">{doc.label}</span>
@@ -369,11 +369,11 @@ export default function AdminStudents() {
                         {previewDoc === doc.field && url && (
                           <div className="border-t bg-muted/30 p-3">
                             {isImage ? (
-                              <img src={url} alt={doc.label} className="max-h-[400px] w-auto mx-auto rounded-md object-contain" />
+                              <img src={url} alt={doc.label} className="max-h-[400px] w-auto mx-auto rounded-sm object-contain" />
                             ) : isPdf ? (
-                              <iframe src={url} className="w-full h-[500px] rounded-md border" title={doc.label} />
+                              <iframe src={url} className="w-full h-[500px] rounded-sm border" title={doc.label} />
                             ) : (
-                              <iframe src={url} className="w-full h-[400px] rounded-md border" title={doc.label} />
+                              <iframe src={url} className="w-full h-[400px] rounded-sm border" title={doc.label} />
                             )}
                           </div>
                         )}

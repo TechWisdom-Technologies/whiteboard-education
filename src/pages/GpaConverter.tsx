@@ -49,7 +49,7 @@ export default function GpaConverter() {
               <p className="text-primary-foreground/80 max-w-md">Convert your GPA to the Malaysian 4.0 scale used by universities.</p>
             </div>
 
-            <div className="rounded-md overflow-hidden border border-primary-foreground/20 shadow-xl bg-primary-foreground/5">
+            <div className="rounded-sm overflow-hidden border border-primary-foreground/20 shadow-xl bg-primary-foreground/5">
               <img
                 src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1100&h=700&fit=crop"
                 alt="Student reviewing grades"
@@ -92,7 +92,7 @@ export default function GpaConverter() {
               </Button>
 
               {result !== null && (
-                <div className="text-center p-6 bg-muted/50 rounded-md animate-fade-in">
+                <div className="text-center p-6 bg-muted/50 rounded-sm animate-fade-in">
                   <p className="text-sm text-muted-foreground mb-1">Malaysian 4.0 Scale Equivalent</p>
                   <p className="text-4xl font-extrabold text-[#ffa300]">{result.toFixed(2)}</p>
                 </div>

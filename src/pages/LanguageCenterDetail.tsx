@@ -52,7 +52,7 @@ export default function LanguageCenterDetail() {
       <div className="intro-surface py-10 md:py-14">
         <div className="container mx-auto px-4">
           <div className="flex items-start gap-4">
-            <div className="h-14 w-14 rounded-md bg-primary-foreground/10 items-center justify-center shrink-0 hidden sm:flex">
+            <div className="h-14 w-14 rounded-sm bg-primary-foreground/10 items-center justify-center shrink-0 hidden sm:flex">
               <Languages className="h-7 w-7 text-[#ffa300]" />
             </div>
             <div>
@@ -102,7 +102,7 @@ export default function LanguageCenterDetail() {
                       { icon: GraduationCap, label: "Level", value: lc.level },
                     ].map(({ icon: Icon, label, value }) => (
                       <div key={label} className="flex items-center gap-3">
-                        <div className="h-9 w-9 rounded-md bg-[#ffa300]/15 flex items-center justify-center shrink-0">
+                        <div className="h-9 w-9 rounded-sm bg-[#ffa300]/15 flex items-center justify-center shrink-0">
                           <Icon className="h-4 w-4 text-[#ffa300]" />
                         </div>
                         <div>

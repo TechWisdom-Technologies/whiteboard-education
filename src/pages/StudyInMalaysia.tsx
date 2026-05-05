@@ -85,7 +85,7 @@ export default function StudyInMalaysia() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
               {quickFacts.map((f) => (
                 <div key={f.label} className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-md bg-[#ffa300]/15 flex items-center justify-center shrink-0">
+                  <div className="h-10 w-10 rounded-sm bg-[#ffa300]/15 flex items-center justify-center shrink-0">
                     <f.icon className="h-5 w-5 text-[#ffa300]" />
                   </div>
                   <div>
@@ -106,7 +106,7 @@ export default function StudyInMalaysia() {
           <div className="flex flex-col lg:flex-row gap-10 mt-6">
             <div className="lg:w-1/2">
               <p className="text-muted-foreground leading-relaxed text-base">{malaysia.aboutText}</p>
-              <div className="mt-6 p-4 rounded-md bg-[#ffa300]/10 border border-[#ffa300]/20">
+              <div className="mt-6 p-4 rounded-sm bg-[#ffa300]/10 border border-[#ffa300]/20">
                 <div className="flex items-center gap-2 mb-2">
                   <Cpu className="h-5 w-5 text-[#ffa300]" />
                   <h3 className="font-bold text-sm text-foreground">Malaysia's Tech Advantage</h3>
@@ -125,7 +125,7 @@ export default function StudyInMalaysia() {
                   return (
                     <Card key={i} className="hover:shadow-md transition-shadow animate-fade-in" style={{ animationDelay: `${i * 80}ms` }}>
                       <CardContent className="p-5">
-                        <div className="h-9 w-9 rounded-md bg-[#ffa300]/15 flex items-center justify-center mb-3">
+                        <div className="h-9 w-9 rounded-sm bg-[#ffa300]/15 flex items-center justify-center mb-3">
                           <Icon className="h-4 w-4 text-[#ffa300]" />
                         </div>
                         <h3 className="text-sm font-bold text-foreground mb-1">{r.title}</h3>
@@ -192,7 +192,7 @@ export default function StudyInMalaysia() {
               <Card key={c.city}>
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-5">
-                    <div className="h-10 w-10 rounded-md bg-[#ffa300]/15 flex items-center justify-center">
+                    <div className="h-10 w-10 rounded-sm bg-[#ffa300]/15 flex items-center justify-center">
                       <c.icon className="h-5 w-5 text-[#ffa300]" />
                     </div>
                     <h3 className="font-bold text-foreground">{c.city}</h3>
@@ -230,7 +230,7 @@ export default function StudyInMalaysia() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row gap-10 items-center">
             <div className="lg:w-1/2">
-              <div className="rounded-md overflow-hidden bg-muted aspect-video">
+              <div className="rounded-sm overflow-hidden bg-muted aspect-video">
                 <img
                   src="https://images.unsplash.com/photo-1523050854058-8df90110c476?w=800&h=500&fit=crop"
                   alt="Student visa process"
@@ -252,14 +252,14 @@ export default function StudyInMalaysia() {
                   "Collect your Student Pass upon arrival in Malaysia",
                 ].map((step, i) => (
                   <li key={i} className="flex items-start gap-3">
-                    <span className="h-6 w-6 rounded-full bg-secondary text-[#181d29] text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                    <span className="h-6 w-6 rounded-sm bg-secondary text-[#181d29] text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
                       {i + 1}
                     </span>
                     <span className="text-sm text-foreground">{step}</span>
                   </li>
                 ))}
               </ol>
-              <div className="flex items-start gap-3 pt-4 p-3 rounded-md bg-[#ffa300]/10">
+              <div className="flex items-start gap-3 pt-4 p-3 rounded-sm bg-[#ffa300]/10">
                 <FileText className="h-5 w-5 text-[#ffa300] mt-0.5 shrink-0" />
                 <div>
                   <p className="text-sm font-semibold text-foreground">Post-Study Work Rights</p>

@@ -19,13 +19,13 @@ export function StatsBanner() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {stats.map((stat) => (
             <div key={stat.label} className="text-center">
-              <div className="mx-auto mb-4 h-14 w-14 rounded-full flex items-center justify-center" style={{ backgroundColor: "rgba(255, 163, 0, 0.15)" }}>
+              <div className="mx-auto mb-4 h-14 w-14 rounded-sm flex items-center justify-center" style={{ backgroundColor: "rgba(255, 163, 0, 0.15)" }}>
                 <stat.icon className="h-6 w-6 text-[#ffa300]" />
               </div>
               <p className="text-4xl lg:text-5xl font-bold text-white mb-1" style={{ fontFamily: "'Poppins', sans-serif" }}>
                 {stat.value}{stat.suffix}
               </p>
-              <p className="text-base font-semibold text-white" style={{ fontFamily: "Manrope, sans-serif" }}>{stat.label}</p>
+              <p className="text-base font-semibold text-white" style={{ fontFamily: "Poppins, sans-serif" }}>{stat.label}</p>
               <p className="text-xs mt-1" style={{ color: "#a2a6b0" }}>{stat.sublabel}</p>
             </div>
           ))}

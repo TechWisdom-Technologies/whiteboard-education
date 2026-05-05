@@ -96,13 +96,13 @@ export default function Compare() {
           {hasAny && (
             <div className="space-y-8 animate-fade-in">
               {/* Sticky university headers */}
-              <div className="sticky top-16 z-30 bg-background/95 backdrop-blur border-b py-4 -mx-4 px-4 md:mx-0 md:px-0 md:rounded-md md:border md:shadow-sm">
+              <div className="sticky top-16 z-30 bg-background/95 backdrop-blur border-b py-4 -mx-4 px-4 md:mx-0 md:px-0 md:rounded-sm md:border md:shadow-sm">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {activeUnis.map((a, i) => (
                     <div key={i} className="text-center">
                       {a ? (
                         <div className="flex flex-col items-center gap-2">
-                          <img src={a.uni.logo_url} alt={a.uni.name} className="w-12 h-12 rounded-md object-cover" />
+                          <img src={a.uni.logo_url} alt={a.uni.name} className="w-12 h-12 rounded-sm object-cover" />
                           <div>
                             <p className="font-bold text-sm leading-tight">{a.uni.name}</p>
                             <p className="text-xs text-muted-foreground">{a.uni.city}, {countries.find((c) => c.id === a.uni.country_id)?.name}</p>
@@ -188,7 +188,7 @@ export default function Compare() {
                         {a ? (
                           <div className="space-y-2">
                             {courses.filter((c) => c.university_id === a.uni.id).slice(0, 3).map((c) => (
-                              <div key={c.id} className="bg-muted/50 rounded-md p-2.5">
+                              <div key={c.id} className="bg-muted/50 rounded-sm p-2.5">
                                 <p className="text-xs font-medium leading-tight">{c.title}</p>
                                 <p className="text-xs text-muted-foreground">{c.degree_level} • ${c.tuition_fee.toLocaleString()}/yr</p>
                               </div>

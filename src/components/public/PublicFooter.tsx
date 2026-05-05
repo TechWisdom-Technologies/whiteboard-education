@@ -14,7 +14,7 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
         <div className="container mx-auto px-4 py-14 grid grid-cols-1 md:grid-cols-4 gap-10">
           <div>
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="h-9 w-9 bg-[#ffa300]/15 rounded-md flex items-center justify-center">
+              <div className="h-9 w-9 bg-[#ffa300]/15 rounded-sm flex items-center justify-center">
                 <GraduationCap className="h-5 w-5 text-[#ffa300]" />
               </div>
               <div className="flex flex-col leading-tight">
@@ -26,15 +26,15 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
               Expert guidance for international students seeking quality education in Malaysia.
             </p>
             <div className="flex gap-3 mt-5">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="h-9 w-9 rounded-full border flex items-center justify-center hover:bg-[#ffa300] hover:border-[#ffa300] hover:text-[#181d29] transition-colors" style={{ borderColor: "#515768" }}><Facebook className="h-4 w-4" /></a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="h-9 w-9 rounded-full border flex items-center justify-center hover:bg-[#ffa300] hover:border-[#ffa300] hover:text-[#181d29] transition-colors" style={{ borderColor: "#515768" }}><Twitter className="h-4 w-4" /></a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="h-9 w-9 rounded-full border flex items-center justify-center hover:bg-[#ffa300] hover:border-[#ffa300] hover:text-[#181d29] transition-colors" style={{ borderColor: "#515768" }}><Instagram className="h-4 w-4" /></a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="h-9 w-9 rounded-full border flex items-center justify-center hover:bg-[#ffa300] hover:border-[#ffa300] hover:text-[#181d29] transition-colors" style={{ borderColor: "#515768" }}><Linkedin className="h-4 w-4" /></a>
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="h-9 w-9 rounded-sm border flex items-center justify-center hover:bg-[#ffa300] hover:border-[#ffa300] hover:text-[#181d29] transition-colors" style={{ borderColor: "#515768" }}><Facebook className="h-4 w-4" /></a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="h-9 w-9 rounded-sm border flex items-center justify-center hover:bg-[#ffa300] hover:border-[#ffa300] hover:text-[#181d29] transition-colors" style={{ borderColor: "#515768" }}><Twitter className="h-4 w-4" /></a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="h-9 w-9 rounded-sm border flex items-center justify-center hover:bg-[#ffa300] hover:border-[#ffa300] hover:text-[#181d29] transition-colors" style={{ borderColor: "#515768" }}><Instagram className="h-4 w-4" /></a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="h-9 w-9 rounded-sm border flex items-center justify-center hover:bg-[#ffa300] hover:border-[#ffa300] hover:text-[#181d29] transition-colors" style={{ borderColor: "#515768" }}><Linkedin className="h-4 w-4" /></a>
             </div>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4 text-white text-base" style={{ fontFamily: "Manrope, sans-serif" }}>Quick Links</h4>
+            <h4 className="font-semibold mb-4 text-white text-base" style={{ fontFamily: "Poppins, sans-serif" }}>Quick Links</h4>
             <ul className="space-y-2.5 text-sm" style={{ color: "#a2a6b0" }}>
               <li><Link to="/universities" className="hover:text-[#ffa300] transition-colors">Universities</Link></li>
               <li><Link to="/courses" className="hover:text-[#ffa300] transition-colors">Courses</Link></li>
@@ -46,7 +46,7 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4 text-white text-base" style={{ fontFamily: "Manrope, sans-serif" }}>Tools & Resources</h4>
+            <h4 className="font-semibold mb-4 text-white text-base" style={{ fontFamily: "Poppins, sans-serif" }}>Tools & Resources</h4>
             <ul className="space-y-2.5 text-sm" style={{ color: "#a2a6b0" }}>
               <li><Link to="/tools/calculator" className="hover:text-[#ffa300] transition-colors">Cost Calculator</Link></li>
               <li><Link to="/tools/gpa-converter" className="hover:text-[#ffa300] transition-colors">GPA Converter</Link></li>
@@ -58,7 +58,7 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4 text-white text-base" style={{ fontFamily: "Manrope, sans-serif" }}>Contact Us</h4>
+            <h4 className="font-semibold mb-4 text-white text-base" style={{ fontFamily: "Poppins, sans-serif" }}>Contact Us</h4>
             <div className="space-y-3 text-sm" style={{ color: "#a2a6b0" }}>
               <div className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-[#ffa300]" />
@@ -85,7 +85,7 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
         href="https://wa.me/60123456789"
         target="_blank"
         rel="noopener noreferrer"
-        className={`fixed ${bottomClass} right-2 xl:right-3 z-40 h-11 w-11 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-md`}
+        className={`fixed ${bottomClass} right-2 xl:right-3 z-40 h-11 w-11 rounded-sm flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-md`}
         style={{ backgroundColor: "#25d366", color: "#ffffff" }}
       >
         <MessageCircle className="h-5 w-5" />

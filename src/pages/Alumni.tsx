@@ -47,14 +47,14 @@ export default function Alumni() {
               <Card key={a.id} className="break-inside-avoid hover:shadow-lg transition-shadow animate-fade-in">
                 <CardContent className="p-6">
                   {a.type === "video" && (
-                    <div className="h-40 rounded-md bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center mb-4 cursor-pointer group">
-                      <div className="h-14 w-14 rounded-full bg-[#ffa300]/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <div className="h-40 rounded-sm bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center mb-4 cursor-pointer group">
+                      <div className="h-14 w-14 rounded-sm bg-[#ffa300]/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                         <Play className="h-6 w-6 text-[#ffa300] ml-1" />
                       </div>
                     </div>
                   )}
                   <div className="flex items-center gap-3 mb-4">
-                    <img src={a.avatar} alt={a.name} className="h-12 w-12 rounded-full object-cover" />
+                    <img src={a.avatar} alt={a.name} className="h-12 w-12 rounded-sm object-cover" />
                     <div>
                       <h3 className="font-bold text-sm">{a.name}</h3>
                       <p className="text-xs text-muted-foreground">{a.country} • Class of {a.year}</p>

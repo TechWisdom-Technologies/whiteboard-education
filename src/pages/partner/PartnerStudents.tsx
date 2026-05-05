@@ -284,7 +284,7 @@ export default function PartnerStudents() {
         </Card>
       ) : (
         <Card>
-          <div className="rounded-md border overflow-x-auto">
+          <div className="rounded-sm border overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -389,7 +389,7 @@ export default function PartnerStudents() {
                   ].map(doc => {
                     const url = (selected as any)[doc.field];
                     return (
-                      <div key={doc.field} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 rounded-md border">
+                      <div key={doc.field} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 rounded-sm border">
                         <FileText className={`h-5 w-5 ${url ? "text-green-600" : "text-muted-foreground"}`} />
                         <div className="flex-1">
                           <p className="font-medium text-sm">{doc.label}</p>
@@ -408,7 +408,7 @@ export default function PartnerStudents() {
                               if (file) uploadDoc(selected.id, doc.field, file);
                             }}
                           />
-                          <div className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-muted hover:bg-muted/80 text-sm transition-colors">
+                          <div className="flex items-center gap-1 px-3 py-1.5 rounded-sm bg-muted hover:bg-muted/80 text-sm transition-colors">
                             {uploading[doc.field] ? <Loader2 className="h-3 w-3 animate-spin" /> : <Upload className="h-3 w-3" />}
                             {url ? "Replace" : "Upload"}
                           </div>

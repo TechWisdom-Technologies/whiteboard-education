@@ -49,17 +49,17 @@ export function VideoExpertWidget({ bannerVisible = false }: VideoExpertWidgetPr
           className={`fixed ${bottomClass} left-6 z-40 group transition-all duration-300`}
         >
           <div className="relative">
-            <div className="h-16 w-16 overflow-hidden border-2 border-[#ffa300] rounded-full group-hover:scale-110 transition-transform">
+            <div className="h-16 w-16 overflow-hidden border-2 border-[#ffa300] rounded-sm group-hover:scale-110 transition-transform">
               <img
                 src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&h=100&fit=crop"
                 alt="Expert counselor"
                 className="h-full w-full object-cover"
               />
             </div>
-            <div className="absolute -top-1 -right-1 h-5 w-5 bg-[#ffa300] rounded-full flex items-center justify-center animate-pulse-soft">
+            <div className="absolute -top-1 -right-1 h-5 w-5 bg-[#ffa300] rounded-sm flex items-center justify-center animate-pulse-soft">
               <Video className="h-2.5 w-2.5 text-[#181d29]" />
             </div>
-            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap bg-[#181d29] text-white text-xs px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap bg-[#181d29] text-white text-xs px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity">
               Ask an Expert
             </div>
           </div>

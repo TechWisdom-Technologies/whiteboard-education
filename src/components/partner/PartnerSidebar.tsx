@@ -94,7 +94,7 @@ export function PartnerSidebar() {
                       <item.icon className="mr-2 h-5 w-5" />
                       {!collapsed && <span className="text-sm font-medium">{item.title}</span>}
                       {!collapsed && item.title === "Notifications" && unreadCount > 0 && (
-                        <span className="ml-auto h-[18px] min-w-[18px] px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center">
+                        <span className="ml-auto h-[18px] min-w-[18px] px-1 rounded-sm bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center">
                           {unreadCount > 99 ? "99+" : unreadCount}
                         </span>
                       )}

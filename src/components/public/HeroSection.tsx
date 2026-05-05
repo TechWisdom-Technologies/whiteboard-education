@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, ArrowRight, Sparkles, Star, ChevronRight, GraduationCap } from "lucide-react";
+import { Search, ArrowRight, Sparkles, Star, ChevronRight, GraduationCap, Globe, CheckCircle2, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -44,122 +44,98 @@ export function HeroSection() {
   };
 
   return (
-    <section className="relative min-h-[680px] flex items-center justify-center overflow-hidden">
-      {/* Background — light gradient matching reference */}
-      <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #e8edf5 0%, #f0f2f5 30%, #fef1da 70%, #f9c569 100%)" }} />
-      {/* Decorative blobs */}
-      <div className="absolute top-20 left-0 w-[400px] h-[400px] rounded-full opacity-30" style={{ background: "#fef1da" }} />
-      <div className="absolute bottom-0 right-0 w-[300px] h-[300px] rounded-full opacity-30" style={{ background: "#ffa300" }} />
-
-      <div className="relative z-10 container mx-auto px-4 text-center">
-        {/* Trust badge */}
-        <div
-          className={`inline-flex items-center gap-2 px-5 py-2.5 mb-8 transition-all duration-700 ${
-            loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-          }`}
-          style={{ backgroundColor: "#fef1da", borderRadius: "50px" }}
-        >
-          <Sparkles className="h-4 w-4 text-[#ffa300]" />
-          <span className="text-sm font-semibold text-[#181d29]">#1 Platform for International Students in Malaysia</span>
-          <Star className="h-3.5 w-3.5 text-[#ffa300] fill-[#ffa300]" />
-        </div>
-
-        {/* Heading */}
-        <h1
-          className={`text-4xl md:text-5xl lg:text-7xl font-bold mb-6 leading-[1.1] max-w-5xl mx-auto tracking-tight transition-all duration-700 delay-150 ${
-            loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-          }`}
-          style={{ fontFamily: "'Poppins', sans-serif", color: "#181d29" }}
-        >
-          Your Journey to{" "}
-          <span className="text-[#ffa300]">World-Class</span>{" "}
-          Education Starts Here
-        </h1>
-
-        <p
-          className={`text-base md:text-lg mb-10 max-w-2xl mx-auto leading-relaxed transition-all duration-700 delay-300 ${
-            loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-          }`}
-          style={{ color: "#515768" }}
-        >
-          Discover top universities, courses, and accommodations with personalized support every step of the way.
-        </p>
-
-        {/* Search card */}
-        <div
-          className={`max-w-2xl mx-auto transition-all duration-700 delay-[450ms] ${
-            loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-          }`}
-        >
-          <div className="bg-white border overflow-hidden" style={{ borderColor: "#cacdd4", borderRadius: "5px", boxShadow: "rgba(0,0,0,0.1) 0px 4px 12px" }}>
-            <div className="flex border-b" style={{ borderColor: "#dddddd" }}>
-              {tabs.map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`flex-1 py-3.5 text-sm font-semibold transition-all duration-200 relative`}
-                  style={{
-                    color: activeTab === tab ? "#181d29" : "#999999",
-                    fontFamily: "Manrope, sans-serif",
-                  }}
-                >
-                  {tab}
-                  {activeTab === tab && (
-                    <span className="absolute bottom-0 left-1/4 right-1/4 h-[3px] bg-[#ffa300]" style={{ borderRadius: "2px" }} />
-                  )}
-                </button>
-              ))}
+    <section className="relative bg-[#f8f9fb] pt-20 pb-24 lg:pb-32 overflow-hidden">
+      {/* Smooth transition to next section */}
+      <div className="absolute -bottom-1 left-0 w-full h-32 bg-gradient-to-t from-white to-transparent z-10" />
+      
+      <div className="container relative z-20 mx-auto px-4">
+        <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+          {/* Left Side: Content */}
+          <div className="flex-1 text-left max-w-2xl">
+            <div className={`inline-flex items-center gap-2 px-4 py-2 mb-8 bg-white shadow-sm border border-gray-100 rounded-sm transition-all duration-700 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+              <span className="text-lg">🇲🇾</span>
+              <span className="text-xs md:text-sm font-bold text-[#181d29] tracking-tight">The Most Trusted Platform for Study in Malaysia</span>
             </div>
-            <div className="p-4 flex gap-3">
-              <Input
-                placeholder={`Search for a ${activeTab.toLowerCase()}...`}
-                className="flex-1 h-12 text-base placeholder:text-[#999999]"
-                style={{ borderColor: "#cacdd4", borderRadius: "5px", color: "#181d29", fontFamily: "Manrope, sans-serif" }}
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              />
-              <Button
-                className="h-12 px-6 font-bold transition-all"
-                style={{ backgroundColor: "#ffa300", color: "#181d29", borderRadius: "5px", fontFamily: "Poppins, sans-serif", border: "1px solid #ffa300" }}
-                onClick={handleSearch}
-              >
-                <Search className="h-4 w-4 mr-2" />
-                Search
-              </Button>
+
+            <h1 className={`text-5xl md:text-6xl lg:text-7xl font-extrabold mb-8 leading-[1.05] text-[#181d29] tracking-tighter transition-all duration-700 delay-150 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`} style={{ fontFamily: "Poppins, sans-serif" }}>
+              Study in Malaysia: Your Gateway to <span className="text-[#ffa300]">Global Success</span>
+            </h1>
+
+            <p className={`text-xl md:text-2xl text-gray-600 mb-12 max-w-xl leading-relaxed font-light transition-all duration-700 delay-300 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+              Expert guidance for international students. Find the perfect university, secure your visa, and settle into your new home with ease.
+            </p>
+
+            {/* Integrated Search Bar */}
+            <div className={`max-w-xl mb-16 transition-all duration-700 delay-500 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
+              <div className="bg-white p-3 rounded-sm shadow-2xl border border-gray-50">
+                <div className="flex gap-2 p-1 mb-3 bg-gray-50/50 rounded-sm">
+                  {tabs.map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setActiveTab(tab)}
+                      className={`flex-1 py-3 text-sm font-bold transition-all duration-200 rounded-sm ${activeTab === tab ? "bg-[#181d29] text-white shadow-md" : "text-gray-400 hover:text-gray-600 hover:bg-gray-100"}`}
+                      style={{ fontFamily: "Poppins, sans-serif" }}
+                    >
+                      {tab}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex flex-col sm:flex-row items-center gap-3">
+                  <div className="flex-1 w-full relative">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-300" />
+                    <Input
+                      placeholder={`Search for ${activeTab.toLowerCase()}...`}
+                      className="w-full h-14 pl-12 border-none bg-gray-50/30 focus-visible:ring-0 text-lg placeholder:text-gray-300 rounded-sm"
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                    />
+                  </div>
+                  <Button
+                    className="h-14 w-full sm:w-auto px-10 bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 font-extrabold text-lg rounded-sm shadow-lg shadow-[#ffa300]/20 transition-all active:scale-95"
+                    onClick={handleSearch}
+                  >
+                    Find Now
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Stats/Trust Points - Ensure no cut-off */}
+            <div className={`flex flex-wrap items-center gap-10 transition-all duration-700 delay-700 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+              <div className="group">
+                <div className="text-3xl font-extrabold text-[#181d29] group-hover:text-[#ffa300] transition-colors">100+</div>
+                <div className="text-[11px] text-gray-400 uppercase tracking-[0.2em] font-bold mt-1">Programs</div>
+              </div>
+              <div className="h-10 w-[1px] bg-gray-200 hidden sm:block" />
+              <div className="group">
+                <div className="text-3xl font-extrabold text-[#181d29] group-hover:text-[#ffa300] transition-colors">50+</div>
+                <div className="text-[11px] text-gray-400 uppercase tracking-[0.2em] font-bold mt-1">Nationalities</div>
+              </div>
+              <div className="h-10 w-[1px] bg-gray-200 hidden sm:block" />
+              <div className="group">
+                <div className="text-3xl font-extrabold text-[#181d29] flex items-center gap-2 group-hover:text-[#ffa300] transition-colors">
+                  4.9/5 <Star className="h-5 w-5 text-[#ffa300] fill-[#ffa300]" />
+                </div>
+                <div className="text-[11px] text-gray-400 uppercase tracking-[0.2em] font-bold mt-1">Student Rating</div>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* CTA Button */}
-        <div
-          className={`mt-6 transition-all duration-700 delay-[520ms] ${
-            loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-          }`}
-        >
-          <Button
-            size="lg"
-            className="font-bold text-base px-8 h-13 transition-all"
-            style={{ backgroundColor: "#181d29", color: "#ffffff", borderRadius: "5px", fontFamily: "Poppins, sans-serif" }}
-            onClick={() => setLeadOpen(true)}
-          >
-            <GraduationCap className="h-5 w-5 mr-2" />
-            Get Free Consultation
-          </Button>
-        </div>
-
-        {/* Trust points */}
-        <div
-          className={`flex flex-wrap items-center justify-center gap-6 mt-10 transition-all duration-700 delay-[600ms] ${
-            loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-          }`}
-        >
-          {trustPoints.map((point) => (
-            <div key={point} className="flex items-center gap-2" style={{ color: "#515768" }}>
-              <div className="h-2 w-2 rounded-full bg-[#ffa300]" />
-              <span className="text-sm font-medium">{point}</span>
+          <div className={`flex-1 relative hidden lg:block transition-all duration-1000 delay-300 ${loaded ? "opacity-100 translate-x-0" : "opacity-0 translate-x-20"}`}>
+            <div className="relative z-20 w-full max-w-[600px] ml-auto">
+              <div className="relative">
+                <img 
+                  src="/input_file_0.png" 
+                  alt="Student Success in Malaysia" 
+                  className="w-full h-auto drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-20"
+                />
+              </div>
             </div>
-          ))}
+
+            {/* Decorative circle behind student */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-[#ffa300]/20 to-transparent rounded-sm blur-3xl z-0" />
+          </div>
         </div>
       </div>
 
@@ -167,3 +143,4 @@ export function HeroSection() {
     </section>
   );
 }
+

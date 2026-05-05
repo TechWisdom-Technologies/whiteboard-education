@@ -234,7 +234,7 @@ export function AdminNotificationCenter() {
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 h-[18px] min-w-[18px] rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground flex items-center justify-center">
+            <span className="absolute -top-0.5 -right-0.5 h-[18px] min-w-[18px] rounded-sm bg-destructive px-1 text-[10px] font-bold text-destructive-foreground flex items-center justify-center">
               {unreadCount > 99 ? "99+" : unreadCount}
             </span>
           )}

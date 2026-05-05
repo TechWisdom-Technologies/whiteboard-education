@@ -73,6 +73,10 @@ export interface Course {
   curriculum?: CurriculumYear[];
   entryRequirements?: EntryRequirements;
   careerOutcomes?: string[];
+  yearly_fees?: { year: string; fee: string }[];
+  other_fees?: { description: string; fee: string }[];
+  offer_letter?: string;
+  entry_requirements_text?: string;
 }
 
 export interface Accommodation {
@@ -286,14 +290,123 @@ export const universities: University[] = [
 // ─── Courses (Malaysia universities only) ────────────────────────────────────
 
 export const courses: Course[] = [
-  { id: 1, title: "Bachelor of Computer Science", university_id: 1, degree_level: "Bachelor", tuition_fee: 12000, duration: "3 years", intake_months: ["March", "September"], overview: "This program equips students with a strong foundation in algorithms, software engineering, data structures, and AI. Graduates are prepared for careers in the rapidly growing tech industry across Southeast Asia and beyond.", curriculum: [{ year: "Year 1", modules: ["Introduction to Programming", "Discrete Mathematics", "Computer Architecture", "Web Development Fundamentals"] }, { year: "Year 2", modules: ["Data Structures & Algorithms", "Database Systems", "Operating Systems", "Software Engineering"] }, { year: "Year 3", modules: ["Artificial Intelligence", "Cloud Computing", "Capstone Project", "Cybersecurity Fundamentals"] }], entryRequirements: { gpa: 3.0, ielts: 6.0 }, careerOutcomes: ["Software Engineer", "Data Analyst", "Full-Stack Developer", "Systems Architect", "DevOps Engineer", "AI/ML Engineer"] },
-  { id: 2, title: "Master of Business Administration", university_id: 1, degree_level: "Master", tuition_fee: 18000, duration: "2 years", intake_months: ["September"], overview: "A transformative MBA program designed for aspiring leaders. Covers strategic management, finance, marketing, and entrepreneurship with real-world case studies and industry projects.", curriculum: [{ year: "Year 1", modules: ["Strategic Management", "Financial Accounting", "Marketing Management", "Organizational Behaviour"] }, { year: "Year 2", modules: ["Entrepreneurship & Innovation", "Global Business Strategy", "Leadership Seminar", "MBA Capstone Project"] }], entryRequirements: { gpa: 3.2, ielts: 6.5 }, careerOutcomes: ["Business Consultant", "Marketing Director", "Product Manager", "Startup Founder", "Operations Manager"] },
+  {
+    id: 1,
+    title: "Bachelor of Business Administration (Hons.) Human Resource Management",
+    university_id: 11,
+    degree_level: "Bachelor",
+    tuition_fee: 22417,
+    duration: "3 years",
+    intake_months: ["March", "September"],
+    overview: "The Bachelor of Business Administration (Hons.) in Human Resource Management at Multimedia University Malaysia is a three-year program that equips students with specialized skills for effective human resources management. The curriculum covers various areas including recruitment, occupational safety and health, organizational development, international human resource management, labor/industrial relations, communication, soft skills, strategy formulation, and labor law. Graduates can pursue careers as human resource executives, recruitment specialists, training and development officers, labor relations managers, and organizational development consultants.",
+    offer_letter: "Free",
+    entry_requirements_text: "Pass Foundation/ Matriculation studies with at least CGPA of 2.00 from a recognised institution.\n\nFor other qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.",
+    yearly_fees: [
+      { year: "1st Year", fee: "MYR 22,417" },
+      { year: "2nd Year", fee: "MYR 22,417" },
+      { year: "3rd Year", fee: "MYR 22,417" }
+    ],
+    other_fees: [
+      { description: "International Processing Fee (Student Visa)", fee: "MYR 3,500" },
+      { description: "Other Payment (per year)", fee: "MYR 400" },
+      { description: "Registration Fee", fee: "MYR 2,000" },
+      { description: "Deposit", fee: "MYR 1,500" }
+    ],
+    curriculum: [
+      {
+        year: "Core - Year 1",
+        modules: [
+          "English for Business Communication",
+          "Quantitative Analysis Models for Business",
+          "Entrepreneurship and Ethical Practices",
+          "Understanding Management",
+          "Human Capital and Organisational Behaviour",
+          "Introductory Microeconomics",
+          "Financial Management",
+          "Fundamentals of Marketing",
+          "Financial Accounting for Managers",
+          "Digital Business",
+          "International Business"
+        ]
+      },
+      {
+        year: "Core - Year 2",
+        modules: [
+          "Quality and Operations Management",
+          "Introductory Macroeconomics",
+          "Business Risk Management",
+          "Introduction to Financial Technologies",
+          "Business Research Methods",
+          "Management of Strategy",
+          "Business Information Systems",
+          "Data Analytics for Business",
+          "Business Application Development",
+          "Cyber Security",
+          "Occupational Safety and Health",
+          "Performance Management",
+          "Recruitment and Selection",
+          "International Human Resource Management",
+          "Compensations and Benefits"
+        ]
+      },
+      {
+        year: "Core - Year 3",
+        modules: [
+          "Supply Chain Management",
+          "Innovation Management OR International Trade and Policy",
+          "Project Management",
+          "Strategic Management Information Systems or Business Intelligence",
+          "Labour Laws",
+          "Human Resource Management Research Project",
+          "Industrial Relations",
+          "Human Resource Information Systems",
+          "Training and Development",
+          "Industrial Training"
+        ]
+      },
+      {
+        year: "Elective Modules",
+        modules: [
+          "Occupational Safety and Health",
+          "Basic Human Resource Consulting",
+          "International Human Resource Management",
+          "Negotiation at Workplace",
+          "Organisational Development",
+          "The other ONE (1) elective subject may be taken from the above list OR any major and elective subject offered by the BBA/BBKM programmes in the Faculty"
+        ]
+      },
+      {
+        year: "University Subjects",
+        modules: [
+          "Character Building",
+          "Sustainable Society",
+          "Philosophy and Current Issues",
+          "Appreciation of Ethics and Civilizations / Bahasa Melayu Komunikasi 2 (International)",
+          "Bahasa Kebangsaan A",
+          "Integrity and Leadership",
+          "Co-curriculum"
+        ]
+      }
+    ],
+    entryRequirements: {
+      gpa: 2.0,
+      ielts: 5.5
+    },
+    careerOutcomes: [
+      "Human Resource Manager",
+      "Corporate Recruiters",
+      "Labour Relations Manager",
+      "HR Consultant",
+      "Training Specialist"
+    ]
+  },
+  { id: 2, title: "Master of Business Administration", university_id: 1, degree_level: "Master", tuition_fee: 25200, duration: "1 year", intake_months: ["January", "May", "October"], overview: "A transformative MBA program designed for aspiring leaders. Covers strategic management, finance, marketing, and entrepreneurship with real-world case studies and industry projects.", curriculum: [{ year: "Year 1", modules: ["Strategic Management", "Financial Accounting", "Marketing Management", "Organizational Behaviour"] }, { year: "Year 2", modules: ["Entrepreneurship & Innovation", "Global Business Strategy", "Leadership Seminar", "MBA Capstone Project"] }], entryRequirements: { gpa: 3.2, ielts: 6.5 }, careerOutcomes: ["Business Consultant", "Marketing Director", "Product Manager", "Startup Founder", "Operations Manager"] },
   { id: 3, title: "Bachelor of Engineering (Mechanical)", university_id: 2, degree_level: "Bachelor", tuition_fee: 14000, duration: "4 years", intake_months: ["February", "September"], overview: "A comprehensive mechanical engineering program covering thermodynamics, materials science, and manufacturing processes with hands-on lab experience.", curriculum: [{ year: "Year 1", modules: ["Engineering Mathematics", "Physics for Engineers", "Engineering Drawing", "Workshop Practice"] }, { year: "Year 2", modules: ["Thermodynamics", "Mechanics of Materials", "Fluid Mechanics", "Manufacturing Processes"] }, { year: "Year 3", modules: ["Machine Design", "Control Systems", "Heat Transfer", "Industrial Training"] }, { year: "Year 4", modules: ["Finite Element Analysis", "Robotics", "Final Year Project", "Professional Ethics"] }], entryRequirements: { gpa: 3.0, ielts: 5.5 }, careerOutcomes: ["Mechanical Engineer", "Design Engineer", "Project Manager", "Manufacturing Engineer", "R&D Engineer"] },
   { id: 4, title: "Bachelor of Medicine (MBBS)", university_id: 3, degree_level: "Bachelor", tuition_fee: 45000, duration: "5 years", intake_months: ["March"], overview: "A world-class medical program offering clinical rotations at leading hospitals. Graduates are eligible to practice medicine globally with additional licensing.", curriculum: [{ year: "Year 1-2", modules: ["Anatomy", "Biochemistry", "Physiology", "Pathology", "Pharmacology"] }, { year: "Year 3-4", modules: ["Clinical Medicine", "Surgery", "Paediatrics", "Obstetrics & Gynaecology"] }, { year: "Year 5", modules: ["Hospital Rotations", "Emergency Medicine", "Community Medicine", "Final Clinical Exams"] }], entryRequirements: { gpa: 3.7, ielts: 7.0 }, careerOutcomes: ["Medical Doctor", "Surgeon", "Specialist Physician", "Medical Researcher", "Hospital Administrator"] },
   { id: 5, title: "Diploma in Culinary Arts", university_id: 4, degree_level: "Foundation", tuition_fee: 8000, duration: "2 years", intake_months: ["January", "May", "September"], overview: "Hands-on culinary training covering international cuisines, pastry arts, food safety, and restaurant management in professional kitchen facilities.", curriculum: [{ year: "Year 1", modules: ["Culinary Fundamentals", "Food Safety & Hygiene", "Pastry & Bakery Basics", "Asian Cuisines"] }, { year: "Year 2", modules: ["Western Cuisines", "Restaurant Management", "Food Photography", "Industry Internship"] }], entryRequirements: { gpa: 2.5, ielts: 5.0 }, careerOutcomes: ["Chef de Partie", "Pastry Chef", "Restaurant Manager", "Food Consultant", "Catering Manager"] },
   { id: 6, title: "Bachelor of Pharmacy", university_id: 5, degree_level: "Bachelor", tuition_fee: 16000, duration: "4 years", intake_months: ["March", "September"], overview: "A rigorous pharmacy program covering pharmaceutical sciences, clinical pharmacy, and drug development with extensive practical training.", curriculum: [{ year: "Year 1", modules: ["Pharmaceutical Chemistry", "Human Anatomy", "Microbiology", "Mathematics for Pharmacy"] }, { year: "Year 2", modules: ["Pharmacology", "Pharmaceutical Analysis", "Medicinal Chemistry", "Pharmacognosy"] }, { year: "Year 3", modules: ["Clinical Pharmacy", "Hospital Pharmacy Practice", "Drug Formulation", "Regulatory Affairs"] }, { year: "Year 4", modules: ["Advanced Pharmacotherapy", "Research Project", "Community Pharmacy Internship", "Professional Practice"] }], entryRequirements: { gpa: 3.2, ielts: 6.0 }, careerOutcomes: ["Hospital Pharmacist", "Clinical Pharmacist", "Pharmaceutical Researcher", "Regulatory Affairs Specialist", "Drug Safety Officer"] },
   { id: 7, title: "PhD in Agricultural Science", university_id: 6, degree_level: "PhD", tuition_fee: 10000, duration: "3 years", intake_months: ["February"], overview: "An advanced research program focused on sustainable agriculture, crop science, and food security. Students conduct original research under expert supervision.", curriculum: [{ year: "Year 1", modules: ["Research Methodology", "Advanced Crop Science", "Soil Science & Sustainability", "Literature Review"] }, { year: "Year 2", modules: ["Fieldwork & Data Collection", "Statistical Analysis", "Publication Writing", "Conference Presentation"] }, { year: "Year 3", modules: ["Thesis Writing", "Viva Voce Preparation", "Knowledge Transfer", "Final Defence"] }], entryRequirements: { gpa: 3.5, ielts: 6.5 }, careerOutcomes: ["Agricultural Researcher", "University Lecturer", "Policy Advisor", "Agri-Tech Consultant", "Sustainability Officer"] },
-  { id: 8, title: "Master of Data Science", university_id: 1, degree_level: "Master", tuition_fee: 20000, duration: "2 years", intake_months: ["September"], overview: "A cutting-edge program combining statistics, machine learning, and big data analytics. Ideal for professionals transitioning into data-driven roles.", curriculum: [{ year: "Year 1", modules: ["Statistical Learning", "Big Data Technologies", "Machine Learning", "Data Visualization"] }, { year: "Year 2", modules: ["Deep Learning", "Natural Language Processing", "Capstone Project", "Ethics in AI"] }], entryRequirements: { gpa: 3.0, ielts: 6.5 }, careerOutcomes: ["Data Scientist", "Machine Learning Engineer", "Business Intelligence Analyst", "AI Researcher", "Chief Data Officer"] },
+  { id: 8, title: "Master of Data Science", university_id: 1, degree_level: "Master", tuition_fee: 31500, duration: "1 year", intake_months: ["January", "June"], overview: "A cutting-edge program combining statistics, machine learning, and big data analytics. Ideal for professionals transitioning into data-driven roles.", curriculum: [{ year: "Year 1", modules: ["Statistical Learning", "Big Data Technologies", "Machine Learning", "Data Visualization"] }, { year: "Year 2", modules: ["Deep Learning", "Natural Language Processing", "Capstone Project", "Ethics in AI"] }], entryRequirements: { gpa: 3.0, ielts: 6.5 }, careerOutcomes: ["Data Scientist", "Machine Learning Engineer", "Business Intelligence Analyst", "AI Researcher", "Chief Data Officer"] },
   { id: 9, title: "Bachelor of Hospitality Management", university_id: 4, degree_level: "Bachelor", tuition_fee: 15000, duration: "3 years", intake_months: ["January", "September"], overview: "Combines business management with hands-on hospitality training. Students gain experience through internships at 5-star hotels and resorts.", curriculum: [{ year: "Year 1", modules: ["Introduction to Hospitality", "Food & Beverage Operations", "Front Office Management", "Business Communication"] }, { year: "Year 2", modules: ["Revenue Management", "Event Planning", "Housekeeping Management", "Industry Internship"] }, { year: "Year 3", modules: ["Strategic Hotel Management", "Tourism Marketing", "Hospitality Entrepreneurship", "Final Year Project"] }], entryRequirements: { gpa: 2.8, ielts: 5.5 }, careerOutcomes: ["Hotel Manager", "Event Coordinator", "Tourism Officer", "F&B Director", "Hospitality Consultant"] },
   { id: 10, title: "Master of Engineering (Electrical)", university_id: 2, degree_level: "Master", tuition_fee: 16000, duration: "2 years", intake_months: ["September"], overview: "Advanced electrical engineering covering power systems, telecommunications, and embedded systems with research-oriented coursework.", curriculum: [{ year: "Year 1", modules: ["Advanced Power Systems", "Digital Signal Processing", "Embedded Systems Design", "Research Methods"] }, { year: "Year 2", modules: ["IoT & Smart Systems", "Renewable Energy Engineering", "Dissertation", "Industry Seminar"] }], entryRequirements: { gpa: 3.0, ielts: 6.0 }, careerOutcomes: ["Electrical Engineer", "Power Systems Analyst", "Telecommunications Engineer", "IoT Specialist", "R&D Manager"] },
   { id: 11, title: "Foundation in Science", university_id: 8, degree_level: "Foundation", tuition_fee: 6000, duration: "1 year", intake_months: ["January", "May", "September"], overview: "A pathway program preparing students for degree-level studies in IT, engineering, and science disciplines.", curriculum: [{ year: "Year 1", modules: ["Mathematics", "Physics", "Chemistry", "English Proficiency", "IT Fundamentals"] }], entryRequirements: { gpa: 2.0, ielts: 5.0 }, careerOutcomes: ["Progress to Bachelor's Degree"] },

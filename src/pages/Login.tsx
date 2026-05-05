@@ -73,8 +73,8 @@ export default function Login() {
   return (
     <div className="relative h-screen overflow-hidden" style={{ backgroundColor: "#f0f2f5" }}>
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full opacity-40" style={{ backgroundColor: "#fef1da" }} />
-        <div className="absolute -bottom-28 -right-24 h-80 w-80 rounded-full opacity-30" style={{ backgroundColor: "#ffa300" }} />
+        <div className="absolute -top-24 -left-24 h-72 w-72 rounded-sm opacity-40" style={{ backgroundColor: "#fef1da" }} />
+        <div className="absolute -bottom-28 -right-24 h-80 w-80 rounded-sm opacity-30" style={{ backgroundColor: "#ffa300" }} />
       </div>
 
       <div className="relative h-full container mx-auto px-4 py-4 md:py-6 flex items-center">
@@ -95,7 +95,7 @@ export default function Login() {
               </Link>
 
               <div className="flex items-center gap-3 mt-3">
-                <div className="h-11 w-11 bg-[#181d29] rounded-md flex items-center justify-center">
+                <div className="h-11 w-11 bg-[#181d29] rounded-sm flex items-center justify-center">
                   <GraduationCap className="h-6 w-6 text-[#ffa300]" />
                 </div>
                 <div className="flex flex-col leading-tight">

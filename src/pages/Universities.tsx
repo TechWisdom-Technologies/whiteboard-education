@@ -219,10 +219,10 @@ export default function Universities() {
 
       {/* Page Header */}
       <div className="container mx-auto px-4 pt-10 pb-6 flex items-center justify-between">
-        <h1 className="text-[28px] font-extrabold" style={{ fontFamily: "Manrope, sans-serif", color: "#181d29" }}>
+        <h1 className="text-[28px] font-extrabold" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>
           Universities
         </h1>
-        <div className="text-[15px] font-bold" style={{ color: "#515768", fontFamily: "Manrope, sans-serif" }}>
+        <div className="text-[15px] font-bold" style={{ color: "#515768", fontFamily: "Poppins, sans-serif" }}>
           Total universities: <span style={{ color: "#ffa300" }}>{filtered.length}</span>
         </div>
       </div>
@@ -247,7 +247,7 @@ export default function Universities() {
                   <h3
                     className="font-bold"
                     style={{
-                      fontFamily: "Manrope, sans-serif",
+                      fontFamily: "Poppins, sans-serif",
                       fontSize: "20px",
                       lineHeight: "24px",
                       color: "#181d29",
@@ -283,7 +283,7 @@ export default function Universities() {
                         style={{
                           borderColor: "#cacdd4",
                           borderRadius: "5px",
-                          fontFamily: "Manrope, sans-serif",
+                          fontFamily: "Poppins, sans-serif",
                           fontSize: "14px",
                           color: "#444444",
                         }}
@@ -303,7 +303,7 @@ export default function Universities() {
                         style={{
                           borderColor: "#cacdd4",
                           borderRadius: "5px",
-                          fontFamily: "Manrope, sans-serif",
+                          fontFamily: "Poppins, sans-serif",
                           fontSize: "14px",
                           color: selectedLevel === "All Levels" ? "#999999" : "#444444",
                         }}
@@ -326,7 +326,7 @@ export default function Universities() {
                         style={{
                           borderColor: "#cacdd4",
                           borderRadius: "5px",
-                          fontFamily: "Manrope, sans-serif",
+                          fontFamily: "Poppins, sans-serif",
                           fontSize: "14px",
                           color: selectedField === "All Fields" ? "#999999" : "#444444",
                         }}
@@ -349,7 +349,7 @@ export default function Universities() {
                         style={{
                           borderColor: "#cacdd4",
                           borderRadius: "5px",
-                          fontFamily: "Manrope, sans-serif",
+                          fontFamily: "Poppins, sans-serif",
                           fontSize: "14px",
                           color: selectedCity === "all" ? "#999999" : "#444444",
                         }}
@@ -375,7 +375,7 @@ export default function Universities() {
                         style={{
                           borderColor: "#cacdd4",
                           borderRadius: "5px",
-                          fontFamily: "Manrope, sans-serif",
+                          fontFamily: "Poppins, sans-serif",
                           fontSize: "14px",
                           color: selectedOfferLetter === "all" ? "#999999" : "#444444",
                         }}
@@ -401,7 +401,7 @@ export default function Universities() {
               {paged.length === 0 ? (
                 <div
                   className="text-center py-20"
-                  style={{ color: "#999999", fontFamily: "Manrope, sans-serif" }}
+                  style={{ color: "#999999", fontFamily: "Poppins, sans-serif" }}
                 >
                   <GraduationCap className="h-12 w-12 mx-auto mb-4 opacity-40" />
                   <p className="font-semibold text-lg mb-1" style={{ color: "#515768" }}>
@@ -450,7 +450,7 @@ export default function Universities() {
                             <h3
                               className="font-bold hover:underline mb-3"
                               style={{
-                                fontFamily: "Manrope, sans-serif",
+                                fontFamily: "Poppins, sans-serif",
                                 fontSize: "20px",
                                 lineHeight: "28px",
                                 color: "#181d29",
@@ -466,7 +466,7 @@ export default function Universities() {
                               <MapPin className="h-4 w-4 shrink-0" style={{ color: "#ffa300" }} />
                               <span
                                 style={{
-                                  fontFamily: "Manrope, sans-serif",
+                                  fontFamily: "Poppins, sans-serif",
                                   fontSize: "14px",
                                   color: "#444444",
                                 }}
@@ -480,7 +480,7 @@ export default function Universities() {
                               <FileText className="h-4 w-4 shrink-0" style={{ color: "#515768" }} />
                               <span
                                 style={{
-                                  fontFamily: "Manrope, sans-serif",
+                                  fontFamily: "Poppins, sans-serif",
                                   fontSize: "14px",
                                   color: "#444444",
                                 }}
@@ -495,7 +495,7 @@ export default function Universities() {
                               <span
                                 className="font-bold"
                                 style={{
-                                  fontFamily: "Manrope, sans-serif",
+                                  fontFamily: "Poppins, sans-serif",
                                   fontSize: "14px",
                                   color: "#444444",
                                 }}

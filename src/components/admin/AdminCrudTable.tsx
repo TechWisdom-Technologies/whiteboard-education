@@ -445,7 +445,7 @@ export default function AdminCrudTable({
     if (f.type === "select") {
       return (
         <select
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+          className="w-full rounded-sm border border-input bg-background px-3 py-2 text-sm"
           value={form[f.key] || ""}
           onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
         >
@@ -458,7 +458,7 @@ export default function AdminCrudTable({
       const cfg = f.relationConfig;
       return (
         <select
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+          className="w-full rounded-sm border border-input bg-background px-3 py-2 text-sm"
           value={form[f.key] || ""}
           onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
         >
@@ -579,7 +579,7 @@ export default function AdminCrudTable({
         <Input placeholder={`Search ${title.toLowerCase()}...`} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
       </div>
 
-      <div className="rounded-md border bg-card overflow-x-auto">
+      <div className="rounded-sm border bg-card overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>

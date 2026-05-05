@@ -44,10 +44,10 @@ export function AmbassadorChat() {
       {/* Floating Avatar Group */}
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
-          <button className="fixed bottom-6 right-24 z-50 flex items-center gap-2 bg-primary text-primary-foreground shadow-lg rounded-full pl-2 pr-4 py-2 hover:shadow-xl transition-all hover:scale-105 group">
+          <button className="fixed bottom-6 right-24 z-50 flex items-center gap-2 bg-primary text-primary-foreground shadow-lg rounded-sm pl-2 pr-4 py-2 hover:shadow-xl transition-all hover:scale-105 group">
             <div className="flex -space-x-2">
               {ambassadors.slice(0, 3).map((a) => (
-                <img key={a.id} src={a.avatar} alt={a.name} className="w-8 h-8 rounded-full border-2 border-primary object-cover" />
+                <img key={a.id} src={a.avatar} alt={a.name} className="w-8 h-8 rounded-sm border-2 border-primary object-cover" />
               ))}
             </div>
             <span className="text-xs font-semibold">Chat with Students</span>
@@ -83,14 +83,14 @@ export function AmbassadorChat() {
                 <button
                   key={amb.id}
                   onClick={() => selectAmbassador(amb)}
-                  className="w-full text-left p-4 rounded-md border hover:border-[#ffa300]/50 hover:shadow-md transition-all duration-200 animate-fade-in flex items-start gap-3"
+                  className="w-full text-left p-4 rounded-sm border hover:border-[#ffa300]/50 hover:shadow-md transition-all duration-200 animate-fade-in flex items-start gap-3"
                   style={{ animationDelay: `${i * 80}ms` }}
                 >
-                  <img src={amb.avatar} alt={amb.name} className="w-12 h-12 rounded-full object-cover flex-shrink-0" />
+                  <img src={amb.avatar} alt={amb.name} className="w-12 h-12 rounded-sm object-cover flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                       <span className="font-bold text-sm">{amb.name}</span>
-                      <span className="h-2 w-2 rounded-full bg-success animate-pulse-soft" />
+                      <span className="h-2 w-2 rounded-sm bg-success animate-pulse-soft" />
                     </div>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
                       <MapPin className="h-3 w-3" /> {amb.country}
@@ -108,7 +108,7 @@ export function AmbassadorChat() {
               <div className="flex-1 overflow-y-auto p-4 space-y-3">
                 {messages.map((msg, i) => (
                   <div key={i} className={`flex ${msg.from === "user" ? "justify-end" : "justify-start"} animate-fade-in`}>
-                    <div className={`max-w-[80%] rounded-md px-4 py-2.5 text-sm ${
+                    <div className={`max-w-[80%] rounded-sm px-4 py-2.5 text-sm ${
                       msg.from === "user"
                         ? "bg-[#ffa300] text-[#181d29] rounded-br-sm"
                         : "bg-muted rounded-bl-sm"

@@ -19,7 +19,7 @@ export function ServicesGrid() {
           >
             How we can help you?
           </h2>
-          <div className="w-16 h-1 bg-[#ffa300] mx-auto rounded-full" />
+          <div className="w-16 h-1 bg-[#ffa300] mx-auto rounded-sm" />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {services.map((s, i) => (
@@ -29,20 +29,20 @@ export function ServicesGrid() {
                 style={{ animationDelay: `${i * 120}ms` }}
               >
                 <div
-                  className="mx-auto mb-5 h-16 w-16 rounded-full flex items-center justify-center transition-colors"
+                  className="mx-auto mb-5 h-16 w-16 rounded-sm flex items-center justify-center transition-colors"
                   style={{ backgroundColor: "#fef1da" }}
                 >
                   <s.icon className="h-7 w-7 text-[#ffa300]" />
                 </div>
                 <h3
                   className="font-bold text-lg mb-3 group-hover:text-[#ffa300] transition-colors"
-                  style={{ fontFamily: "Manrope, sans-serif", color: "#181d29" }}
+                  style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}
                 >
                   {s.title}
                 </h3>
                 <p
                   className="text-sm leading-relaxed"
-                  style={{ color: "#515768", fontFamily: "Manrope, sans-serif" }}
+                  style={{ color: "#515768", fontFamily: "Poppins, sans-serif" }}
                 >
                   {s.description}
                 </p>

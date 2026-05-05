@@ -101,7 +101,7 @@ export default function LanguageCentersPage() {
                   {paged.map((lc: any) => (
                     <Card key={lc.id} className="hover:shadow-md transition-shadow duration-200">
                       <CardContent className="p-5 flex flex-col sm:flex-row sm:items-center gap-4">
-                        <div className="h-12 w-12 rounded-md bg-[#ffa300]/10 flex items-center justify-center shrink-0">
+                        <div className="h-12 w-12 rounded-sm bg-[#ffa300]/10 flex items-center justify-center shrink-0">
                           <Languages className="h-6 w-6 text-[#ffa300]" />
                         </div>
                         <div className="flex-1 min-w-0">

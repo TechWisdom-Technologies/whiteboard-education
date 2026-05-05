@@ -129,7 +129,7 @@ export default function AdminDashboard() {
         {metrics.map((m, i) => (
           <Card key={m.label} className="hover:shadow-lg transition-shadow animate-fade-in" style={{ animationDelay: `${i * 60}ms` }}>
             <CardContent className="p-5 flex items-center gap-4">
-              <div className={`h-11 w-11 rounded-md bg-muted flex items-center justify-center ${m.color}`}>
+              <div className={`h-11 w-11 rounded-sm bg-muted flex items-center justify-center ${m.color}`}>
                 <m.icon className="h-5 w-5" />
               </div>
               <div>

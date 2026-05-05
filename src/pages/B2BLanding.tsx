@@ -109,7 +109,7 @@ function FileUploadField({ label, accept = ".pdf,.jpg,.jpeg,.png", file, onFileC
     <div>
       <Label>{label} {required && <span className="text-destructive">*</span>}</Label>
       <div
-        className="mt-1 border-2 border-dashed rounded-md p-4 text-center cursor-pointer hover:border-[#ffa300]/50 transition-colors"
+        className="mt-1 border-2 border-dashed rounded-sm p-4 text-center cursor-pointer hover:border-[#ffa300]/50 transition-colors"
         onClick={() => ref.current?.click()}
       >
         <input ref={ref} type="file" accept={accept} className="hidden" onChange={(e) => onFileChange(e.target.files?.[0] || null)} />
@@ -337,7 +337,7 @@ export default function B2BLanding() {
             {benefits.map((b) => (
               <Card key={b.title} className="text-center hover:shadow-lg transition-shadow">
                 <CardContent className="p-8">
-                  <div className="h-14 w-14 rounded-md bg-[#ffa300]/10 flex items-center justify-center mx-auto mb-4">
+                  <div className="h-14 w-14 rounded-sm bg-[#ffa300]/10 flex items-center justify-center mx-auto mb-4">
                     <b.icon className="h-7 w-7 text-[#ffa300]" />
                   </div>
                   <h3 className="font-bold mb-2">{b.title}</h3>
@@ -401,22 +401,22 @@ export default function B2BLanding() {
 
         {/* Operational Workflow */}
         <div className="container mx-auto px-4 py-16">
-          <div className="max-w-4xl mx-auto rounded-md border bg-background p-8">
+          <div className="max-w-4xl mx-auto rounded-sm border bg-background p-8">
             <h2 className="text-2xl font-extrabold mb-6 text-center">How Agency Operations Work</h2>
             <div className="grid md:grid-cols-4 gap-4 text-center">
-              <div className="p-4 rounded-md bg-muted/50">
+              <div className="p-4 rounded-sm bg-muted/50">
                 <p className="font-semibold">Create Student</p>
                 <p className="text-xs text-muted-foreground mt-1">Profile and intake details</p>
               </div>
-              <div className="p-4 rounded-md bg-muted/50">
+              <div className="p-4 rounded-sm bg-muted/50">
                 <p className="font-semibold">Upload Documents</p>
                 <p className="text-xs text-muted-foreground mt-1">Passport, transcripts, IELTS</p>
               </div>
-              <div className="p-4 rounded-md bg-muted/50">
+              <div className="p-4 rounded-sm bg-muted/50">
                 <p className="font-semibold">Track Status</p>
                 <p className="text-xs text-muted-foreground mt-1">Review, offer, visa, enrollment</p>
               </div>
-              <div className="p-4 rounded-md bg-muted/50">
+              <div className="p-4 rounded-sm bg-muted/50">
                 <p className="font-semibold">Earn Commission</p>
                 <p className="text-xs text-muted-foreground mt-1">Based on successful outcomes</p>
               </div>

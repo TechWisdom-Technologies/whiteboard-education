@@ -57,7 +57,7 @@ export default function Contact() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
               
               {/* Contact Form */}
-              <div className="bg-white p-8 md:p-10 border border-[#e8e8e8] shadow-sm" style={{ borderRadius: "10px" }}>
+              <div className="bg-white p-8 md:p-10 border border-[#e8e8e8] shadow-sm" style={{ borderRadius: "2px" }}>
                 <h2 className="text-2xl font-bold text-[#181d29] mb-8 flex items-center gap-3">
                   <MessageSquare className="h-6 w-6 text-[#ffa300]" />
                   Send us a Message
@@ -102,7 +102,7 @@ export default function Contact() {
                     disabled={loading}
                   >
                     {loading ? (
-                      <div className="h-5 w-5 border-2 border-white/30 border-t-white animate-spin rounded-full" />
+                      <div className="h-5 w-5 border-2 border-white/30 border-t-white animate-spin rounded-sm" />
                     ) : (
                       <>
                         <Send className="h-5 w-5" />
@@ -115,7 +115,7 @@ export default function Contact() {
 
               {/* Contact Information Cards */}
               <div className="space-y-8">
-                <Card className="border-none shadow-none bg-[#fef1da] overflow-hidden" style={{ borderRadius: "10px" }}>
+                <Card className="border-none shadow-none bg-[#fef1da] overflow-hidden" style={{ borderRadius: "2px" }}>
                   <CardContent className="p-8 md:p-10 space-y-8">
                     <div>
                       <h3 className="text-xl font-bold text-[#181d29] mb-6 flex items-center gap-3">
@@ -124,7 +124,7 @@ export default function Contact() {
                       </h3>
                       <div className="space-y-6">
                         <div className="flex items-start gap-4">
-                          <div className="h-10 w-10 bg-white rounded-lg flex items-center justify-center shrink-0 shadow-sm border border-[#ffa300]/20">
+                          <div className="h-10 w-10 bg-white rounded-sm flex items-center justify-center shrink-0 shadow-sm border border-[#ffa300]/20">
                             <MapPin className="h-5 w-5 text-[#ffa300]" />
                           </div>
                           <div>
@@ -137,7 +137,7 @@ export default function Contact() {
                         </div>
 
                         <div className="flex items-start gap-4">
-                          <div className="h-10 w-10 bg-white rounded-lg flex items-center justify-center shrink-0 shadow-sm border border-[#ffa300]/20">
+                          <div className="h-10 w-10 bg-white rounded-sm flex items-center justify-center shrink-0 shadow-sm border border-[#ffa300]/20">
                             <Phone className="h-5 w-5 text-[#ffa300]" />
                           </div>
                           <div>
@@ -147,7 +147,7 @@ export default function Contact() {
                         </div>
 
                         <div className="flex items-start gap-4">
-                          <div className="h-10 w-10 bg-white rounded-lg flex items-center justify-center shrink-0 shadow-sm border border-[#ffa300]/20">
+                          <div className="h-10 w-10 bg-white rounded-sm flex items-center justify-center shrink-0 shadow-sm border border-[#ffa300]/20">
                             <Mail className="h-5 w-5 text-[#ffa300]" />
                           </div>
                           <div>
@@ -157,7 +157,7 @@ export default function Contact() {
                         </div>
 
                         <div className="flex items-start gap-4">
-                          <div className="h-10 w-10 bg-white rounded-lg flex items-center justify-center shrink-0 shadow-sm border border-[#ffa300]/20">
+                          <div className="h-10 w-10 bg-white rounded-sm flex items-center justify-center shrink-0 shadow-sm border border-[#ffa300]/20">
                             <Clock className="h-5 w-5 text-[#ffa300]" />
                           </div>
                           <div>
@@ -204,7 +204,7 @@ function SocialIcon({ icon: Icon, href }: { icon: any; href: string }) {
       href={href} 
       target="_blank" 
       rel="noopener noreferrer"
-      className="h-10 w-10 bg-white rounded-full flex items-center justify-center text-[#181d29] hover:bg-[#181d29] hover:text-white transition-all shadow-sm border border-[#ffa300]/20"
+      className="h-10 w-10 bg-white rounded-sm flex items-center justify-center text-[#181d29] hover:bg-[#181d29] hover:text-white transition-all shadow-sm border border-[#ffa300]/20"
     >
       <Icon className="h-5 w-5" />
     </a>

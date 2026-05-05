@@ -24,7 +24,7 @@ export function LoadingScreen({
   return (
     <div className={cn(containerClass, "flex items-center justify-center", className)}>
       <div className="flex flex-col items-center text-center px-4 py-6">
-        <div className="h-8 w-8 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+        <div className="h-8 w-8 rounded-sm border-2 border-primary/30 border-t-primary animate-spin" />
         <h3 className="mt-3 text-base font-medium text-foreground">{label}</h3>
         <p className="mt-1 text-sm text-muted-foreground">{sublabel}</p>
       </div>

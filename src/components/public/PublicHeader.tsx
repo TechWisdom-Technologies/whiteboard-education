@@ -33,7 +33,7 @@ export function PublicHeader() {
             <NavLink 
               key={l.label} 
               to={l.href} 
-              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors px-3 py-2 rounded-md"
+              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors px-3 py-2 rounded-sm"
               activeClassName="text-primary bg-primary/10 font-semibold border-b-2 border-primary"
             >
               {l.label}
@@ -66,7 +66,7 @@ export function PublicHeader() {
             <NavLink 
               key={l.label} 
               to={l.href} 
-              className="block text-sm font-medium text-muted-foreground hover:text-primary transition-colors px-3 py-2 rounded-md"
+              className="block text-sm font-medium text-muted-foreground hover:text-primary transition-colors px-3 py-2 rounded-sm"
               activeClassName="text-primary bg-primary/10 font-semibold border-b-2 border-primary"
               onClick={() => setMobileOpen(false)}
             >

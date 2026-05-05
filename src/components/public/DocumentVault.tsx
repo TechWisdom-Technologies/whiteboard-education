@@ -28,7 +28,7 @@ export function DocumentVault() {
             const config = statusConfig[doc.status as keyof typeof statusConfig];
             const Icon = config.icon;
             return (
-              <div key={doc.name} className="border border-dashed rounded-md p-4 hover:border-[#ffa300]/50 transition-colors group cursor-pointer">
+              <div key={doc.name} className="border border-dashed rounded-sm p-4 hover:border-[#ffa300]/50 transition-colors group cursor-pointer">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <FileText className="h-4 w-4 text-muted-foreground" />

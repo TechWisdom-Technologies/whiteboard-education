@@ -197,13 +197,13 @@ export default function CityHub() {
               <p className="text-muted-foreground leading-relaxed">{city.description}</p>
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <div className="flex items-center gap-2 text-sm">
-                  <div className="h-8 w-8 rounded-md bg-[#ffa300]/10 flex items-center justify-center shrink-0">
+                  <div className="h-8 w-8 rounded-sm bg-[#ffa300]/10 flex items-center justify-center shrink-0">
                     <Sun className="h-4 w-4 text-[#ffa300]" />
                   </div>
                   <span className="text-muted-foreground">{city.averageTemp}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <div className="h-8 w-8 rounded-md bg-[#ffa300]/10 flex items-center justify-center shrink-0">
+                  <div className="h-8 w-8 rounded-sm bg-[#ffa300]/10 flex items-center justify-center shrink-0">
                     <MapPin className="h-4 w-4 text-[#ffa300]" />
                   </div>
                   <span className="text-muted-foreground">{city.safetyRating.split("—")[0].trim()}</span>
@@ -214,7 +214,7 @@ export default function CityHub() {
               {city.highlights.map((h, i) => (
                 <Card key={i} className="hover:shadow-md transition-shadow animate-fade-in" style={{ animationDelay: `${i * 80}ms` }}>
                   <CardContent className="p-5">
-                    <div className="h-9 w-9 rounded-md bg-[#ffa300]/15 flex items-center justify-center mb-3">
+                    <div className="h-9 w-9 rounded-sm bg-[#ffa300]/15 flex items-center justify-center mb-3">
                       <h.icon className="h-4 w-4 text-[#ffa300]" />
                     </div>
                     <h3 className="text-sm font-bold text-foreground mb-1">{h.title}</h3>
@@ -277,7 +277,7 @@ export default function CityHub() {
                     <ul className="space-y-1.5">
                       {city.transport.map((t) => (
                         <li key={t} className="text-sm text-muted-foreground flex items-center gap-2">
-                          <span className="h-1.5 w-1.5 rounded-full bg-secondary shrink-0" /> {t}
+                          <span className="h-1.5 w-1.5 rounded-sm bg-secondary shrink-0" /> {t}
                         </li>
                       ))}
                     </ul>

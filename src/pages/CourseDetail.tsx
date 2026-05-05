@@ -1,20 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
 import { courses as mockCourses, universities as mockUniversities } from "@/data/mockData";
 import { LeadCaptureModal } from "@/components/public/LeadCaptureModal";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { LoadingScreen } from "@/components/ui/loading-screen";
-import {
-  CheckCircle, Clock, GraduationCap, MapPin, DollarSign,
-  CalendarDays, FileText, Download, Briefcase, BookOpen
-} from "lucide-react";
+import { BookOpen, Copy, Check } from "lucide-react";
 
 export default function CourseDetail() {
   const { courseId } = useParams();
@@ -23,9 +17,52 @@ export default function CourseDetail() {
   const courses = liveCourses.length > 0 ? liveCourses : (mockCourses as any[]);
   const universities = liveUniversities.length > 0 ? liveUniversities : (mockUniversities as any[]);
   const [leadOpen, setLeadOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("key-info");
+  const [copied, setCopied] = useState(false);
 
   const course = courses.find((c: any) => String(c.id) === String(courseId));
   const uni = course ? universities.find((u: any) => String(u.id) === String(course.university_id)) : null;
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ["key-info", "overview", "curriculum"];
+      for (const section of sections.reverse()) {
+        const element = document.getElementById(section);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          if (rect.top <= 150) {
+            setActiveSection(section);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      const offset = 80; // Account for sticky header
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+      setActiveSection(id);
+    }
+  };
+
+  const handleCopy = () => {
+    if (course?.title) {
+      navigator.clipboard.writeText(course.title);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   if (loadingC) {
     return (
@@ -53,149 +90,331 @@ export default function CourseDetail() {
     );
   }
 
-  const curriculum = Array.isArray(course.curriculum) ? course.curriculum : [];
-  const careerOutcomes = Array.isArray(course.career_outcomes) ? course.career_outcomes : [];
-  const intakeMonths = Array.isArray(course.intake_months) ? course.intake_months : [];
-  const entryReqs = course.entry_requirements && typeof course.entry_requirements === "object" ? course.entry_requirements : null;
-  const nextIntake = intakeMonths[0] ? `${intakeMonths[0]} 2026` : "TBA";
+  // Robustly parse curriculum to handle JSON strings from the database
+  let curriculum = [];
+  if (Array.isArray(course.curriculum)) {
+    curriculum = course.curriculum;
+  } else if (typeof course.curriculum === 'string') {
+    try {
+      const parsed = JSON.parse(course.curriculum);
+      curriculum = Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      console.error("Failed to parse curriculum string", e);
+    }
+  } else if (course.curriculum && typeof course.curriculum === 'object') {
+    if (Array.isArray((course.curriculum as any).data)) {
+      curriculum = (course.curriculum as any).data;
+    }
+  }
+
+  // Handle both snake_case (DB) and camelCase (mockData) gracefully
+  const careerOutcomes = Array.isArray(course.careerOutcomes || course.career_outcomes) ? (course.careerOutcomes || course.career_outcomes) : [];
+  
+  let intakeMonths = [];
+  const rawIntake = course.intake_months || course.intakeMonths;
+  if (Array.isArray(rawIntake)) {
+    intakeMonths = rawIntake;
+  } else if (typeof rawIntake === 'string') {
+    try {
+      const parsed = JSON.parse(rawIntake);
+      intakeMonths = Array.isArray(parsed) ? parsed : [rawIntake];
+    } catch(e) {
+      // If it's a comma separated string
+      intakeMonths = rawIntake.split(',').map(s => s.trim());
+    }
+  }
+
+  const entryReqs = (course.entryRequirements || course.entry_requirements) && typeof (course.entryRequirements || course.entry_requirements) === "object" ? (course.entryRequirements || course.entry_requirements) : null;
+
+  // If curriculum is empty, it means we couldn't scrape it for this course yet.
+  // We should just let it be empty instead of showing dummy data.
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-[#faf9f6]">
       <MegaMenu />
 
-      <div className="intro-surface py-10 md:py-14">
-        <div className="container mx-auto px-4">
-          <div className="flex items-start gap-4">
-            {uni?.logo_url && (
-              <div className="h-14 w-14 rounded-md bg-primary-foreground/10 overflow-hidden shrink-0 hidden sm:block">
-                <img src={uni.logo_url} alt={uni.name} className="w-full h-full object-cover" />
+      <div className="w-full flex-1 flex flex-col">
+        {/* Top Hero Section */}
+        <div className="container mx-auto px-4 py-8 md:py-10 max-w-5xl">
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+            <div className="flex items-start gap-4 md:gap-5">
+              {uni?.logo_url && (
+                <div className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-sm border border-gray-200 p-2 shrink-0 flex items-center justify-center overflow-hidden shadow-sm">
+                  <img src={uni.logo_url} alt={uni.name} className="max-w-full max-h-full object-contain" />
+                </div>
+              )}
+              <div className="space-y-1">
+                <div className="flex items-start gap-2">
+                  <h1 className="text-xl md:text-3xl font-bold text-gray-900 leading-tight">{course.title}</h1>
+                  <button onClick={handleCopy} className="mt-1 p-1 text-gray-400 hover:text-gray-600 rounded-sm hover:bg-gray-100 transition-colors" title="Copy course title">
+                    {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+                  </button>
+                </div>
+                <p className="text-lg text-gray-600 font-medium">{uni?.name}</p>
               </div>
-            )}
-            <div>
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold leading-tight">{course.title}</h1>
-              <p className="text-primary-foreground/70 mt-1 text-sm md:text-base">{uni?.name || "University"}</p>
-              <div className="flex flex-wrap gap-2 mt-3">
-                <Badge variant="secondary" className="bg-[#ffa300]/20 text-[#ffa300] border-0"><GraduationCap className="h-3 w-3 mr-1" /> {course.degree_level}</Badge>
-                <Badge variant="outline" className="border-primary-foreground/30 text-primary-foreground"><Clock className="h-3 w-3 mr-1" /> {course.duration}</Badge>
-                {uni && <Badge variant="outline" className="border-primary-foreground/30 text-primary-foreground"><MapPin className="h-3 w-3 mr-1" /> {uni.city}, Malaysia</Badge>}
+            </div>
+            
+            <div className="flex items-center gap-3 shrink-0 self-start md:mt-0 mt-2">
+              <Button className="bg-[#f1a51c] hover:bg-[#e09819] text-black font-semibold rounded-sm px-6 h-10 shadow-none text-sm" onClick={() => setLeadOpen(true)}>Apply Now</Button>
+              <Button variant="outline" className="rounded-sm px-6 border-gray-300 text-gray-700 hover:bg-gray-50 font-medium h-10 text-sm shadow-none bg-white">Ask Us</Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Sticky Tab Bar */}
+        <div className="sticky top-0 z-40 bg-[#faf9f6] border-y border-gray-200 shadow-sm transition-all duration-200">
+          <div className="container mx-auto px-4 h-14 flex items-center overflow-x-auto no-scrollbar max-w-5xl">
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center h-full space-x-6 md:space-x-10">
+                <button onClick={() => scrollToSection('key-info')} className={`h-full border-b-4 px-0 font-semibold text-sm whitespace-nowrap transition-colors ${activeSection === 'key-info' ? 'border-[#f1a51c] text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>Key Information</button>
+                <button onClick={() => scrollToSection('overview')} className={`h-full border-b-4 px-0 font-semibold text-sm whitespace-nowrap transition-colors ${activeSection === 'overview' ? 'border-[#f1a51c] text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>Course Overview</button>
+                <button onClick={() => scrollToSection('curriculum')} className={`h-full border-b-4 px-0 font-semibold text-sm whitespace-nowrap transition-colors ${activeSection === 'curriculum' ? 'border-[#f1a51c] text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>Curriculum</button>
+              </div>
+              
+              {/* Actions in sticky nav (visible mostly on desktop) */}
+              <div className="hidden md:flex items-center gap-3 shrink-0 ml-6">
+                <Button className="bg-[#f1a51c] hover:bg-[#e09819] text-black font-semibold rounded-sm px-4 h-8 shadow-none text-xs" onClick={() => setLeadOpen(true)}>Apply Now</Button>
+                <Button variant="outline" className="rounded-sm px-4 border-gray-300 text-gray-700 hover:bg-gray-50 font-medium h-8 text-xs shadow-none bg-white">Ask Us</Button>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="container mx-auto px-4 py-8 md:py-12">
-        <div className="flex flex-col lg:flex-row gap-8">
-          <div className="flex-1 min-w-0">
-            <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="w-full justify-start border-b rounded-none bg-transparent h-auto p-0 gap-0">
-                <TabsTrigger value="overview" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-5 py-3">Overview</TabsTrigger>
-                <TabsTrigger value="curriculum" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-5 py-3">Curriculum</TabsTrigger>
-                <TabsTrigger value="careers" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-5 py-3">Career Outcomes</TabsTrigger>
-              </TabsList>
+        {/* Main Content Area */}
+        <div className="flex-1 pb-24">
+          <div className="container mx-auto px-4 pt-10 max-w-5xl space-y-12">
+            
+            {/* Key Information Section */}
+            <div id="key-info" className="space-y-10 scroll-m-20">
+              <div>
+                <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">{course.title}</h3>
+                <div className="grid grid-cols-[130px_1fr] sm:grid-cols-[180px_1fr] gap-y-4 text-sm sm:text-[14px] items-center">
+                  <div className="font-semibold text-gray-800">Qualification</div>
+                  <div className="text-gray-600">{course.degree_level}</div>
 
-              <TabsContent value="overview" className="mt-6 space-y-8">
-                {course.overview && (
-                  <div>
-                    <h2 className="text-xl font-bold text-foreground mb-3">About This Program</h2>
-                    <p className="text-muted-foreground leading-relaxed">{course.overview}</p>
+                  <div className="font-semibold text-gray-800">Duration</div>
+                  <div className="text-gray-600">{course.duration}</div>
+
+                  <div className="font-semibold text-gray-800">Intake</div>
+                  <div className="flex flex-wrap gap-2">
+                    {intakeMonths.length > 0 ? intakeMonths.map((m: string, idx: number) => (
+                      <span key={m} className="px-3 py-1 rounded-sm text-xs font-medium bg-[#fcecc9] text-gray-900 border border-[#f5d9a0]">{m}</span>
+                    )) : <span className="text-gray-600">TBA</span>}
                   </div>
-                )}
-                {curriculum.length > 0 && (
-                  <div>
-                    <h2 className="text-xl font-bold text-foreground mb-4">What You Will Learn</h2>
-                    <div className="grid sm:grid-cols-2 gap-3">
-                      {curriculum.flatMap((y: any) => y.modules || []).slice(0, 8).map((mod: string, i: number) => (
-                        <div key={i} className="flex items-start gap-2">
-                          <CheckCircle className="h-4 w-4 text-[#ffa300] mt-0.5 shrink-0" />
-                          <span className="text-sm text-foreground">{mod}</span>
-                        </div>
-                      ))}
+
+                  <div className="font-semibold text-gray-800">English Requirement</div>
+                  <div className="text-gray-600">{(entryReqs as any)?.ielts ? `IELTS ${(entryReqs as any).ielts}` : 'Not Specified'}</div>
+
+                  <div className="font-semibold text-gray-800">Offer Letter</div>
+                  <div className="text-gray-600">{course.offer_letter || "Fees Applies"}</div>
+
+                  <div className="font-semibold text-gray-800">Class Type</div>
+                  <div className="text-gray-600">Physical</div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-bold text-gray-800 mb-4">Course Fee for International Students</h3>
+                <div className="grid md:grid-cols-2 gap-5">
+                  <div className="border border-gray-200 rounded-sm overflow-hidden bg-white shadow-sm">
+                    <div className="bg-[#eedaad] px-4 py-3 border-b border-gray-200">
+                      <h4 className="font-semibold text-gray-900 text-sm">Yearly Tuition fees</h4>
+                    </div>
+                    <div className="p-4">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-gray-100">
+                            <th className="text-left pb-3 font-semibold text-gray-700">Year</th>
+                            <th className="text-left pb-3 font-semibold text-gray-700">Fee</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {course.yearly_fees ? (
+                            course.yearly_fees.map((yf: any, i: number) => (
+                              <tr key={i} className="border-b border-gray-100 last:border-0">
+                                <td className="py-3 text-gray-600">{yf.year}</td>
+                                <td className="py-3 text-gray-600 font-medium">{yf.fee}</td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td className="py-3 text-gray-600">1st Year</td>
+                              <td className="py-3 text-gray-600 font-medium">MYR {Number(course.tuition_fee || 0).toLocaleString()}</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
-                )}
-              </TabsContent>
 
-              <TabsContent value="curriculum" className="mt-6">
-                <h2 className="text-xl font-bold text-foreground mb-4">Program Structure</h2>
-                {curriculum.length > 0 ? (
-                  <Accordion type="multiple" defaultValue={[curriculum[0]?.year]} className="space-y-2">
-                    {curriculum.map((cy: any) => (
-                      <AccordionItem key={cy.year} value={cy.year} className="border rounded-md px-4">
-                        <AccordionTrigger className="text-sm font-semibold hover:no-underline">{cy.year} Core Modules</AccordionTrigger>
-                        <AccordionContent>
-                          <ul className="space-y-2 pb-2">
-                            {(cy.modules || []).map((mod: string, i: number) => (
-                              <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <FileText className="h-3.5 w-3.5 text-primary shrink-0" />{mod}
-                              </li>
-                            ))}
-                          </ul>
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                ) : (
-                  <p className="text-muted-foreground">Curriculum details coming soon.</p>
-                )}
-              </TabsContent>
+                  <div className="border border-gray-200 rounded-sm overflow-hidden bg-white shadow-sm">
+                    <div className="bg-[#eedaad] px-4 py-3 border-b border-gray-200">
+                      <h4 className="font-semibold text-gray-900 text-sm">Other Fees</h4>
+                    </div>
+                    <div className="p-4">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-gray-100">
+                            <th className="text-left pb-3 font-semibold text-gray-700">Description</th>
+                            <th className="text-left pb-3 font-semibold text-gray-700">Fee</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {course.other_fees ? (
+                            course.other_fees.map((of: any, i: number) => (
+                              <tr key={i} className="border-b border-gray-100 last:border-0">
+                                <td className="py-3 text-gray-600">{of.description}</td>
+                                <td className="py-3 text-gray-600 font-medium">{of.fee}</td>
+                              </tr>
+                            ))
+                          ) : (
+                            <>
+                              <tr className="border-b border-gray-100">
+                                <td className="py-3 text-gray-600">Registration Fee</td>
+                                <td className="py-3 text-gray-600">MYR 280</td>
+                              </tr>
+                              <tr className="border-b border-gray-100">
+                                <td className="py-3 text-gray-600">Administration Fees</td>
+                                <td className="py-3 text-gray-600">MYR 3,000</td>
+                              </tr>
+                              <tr className="border-b border-gray-100">
+                                <td className="py-3 text-gray-600">Personal Bond (Estimate)</td>
+                                <td className="py-3 text-gray-600">MYR 1,500</td>
+                              </tr>
+                              <tr>
+                                <td className="py-3 text-gray-600">Visa Application Fee (approx)</td>
+                                <td className="py-3 text-gray-600">MYR 2,850</td>
+                              </tr>
+                            </>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-5 text-[15px] text-gray-500 font-medium flex items-center gap-2">
+                  <span className="text-2xl font-bold leading-none mt-1">+</span> University fees for this course do not include 6% tax (SST)
+                </div>
+              </div>
 
-              <TabsContent value="careers" className="mt-6">
-                <h2 className="text-xl font-bold text-foreground mb-4">Where This Degree Takes You</h2>
-                {careerOutcomes.length > 0 ? (
-                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {careerOutcomes.map((role: string, i: number) => (
-                      <Card key={i} className="hover:shadow-md transition-shadow">
-                        <CardContent className="p-4 flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-full bg-accent flex items-center justify-center shrink-0">
-                            <Briefcase className="h-4 w-4 text-accent-foreground" />
-                          </div>
-                          <span className="text-sm font-medium text-foreground">{role}</span>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground">Career outcomes data coming soon.</p>
-                )}
-              </TabsContent>
-            </Tabs>
-          </div>
-
-          <aside className="lg:w-[340px] shrink-0">
-            <div className="lg:sticky lg:top-6">
-              <Card className="shadow-lg border-2 border-border">
-                <CardContent className="p-6 space-y-5">
-                  <h3 className="font-bold text-foreground text-lg">Key Information</h3>
-                  <div className="space-y-4">
-                    {[
-                      { icon: DollarSign, label: "Tuition Fee", value: `USD ${Number(course.tuition_fee).toLocaleString()} / year` },
-                      { icon: CalendarDays, label: "Next Intake", value: nextIntake },
-                      { icon: Clock, label: "Duration", value: `${course.duration} Full-Time` },
-                    ].map(({ icon: Icon, label, value }) => (
-                      <div key={label} className="flex items-center gap-3">
-                        <div className="h-9 w-9 rounded-md bg-[#ffa300]/15 flex items-center justify-center shrink-0"><Icon className="h-4 w-4 text-[#ffa300]" /></div>
-                        <div><p className="text-xs text-muted-foreground">{label}</p><p className="text-sm font-semibold text-foreground">{value}</p></div>
-                      </div>
-                    ))}
-                    {entryReqs && (
-                      <div className="flex items-center gap-3">
-                        <div className="h-9 w-9 rounded-md bg-[#ffa300]/15 flex items-center justify-center shrink-0"><GraduationCap className="h-4 w-4 text-[#ffa300]" /></div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">Entry Requirements</p>
-                          <p className="text-sm font-semibold text-foreground">IELTS {(entryReqs as any).ielts}, Min GPA {(entryReqs as any).gpa}</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  <div className="pt-2 space-y-3">
-                    <Button className="w-full bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 h-12 text-base font-bold" onClick={() => setLeadOpen(true)}>Apply Now</Button>
-                    <Button variant="outline" className="w-full h-10"><Download className="h-4 w-4 mr-2" /> Download Syllabus</Button>
-                  </div>
-                </CardContent>
-              </Card>
+              {/* Apply Banner CTA */}
+              <div className="mt-16 bg-gradient-to-r from-blue-50 to-[#fdf9f1] border border-blue-100 rounded-sm p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden shadow-sm">
+                <h2 className="text-2xl md:text-[28px] font-bold text-gray-900 max-w-md relative z-10 leading-tight">
+                  Would you like to apply to {uni?.name} ?
+                </h2>
+                <Button variant="outline" className="relative z-10 bg-transparent border-2 border-gray-900 text-gray-900 hover:bg-gray-50 h-14 px-8 rounded-sm font-bold text-base transition-colors shadow-none w-full md:w-auto" onClick={() => setLeadOpen(true)}>
+                  Apply now
+                </Button>
+              </div>
             </div>
-          </aside>
+
+            {/* Course Overview Section */}
+            <div id="overview" className="space-y-10 scroll-m-24 border-t border-gray-200 pt-16">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-5">Course Overview</h3>
+                <div className="text-gray-600 leading-relaxed text-[15px] sm:text-base">
+                  {course.overview ? (
+                    <p className="whitespace-pre-wrap">
+                      {course.overview.split('Entry Requirements')[0].replace(/\n\s*\n/g, '\n\n').trim()}
+                    </p>
+                  ) : (
+                    <p>Overview information is currently being updated.</p>
+                  )}
+                </div>
+              </div>
+              
+              {course.entry_requirements_text && course.entry_requirements_text.split('Curriculum')[0].trim().length > 0 && (
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-5">Entry Requirements</h3>
+                  <div className="text-gray-600 leading-relaxed text-[15px] sm:text-base whitespace-pre-wrap">
+                    {course.entry_requirements_text.split('Curriculum')[0].replace(/\n\s*\n/g, '\n\n').trim()}
+                  </div>
+                </div>
+              )}
+
+              {careerOutcomes.length > 0 && (
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-5">Career opportunities</h3>
+                  <ul className="list-disc pl-5 space-y-2 text-gray-600 text-[15px] sm:text-base">
+                    {careerOutcomes.map((role: string, i: number) => (
+                      <li key={i}>{role}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            {/* Programme Structure Section (Curriculum Accordion) */}
+            <div id="curriculum" className="scroll-m-24 border-t border-gray-200 pt-16">
+              <Accordion type="single" collapsible className="w-full bg-white rounded-sm shadow-sm overflow-hidden">
+                <AccordionItem value="curriculum" className="border-b-0">
+                  <AccordionTrigger className="px-6 py-6 hover:no-underline text-2xl font-bold text-gray-900 text-left bg-gray-50/50">
+                    Curriculum
+                  </AccordionTrigger>
+                  <AccordionContent className="px-6 pb-8 pt-6">
+                    <h4 className="text-xl font-bold text-gray-900 mb-6">Programme Structure</h4>
+                    {curriculum.length > 0 ? (
+                      <div className="space-y-10">
+                        {curriculum.map((cy: any, idx: number) => (
+                          <div key={idx} className="space-y-4">
+                            <h5 className="text-lg font-bold text-gray-900">{cy.year}</h5>
+                            {cy.year === "Manufacturing System Engineering" && <h6 className="font-bold text-gray-900">Subjects</h6>}
+                            
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-[15px] border-collapse">
+                                <thead>
+                                  <tr className="border-b border-gray-200">
+                                    <th className="text-left py-3 font-semibold text-gray-800">Subject</th>
+                                    {(cy.modules || []).some((mod: any) => typeof mod !== 'string' && mod.credits) && (
+                                      <th className="text-right py-3 font-semibold text-gray-800 w-32 whitespace-nowrap">Credit Hours</th>
+                                    )}
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {(cy.modules || []).map((mod: any, i: number) => {
+                                    const hasCreditsCol = (cy.modules || []).some((m: any) => typeof m !== 'string' && m.credits);
+                                    if (typeof mod === 'string') {
+                                      return (
+                                        <tr key={i} className="border-b border-gray-100 last:border-0">
+                                          <td className="py-3 text-gray-600" colSpan={hasCreditsCol ? 2 : 1}>{mod}</td>
+                                        </tr>
+                                      );
+                                    }
+                                    return (
+                                      <tr key={i} className="border-b border-gray-100 last:border-0">
+                                        <td className="py-3 text-gray-600">{mod.name}</td>
+                                        {hasCreditsCol && (
+                                          <td className="py-3 text-gray-600 text-right">{mod.credits}</td>
+                                        )}
+                                      </tr>
+                                    );
+                                  })}
+                                </tbody>
+                              </table>
+                            </div>
+                            
+                            {cy.totalCredits && (
+                              <div className="mt-4 pt-4 border-t border-gray-200">
+                                <p className="font-bold text-gray-900 mb-2">
+                                  {cy.year === "Core Subjects" ? "Programme Core Credit Hours" : `Total Credit Hours in ${cy.year}`}
+                                </p>
+                                <ul className="list-disc pl-5 text-gray-800 text-[15px]">
+                                  <li>Total {cy.year === "Core Subjects" ? "Core " : ""}Credit Hours: {cy.totalCredits}</li>
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-600 text-[15px]">Programme structure details coming soon.</p>
+                    )}
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
+            
+          </div>
         </div>
       </div>
 
@@ -206,6 +425,16 @@ export default function CourseDetail() {
         defaultUniversity={uni?.name || ""}
         source="course_apply"
       />
+
+      {/* Floating WhatsApp Button */}
+      <a href="https://wa.me/60123456789" target="_blank" rel="noopener noreferrer" className="fixed bottom-6 right-6 z-50 flex items-center gap-3 group">
+        <div className="bg-white px-4 py-2 rounded-sm shadow-md text-sm font-medium text-gray-800 border border-gray-100 opacity-0 group-hover:opacity-100 transition-opacity translate-x-4 group-hover:translate-x-0 hidden md:block">
+          Need help? Chat with us
+        </div>
+        <div className="w-14 h-14 bg-[#25D366] rounded-sm flex items-center justify-center shadow-lg hover:bg-[#20bd5a] transition-colors">
+          <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+        </div>
+      </a>
 
       <PublicFooter />
     </div>

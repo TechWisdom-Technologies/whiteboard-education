@@ -29,7 +29,7 @@ export default function ComingSoon() {
               </p>
             </div>
 
-            <div className="rounded-md overflow-hidden border border-primary-foreground/20 shadow-xl bg-primary-foreground/5">
+            <div className="rounded-sm overflow-hidden border border-primary-foreground/20 shadow-xl bg-primary-foreground/5">
               <img
                 src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=1200&h=700&fit=crop"
                 alt="Team building new feature"
@@ -42,7 +42,7 @@ export default function ComingSoon() {
 
       <div className="flex-1 flex items-center justify-center py-10">
         <div className="text-center space-y-4 max-w-md px-4">
-          <div className="h-14 w-14 rounded-md bg-[#ffa300]/10 flex items-center justify-center mx-auto">
+          <div className="h-14 w-14 rounded-sm bg-[#ffa300]/10 flex items-center justify-center mx-auto">
             <Construction className="h-7 w-7 text-[#ffa300]" />
           </div>
           <Link to="/">

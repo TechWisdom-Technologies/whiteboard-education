@@ -145,7 +145,7 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
         <div className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-6">
           {/* Brand - Left */}
           <Link to="/" className="flex items-center gap-3 shrink-0 group">
-            <div className="h-10 w-10 bg-[#181d29] rounded-md flex items-center justify-center">
+            <div className="h-10 w-10 bg-[#181d29] rounded-sm flex items-center justify-center">
               <GraduationCap className="h-6 w-6 text-[#ffa300]" />
             </div>
             <div className="flex flex-col leading-tight">
@@ -186,9 +186,9 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
                       <Link
                         key={item.to}
                         to={item.to}
-                        className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground hover:bg-[#fef1da]/50 rounded-md transition-colors group"
+                        className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground hover:bg-[#fef1da]/50 rounded-sm transition-colors group"
                       >
-                        <div className="h-8 w-8 rounded-md bg-[#fef1da] flex items-center justify-center group-hover:bg-[#ffa300]/15 transition-colors shrink-0">
+                        <div className="h-8 w-8 rounded-sm bg-[#fef1da] flex items-center justify-center group-hover:bg-[#ffa300]/15 transition-colors shrink-0">
                           <item.icon className="h-4 w-4 text-[#515768] group-hover:text-[#ffa300] transition-colors" />
                         </div>
                         <span className="truncate">{item.label}</span>
@@ -204,7 +204,7 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
             {user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 hover:ring-2 hover:ring-[#ffa300]/30 transition-all">
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-sm p-0 hover:ring-2 hover:ring-[#ffa300]/30 transition-all">
                     <Avatar className="h-10 w-10 border-2 border-[#ffa300]/30">
                       <AvatarImage src={avatarUrl} alt={user?.email || "User avatar"} />
                       <AvatarFallback className="bg-primary text-primary-foreground text-sm font-bold">
@@ -256,7 +256,7 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
                   {/* Mobile Header */}
                   <div className="p-5 border-b border-[#cacdd4] flex items-center justify-between">
                     <Link to="/" className="flex items-center gap-2.5">
-                      <div className="h-8 w-8 bg-[#181d29] rounded-md flex items-center justify-center">
+                      <div className="h-8 w-8 bg-[#181d29] rounded-sm flex items-center justify-center">
                         <GraduationCap className="h-5 w-5 text-[#ffa300]" />
                       </div>
                       <div className="flex flex-col leading-tight">
@@ -292,7 +292,7 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
                     <MobileNavLink to="/language-centers" icon={Languages}>Language Centers</MobileNavLink>
 
                     <Collapsible>
-                      <CollapsibleTrigger className="flex w-full items-center justify-between px-3 py-2.5 text-sm font-medium text-foreground hover:bg-[#fef1da]/50 rounded-md transition-colors">
+                      <CollapsibleTrigger className="flex w-full items-center justify-between px-3 py-2.5 text-sm font-medium text-foreground hover:bg-[#fef1da]/50 rounded-sm transition-colors">
                         <span className="flex items-center gap-2.5">
                           <Sparkles className="h-4 w-4 text-muted-foreground" /> Resources & Tools
                         </span>
@@ -401,7 +401,7 @@ function MobileNavLink({ to, children, icon: Icon }: { to: string; children: Rea
       <Link
         to={to}
         className={cn(
-          "flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium text-foreground hover:bg-[#fef1da]/50 rounded-md transition-colors",
+          "flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium text-foreground hover:bg-[#fef1da]/50 rounded-sm transition-colors",
           isActive && "text-[#ffa300] bg-[#fef1da]/50 border-l-2 border-[#ffa300]",
         )}
       >

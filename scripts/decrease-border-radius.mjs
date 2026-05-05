@@ -15,11 +15,13 @@ function processDirectory(dirPath) {
       
       const originalContent = content;
 
-      content = content.replace(/borderRadius:\s*["']10px["']/g, 'borderRadius: "5px"');
-      content = content.replace(/borderRadius:\s*["']8px["']/g, 'borderRadius: "5px"');
-      content = content.replace(/rounded-2xl/g, 'rounded-md');
-      content = content.replace(/rounded-xl/g, 'rounded-md');
-      content = content.replace(/rounded-lg/g, 'rounded-md');
+      content = content.replace(/borderRadius:\s*["']10px["']/g, 'borderRadius: "2px"');
+      content = content.replace(/borderRadius:\s*["']8px["']/g, 'borderRadius: "2px"');
+      content = content.replace(/rounded-2xl/g, 'rounded-sm');
+      content = content.replace(/rounded-xl/g, 'rounded-sm');
+      content = content.replace(/rounded-lg/g, 'rounded-sm');
+      content = content.replace(/rounded-md/g, 'rounded-sm');
+      content = content.replace(/rounded-full/g, 'rounded-sm');
 
       if (content !== originalContent) {
         fs.writeFileSync(fullPath, content, 'utf8');

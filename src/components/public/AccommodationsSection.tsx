@@ -18,7 +18,7 @@ export function AccommodationsSection() {
               <Card key={acc.id} className="hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-3">
-                    <div className="h-11 w-11 rounded-md bg-[#ffa300]/10 flex items-center justify-center">
+                    <div className="h-11 w-11 rounded-sm bg-[#ffa300]/10 flex items-center justify-center">
                       <Home className="h-5 w-5 text-[#ffa300]" />
                     </div>
                     <Badge variant="outline" className="text-xs">{acc.type}</Badge>
