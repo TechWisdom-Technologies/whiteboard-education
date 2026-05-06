@@ -85,10 +85,10 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
         href="https://wa.me/60123456789"
         target="_blank"
         rel="noopener noreferrer"
-        className={`fixed ${bottomClass} right-2 xl:right-3 z-40 h-11 w-11 rounded-sm flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-md`}
+        className={`fixed ${bannerVisible ? 'bottom-[76px]' : 'bottom-[20px]'} right-2 xl:right-3 z-40 h-9 w-9 rounded-sm flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-md`}
         style={{ backgroundColor: "#25d366", color: "#ffffff" }}
       >
-        <MessageCircle className="h-5 w-5" />
+        <MessageCircle className="h-4 w-4" />
       </a>
     </>
   );

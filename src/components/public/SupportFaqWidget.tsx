@@ -146,8 +146,8 @@ export function SupportFaqWidget({ bannerVisible = false }: SupportFaqWidgetProp
   const [open, setOpen] = useState(false);
   const [audience, setAudience] = useState<"student" | "partner">("student");
 
-  const whatsAppBottomPx = bannerVisible ? 80 : 24;
-  const supportBottomPx = whatsAppBottomPx + 52;
+  const whatsAppBottomPx = bannerVisible ? 76 : 20;
+  const supportBottomPx = whatsAppBottomPx + 44;
 
   const activeFaqs = audience === "student" ? prebuiltSupportFaqs : partnerSupportFaqs;
 
@@ -157,11 +157,11 @@ export function SupportFaqWidget({ bannerVisible = false }: SupportFaqWidgetProp
     return (
       <button
         onClick={() => setOpen(true)}
-        className="fixed right-2 xl:right-3 z-[60] h-11 w-11 rounded-sm bg-[#181d29] text-white flex items-center justify-center hover:bg-[#181d29]/90 transition-all duration-200 shadow-md"
+        className="fixed right-2 xl:right-3 z-[60] h-9 w-9 rounded-sm bg-[#181d29] text-white flex items-center justify-center hover:bg-[#181d29]/90 transition-all duration-200 shadow-md"
         style={{ bottom: `${supportBottomPx}px` }}
         aria-label="Open support FAQs"
       >
-        <Headset className="h-5 w-5 text-[#ffa300]" />
+        <Headset className="h-4 w-4 text-[#ffa300]" />
       </button>
     );
   }
