@@ -82,13 +82,13 @@ export function HeroSection() {
               <span className="text-xs md:text-sm font-bold text-[#181d29] tracking-tight">The Most Trusted Platform for Study in Malaysia</span>
             </div>
 
-            <h1 className={`text-4xl md:text-5xl lg:text-5xl font-extrabold mb-4 leading-[1.2] text-[#181d29] tracking-tighter transition-all duration-700 delay-150 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`} style={{ fontFamily: "Poppins, sans-serif" }}>
+            <h1 className={`mb-4 transition-all duration-700 delay-150 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`} style={{ fontFamily: "Poppins, sans-serif" }}>
               <span className="block mb-2">Expert Guidance</span>
               <span className="inline-block bg-[#ffa300] text-[#181d29] px-4 py-1 rounded-sm mb-2 shadow-sm">For International</span>
               <span className="block">students In Malaysia</span>
             </h1>
 
-            <p className={`text-lg text-gray-600 mb-8 max-w-xl leading-relaxed font-light transition-all duration-700 delay-300 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+            <p className={`subheadline mb-8 max-w-xl transition-all duration-700 delay-300 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
               We made searching for and applying to Malaysian universities easier.
             </p>
 

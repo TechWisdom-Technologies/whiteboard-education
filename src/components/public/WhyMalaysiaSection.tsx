@@ -4,18 +4,33 @@ export function WhyMalaysiaSection() {
   const points = [
     {
       title: "World-Class Education",
-      desc: "Malaysia is home to many prestigious international branch campuses and highly-ranked local universities.",
-      image: "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80"
+      desc: "Malaysia offers a high standard of education, with several of its universities ranked among the top 100 in the world. You can earn a globally recognized degree while experiencing a diverse academic environment.",
+      image: "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80",
+      benefits: [
+        "Home to top-ranked global universities",
+        "Partnerships with UK, Australian, and US institutions",
+        "Modern campus facilities and high-tech research labs"
+      ]
     },
     {
       title: "Affordable Living & Tuition",
-      desc: "Quality education at a fraction of the cost compared to the UK, USA, or Australia.",
-      image: "https://images.unsplash.com/photo-1596422846543-75c6fc18a593?auto=format&fit=crop&w=800&q=80"
+      desc: "One of the biggest advantages of studying in Malaysia is the high quality of life at a low cost. Tuition fees and living expenses are significantly lower than in the UK, US, or Australia, without compromising on quality.",
+      image: "https://images.unsplash.com/photo-1713532796652-abbfe89a3193",
+      benefits: [
+        "Low cost of living compared to Western countries",
+        "Affordable high-quality student accommodation",
+        "Generous scholarships and financial aid options"
+      ]
     },
     {
       title: "Multicultural Environment",
-      desc: "Experience a diverse society that is welcoming to international students from all over the world.",
-      image: "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=800&q=80"
+      desc: "Experience the true essence of 'Truly Asia'. Malaysia is a melting pot of cultures, offering international students a safe, harmonious, and welcoming environment to live and study in.",
+      image: "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=800&q=80",
+      benefits: [
+        "English is widely spoken across the country",
+        "Rich cultural diversity and international festivals",
+        "Safe and politically stable environment for students"
+      ]
     }
   ];
 
@@ -23,8 +38,8 @@ export function WhyMalaysiaSection() {
     <section className="py-24 bg-gray-50">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center mb-20">
-          <h2 className="text-3xl md:text-5xl font-bold text-[#181d29] mb-6 tracking-tight">Why Study in Malaysia?</h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          <h2 className="mb-6 tracking-tight">Why Study in Malaysia?</h2>
+          <p className="subheadline max-w-3xl mx-auto">
             Discover why thousands of international students choose Malaysia as their preferred study destination every year.
           </p>
         </div>
@@ -39,20 +54,20 @@ export function WhyMalaysiaSection() {
                 {/* Decorative background element */}
                 <div className={`absolute -inset-4 rounded-sm z-0 ${i % 2 === 0 ? 'bg-[#ffa300]/10 -rotate-2' : 'bg-[#181d29]/5 rotate-2'}`} />
               </div>
-              
+
               <div className="flex-1 space-y-6">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-[#ffa300]/10 text-[#ffa300] text-sm font-bold uppercase tracking-wider">
                   Reason 0{i + 1}
                 </div>
-                <h3 className="text-3xl md:text-4xl font-bold text-[#181d29]">{p.title}</h3>
-                <p className="text-lg text-gray-600 leading-relaxed">
+                <h3 className="">{p.title}</h3>
+                <p className="">
                   {p.desc}
                 </p>
                 <ul className="space-y-4">
-                  {[1, 2, 3].map((_, j) => (
+                  {p.benefits.map((benefit, j) => (
                     <li key={j} className="flex items-center gap-3 text-gray-700">
                       <CheckCircle2 className="h-5 w-5 text-[#ffa300]" />
-                      <span className="font-medium">Key benefit point {j + 1} about this category</span>
+                      <span className="font-medium">{benefit}</span>
                     </li>
                   ))}
                 </ul>
