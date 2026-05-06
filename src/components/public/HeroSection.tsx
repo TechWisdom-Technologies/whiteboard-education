@@ -51,6 +51,21 @@ export function HeroSection() {
 
   return (
     <section className="relative bg-[#f8f9fb] pt-0 pb-24 lg:pb-32 overflow-hidden">
+      {/* Background Watermark Text */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[120%] h-[120%] flex flex-col gap-24 transform -rotate-12">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="flex gap-32 whitespace-nowrap text-8xl font-black tracking-widest uppercase">
+              {[...Array(4)].map((_, j) => (
+                <span key={j} className={j % 2 === 0 ? "text-[#181d29]/[0.04]" : "text-[#ffa300]/[0.08]"}>
+                  WHITEBOARD EDUCATION
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Smooth transition to next section */}
       <div className="absolute -bottom-1 left-0 w-full h-32 bg-gradient-to-t from-white to-transparent z-10" />
       
