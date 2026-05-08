@@ -48,7 +48,7 @@ const Index = () => {
         {/* 9. Pre-Footer CTA */}
         <PreFooterCTA />
       </main>
-      
+
       <PublicFooter bannerVisible={bannerVisible} />
       <LeadBanner onVisibilityChange={handleBannerVisibility} />
       <VideoExpertWidget bannerVisible={bannerVisible} />

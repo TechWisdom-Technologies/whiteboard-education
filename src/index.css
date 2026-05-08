@@ -48,7 +48,7 @@
     --input: 216 10% 82%;
     --ring: 39 100% 50%;
 
-    --radius: 0.625rem;                /* 10px per design system */
+    --radius: 0.25rem;                 /* 4px per requested less-rounded design */
 
     --sidebar-background: 225 24% 13%;
     --sidebar-foreground: 0 0% 100%;

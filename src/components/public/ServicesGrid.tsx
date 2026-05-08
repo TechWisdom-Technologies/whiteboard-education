@@ -2,29 +2,29 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const services = [
-  { 
+  {
     icon: "https://cdn-icons-png.flaticon.com/512/1995/1995539.png", // Handshake/Consultation
-    title: "Free consultations", 
-    description: "Choose the perfect courses and universities in Malaysia according to your interest, eligibility and budget.", 
-    link: "/eligibility" 
+    title: "Free consultations",
+    description: "Choose the perfect courses and universities in Malaysia according to your interest, eligibility and budget.",
+    link: "/eligibility"
   },
-  { 
+  {
     icon: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", // Document/Admission
-    title: "University admission & visa", 
-    description: "Submit all necessary documents to complete the university's admission procedures as well as visa application.", 
-    link: "/visa-guide" 
+    title: "University admission & visa",
+    description: "Submit all necessary documents to complete the university's admission procedures as well as visa application.",
+    link: "/visa-guide"
   },
-  { 
+  {
     icon: "https://cdn-icons-png.flaticon.com/512/619/619153.png", // Accommodation/House
-    title: "Preparing accommodation", 
-    description: "Cost-saving for students to arrange accommodation before arriving. We send a variety of options for you to choose.", 
-    link: "/housing" 
+    title: "Preparing accommodation",
+    description: "Cost-saving for students to arrange accommodation before arriving. We send a variety of options for you to choose.",
+    link: "/housing"
   },
-  { 
+  {
     icon: "https://cdn-icons-png.flaticon.com/512/754/754848.png", // Airport Pickup
-    title: "Airport pickup", 
-    description: "We have a team that will pick you up from the airport and drive you to the selected accommodation.", 
-    link: "/pre-departure" 
+    title: "Airport pickup",
+    description: "We have a team that will pick you up from the airport and drive you to the selected accommodation.",
+    link: "/pre-departure"
   },
 ];
 
@@ -33,7 +33,7 @@ export function ServicesGrid() {
     <section className="py-24 bg-white relative overflow-hidden">
       {/* Organic Background Blob */}
       <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#ffa300]/5 rounded-full blur-[80px] pointer-events-none" />
-      
+
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-20">
           <h2

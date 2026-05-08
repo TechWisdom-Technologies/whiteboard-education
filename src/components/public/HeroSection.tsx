@@ -68,16 +68,16 @@ export function HeroSection() {
 
       {/* Smooth transition to next section */}
       <div className="absolute -bottom-1 left-0 w-full h-32 bg-gradient-to-t from-white to-transparent z-10" />
-      
+
       <div className="container relative z-20 mx-auto px-4">
         <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
           {/* Left Side: Content */}
           <div className="flex-1 text-left max-w-2xl lg:-mt-40">
             <div className={`inline-flex items-center gap-2 px-4 py-2 mb-8 bg-white shadow-sm border border-gray-100 rounded-sm transition-all duration-700 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
-              <img 
-                src="https://flagcdn.com/w40/my.png" 
-                alt="Malaysia Flag" 
-                className="w-5 h-auto shadow-sm rounded-[1px]"
+              <img
+                src="https://flagcdn.com/w40/my.png"
+                alt="Malaysia Flag"
+                className="w-5 h-auto shadow-sm rounded-sm"
               />
               <span className="text-xs md:text-sm font-bold text-[#181d29] tracking-tight">The Most Trusted Platform for Study in Malaysia</span>
             </div>
@@ -140,9 +140,9 @@ export function HeroSection() {
           <div className={`flex-1 relative hidden lg:block transition-all duration-1000 delay-300 ${loaded ? "opacity-100 translate-x-0" : "opacity-0 translate-x-20"}`}>
             <div className="relative z-20 w-full max-w-[600px] ml-auto -mt-20">
               <div className="relative">
-                <img 
-                  src="/hero-student.png" 
-                  alt="Student Success in Malaysia" 
+                <img
+                  src="/hero-student.png"
+                  alt="Student Success in Malaysia"
                   className="w-full h-auto drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-20"
                 />
               </div>
@@ -152,7 +152,7 @@ export function HeroSection() {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] w-[120%] h-[120%] z-0 pointer-events-none flex items-center justify-center">
               {/* Glow */}
               <div className="absolute w-[500px] h-[500px] bg-gradient-to-br from-[#ffa300]/30 to-transparent rounded-full blur-3xl" />
-              
+
               {/* Blob 1 */}
               <div className="absolute w-[550px] h-[550px] text-[#ffa300]/20" style={{ animation: 'spin 25s linear infinite' }}>
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full fill-current">
@@ -174,8 +174,8 @@ export function HeroSection() {
       {/* Organic Bottom Curve - Covers image cutoff */}
       <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-30 pointer-events-none hidden md:block">
         <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-40">
-          <path 
-            d="M0,60C200,110,400,110,600,60s400-50,600,0v60H0Z" 
+          <path
+            d="M0,60C200,110,400,110,600,60s400-50,600,0v60H0Z"
             className="fill-white"
           />
         </svg>

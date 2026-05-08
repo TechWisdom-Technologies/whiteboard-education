@@ -316,12 +316,12 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
                       <>
                         <SheetClose asChild>
                           <Link to="/login" className="block">
-                            <Button variant="outline" className="w-full font-medium rounded-[10px] border-[#181d29] text-[#181d29]">Log In</Button>
+                            <Button variant="outline" className="w-full font-medium rounded-sm border-[#181d29] text-[#181d29]">Log In</Button>
                           </Link>
                         </SheetClose>
                         <SheetClose asChild>
                           <Button
-                            className="w-full bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 font-semibold rounded-[10px] border border-[#ffa300]"
+                            className="w-full bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 font-semibold rounded-sm border border-[#ffa300]"
                             onClick={() => setLeadOpen(true)}
                           >
                             <Phone className="h-4 w-4 mr-1.5" /> Free Consultation

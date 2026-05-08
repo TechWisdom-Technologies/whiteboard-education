@@ -98,7 +98,7 @@ export default function Contact() {
 
                   <Button 
                     type="submit" 
-                    className="w-full h-14 bg-[#181d29] text-white hover:bg-[#181d29]/90 font-bold text-lg rounded-[5px] transition-all flex items-center justify-center gap-3"
+                    className="w-full h-14 bg-[#181d29] text-white hover:bg-[#181d29]/90 font-bold text-lg rounded-sm transition-all flex items-center justify-center gap-3"
                     disabled={loading}
                   >
                     {loading ? (
