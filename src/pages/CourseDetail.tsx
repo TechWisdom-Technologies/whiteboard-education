@@ -8,7 +8,7 @@ import { LeadCaptureModal } from "@/components/public/LeadCaptureModal";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { LoadingScreen } from "@/components/ui/loading-screen";
-import { BookOpen, Copy, Check } from "lucide-react";
+import { BookOpen, Copy, Check, Info, Building2 } from "lucide-react";
 
 export default function CourseDetail() {
   const { courseId } = useParams();
@@ -177,7 +177,8 @@ ${window.location.href}`;
 
       <div className="w-full flex-1 flex flex-col">
         {/* Top Hero Section */}
-        <div className="container mx-auto px-4 py-16 md:py-20 max-w-5xl">
+        <div className="w-full bg-[#ffecd8] border-b border-[#ffb870]/20">
+          <div className="container mx-auto px-4 py-16 md:py-20 max-w-5xl">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 w-full">
               {uni?.logo_url && (
@@ -186,10 +187,13 @@ ${window.location.href}`;
                 </div>
               )}
               <div className="w-full flex-1">
-                <div className="space-y-4 md:space-y-6 text-center md:text-left">
+                <div className="space-y-1 md:space-y-2 text-center md:text-left">
                   <h1 className="text-2xl font-semibold text-gray-900 leading-tight">{course.title}</h1>
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <p className="text-xl text-gray-600 font-medium">{uni?.name}</p>
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                    <div className="flex items-center justify-center md:justify-start gap-2 text-gray-600">
+                      <Building2 className="w-5 h-5 shrink-0" />
+                      <p className="text-base font-medium">{uni?.name}</p>
+                    </div>
                     
                     <div className="flex items-center gap-3 shrink-0 justify-center md:justify-end">
                       <Button className="bg-[#f1a51c] hover:bg-[#e09819] text-black font-semibold rounded-sm px-6 h-10 shadow-none text-sm" onClick={() => setLeadOpen(true)}>Apply Now</Button>
@@ -200,7 +204,7 @@ ${window.location.href}`;
               </div>
             </div>
           </div>
-        </div>
+        </div></div>
 
         {/* Sticky Tab Bar */}
         <div className="sticky top-0 z-40 bg-white border-y border-gray-200 shadow-sm transition-all duration-200">
@@ -213,17 +217,17 @@ ${window.location.href}`;
                   </div>
                 )}
                 <div className="flex items-center h-full space-x-6 md:space-x-10">
-                  <button onClick={() => scrollToSection('key-info')} className={`h-full px-0 font-normal text-base whitespace-nowrap transition-colors ${activeSection === 'key-info' ? 'text-[#f1a51c]' : 'text-gray-500 hover:text-[#e09819]'}`}>Key Information</button>
-                  <button onClick={() => scrollToSection('overview')} className={`h-full px-0 font-normal text-base whitespace-nowrap transition-colors ${activeSection === 'overview' ? 'text-[#f1a51c]' : 'text-gray-500 hover:text-[#e09819]'}`}>Course Overview</button>
-                  <button onClick={() => scrollToSection('curriculum')} className={`h-full px-0 font-normal text-base whitespace-nowrap transition-colors ${activeSection === 'curriculum' ? 'text-[#f1a51c]' : 'text-gray-500 hover:text-[#e09819]'}`}>Curriculum</button>
+                  <button onClick={() => scrollToSection('key-info')} className={`h-full px-0 font-normal text-lg whitespace-nowrap transition-colors ${activeSection === 'key-info' ? 'text-[#f1a51c]' : 'text-gray-500 hover:text-[#e09819]'}`}>Key Information</button>
+                  <button onClick={() => scrollToSection('overview')} className={`h-full px-0 font-normal text-lg whitespace-nowrap transition-colors ${activeSection === 'overview' ? 'text-[#f1a51c]' : 'text-gray-500 hover:text-[#e09819]'}`}>Course Overview</button>
+                  <button onClick={() => scrollToSection('curriculum')} className={`h-full px-0 font-normal text-lg whitespace-nowrap transition-colors ${activeSection === 'curriculum' ? 'text-[#f1a51c]' : 'text-gray-500 hover:text-[#e09819]'}`}>Curriculum</button>
                 </div>
               </div>
               
               {/* Actions in sticky nav (visible mostly on desktop) */}
               {isScrolledPastHero && (
                 <div className="hidden md:flex items-center gap-3 shrink-0 ml-6">
-                  <Button className="bg-[#f1a51c] hover:bg-[#e09819] text-black font-normal rounded-sm px-4 h-8 shadow-none text-base" onClick={() => setLeadOpen(true)}>Apply Now</Button>
-                  <Button variant="outline" className="rounded-sm px-4 border-gray-300 text-gray-700 hover:bg-gray-50 font-normal h-8 text-base shadow-none bg-white">Ask Us</Button>
+                  <Button className="bg-[#f1a51c] hover:bg-[#e09819] text-black font-normal rounded-sm px-6 h-10 shadow-none text-lg" onClick={() => setLeadOpen(true)}>Apply Now</Button>
+                  <Button variant="outline" className="rounded-sm px-6 border-gray-300 text-gray-700 hover:bg-gray-50 font-normal h-10 text-lg shadow-none bg-white">Ask Us</Button>
                 </div>
               )}
             </div>
@@ -235,7 +239,7 @@ ${window.location.href}`;
           <div className="container mx-auto px-4 pt-10 max-w-5xl space-y-12">
             
             {/* Key Information Section */}
-            <div id="key-info" className="space-y-10 scroll-m-20">
+            <div id="key-info" className="space-y-10 scroll-m-20 pt-8 pb-24">
               <div>
                 <div className="flex items-center gap-3 mb-6">
                   <h3 className="text-xl font-semibold text-gray-900">{course.title}</h3>
@@ -249,46 +253,80 @@ ${window.location.href}`;
                     {copied ? 'Copied!' : 'Copy'}
                   </Button>
                 </div>
-                <div className="grid grid-cols-[130px_1fr] sm:grid-cols-[180px_1fr] gap-y-5 text-[16px] font-normal items-center">
-                  <div className="text-gray-800">Qualification</div>
-                  <div className="text-gray-600">{course.degree_level}</div>
-
-                  <div className="text-gray-800">Duration</div>
-                  <div className="text-gray-600">{course.duration}</div>
-
-                  <div className="text-gray-800">Intake</div>
-                  <div className="flex flex-wrap gap-2">
-                    {intakeMonths.length > 0 ? intakeMonths.map((m: string, idx: number) => (
-                      <span key={m} className="px-4 py-1.5 rounded-sm text-[16px] font-normal bg-[#fcecc9] text-gray-900 border border-[#f5d9a0]">{m}</span>
-                    )) : <span className="text-gray-600">TBA</span>}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-1 w-fit">
+                  <div className="py-2 flex items-center gap-4">
+                    <div className="flex items-center gap-2 w-56 shrink-0">
+                      <Info className="w-4 h-4 text-[#f1a51c] shrink-0" />
+                      <div className="text-gray-700 text-base font-semibold whitespace-nowrap">Qualification</div>
+                    </div>
+                    <div className="text-gray-900 font-normal text-base text-left">
+                      {course.degree_level === "Bachelor" ? "Bachelor's Degree" : 
+                       course.degree_level === "Master" ? "Master's Degree" : 
+                       course.degree_level}
+                    </div>
                   </div>
 
-                  <div className="text-gray-800">English Requirement</div>
-                  <div className="text-gray-600">
-                    {(() => {
-                      const rawIelts = entryReqs && typeof entryReqs === 'object' 
-                        ? ((entryReqs as any).IELTS || (entryReqs as any).ielts) 
-                        : null;
-                      
-                      if (!rawIelts) return 'Not Specified';
-                      
-                      // If it's a range like "6.0 - 6.5", take the last part
-                      const parts = String(rawIelts).split(/[-–—]/);
-                      const displayScore = parts[parts.length - 1].trim();
-                      
-                      return `IELTS ${displayScore}`;
-                    })()}
+                  <div className="py-2 flex items-center gap-4">
+                    <div className="flex items-center gap-2 w-56 shrink-0">
+                      <Info className="w-4 h-4 text-[#f1a51c] shrink-0" />
+                      <div className="text-gray-700 text-base font-semibold whitespace-nowrap">Duration</div>
+                    </div>
+                    <div className="text-gray-900 font-normal text-base text-left">{course.duration}</div>
                   </div>
 
-                  <div className="text-gray-800">Offer Letter</div>
-                  <div className="text-gray-600">{course.offer_letter || "Fees Applies"}</div>
+                  <div className="py-2 flex items-center gap-4">
+                    <div className="flex items-center gap-2 w-56 shrink-0">
+                      <Info className="w-4 h-4 text-[#f1a51c] shrink-0" />
+                      <div className="text-gray-700 text-base font-semibold whitespace-nowrap">Intake</div>
+                    </div>
+                    <div className="flex flex-wrap justify-start gap-1.5">
+                      {intakeMonths.length > 0 ? intakeMonths.map((m: string, idx: number) => (
+                        <span key={m} className="px-2.5 py-0.5 rounded-[4px] text-sm font-normal bg-[#fcecc9] text-gray-900 border border-[#f5d9a0]">{m}</span>
+                      )) : <span className="text-gray-900 font-normal text-base">TBA</span>}
+                    </div>
+                  </div>
 
-                  <div className="text-gray-800">Class Type</div>
-                  <div className="text-gray-600">Physical</div>
+                  <div className="py-2 flex items-center gap-4">
+                    <div className="flex items-center gap-2 w-56 shrink-0">
+                      <Info className="w-4 h-4 text-[#f1a51c] shrink-0" />
+                      <div className="text-gray-700 text-base font-semibold whitespace-nowrap">English Requirements</div>
+                    </div>
+                    <div className="text-gray-900 font-normal text-base text-left">
+                      {(() => {
+                        const rawIelts = entryReqs && typeof entryReqs === 'object' 
+                          ? ((entryReqs as any).IELTS || (entryReqs as any).ielts) 
+                          : null;
+                        
+                        if (!rawIelts) return 'Not Specified';
+                        
+                        // If it's a range like "6.0 - 6.5", take the last part
+                        const parts = String(rawIelts).split(/[-–—]/);
+                        const displayScore = parts[parts.length - 1].trim();
+                        
+                        return `IELTS ${displayScore}`;
+                      })()}
+                    </div>
+                  </div>
+
+                  <div className="py-2 flex items-center gap-4">
+                    <div className="flex items-center gap-2 w-56 shrink-0">
+                      <Info className="w-4 h-4 text-[#f1a51c] shrink-0" />
+                      <div className="text-gray-700 text-base font-semibold whitespace-nowrap">Offer Letter</div>
+                    </div>
+                    <div className="text-gray-900 font-normal text-base text-left">{course.offer_letter || "Fees Applies"}</div>
+                  </div>
+
+                  <div className="py-2 flex items-center gap-4">
+                    <div className="flex items-center gap-2 w-56 shrink-0">
+                      <Info className="w-4 h-4 text-[#f1a51c] shrink-0" />
+                      <div className="text-gray-700 text-base font-semibold whitespace-nowrap">Class Type</div>
+                    </div>
+                    <div className="text-gray-900 font-normal text-base text-left">Physical</div>
+                  </div>
                 </div>
               </div>
 
-              <div>
+              <div className="pt-10">
                 <h3 className="text-xl font-semibold text-gray-800 mb-5">Course Fee for International Students</h3>
                 <div className="grid md:grid-cols-2 gap-12 w-full lg:w-[75%]">
                   <div className="border border-gray-200 rounded-sm overflow-hidden bg-white shadow-sm">
