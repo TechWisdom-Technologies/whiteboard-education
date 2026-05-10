@@ -185,12 +185,9 @@ export default function AdminStudents() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <h1 className="text-2xl font-bold">Student Management</h1>
-        <div className="flex flex-wrap gap-2 text-sm">
-          <Badge variant="secondary">{students.length} Total Students</Badge>
-          <Badge variant="secondary">{partners.length} Partners</Badge>
-        </div>
+      <div className="flex justify-end gap-2 text-xs">
+        <Badge variant="secondary" className="px-2 py-0.5">{students.length} Total Students</Badge>
+        <Badge variant="secondary" className="px-2 py-0.5">{partners.length} Partners</Badge>
       </div>
 
       {/* Partner Summary Cards */}

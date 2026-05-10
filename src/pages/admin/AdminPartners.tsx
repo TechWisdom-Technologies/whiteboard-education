@@ -106,12 +106,9 @@ export default function AdminPartners() {
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-        <h1 className="text-2xl font-bold">Partner Registrations</h1>
-        <div className="flex flex-wrap gap-2 text-sm">
-          <Badge variant="secondary">{registrations.filter(r => r.status === "pending").length} Pending</Badge>
-          <Badge variant="secondary">{registrations.filter(r => r.status === "approved").length} Approved</Badge>
-        </div>
+      <div className="flex justify-end gap-2 text-xs mb-6">
+        <Badge variant="secondary" className="px-2 py-0.5">{registrations.filter(r => r.status === "pending").length} Pending</Badge>
+        <Badge variant="secondary" className="px-2 py-0.5">{registrations.filter(r => r.status === "approved").length} Approved</Badge>
       </div>
 
       {registrations.length === 0 ? (

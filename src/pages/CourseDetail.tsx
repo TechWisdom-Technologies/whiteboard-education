@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import DOMPurify from 'dompurify';
 import { useParams, Link } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -427,9 +428,16 @@ ${window.location.href}`;
                 <h3 className="text-xl font-semibold text-gray-900 mb-5">Course Overview</h3>
                 <div className="text-gray-600 font-normal leading-relaxed text-[16px]">
                   {course.overview ? (
-                    <p className="whitespace-pre-wrap">
-                      {course.overview.split('Entry Requirements')[0].replace(/\n\s*\n/g, '\n\n').trim()}
-                    </p>
+                    course.overview.trim().startsWith('<') ? (
+                      <div 
+                        className="prose prose-sm max-w-none text-gray-600"
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(course.overview) }} 
+                      />
+                    ) : (
+                      <p className="whitespace-pre-wrap">
+                        {course.overview.split('Entry Requirements')[0].replace(/\n\s*\n/g, '\n\n').trim()}
+                      </p>
+                    )
                   ) : (
                     <p>Overview information is currently being updated.</p>
                   )}

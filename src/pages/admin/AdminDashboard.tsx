@@ -118,11 +118,7 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div>
-        <h1 className="text-2xl font-extrabold">Dashboard Overview</h1>
-        <p className="text-muted-foreground text-sm">Real-time platform metrics</p>
-      </div>
+    <div className="space-y-6 animate-fade-in">
 
       {/* KPI Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

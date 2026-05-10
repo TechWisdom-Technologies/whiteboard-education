@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useRef, useState, type ChangeEvent } from "react";
+import { useRef, useState, useMemo, type ChangeEvent } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,9 @@ import { Badge } from "@/components/ui/badge";
 import * as XLSX from "xlsx";
 import { useToast } from "@/hooks/use-toast";
 
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
 type TemplateColumnMeta = {
   column: string;
   label: string;
@@ -23,7 +26,7 @@ type TemplateColumnMeta = {
 export interface FieldConfig {
   key: string;
   label: string;
-  type?: "text" | "number" | "textarea" | "select" | "json_array" | "json_object" | "relation" | "tag_input";
+  type?: "text" | "number" | "textarea" | "select" | "json_array" | "json_object" | "relation" | "tag_input" | "richtext";
   options?: string[];
   showInTable?: boolean;
   placeholder?: string;
@@ -36,6 +39,16 @@ export interface FieldConfig {
   /** Help text shown below the field */
   helpText?: string;
 }
+
+const singularize = (word: string) => {
+  if (word.endsWith("ies")) {
+    return word.slice(0, -3) + "y";
+  }
+  if (word.endsWith("s")) {
+    return word.slice(0, -1);
+  }
+  return word;
+};
 
 interface AdminCrudTableProps {
   title: string;
@@ -157,13 +170,30 @@ export default function AdminCrudTable({
   const [editingRow, setEditingRow] = useState<any | null>(null);
   const [form, setForm] = useState<Record<string, any>>({});
   const [isImporting, setIsImporting] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 50;
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const tableFields = fields.filter((f) => f.showInTable !== false);
+  const tableFields = useMemo(() => fields.filter((f) => f.showInTable !== false), [fields]);
 
-  const filtered = (data || []).filter((row) =>
-    String(row[searchKey] || "").toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = useMemo(() => {
+    if (!data) return [];
+    const lowerSearch = search.toLowerCase();
+    return data.filter((row) => {
+      if (!lowerSearch) return true;
+      // Search across all fields shown in table, plus the designated searchKey
+      return tableFields.some(f => 
+        String(row[f.key] || "").toLowerCase().includes(lowerSearch)
+      ) || String(row[searchKey] || "").toLowerCase().includes(lowerSearch);
+    });
+  }, [data, search, tableFields, searchKey]);
+
+  const paginatedData = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filtered.slice(start, start + itemsPerPage);
+  }, [filtered, currentPage]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / itemsPerPage));
 
   const getDefaultValue = (f: FieldConfig) => {
     if (f.type === "number") return 0;
@@ -347,19 +377,14 @@ export default function AdminCrudTable({
       const lowerName = file.name.toLowerCase();
       let importedRows: Record<string, any>[] = [];
 
-      if (lowerName.endsWith(".json")) {
-        const text = await file.text();
-        const parsed = JSON.parse(text);
-        if (!Array.isArray(parsed)) throw new Error("JSON file must contain an array of objects");
-        importedRows = parsed;
-      } else if (lowerName.endsWith(".xlsx") || lowerName.endsWith(".xls")) {
+      if (lowerName.endsWith(".xlsx") || lowerName.endsWith(".xls")) {
         const buffer = await file.arrayBuffer();
         const workbook = XLSX.read(buffer, { type: "array" });
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
         importedRows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, { defval: "" });
       } else {
-        throw new Error("Unsupported file type. Use .xlsx, .xls, or .json");
+        throw new Error("Unsupported file type. Use .xlsx or .xls");
       }
 
       const cleanedRows = importedRows
@@ -440,6 +465,18 @@ export default function AdminCrudTable({
           placeholder={f.placeholder || f.label}
           rows={3}
         />
+      );
+    }
+    if (f.type === "richtext") {
+      return (
+        <div className="bg-white rounded-sm">
+          <ReactQuill 
+            theme="snow" 
+            value={form[f.key] || ""} 
+            onChange={(val) => setForm({ ...form, [f.key]: val })}
+            className="bg-white text-gray-900 rounded-sm"
+          />
+        </div>
       );
     }
     if (f.type === "select") {
@@ -524,69 +561,80 @@ export default function AdminCrudTable({
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-        <h1 className="text-2xl font-bold">{title}</h1>
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="mb-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 w-full">
+          {/* Search Field */}
+          <div className="relative w-full md:flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+            <Input 
+              placeholder={`Search ${title.toLowerCase()}...`} 
+              value={search} 
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setCurrentPage(1);
+              }} 
+              className="pl-9 h-8 text-xs md:text-[13px] bg-white w-full" 
+            />
+          </div>
+
           <input
             ref={fileInputRef}
             type="file"
-            accept=".xlsx,.xls,.json"
+            accept=".xlsx,.xls"
             className="hidden"
             onChange={handleFileSelect}
           />
-          <Button variant="outline" onClick={handleDownloadTemplate} className="w-full sm:w-auto">
-            <Download className="h-4 w-4 mr-2" />Download Template
-          </Button>
-          <Button variant="outline" onClick={handleExportExcel} className="w-full sm:w-auto">
-            <Download className="h-4 w-4 mr-2" />Export Excel
-          </Button>
-          <Button
-            variant="outline"
-            disabled={!onBulkUpsert || isImporting}
-            onClick={() => fileInputRef.current?.click()}
-            className="w-full sm:w-auto"
-          >
-            <Upload className="h-4 w-4 mr-2" />{isImporting ? "Importing..." : "Import Excel/JSON"}
-          </Button>
-          <Button onClick={openCreate} className="w-full sm:w-auto">
-            <Plus className="h-4 w-4 mr-2" />Add {title.replace(/s$/, "")}
-          </Button>
+          
+          <div className="flex flex-wrap lg:flex-nowrap items-center gap-1.5 md:gap-2 justify-end flex-shrink-0">
+            <Button variant="outline" onClick={handleDownloadTemplate} className="h-8 text-xs xl:text-[13px] px-2 xl:px-2.5 whitespace-nowrap">
+              <Download className="h-3.5 w-3.5 mr-1 xl:mr-1.5" />Download Template
+            </Button>
+            <Button variant="outline" onClick={handleExportExcel} className="h-8 text-xs xl:text-[13px] px-2 xl:px-2.5 whitespace-nowrap">
+              <Download className="h-3.5 w-3.5 mr-1 xl:mr-1.5" />Export Excel
+            </Button>
+            <Button
+              variant="outline"
+              disabled={!onBulkUpsert || isImporting}
+              onClick={() => fileInputRef.current?.click()}
+              className="h-8 text-xs xl:text-[13px] px-2 xl:px-2.5 whitespace-nowrap"
+            >
+              <Upload className="h-3.5 w-3.5 mr-1 xl:mr-1.5" />{isImporting ? "Importing..." : "Import Excel"}
+            </Button>
+            <Button onClick={openCreate} className="h-8 text-xs xl:text-[13px] px-2 xl:px-2.5 whitespace-nowrap">
+              <Plus className="h-3.5 w-3.5 mr-1 xl:mr-1.5" />Add {singularize(title)}
+            </Button>
+          </div>
         </div>
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl text-[13px]">
           <DialogHeader>
-            <DialogTitle>{editingRow ? "Edit" : "Add"} {title.replace(/s$/, "")}</DialogTitle>
+            <DialogTitle className="text-base">{editingRow ? "Edit" : "Add"} {singularize(title)}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-2">
             {fields.map((f) => (
               <div key={f.key}>
-                <Label className="mb-1 block">{f.label}</Label>
+                <Label className="mb-1 block text-xs font-semibold">{f.label}</Label>
                 {renderField(f)}
-                {f.helpText && <p className="text-xs text-muted-foreground mt-1">{f.helpText}</p>}
+                {f.helpText && <p className="text-[11px] text-muted-foreground mt-1">{f.helpText}</p>}
               </div>
             ))}
-            <Button className="w-full" onClick={handleSave}>
+            <Button className="w-full text-[13px] h-9" onClick={handleSave}>
               {editingRow ? "Update" : "Save"}
             </Button>
           </div>
         </DialogContent>
       </Dialog>
 
-      <div className="relative mb-4 w-full sm:max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input placeholder={`Search ${title.toLowerCase()}...`} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
-      </div>
-
       <div className="rounded-sm border bg-card overflow-x-auto">
-        <Table>
+        <Table className="text-xs md:text-[13px]">
           <TableHeader>
             <TableRow>
               {tableFields.map((f) => (
-                <TableHead key={f.key}>{f.label}</TableHead>
+                <TableHead key={f.key} className="h-10 text-xs text-muted-foreground">{f.label}</TableHead>
               ))}
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="text-right h-10 text-xs text-muted-foreground">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -597,32 +645,32 @@ export default function AdminCrudTable({
                 </TableCell>
               </TableRow>
             ) : (
-              filtered.map((row) => (
+              paginatedData.map((row) => (
                 <TableRow key={row.id}>
                   {tableFields.map((f) => (
-                    <TableCell key={f.key} className={f.key === searchKey ? "font-medium" : ""}>
+                    <TableCell key={f.key} className={`${f.key === searchKey ? "font-medium" : ""} py-2.5 text-xs md:text-[13px]`}>
                       {renderCell ? renderCell(row, f.key) ?? formatCellValue(row, f.key) : formatCellValue(row, f.key)}
                     </TableCell>
                   ))}
-                  <TableCell className="text-right">
+                  <TableCell className="text-right py-2.5 text-xs md:text-[13px]">
                     <div className="flex justify-end gap-1">
-                    <Button variant="ghost" size="icon" onClick={() => openEdit(row)}>
-                      <Pencil className="h-4 w-4" />
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(row)}>
+                      <Pencil className="h-3.5 w-3.5" />
                     </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-destructive">
-                          <Trash2 className="h-4 w-4" />
+                        <Button variant="ghost" size="icon" className="text-destructive h-7 w-7">
+                          <Trash2 className="h-3.5 w-3.5" />
                         </Button>
                       </AlertDialogTrigger>
-                      <AlertDialogContent>
+                      <AlertDialogContent className="text-[13px]">
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Delete this item?</AlertDialogTitle>
-                          <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+                          <AlertDialogTitle className="text-base">Delete this item?</AlertDialogTitle>
+                          <AlertDialogDescription className="text-xs">This action cannot be undone.</AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => onDelete(row.id)}>Delete</AlertDialogAction>
+                          <AlertDialogCancel className="text-[13px] h-8">Cancel</AlertDialogCancel>
+                          <AlertDialogAction className="text-[13px] h-8 bg-destructive hover:bg-destructive/90" onClick={() => onDelete(row.id)}>Delete</AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
@@ -633,6 +681,34 @@ export default function AdminCrudTable({
             )}
           </TableBody>
         </Table>
+      </div>
+      
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between mt-4 text-xs md:text-[13px]">
+          <p className="text-muted-foreground">
+            Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length} entries
+          </p>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="h-8 text-xs"
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="h-8 text-xs"
+            >
+              Next
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -666,3 +666,638 @@ For other qualifications and certificates please contact our educational consult
 Future Careers
 
 Advertising, banking, broadcasting, business, communications, human resources, journalism, literary criticism, law, marketing, public relations, publishing and teaching.' WHERE id = '4f96eb51-5db2-4664-bb2b-de291a5f6850';
+UPDATE public.courses SET overview = 'This course enables students to become independent researchers and experts in their selected area of education. The University of Nottingham Malaysia (UNM) offers high-quality doctoral training at the School of Education, where applicants should have a solid research background in their chosen discipline (see our areas of strength below). Students are expected to be highly motivated, enthusiastic, and possess an inquisitive mindset.
+
+International students are registered as full-time students due to immigration requirements, while local students have the option to choose between part-time and full-time study. All doctoral candidates will be based at the Malaysia campus.
+
+Entry Requirements  
+An upper second class honours degree (or international equivalent) in a relevant discipline and normally some experience in research methodology, (e.g., undergraduate level dissertation or research project). Non-UK qualifications will be assessed against this standard.
+If deemed necessary, applicants may also be required to attend an interview.
+
+For other qualifications and certificates please contact our educational consultants or submit your application for Admission assessment.
+
+Future Careers
+Assistant Professor. 
+Assistant Researcher.
+Consultant.
+Quality Control Expert.
+Editor. 
+Human Services.' WHERE id = '715a40de-a277-4eba-ae3c-00415a1cd44c';
+UPDATE public.courses SET overview = 'An MPhil is a research degree that requires the submission of a dissertation. An MPhil thesis should demonstrate a solid general understanding of the field, comprehensive knowledge of a specific aspect, and a recognizable original contribution to knowledge or understanding. Typically, an MPhil does not require an oral examination, and a full-time MPhil program is usually completed in two years.
+
+Entry Requirements  
+An upper second class honours degree (or international equivalent) in a relevant discipline. Non-UK qualifications will be assessed against this standard.
+If deemed necessary, applicants may also be required to attend an interview.
+
+For other qualifications and certificates please contact our educational consultants or submit your application for Admission assessment.
+
+Future Careers
+Research Engineer
+Lecturer/Academic Researcher
+Project Manager
+Design Engineer
+Consulting Engineer
+Quality Assurance Engineer' WHERE id = 'dd1e0014-099b-4131-b0ac-e4d5e4af9de8';
+UPDATE public.courses SET overview = 'Embark on a transformative journey with APU University Malaysia Master of Accounting program. Explore a myriad of invaluable insights and skills, detailed below:
+
+What you will learn in a glance?
+
+The Master of Accounting program is designed to equip students with advanced knowledge and skills in accounting principles, financial reporting, auditing, and taxation. Core courses cover essential topics such as financial accounting, managerial accounting, and business law. Students also delve into financial analysis, ethics, and accounting information systems. Through practical experiences like internships and case studies, students develop critical thinking and problem-solving abilities essential for success in the accounting profession. Graduates emerge prepared for careers in accounting and finance, equipped to navigate complex challenges in various industries and sectors.
+
+Dual Degrees from APU and DMU United Kindom
+
+Students who joined the Master of Accounting program at APU University Malaysia will have the option to apply for the APU-DMU Dual Degree Scheme. Under this Scheme, students will be able to get 2 Degree Certificates and transcripts upon graduation: 1 from Asia Pacific University (APU), Malaysia, and 1 from De Montfort University (DMU), UK. please note this is optional and costs GBP 375 Per year. For more information about this Scheme (Click here)
+
+General Requirements:
+
+• Bachelor’s degree in related fields with a minimum CGPA of 2.50, or its equivalent qualification as accepted by the Senate.
+
+• Bachelor’s degree in related fields with a minimum CGPA of 2.00 and not meeting a CGPA of 2.50 can be accepted, subject to a rigorous internal assessment.
+
+• Bachelor’s degree in non-related fields with a minimum CGPA of 2.00 as accepted by the Senate and with relevant working experience, subject to a rigorous internal assessment.
+
+​​• Bachelor’s degree in non-related fields with a minimum CGPA of 2.00 as accepted by the Senate and without relevant working experience, subject to passing pre-requisite courses.' WHERE id = '1aad0ea5-b15e-485d-9e65-033139cfd269';
+UPDATE public.courses SET overview = 'UNM’s MA in English with Creative Writing integrates creative and critical practices, examining the writing process within the contexts of publication and professional writing.
+
+This degree is especially suited for students eager to develop their creative writing skills in a professional setting. It also includes modules in English language and literature, which enrich any career path within the broader field of English studies.
+
+You will gain specialized knowledge in research methods and practices relevant to the wider field of English. Earning an MA degree demonstrates a high level of expertise in a specific area, enhancing your employability and preparing you for further academic research or vocational training.
+
+Entry Requirements  
+A relevant second class honours degree (or international equivalent). Non-UK qualifications will be assessed against this standard.
+If deemed necessary, applicants may also be required to attend an interview.
+Applicants applying for Master of Arts in English with Creative Writing will be asked to submit an example of their written work. You will be contacted by the university with full details of how to submit this.
+
+ 
+
+For other qualifications and certificates please contact our educational consultants or submit your application for Admission assessment.
+
+Future Careers
+
+Advertising, banking, broadcasting, business, communications, human resources, journalism, law, marketing, public relations, publishing and teaching .' WHERE id = 'b7e4e2c1-6b6d-4c15-b50f-a62762823d88';
+UPDATE public.courses SET overview = 'Embark on a transformative journey with APU University Malaysia MSc in Information Technology Management program. Explore a myriad of invaluable insights and skills, detailed below:
+
+What you will learn in a glance?
+
+The MSc in Information Technology Management program prepares graduates to lead at the nexus of technology and business. Graduates possess a robust skill set, including strategic IT planning, project management, and leadership. They excel in aligning IT initiatives with organizational goals, integrating emerging technologies, and fostering collaboration across departments. With strong business acumen and communication skills, graduates drive innovation and success in today''s digital landscape.
+
+Dual Degrees from APU and DMU United Kindom
+
+Students who joined the MSc in Information Technology Management program at APU University Malaysia will have the option to apply for the APU-DMU Dual Degree Scheme. Under this Scheme, students will be able to get 2 Degree Certificates and transcripts upon graduation: 1 from Asia Pacific University (APU), Malaysia, and 1 from De Montfort University (DMU), UK. please note this is optional and costs GBP 375 Per year. For more information about this Scheme (Click here)
+
+General Requirements:
+
+• Bachelor’s degree in Computing or related fields with a minimum CGPA of 2.50, or its equivalent qualification as accepted by the Senate.
+
+• Bachelor’s degree in Computing or related fields with a minimum CGPA of 2.00 and not meeting a CGPA of 2.50 can be accepted, subject to a rigorous internal assessment.
+
+• Bachelor’s degree in non-related fields with a minimum CGPA of 2.00 as accepted by the Senate and with relevant working experience, subject to a rigorous internal assessment.
+
+​• Bachelor’s degree in non-related fields with a minimum CGPA of 2.00 as accepted by the Senate and without relevant working experience, subject to passing pre-requisite courses.' WHERE id = 'a7cac6e1-1697-4deb-ab4e-20396f9a61c6';
+UPDATE public.courses SET overview = 'The Master in Applied Computing program at UTP University is dedicated to providing education that benefits society. It aims to transform computing professionals into specialists who can support the national digital transformation agenda.
+
+Entry Requirement
+A Bachelor’s Degree in a relevant field from a recognised university with a minimum CGPA of 2.75 or its equivalent.
+
+For other qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.
+
+Future Career
+Emerging Technology
+ Big Data Analytics
+Enterprise Resource Planning.' WHERE id = 'b133dfd9-7539-4b68-9605-d41ad27bee42';
+UPDATE public.courses SET overview = 'The Master in Corrosion Engineering program at UTP University is the first of its kind in Southeast Asia, tailored specifically for this field. Corrosion causes significant damage across various sectors, including utilities, transportation, infrastructure, government assets, and manufacturing.
+
+Entry Requirement
+BSc Degree in Engineering/ Engineering Technology discipline with minimum CGPA 2.50/4.00 or equivalent in the relevant field from a recognized university.
+
+For other qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.
+
+Future Career
+Exploration & Production
+Downstream: Refining & Petrochemicals
+Power Generation: Process-related
+Academia
+R&D
+Industry
+Consultant services & testing' WHERE id = '62ee1f0f-95d7-4817-a9d5-184a38573ec8';
+UPDATE public.courses SET overview = 'The MSc in Drilling Engineering program at UTP University emphasizes the application of the latest advancements in drilling technologies and analysis techniques. Key areas include well construction, geomechanics, drilling fluids and cementing, well completion, casing design, project management, economics, well engineering, and well intervention. The program aims to provide expertise in optimized drilling techniques, technical proficiency, and safety measures.
+
+Entry Requirement
+BSc Degree in Engineering/ Engineering Technology discipline with minimum CGPA 2.50/4.00 or equivalent in the relevant field from a recognized university.
+
+For other qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.' WHERE id = '5228744f-d6cc-459b-a331-f6a37544b292';
+UPDATE public.courses SET overview = 'The Offshore Engineering program at UTP University focuses on an industry that has seen rapid expansion over the past 60 years. This field faces unprecedented challenges, particularly in offshore engineering, that require enhanced and updated knowledge to address. The oil and gas sector is crucial to Malaysia''s economy, primarily drawing resources from offshore reserves. However, a talent shortage in this industry is anticipated due to an aging workforce nearing retirement and a lack of skilled graduates from Malaysian universities.
+
+Entry Requirement
+Candidates must hold a BSc Degree in Engineering/ Engineering Technology discipline with minimum CGPA 2.50/4.00 or equivalent in the relevant field from a recognized university.
+
+For other qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.' WHERE id = 'a2c93958-e20b-4f57-93aa-eed27ef59304';
+UPDATE public.courses SET overview = 'The Master’s program in Electronics Systems Engineering at UTP University is designed to equip young graduates and professionals with advanced skills in integrated circuit design, applications, and entrepreneurship. This training enables them to engage in research, development, and commercialization activities, facilitating their transition from manufacturing to design roles within the electronics industry.
+
+Entry Requirement
+A Bachelor’s Degree in a relevant field from a recognised university with a minimum CGPA of 2.50 or its equivalent.
+
+For other qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.
+
+Future Career
+Instrumentation and Control
+Telecommunication
+ Computer and Embedded Systems
+ Electronics and Semiconductor Industry.' WHERE id = 'ecc04313-fcd2-47ed-a351-41e67a4f53d1';
+UPDATE public.courses SET overview = 'The Master in Industrial Environmental Engineering program at UTP University equips graduates and practicing engineers with advanced expertise in managing water, air, and solid waste. It covers industrial design and operations for water and wastewater treatment plants, along with practical laboratory experience.
+
+Entry Requirement
+A Bachelor’s Degree in Engineering / Engineering Technology or its equivalent with a minimum CGPA of 2.5
+
+For other qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.
+
+Future Career
+PETRONAS operating companies
+Academics from local and overseas universities
+Government representatives
+Industry practitioners
+Representative from accreditation & statutory bodies.
+Local & International experts
+Consultants' WHERE id = '7b8ba4a9-4fdf-43ec-bc6e-49d1edd69ebb';
+UPDATE public.courses SET overview = 'The Master in Petroleum Engineering program at UTP University integrates engineering principles to advance the development of commercial oil and gas fields. It offers graduates and practicing engineers advanced knowledge in reservoir engineering, production technology, and drilling engineering. The MSc in Petroleum Engineering program emphasizes the latest advancements in reservoir engineering, production technologies, formation evaluation, and drilling technologies. Key topics include drilling fluid and cementing, casing design, project management, and economics.
+
+Entry Requirement
+BSc Degree in Engineering/ Engineering Technology discipline with minimum CGPA 2.50/4.00 or equivalent in the relevant field from a recognized university
+
+For other qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.' WHERE id = '38165e5f-730d-4f64-b13e-272fcb582929';
+UPDATE public.courses SET overview = 'The Master of Science in Process Integration program at UTP University is crafted to address the challenges faced by process system engineers across various industries. It equips you to tackle these challenges with innovative solutions.The program emphasizes the application of the latest advancements in process system engineering and analysis techniques, moving away from traditional practices. Key areas of focus include heat integration, modeling, optimization, process safety, control, and operability. These elements aim to optimize the use of raw materials and energy, contributing to sustainability.In collaboration with industry experts, UTP''s MSc in Process Integration encourages students to think beyond conventional methods, preparing them to shape a promising future. The program aims to create a pipeline of skilled process integration specialists, offering learning objectives grounded in real-world industry scenarios and changes.
+
+Entry Requirement
+A bachelor''s degree with a minimum CGPA of 2.50 or equivalent.
+
+For other qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.' WHERE id = '82459294-0343-4966-8645-5ca316541320';
+UPDATE public.courses SET overview = 'The Master in Petroleum Geoscience program at UTP University is an interdisciplinary field that integrates geoscience principles and quantitative methods to discover and develop commercial oil and gas fields. It involves interpreting, predicting, and managing risks and uncertainties in the exploration and exploitation of hydrocarbon resources. Universiti Teknologi PETRONAS''s MSc in Petroleum Geoscience is designed to train young graduates and industry professionals in comprehensive approaches, methods, and techniques for exploring and evaluating new oil and gas fields, as well as characterizing reservoirs.
+
+Entry Requirement
+A bachelor''s degree with a minimum CGPA of 2.50 or equivalent
+
+For other qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.' WHERE id = 'b1c4410a-d0ed-4342-9677-37609288c9ba';
+UPDATE public.courses SET overview = 'The Master in Process Safety program at UTP University aims to enhance students'' knowledge and equip them with advanced skills in process safety, loss prevention, and risk assessment. By collaborating closely with renowned process safety institutions and experts, we have jointly developed an outstanding and leading MSc Process Safety program in the region.
+
+Entry Requirement
+A Bachelor’s Degree in Engineering / Engineering Technology or its equivalent with a minimum CGPA of 2.5
+
+For other qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.' WHERE id = 'c5189b9b-5b3f-475e-b1bc-efa1aa4b2d8d';
+UPDATE public.courses SET overview = 'The Bachelor of Finance (Hons) Program at UNITEN University Malaysia provides students with a strong knowledge of finance. The program covers specific areas such as stock analysis, investment instruments, and capital markets. Graduates gain a thorough understanding of finance principles and their application in the business world. The program prepares students for careers in the financial services sector or further studies in finance at the master''s level.
+
+Entry Requirement
+Bachelor’s Degree [Level 6, Malaysian Qualifications Framework MQF)] in a related field
+Pass with a minimum CGPA of 2.50
+For other qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.
+Future Careers
+Financial Planner
+Financial Analyst
+Financial Controller
+Fund Manager
+Financial Advisor
+Remisier
+Stock Broker
+Bank Executive
+Academics' WHERE id = '79a1bd80-d5e2-4520-afc3-60c15bbecf34';
+UPDATE public.courses SET overview = 'The PhD in Applied Science program encourages you to think beyond the confines of your primary research focus, tackle problems from various perspectives, collaborate with a diverse range of scientists and researchers, and pursue research fueled by intellectual curiosity.
+
+Entry Requirement
+A Master Degree in the relevant field OR equivalent from a recognized university.
+
+For other qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.' WHERE id = '72b1bcc4-b9d6-4043-8981-d1a32bb8164b';
+UPDATE public.courses SET overview = 'The PhD in Chemical Engineering at UTP University is a doctoral program aimed at enabling students to find practical solutions to both current and upcoming challenges in the field. Students collaborate closely with peers and esteemed faculty members to push the boundaries of knowledge in Chemical Engineering.
+
+Entry Requirement
+A Master Degree in the relevant field OR equivalent from a recognized university.
+
+For other qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.' WHERE id = '11295e5f-6e5b-4fd9-b4c1-3b665a98bf78';
+UPDATE public.courses SET overview = 'The APIIT Certificate in Administrative Skills (CAS) at APU University Malaysia is designed to equip students with strong communication, leadership, and administrative skills Alongside these essential skills, the program provides the fundamental knowledge necessary to navigate the challenging and ever-changing business environment
+
+Graduates of this certificate program will have opportunities for progression into diploma programs or can embark on careers in various fields such as administration, marketing, accounting, and human resources This comprehensive training prepares students to meet the demands of modern workplaces effectively.
+
+Entry Requirements
+
+SPM  
+
+• 1 Credit at SPM level with a minimum of a pass in Bahasa Malaysia and Sejarah (History);
+
+For other qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.' WHERE id = '4a0f5801-df6f-4c6b-99a9-3af010ebae17';
+UPDATE public.courses SET overview = 'The Bachelor of Landscape Architecture with Honours program at UTM University Malaysia, established in 1993, combines design and built philosophy to produce competent professionals in landscape architecture. The program focuses on creating practical and aesthetically pleasing outdoor spaces and covers a diverse range of design work. Graduates can work in various settings, designing landscapes that respond to cultural and ecological contexts
+
+Entry Requirement
+A Senior High School Certificate or equivalent / pre – university qualifications.
+Pass the English Proficiency requirements
+Pass the UTM interview - if applicable
+
+ 
+
+ 
+
+For other qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.
+
+Future Careers
+Landscape architects
+Research officers at research institutions, universities and industries
+Academicians at universities, polytechnics and colleges
+Graphic illustrators and designers
+Nursery operators
+Landscape contractors
+Landscape managers' WHERE id = 'e95087bf-685c-49c6-bc7d-6b6c9534f01f';
+UPDATE public.courses SET overview = 'The Bachelor of Media and Communication program at Swinburne University of Technology Sarawak Campus is designed to cultivate essential skills in professional communication and media content creation. With a focus on bridging theory and practice, this program leverages strong industry connections to provide students with relevant, experiential learning opportunities in the dynamic field of media and communication. By gaining practical experience, students acquire the necessary proficiency to thrive in the ever-growing areas of media and communication, preparing them for successful careers in the industry.
+
+Entry Requirement
+The minimum entry requirement, you may be selected for one of our courses. However, meeting the minimum requirements doesn’t guarantee that you will be selected.
+
+ 
+
+For other qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.' WHERE id = '1f20bc57-9b2e-4c96-bf29-e4275c910ead';
+UPDATE public.courses SET overview = 'The Graduate Certificate of Information Technology program at Swinburne University of Technology Sarawak Campus focuses on the development of theoretical knowledge and practical skills necessary for designing, constructing, operating, supporting, and maintaining information technology (IT) solutions. This program aims to equip students with a solid foundation in IT principles and practices. Through a combination of theoretical learning and practical application, students gain the necessary expertise to design and implement effective IT solutions. The curriculum covers various aspects of IT, including system design, construction, operation, technical support, and maintenance. By completing this program, students acquire the essential skills to navigate the dynamic field of IT and contribute to the development and management of efficient IT solutions.
+
+Entry Requirement
+A Bachelor’s degree with a minimum CGPA of 2.75, 
+A Bachelor’s Degree or its equivalent, with a minimum CGPA of 2.50 and not meeting CGPA of 2.75, can be accepted subject to rigorous internal assessment process,
+A Bachelor’s Degree or its equivalent, with a minimum CGPA of 2.00 and a minimum of 5 years working experience in a relevant field may be accepted.
+
+ 
+
+Forother qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.' WHERE id = '59d62c59-8175-40c0-8864-81fc28e3b122';
+UPDATE public.courses SET overview = 'The Bachelor of Digital Business program at MONASH University Malaysia trains future business leaders in digital transformation, emphasizing the application of digital technologies in business management. Students gain hands-on experience with industry partners and learn to leverage emerging technologies, such as artificial intelligence, to benefit both business and society. Additionally, the program focuses on developing valuable knowledge and skills in cybersecurity and big data.
+
+Entry Requirement
+To enter Monash University, students must satisfy particular academic, English language and age requirements.
+
+For other qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.
+
+Future Careers
+digital marketing specialist
+business analyst
+e-commerce manager.' WHERE id = '18f8868d-ee19-43df-b84c-9fd34dc1c00e';
+UPDATE public.courses SET overview = 'The Master of Business Administration (MBA) at Help University Malaysia offers a career-transforming, life-changing learning experience. It seeks to develop analytics savvy in a new generation of managers and leaders and equip them with the skills to respond to the rapid, often unpredictable business environment through its rigorous curriculum. You can expect to be anchored in the fundamentals of general management including the latest trends, theories and best practices in business from accounting to data analytics to strategy; taught by faculty members who are experienced in these disciplines in a diverse learning environment.
+
+Entry Requirement
+A Bachelor’s degree from a recognised university with a minimum CGPA of 2.50, preferably with adequate industry experience; those with a CGPA of less than 2.50 but with 5 years’ relevant working experience are also admissible.
+International applicants are required to fulfil a minimum score of 6.0 for the International English Language Testing System (IELTS) or the equivalent.
+Future Career
+Business Operations Manager
+Financial Analyst
+Consulting
+Financial Management
+Management Consultant
+Accountant
+CEO
+CFO
+Budget Analyst
+Strategy
+Investment Banking
+Entrepreneurship
+Business Development' WHERE id = '8ce594c5-0908-4e9d-9144-572b8ca2a4e4';
+UPDATE public.courses SET overview = 'The Doctor of Philosophy (PhD) program in Science at Tunku Abdul Rahman University (UTAR) provides an extensive and rigorous pathway for students seeking the highest level of expertise in the field of science. This program offers a unique opportunity for students to engage in advanced research, critical analysis, and scholarly exploration across various scientific disciplines. By enrolling in the program, students collaborate closely with esteemed faculty mentors, conducting independent research, contributing to the existing body of scientific knowledge, and making significant intellectual contributions to their specialized areas of study. Through the pursuit of a PhD in Science at UTAR, students develop advanced research skills, critical thinking abilities, and a profound understanding of complex scientific theories and methodologies. Graduates of the program are well-equipped for leadership roles in academia, research institutions, industry, and government organizations, where they can drive scientific advancements, solve intricate problems, and contribute to the development of innovative solutions through their cutting-edge research and expertise.
+
+Entry Requirements
+a Master’s degree from UTAR and shows evidence of adequate related research or work experience to the satisfaction of the Senate.
+
+For other qualifications and certificates (e.g.,,Other qualifications equivalent to a Master’s degree , etc..) please contact our educational consultants or submit your application for Admission assessment.' WHERE id = '828f0a0c-b017-424a-867c-bfb1c9c88cc5';
+UPDATE public.courses SET overview = 'The Master of Art and Design by Research Mode at Tunku Abdul Rahman University of Management and Technology (TAR UMT) is designed to cultivate graduates equipped with advanced knowledge, practical skills, and analytical abilities essential for problem identification, research design, and data analysis.
+
+This program is particularly relevant to the creative professions, emphasizing critical thinking and extensive study. As students engage in the creation of high-quality art materials, they will develop the professionalism required in the fields of art and design. Graduates will be well-prepared to contribute meaningfully to the creative industry.
+
+Entry Requirements
+
+A Bachelor''s degree (Level 6 Malaysian Qualifications Framework, MQF) or its equivalent, with a minimum CGPA of 2.75, as accepted by the Senate.
+
+For other qualifications and certificates (e.g., Other qualifications equivalent to a Bachelor’s degree , etc..) please contact our educational consultants or submit your application for Admission assessment.
+
+Future Careers
+Curator
+Creative Director
+Graphic Designer
+2D/3D Animator
+Illustrator
+Copywriter
+Art and Design Freelancer
+UI/UX Designer
+Event Coordinator
+Photographer
+Interactive/Multimedia Designer
+Game Artist
+Film/TV Assistant Producer
+Project Coordinator
+Design Entrepreneur
+Web Designer
+Sketching Assistant
+Multimedia Event Coordinator' WHERE id = '7c2aad66-bdf8-41ea-b8e2-f22e0365f0e2';
+UPDATE public.courses SET overview = 'The Doctor of Education (EdD) program prepares professionals for leadership roles in education through advanced research, coursework, and practical experiences, enabling graduates to make a positive impact as administrators, consultants, policymakers, curriculum developers, or faculty members.
+
+Entry Requirements
+A Master’s Degree (Level 7, MQF) in related fields as accepted by the Higher Education Provider (HEP) Senate
+
+For other qualifications and certificates (e.g.,related fields,Other qualifications equivalent to a Master’s degree , etc..) please contact our educational consultants or submit your application for Admission assessment.
+Future Careers 
+
+Future Careers
+
+School administrators ,Education consultants ,Policy analysts ,Curriculum specialists ,College or university faculty 
+
+Educational researchers ,Educational policy makers.' WHERE id = '03478825-9966-49bf-8957-1174933e16c8';
+UPDATE public.courses SET overview = 'The Doctor of Philosophy (PhD) program in Social Science at Tunku Abdul Rahman University (UTAR) offers an in-depth and comprehensive pathway for students aspiring to achieve the highest level of expertise in the field. This program provides a unique opportunity for students to engage in advanced research, critical analysis, and scholarly exploration across various disciplines within the social sciences. By enrolling in the program, students work closely with esteemed faculty mentors, conducting independent research, contributing to the existing body of social science knowledge, and making significant intellectual contributions to their specialized areas of study. Through the pursuit of a PhD in Social Science at UTAR, students develop advanced research skills, critical thinking abilities, and a profound understanding of complex social phenomena and research methodologies. Graduates of the program are well-prepared for leadership roles in academia, research institutions, policy-making organizations, and non-profit sectors, where they can drive social change, shape public policies, and contribute to the advancement of knowledge through their innovative research and expertise.
+
+Entry Requirements
+ a Master’s degree from UTAR and shows evidence of adequate related research or work experience to the satisfaction of the Senate
+
+For other qualifications and certificates (e.g.,,Other qualifications equivalent to a Master’s degree , etc..) please contact our educational consultants or submit your application for Admission assessment.' WHERE id = '897eb5cb-65f6-479c-bb38-05efa448ec09';
+UPDATE public.courses SET overview = 'Our academic staff are actively engaged in cutting-edge, policy-relevant, and curiosity-driven research across a wide range of topics in international development, international relations, and politics. Our research and teaching efforts are enriched by resources from our partner schools in the UK and the Division of International Studies at the University of Nottingham Ningbo China.
+
+We host our own seminars where academics and practitioners share their research findings and professional experiences. Additionally, the school’s student society, PHIR-NOTT, complements these formal activities with its own round-table discussions, guest speaker series, and other events.
+
+International development is a multidisciplinary field that examines how communities and states achieve the economic, socio-political, and other characteristics associated with development.
+
+This program offers you the opportunity to develop a comprehensive multidisciplinary understanding of international development while exploring the prospects for development in a globalizing world. It addresses the reasons behind the persistence of global poverty and inequality, as well as how current development paradigms contribute to poverty reduction and human development. The course investigates how to apply development theory to enhance practice at the grassroots level and to identify, design, and implement effective interventions to improve development outcomes. It equips you with the practical skills necessary for employment in the development sector, including the design, implementation, and management of development projects.
+
+Entry Requirements  
+An upper second class honours degree (or international equivalent) in science, engineering or geography and environment-related subjects. Non-UK qualifications will be assessed against this standard.
+If deemed necessary, applicants may also be required to attend an interview.
+
+For other qualifications and certificates please contact our educational consultants or submit your application for Admission assessment.
+
+Future Career
+
+The University’s Career Advisory Services (CAS) support students in developing the necessary skills and accessing career opportunities through strong partnerships with various employers and industries. The CAS provides essential resources and guidance for career planning, offering numerous opportunities to build the skills needed to manage your future effectively.
+
+Our Careers Advisory Service will collaborate with you to enhance and maximize your employability skills, providing crucial resources and support for job and course applications. They will assist you in searching for suitable work experience placements and connect you with a diverse range of prospective employers and training opportunities.' WHERE id = '3d3393ed-4aa2-4cde-8129-a63c18afc093';
+UPDATE public.courses SET overview = 'The Certificate in Hotel Operations at the University of Wollongong (UOW) in Glenmarie, Selangor, provides students with essential skills and knowledge to enter the dynamic international hospitality industry. This program introduces various aspects of hospitality operations, including front office management, housekeeping, food and beverage service, and culinary arts. It is designed to equip students with key operational skills relevant to daily hotel functions, making them well-prepared for various roles within the industry. Moreover, this certificate creates a pathway for further studies, enabling graduates to pursue managerial positions in hotels and explore careers in event planning, restaurant management, consulting, and even professional cooking.
+
+Entry Requirements
+
+SPM / O Levels :
+Pass with min. 1 Credit
+
+For other qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.' WHERE id = 'c50f52a3-2423-41cc-9e7b-60002620ac14';
+UPDATE public.courses SET overview = 'Our academic staff are engaged in active research, pursuing cutting-edge, policy-relevant, and curiosity-driven inquiries across a wide range of topics in international development, international relations, and politics. Our research and teaching activities benefit from resources provided by our partner schools in the UK and the Division of International Studies at the University of Nottingham Ningbo China.
+
+We organize seminars where academics and practitioners share their research findings and professional experiences. Additionally, the school’s student society, PHIR-NOTT, complements these formal activities with round-table discussions, guest speaker series, and other events.
+
+International Relations examines the intricate relationships among states, societies, individuals, identities, and cultures from both theoretical and empirical perspectives. The discipline encompasses areas such as economics, law, politics, and security, and addresses fundamental questions about our understanding of contemporary global transformations. Throughout the program, you will explore the subject from multiple viewpoints, including state-centric, complex interdependence, and globalization perspectives. The degree is open to students from any discipline or career background, but it is particularly popular among those interested in pursuing careers in government or diplomatic services, international organizations, or the media.
+
+Entry Requirements  
+
+A relevant second class honours degree (or international equivalent). Non-UK qualifications will be assessed against this standard.
+
+If deemed necessary, applicants may also be required to attend an interview.
+
+For other qualifications and certificates please contact our educational consultants or submit your application for Admission assessment.
+
+Future Careers
+
+The University’s Career Advisory Services (CAS) assist students in developing essential skills and accessing career opportunities through strong connections with various employers and industries. The CAS offers vital resources and guidance for making informed career choices, providing numerous opportunities to cultivate the skills necessary for planning and managing your future.
+
+Our Careers Advisory Service will collaborate with you to enhance and maximize your employability skills, while also offering crucial resources and support for job and course applications. They will help you find suitable work experience placements and connect you with a wide array of prospective employers and training opportunities.' WHERE id = '1a6b9351-a304-4fb3-b137-7512aec004e0';
+UPDATE public.courses SET overview = 'Master of Science in Accounting By Research Mode program at Universiti Putra Malaysia (UPM) aims to build and enhance the skills and knowledge essential in the fields of accounting and finance, equipping graduates to tackle complex challenges in dynamic work environments.
+
+This program encompasses the collection, analysis, measurement and presentation of economic information, enabling informed decision-making and judgments.
+
+Enty Requirements 
+
+• Bachelor’s Degree or an equivalent qualification in a relevant field with a minimum CGPA of 3.000
+
+For other qualifications and certificates (e.g., Other qualifications equivalent to a Bachelor’s degree , etc..) please contact our educational consultants or submit your application for Admission assessment.' WHERE id = '89c52885-1f6b-4599-bc29-9b340e91fca2';
+UPDATE public.courses SET overview = 'Advance your career by applying psychology in the workplace. This course is designed to help you manage people effectively, even if you have no prior background in psychology. You will learn how to motivate employees, train them, recruit talent, design job specifications, assess performance, manage well-being, and lead teams. Additionally, you''ll explore how to navigate organizational change and diversity in the workplace.
+
+At Nottingham, we ensure that the course has a practical emphasis, aiming to enhance your skills as a practitioner. You will study consultancy and gain a solid understanding of research methods relevant to the workplace, which is particularly valuable to future employers. The course is taught by research-active experts in the field, many of whom earned their own MSc degrees at Nottingham Malaysia. By the end of the program, you will be well-prepared to apply your knowledge in the real world of work.
+
+Entry Requirements  
+
+An upper second class honours degree (or international equivalent) in a relevant field. Non-UK qualifications will be assessed against this standard. Applicants will be considered if they have a first degree in a relevant subject such as management, psychology or other related disciplines.
+
+If deemed necessary, applicants may also be required to attend an interview.
+
+For other qualifications and certificates please contact our educational consultants or submit your application for Admission assessment.
+
+Future Careers
+
+Executive Training and Coaching Professional, Business Development Consultant, Internal and External Management, Consulting Team Development Manager, Change Management Professional, Strategy Development Professional, Staffing and Recruiting Manager, Policy Officer, Corporate Consultant, Employee Retention Consultant, Professional Development Coach, Customer Service Manager, Change Management Specialist.' WHERE id = 'b2f3509d-6f11-460b-9873-29432fb258c3';
+UPDATE public.courses SET overview = 'Master of Science in Plant Physiology By Research Mode at Universiti Putra Malaysia (UPM) focuses on the molecular, cellular, and systemic approaches to studying plant physiology under both natural and pathological conditions. Research in this program spans from cell and tissue culture to animal models and human pathophysiological studies.
+
+The scope of research includes areas such as cell physiology, systems physiology, and pathophysiology. Students will explore how environmental factors, aging, and metabolite content affect plant growth, as well as responses to light intensity and nutritional needs. The program also addresses genetic studies aimed at developing cloned and transgenic plants. Understanding plant physiology is essential for advancing agricultural practices and agro-technology, including drug discovery research, isolation of plant-derived metabolites, and assessments related to phytopharmaceuticals, nutraceuticals, pharmacogenomics, and toxicogenomics.
+
+Entry Requirements 
+
+• A Bachelor’s degree in the field or related fields with a minimum CGPA of 2.750 or equivalent, as accepted by the UPM Senate
+
+For other qualifications and certificates (e.g., Other qualifications equivalent to a Bachelor’s degree , etc..) please contact our educational consultants or submit your application for Admission assessment.' WHERE id = '44e484c9-a987-4548-9266-052d673bb879';
+UPDATE public.courses SET overview = 'Doctor of Philosophy in Animal Physiology By Research Mode at Universiti Putra Malaysia (UPM) delves into advanced research in molecular, behavioral, nutritional, neuronal, and stress physiology. The program focuses on understanding the functions of organs and organ systems, morphological adaptations, and responses to environmental stimuli, emphasizing metabolism, regulatory mechanisms, as well as metabolomics, nutrigenomics, and lipidomics.
+
+PhD candidates will investigate critical metabolic and biochemical pathways vital for bioenergetics and homeostatic regulation, exploring ligand-receptor interactions in the context of natural products research and the study of communicable and non-communicable diseases using animal models. Additionally, research at the cellular level encompasses cellular organization, biomembrane properties, communication, signal transduction, and the regulation of cell survival, apoptosis, and neoplasia. This program equips students with the expertise to make significant contributions to the field of animal physiology.
+
+Entry Requirements
+
+• A Master''s degree by research in the field related to the PhD field applied for
+
+For other qualifications and certificates (e.g., Other qualifications equivalent to a Master’s degree , etc..) please contact our educational consultants or submit your application for Admission assessment.' WHERE id = 'da1e4c55-0610-40b8-b9e7-dd8ca2e6eb93';
+UPDATE public.courses SET overview = 'Nottingham Malaysia’s MA in Media, Communications, and Culture offers the theoretical and analytical training needed for further academic study or to develop professional skills for management roles in media, communications policy, and industry.
+
+The program will enhance your specialized knowledge of key research methods through empirical examples and case studies. It will deepen your understanding and critical awareness of the dynamics of media transformation and the challenges it poses in politics, business, public administration, and daily life. Modules encourage students to re-evaluate the conditions of knowledge and the foundations of European modernity from postcolonial and decolonial perspectives.
+
+Adopting an interdisciplinary approach and drawing on current research, the program also aims to equip you with practical skills to engage with relevant developments and discourses in the field. For instance, theories of posthumanism help students grasp how scholars in the humanities and social sciences address contemporary global issues arising from the Anthropocene, such as climate change and ecological damage, while raising questions about humanity''s relationship with technology and other living organisms.
+
+Entry Requirements  
+A relevant second class honours degree (or international equivalent). Non-UK qualifications will be assessed against this standard.
+If deemed necessary, applicants may also be required to attend an interview.
+
+For other qualifications and certificates please contact our educational consultants or submit your application for Admission assessment.
+
+Future Careers
+
+PhD and academia, education, civil service, research institutes and think tanks, writing, UNHCR, journalism and the media, corporate advertising and careers in civil society organisations.' WHERE id = '1fd297e7-54b9-433c-9779-038399d8cfd2';
+UPDATE public.courses SET overview = 'Join the School of Mathematical Sciences to engage in projects that explore both fundamental and applied mathematical sciences, aimed at solving a diverse array of real-world problems. Projects encompass the following areas:
+
+Pure Mathematics
+Applied Mathematics
+Statistics and Probability
+Mathematical Education
+
+We are looking for enthusiastic research students who are keen to shape the future of mathematical sciences and make a positive impact on the world. Our research projects span a wide range, from developing innovative mathematical models to applying mathematical sciences in the creation of sustainable materials and advancements in healthcare. Join us and contribute to making a difference through your passion for research.
+
+Entry Requirements  
+An upper second class honours degree (or international equivalent) in mathematics or a closely related discipline with substantial mathematical content. Non-UK qualifications will be assessed against this standard.
+If deemed necessary, applicants may also be required to attend an interview.
+
+For other qualifications and certificates please contact our educational consultants or submit your application for Admission assessment.
+
+Future Careers
+
+A postgraduate qualification in Mathematics or Statistics can open the door to various roles, including academic positions, data scientist, policy analyst, or economist in government organizations and research institutes. Graduates may also find opportunities in banks and investment firms, health research institutes, or as management consultants in fields such as finance, insurance, IT, engineering, market research, and management consulting.' WHERE id = 'acf9e94f-1b7d-4ec1-8f24-2b59bc9d6cd6';
+UPDATE public.courses SET overview = 'The MSc and PhD programs in Chemical Engineering (research mode) at Xiamen University Malaysia (XMUM) provide innovative courses delivered by highly qualified faculty members with strong academic reputations. The instructors take a dynamic approach to teaching and bring years of research experience across various fields, including catalysis and reactions, membrane science and technology, nanomaterials, chemical processes, clean energy, process design optimization, safety, and environmental protection.
+
+Our research laboratories are outfitted with advanced instruments, enabling students to concentrate on their studies and carry out independent research projects within their areas of specialization.
+
+Entry Requirements
+A Bachelor’s Degree in Chemical Engineering or a related discipline with a minimum Cumulative Grade PointAverage (CGPA) of 2.75
+
+For other qualifications and certificates (e.g.,,Other qualifications equivalent to a Bachelor’s degree , etc..) please contact our educational consultants or submit your application for Admission assessment.
+
+Future Careers 
+
+The program offers excellent career prospects in various sectors, including chemical, petrochemical, petroleum refining, power plants, palm oil processing, semiconductor and electronics, pharmaceuticals, biotechnology, food processing, safety engineering, environmental services, education, management, and consulting firms, as well as related industries.' WHERE id = 'b7b27378-fb5a-465d-9c50-d1d0ccb479b7';
+UPDATE public.courses SET overview = 'Our PhD degrees are available in both full-time and part-time formats, with part-time options offered exclusively to Malaysian students. Typically, a full-time PhD requires three years of research, followed by an additional year for writing up your thesis.
+
+An MPhil degree may be awarded after one year of study, with an additional year for writing, if either you or the University determines that this is a more suitable qualification.
+
+Research plays a vital role in the pharmaceutical industry, and our academic staff are at the forefront of scientific and healthcare advancements. Our current research areas showcase the diverse expertise of our faculty, the successful acquisition of research funding, and recent grant applications. We provide high-quality doctoral training for postgraduate students interested in pursuing an MPhil or PhD. As a research student, you will collaborate with a supervisor who will guide you in your research and thesis development.
+
+Entry Requirements  
+A master’s degree (or international equivalent) plus, an upper second class honours degree (or international equivalent) in pharmacy or a related scientific discipline. Non-UK qualifications will be assessed against this standard.
+If deemed necessary, applicants may also be required to attend an interview.
+
+For other qualifications and certificates please contact our educational consultants or submit your application for Admission assessment.
+
+Future Careers
+
+Our programs offer you the opportunity to pursue research in an area of your interest, enabling you to focus on a specific niche and make significant contributions to science. By becoming an MPhil/PhD student at our school, you will join a vibrant research community and engage with world-changing issues at the forefront of science and healthcare. This experience will also help you develop skills that are highly valued in academia as well as in the biotechnology, healthcare, and pharmaceutical industries.
+
+Recent MPhil/PhD graduates from the School of Pharmacy at the Malaysia Campus typically pursue careers in academia or research, working for government agencies, international research organizations, and universities, or serving as experts and consultants in their areas of expertise.' WHERE id = '8e0c2374-4b85-46c5-97d1-f133a4818af5';
+UPDATE public.courses SET overview = 'Over the past two decades, psychology has emerged as one of the most popular degree fields worldwide. It is a captivating subject that helps us understand the workings of our minds, brains, relationships, and societies. At UNM, we provide high-quality doctoral training for postgraduate students interested in pursuing an MPhil or PhD. As a research student, you will collaborate with two members of our academic staff and join one of our seven research groups.
+
+Given the diverse nature of research within the school, there are numerous opportunities for MPhil and PhD projects. Postgraduate training at the School of Psychology is designed to equip you with essential research skills, as well as communication, information technology, personal development, and employment-related skills. This training can be customized to suit your individual needs.
+
+Entry Requirements  
+An upper second class honours degree (or international equivalent) either in psychology or a related discipline. Non-UK qualifications will be assessed against this standard.
+If deemed necessary, applicants may also be required to attend an interview.
+
+For other qualifications and certificates please contact our educational consultants or submit your application for Admission assessment.
+
+Future Careers
+
+Psychology postgraduates can advance to careers in research and higher education in both the public and private sectors. Research psychologists working for businesses may engage in diverse projects, such as developing innovative strategies for targeting advertising campaigns, creating new forms of 3D cinema, or evaluating new drugs for treating depression.' WHERE id = '974d35cb-626a-40ef-9ad9-ac2d3e73507b';
+UPDATE public.courses SET overview = 'Our PhD degrees are available in both full-time and part-time formats, with part-time options offered exclusively to Malaysian students. Typically, a full-time PhD requires three years of research, followed by an additional year for writing up your thesis.
+
+An MPhil degree may be awarded after one year of study, with an additional year for writing, if either you or the University determines that this is a more suitable qualification.
+
+Research plays a vital role in the pharmaceutical industry, and our academic staff are at the forefront of scientific and healthcare advancements. Our current research areas showcase the diverse expertise of our faculty, the successful acquisition of research funding, and recent grant applications. We provide high-quality doctoral training for postgraduate students interested in pursuing an MPhil or PhD. As a research student, you will collaborate with a supervisor who will guide you in your research and thesis development.
+
+Entry Requirements  
+An upper second class honours degree (or international equivalent) in pharmacy or a related scientific discipline. Non-UK qualifications will be assessed against this standard.
+If deemed necessary, applicants may also be required to attend an interview.
+
+For other qualifications and certificates please contact our educational consultants or submit your application for Admission assessment.
+
+Future Careers
+
+Our programs offer you the opportunity to pursue research in an area of your interest, enabling you to focus on a specific niche and make significant contributions to science. By becoming an MPhil/PhD student at our school, you will join a vibrant research community and engage with world-changing issues at the forefront of science and healthcare. This experience will also help you develop skills that are highly valued in academia as well as in the biotechnology, healthcare, and pharmaceutical industries.
+
+Recent MPhil/PhD graduates from the School of Pharmacy at the Malaysia Campus typically pursue careers in academia or research, working for government agencies, international research organizations, and universities, or serving as experts and consultants in their areas of expertise.' WHERE id = 'e0076ff5-a2e9-4f14-9b62-80a3abf36158';
+UPDATE public.courses SET overview = 'Doctor of Philosophy in Animal Sciences By Research Mode at Universiti Putra Malaysia (UPM) encompasses essential disciplines related to animal production, including anatomy, physiology, nutrition, reproduction, meat and dairy sciences, biotechnology, microbiology, agrostology, and biochemistry. The program also explores the study of farm animals, recreational animals, and captive wildlife.
+
+Through rigorous research and advanced theoretical knowledge, students will develop a comprehensive understanding of animal sciences, enabling them to tackle complex challenges in animal production and welfare. This program equips graduates with the expertise necessary to make impactful contributions to the field of animal sciences.
+
+Entry Requirements 
+
+• A master’s degree in the field or related fields accepted by the UPM Senate.
+
+For other qualifications and certificates (e.g., Other qualifications equivalent to a Master’s degree , etc..) please contact our educational consultants or submit your application for Admission assessment.' WHERE id = '4ff40582-b316-4dec-ae72-f5770b57836a';
+UPDATE public.courses SET overview = 'Over the past two decades, psychology has emerged as one of the most popular degree fields worldwide. It is a captivating subject that helps us understand the workings of our minds, brains, relationships, and societies. At UNM, we provide high-quality doctoral training for postgraduate students interested in pursuing an MPhil or PhD. As a research student, you will collaborate with two members of our academic staff and join one of our seven research groups.
+
+Given the diverse nature of research within the school, there are numerous opportunities for MPhil and PhD projects. Postgraduate training at the School of Psychology is designed to equip you with essential research skills, as well as communication, information technology, personal development, and employment-related skills. This training can be customized to suit your individual needs.
+
+Entry Requirements  
+An upper second class honours degree (or international equivalent) either in psychology or a related discipline. Non-UK qualifications will be assessed against this standard.
+If deemed necessary, applicants may also be required to attend an interview.
+
+For other qualifications and certificates please contact our educational consultants or submit your application for Admission assessment.
+
+Future Careers
+
+Psychology postgraduates can advance to careers in research and higher education in both the public and private sectors. Research psychologists working for businesses may engage in diverse projects, such as developing innovative strategies for targeting advertising campaigns, creating new forms of 3D cinema, or evaluating new drugs for treating depression.' WHERE id = '60ff2413-f062-48d1-8a5e-b8c1f690fd8b';
+UPDATE public.courses SET overview = 'Doctor of Philosophy in Animal Production By Research Mode at Universiti Putra Malaysia (UPM) focuses on sustainable production practices aimed at enhancing the efficiency of animal production systems. The program explores the management of both ruminant and non-ruminant livestock, emphasizing the production of clean, safe, nutritious, and high-quality food for consumers while promoting environmental conservation in animal husbandry.
+
+A significant aspect of the program is production system analysis, which includes resource evaluation and farm economics. Research in this field integrates knowledge of animal production and health, covering entrepreneurship, infrastructure, management, farm mechanization, and the handling of animal products and waste. 
+
+Through extensive study and research, students will acquire the expertise needed to make valuable contributions to sustainable animal production practices.
+
+Entry Requirements 
+
+• A master’s degree in the field or related fields accepted by the UPM Senate.
+
+For other qualifications and certificates (e.g., Other qualifications equivalent to a Master’s degree , etc..) please contact our educational consultants or submit your application for Admission assessment.' WHERE id = '857fe5b7-045e-4008-ac81-ce2ac42f67f1';
+UPDATE public.courses SET overview = 'The Bachelor of Early Childhood Education (Honours) at Tunku Abdul Rahman University of Management and Technology (TAR UMT) offers a balanced blend of theoretical and practical elements, equipping students with contemporary knowledge and expertise in child development and early years curriculum design. 
+
+The program covers essential pedagogical approaches in literacy, arts, mathematics, and science, enabling students to effectively apply their learning in teaching careers. 
+
+Additionally, the curriculum includes practicum placements and micro-teaching experiences in early childhood settings, ensuring that students are well-prepared to become competent early childhood educators. This hands-on training fosters the skills necessary for nurturing and supporting young learners in their developmental journey.
+
+Entry Requirements
+
+STPM  
+
+Grade C in 2 relevant subjects
+Students who do not have at least a pass in English Language (SPM/O Level/UEC) must attend the TAR UMT Essential English Skills course during their first semester in the program.
+
+For other qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.
+
+Future Careers
+Preschool Teacher
+Early Learning Centre Teacher
+Childhood Educator
+Children Enrichment Programme Specialists
+Managers, Executives, and Entrepreneurs in Children-Related Industries
+Preschool Curriculum Planner
+Kindergarten Principal' WHERE id = '98bc9317-b447-43d0-ada7-10b80a7043b5';
+UPDATE public.courses SET overview = 'The Master in Accounting/Finance (by research) is a specialized master''s program focused on conducting in-depth research in the fields of accounting and finance, aiming to develop theoretical frameworks and make significant contributions to these disciplines. Students work closely with faculty advisors to conduct research projects in specific areas of accounting or finance, contributing to the advancement of knowledge in these fields.
+
+Entry Requirements
+ A Bachelor’s Degree with good honours from KUTPM(MSU)
+
+For other qualifications and certificates (e.g., Other qualifications equivalent to a Bachelor’s degree , etc..) please contact our educational consultants or submit your application for Admission assessment.
+
+Future Careers
+
+Financial analysts , Researchers , Financial managers , Risk managers, Auditors , Investment bankers, Consultants.' WHERE id = '93602110-d15c-478e-8988-67ff770eea77';
+UPDATE public.courses SET overview = 'Doctor of Philosophy in Fluid Dynamics By Research Mode at Universiti Putra Malaysia (UPM) provides an advanced investigation into the complexities of fluid flow and its myriad applications in fields like aerodynamics, hydrology, and fuel transport. This program delves into the nonlinear differential equations governing fluid motion, focusing on both analytical manipulations and numerical computations due to the lack of closed-form solutions. PhD candidates will engage in cutting-edge research areas, including the stability of fluid flow, surface tension gradient phenomena, and granular flow, preparing them for significant contributions to the field of fluid dynamics.
+
+Entry Requirements
+
+• A Master’s degree in the field or related fields accepted by the UPM Senate
+
+For other qualifications and certificates (e.g., Other qualifications equivalent to a Master’s degree , etc..) please contact our educational consultants or submit your application for Admission assessment.' WHERE id = 'dc7bf90a-f151-4ef6-8937-ef9318a263e0';
+UPDATE public.courses SET overview = 'The Postgraduate Diploma in Education at Tunku Abdul Rahman University of Management and Technology (TAR UMT) aims to provide a comprehensive training platform for graduates, preparing them to excel as educators in the New Academia. 
+
+The program focuses on cultivating essential skills and knowledge that enable educators to effectively guide 21st-century students towards outstanding achievements in their respective fields. By fostering innovative teaching practices and a deep understanding of contemporary educational challenges, graduates are well-equipped to make a significant impact in the education sector.
+
+Entry Requirements
+
+A Bachelor''s degree (Level 6 Malaysian Qualifications Framework, MQF) or equivalent with a minimum CGPA of 2.50 as accepted by the HEP Senate.
+
+For other qualifications and certificates (e.g., Other qualifications equivalent to a Bachelor’s degree , etc..) please contact our educational consultants or submit your application for Admission assessment.
+
+Future Careers
+Teachers
+Lecturers
+Academic Advisors
+Programme and Development Trainers' WHERE id = '25bfcb98-eed7-462c-ab8c-f26e714b8064';
+UPDATE public.courses SET overview = 'The Diploma in Accounting program at Tunku Abdul Rahman University of Management and Technology (TAR UMT) offers a comprehensive education in the knowledge and skills essential for a career in accountancy and finance. The curriculum encompasses key areas such as financial accounting and reporting, sustainability reporting, management accounting and control, accounting information systems, audit and assurance, public sector accounting, taxation, corporate governance, and professional values and ethics. This diverse range of topics equips students with the expertise needed to excel in the accounting profession.
+
+Entry Requirements
+
+SPM  
+
+3 Credits in Relevant Subjects
+SPM Credit / lGrade C in Mathematics
+English Language Requirement:
+SPM Pass Grade C in English Language
+
+For other qualifications and certificates (e.g., UEC, Foundation, STAM, etc..) please contact our educational consultants or submit your application for Admission assessment.
+
+Future Careers
+Accounting
+Corporate Reporting
+Corporate Finance
+Management Accounting
+Financial Management
+Assurance Services
+Treasury
+Taxation
+Business Analysis
+Business Consultancy
+Finance
+Risk Management
+Corporate Advisory
+Financial Analysis' WHERE id = '36f63a80-0547-4c96-8227-0c4546a5dccc';
