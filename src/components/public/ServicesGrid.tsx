@@ -46,9 +46,13 @@ export function ServicesGrid() {
 
         <div className="relative">
           {/* Connecting Process Line - Aligned to middle of numbers */}
-          <div className="hidden lg:flex absolute top-[144px] left-1/2 -translate-x-1/2 w-[75%] h-0.5 bg-[#181d29]/10 items-center justify-between pointer-events-none z-0">
-            <div className="w-2 h-2 rounded-full bg-[#181d29]/30 -ml-1" />
-            <ArrowRight className="w-4 h-4 text-[#181d29]/30 -mr-2" />
+          <div className="hidden lg:flex absolute top-[176px] left-1/2 -translate-x-1/2 w-[88%] h-3 items-center pointer-events-none z-0 opacity-30 text-[#ffa300]">
+            {/* Start Circle */}
+            <div className="w-3 h-3 rounded-full bg-current shrink-0" />
+            {/* Line */}
+            <div className="flex-grow h-0.5 bg-current -ml-1 -mr-1" />
+            {/* End Arrow Head (Filled) */}
+            <div className="w-0 h-0 border-y-[5px] border-y-transparent border-l-[10px] border-l-current shrink-0" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
@@ -56,8 +60,8 @@ export function ServicesGrid() {
               <Link key={s.title} to={s.link} className="relative group">
                 <div className="text-center">
                   {/* Step Image */}
-                  <div className="mx-auto mb-8 h-24 w-24 flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
-                    <img src={s.image} alt={s.title} className="w-full h-full object-contain drop-shadow-sm" />
+                  <div className="mx-auto mb-8 h-32 w-32 flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
+                    <img src={s.image} alt={s.title} className="w-full h-full" />
                   </div>
 
                   {/* Step Number with Shadow/Offset */}
