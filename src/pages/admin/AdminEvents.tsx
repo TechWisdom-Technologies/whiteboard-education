@@ -15,7 +15,7 @@ export default function AdminEvents() {
     { key: "time", label: "Time", showInTable: true, placeholder: "10:00 AM" },
     { key: "description", label: "Description", type: "textarea", showInTable: false },
     { key: "spots_left", label: "Spots Left", type: "number", showInTable: true },
-    { key: "university_ids", label: "University IDs", type: "json_array", showInTable: false, helpText: 'JSON array of university UUIDs: ["uuid1","uuid2"]', placeholder: '["uuid-1","uuid-2"]' },
+    { key: "university_ids", label: "University IDs", type: "json_array", showInTable: false, placeholder: '["uuid-1","uuid-2"]' },
   ];
 
   return (

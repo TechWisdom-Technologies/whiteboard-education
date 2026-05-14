@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   GraduationCap, Menu, ChevronDown, LogOut, LayoutDashboard, ShieldCheck, Phone,
-  Calculator, RefreshCw, Sparkles, ChevronRight, MapPin, Home, Award, GitCompare,
-  BookOpen, FileText, Calendar, Building2, Languages, PenTool, User, Wrench, Zap,
+  Calculator, RefreshCw, Sparkles, ChevronRight, MapPin, Home, GitCompare,
+  BookOpen, FileText, Building2, Languages, PenTool, User, Wrench, Zap,
   Handshake, LogIn
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -38,13 +38,11 @@ const cityLinks = [
 
 const resourceToolsLinks = [
   { label: "Blog", to: "/blog", icon: PenTool },
-  { label: "Events & Webinars", to: "/events", icon: Calendar },
   { label: "Alumni", to: "/alumni", icon: User },
   { label: "AI Eligibility Test", to: "/eligibility", icon: Sparkles },
   { label: "Compare Universities", to: "/compare", icon: GitCompare },
   { label: "Cost Calculator", to: "/tools/calculator", icon: Calculator },
   { label: "GPA Converter", to: "/tools/gpa-converter", icon: RefreshCw },
-  { label: "Scholarships", to: "/scholarships", icon: Award },
   { label: "Visa Guide", to: "/visa-guide", icon: FileText },
 ];
 
@@ -64,12 +62,10 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
 
   const toolsRoots = [
     "/blog",
-    "/events",
     "/alumni",
     "/eligibility",
     "/compare",
     "/tools",
-    "/scholarships",
     "/visa-guide",
   ];
 

@@ -17,7 +17,7 @@ const fields: FieldConfig[] = [
   { key: "amenities", label: "Amenities", type: "tag_input", showInTable: false, placeholder: "e.g. WiFi, Gym, Pool, Laundry, 24h Security" },
   { key: "contact_phone", label: "Contact Phone", showInTable: false },
   { key: "contact_email", label: "Contact Email", showInTable: false },
-  { key: "near_university_ids", label: "Nearby University IDs", type: "json_array", showInTable: false, helpText: 'JSON array of university UUIDs', placeholder: '["uuid-1","uuid-2"]' },
+  { key: "near_university_ids", label: "Nearby University IDs", type: "json_array", showInTable: false, placeholder: '["uuid-1","uuid-2"]' },
 ];
 
 export default function AdminAccommodations() {

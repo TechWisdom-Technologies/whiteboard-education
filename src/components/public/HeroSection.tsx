@@ -50,7 +50,7 @@ export function HeroSection() {
   };
 
   return (
-    <section className="relative bg-[#f8f9fb] pt-0 pb-24 lg:pb-32 overflow-hidden">
+    <section className="relative bg-[#f8f9fb] pt-0 pb-16 lg:pb-16 overflow-hidden">
       {/* Background Watermark Text */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
         <div className="absolute top-[-10%] left-[-10%] w-[120%] h-[120%] flex flex-col gap-24 transform -rotate-12">

@@ -41,7 +41,6 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
               <li><Link to="/language-centers" className="hover:text-[#ffa300] transition-colors">Language Centers</Link></li>
               <li><Link to="/destinations/malaysia" className="hover:text-[#ffa300] transition-colors">Study in Malaysia</Link></li>
               <li><Link to="/eligibility" className="hover:text-[#ffa300] transition-colors">Eligibility Test</Link></li>
-              <li><Link to="/events" className="hover:text-[#ffa300] transition-colors">Events</Link></li>
             </ul>
           </div>
 
@@ -50,7 +49,6 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
             <ul className="space-y-2.5 text-sm" style={{ color: "#a2a6b0" }}>
               <li><Link to="/tools/calculator" className="hover:text-[#ffa300] transition-colors">Cost Calculator</Link></li>
               <li><Link to="/tools/gpa-converter" className="hover:text-[#ffa300] transition-colors">GPA Converter</Link></li>
-              <li><Link to="/scholarships" className="hover:text-[#ffa300] transition-colors">Scholarships</Link></li>
               <li><Link to="/visa-guide" className="hover:text-[#ffa300] transition-colors">Visa Guide</Link></li>
               <li><Link to="/partner" className="hover:text-[#ffa300] transition-colors">For Agencies</Link></li>
               <li><Link to="/login" className="hover:text-[#ffa300] transition-colors">Sign In</Link></li>

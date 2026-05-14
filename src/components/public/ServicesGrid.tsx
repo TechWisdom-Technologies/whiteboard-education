@@ -30,19 +30,16 @@ const services = [
 
 export function ServicesGrid() {
   return (
-    <section className="py-24 bg-white relative overflow-hidden">
+    <section className="py-16 bg-white relative overflow-hidden">
       {/* Organic Background Blob */}
       <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#ffa300]/5 rounded-full blur-[80px] pointer-events-none" />
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-20">
-          <h2
-            className="text-3xl md:text-4xl font-bold mb-4"
-            style={{ fontFamily: "'Poppins', sans-serif", color: "#181d29" }}
-          >
+        <div className="text-center mb-12">
+          <h2 className="text-2xl md:text-3xl font-semibold text-[#181d29] mb-2">
             How we can help you?
           </h2>
-          <p className="text-[#515768] max-w-2xl mx-auto text-sm leading-relaxed">
+          <p className="text-[#515768] max-w-2xl mx-auto text-sm">
             Whiteboard Education provides comprehensive end-to-end support for your journey in Malaysia.
           </p>
         </div>

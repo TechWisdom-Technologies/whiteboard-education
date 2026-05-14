@@ -8,7 +8,6 @@ const navLinks = [
   { label: "Universities", href: "/countries" },
   { label: "Compare", href: "/compare" },
   { label: "Eligibility Test", href: "/eligibility" },
-  { label: "Events", href: "/events" },
   { label: "Cost Calculator", href: "/cost-calculator" },
   { label: "Partner With Us", href: "/b2b" },
 ];

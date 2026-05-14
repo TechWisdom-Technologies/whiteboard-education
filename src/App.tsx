@@ -21,8 +21,7 @@ import B2BLanding from "./pages/B2BLanding";
 import CostCalculator from "./pages/CostCalculator";
 import GpaConverter from "./pages/GpaConverter";
 import Compare from "./pages/Compare";
-import Events from "./pages/Events";
-import Scholarships from "./pages/Scholarships";
+
 import VisaGuide from "./pages/VisaGuide";
 import Housing from "./pages/Housing";
 import LanguagePrep from "./pages/LanguagePrep";
@@ -40,10 +39,8 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUniversities from "./pages/admin/AdminUniversities";
 import AdminCourses from "./pages/admin/AdminCourses";
 import AdminAccommodations from "./pages/admin/AdminAccommodations";
-import AdminScholarships from "./pages/admin/AdminScholarships";
 import AdminLanguageCenters from "./pages/admin/AdminLanguageCenters";
 import AdminBlogs from "./pages/admin/AdminBlogs";
-import AdminEvents from "./pages/admin/AdminEvents";
 import AdminPartners from "./pages/admin/AdminPartners";
 
 import AdminSettings from "./pages/admin/AdminSettings";
@@ -119,10 +116,8 @@ const App = () => (
             <Route path="/compare" element={<Compare />} />
 
             {/* Resources */}
-            <Route path="/scholarships" element={<Scholarships />} />
             <Route path="/visa-guide" element={<VisaGuide />} />
             <Route path="/housing" element={<Housing />} />
-            <Route path="/events" element={<Events />} />
             <Route path="/language-prep" element={<LanguagePrep />} />
             <Route path="/alumni" element={<Alumni />} />
             <Route path="/pre-departure" element={<PreDeparture />} />
@@ -178,10 +173,8 @@ const App = () => (
               <Route path="universities" element={<AdminUniversities />} />
               <Route path="courses" element={<AdminCourses />} />
               <Route path="accommodations" element={<AdminAccommodations />} />
-              <Route path="scholarships" element={<AdminScholarships />} />
               <Route path="language-centers" element={<AdminLanguageCenters />} />
               <Route path="blogs" element={<AdminBlogs />} />
-              <Route path="events" element={<AdminEvents />} />
               <Route path="partners" element={<AdminPartners />} />
               <Route path="students" element={<AdminStudents />} />
               <Route path="leads" element={<AdminLeads />} />

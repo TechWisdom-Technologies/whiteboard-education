@@ -1,4 +1,4 @@
-import { LayoutDashboard, GraduationCap, BookOpen, Home, Users, Settings, Award, Languages, FileText, Calendar, UserCheck, Target, LogOut } from "lucide-react";
+import { LayoutDashboard, GraduationCap, BookOpen, Home, Users, Settings, Languages, FileText, UserCheck, Target, LogOut } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -12,10 +12,8 @@ const items = [
   { title: "Universities", url: "/admin/universities", icon: GraduationCap },
   { title: "Courses", url: "/admin/courses", icon: BookOpen },
   { title: "Accommodations", url: "/admin/accommodations", icon: Home },
-  { title: "Scholarships", url: "/admin/scholarships", icon: Award },
   { title: "Language Centers", url: "/admin/language-centers", icon: Languages },
   { title: "Blog Posts", url: "/admin/blogs", icon: FileText },
-  { title: "Events", url: "/admin/events", icon: Calendar },
   { title: "B2B Partners", url: "/admin/partners", icon: Users },
   { title: "Students", url: "/admin/students", icon: UserCheck },
   { title: "Leads", url: "/admin/leads", icon: Target },
@@ -37,22 +35,26 @@ export function AdminSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border bg-sidebar-background">
-      {/* Sidebar Header containing logo & email */}
+      {/* Sidebar Header containing logo */}
       <div className="border-b border-sidebar-border/50 py-4 px-4 bg-sidebar-background flex flex-col gap-1 flex-shrink-0">
         <div className="flex items-center gap-2">
+          <div
+            className="h-8 w-8 bg-[#ffa300] flex items-center justify-center flex-shrink-0"
+            style={{ clipPath: "polygon(0 0, 100% 0, 100% 75%, 75% 100%, 0 100%)" }}
+          >
+            <GraduationCap className="h-4 w-4 text-[#0c0f16]" />
+          </div>
           {!collapsed && (
-            <span className="text-lg font-extrabold">
-              <span className="text-sidebar-primary-foreground">Your</span>
-              <span className="text-sidebar-primary">Uni</span>
-              <span className="text-sidebar-foreground/50 text-xs ml-2 font-normal">Admin</span>
-            </span>
+            <div className="leading-none min-w-0">
+              <div className="text-white font-extrabold text-[13px] tracking-wide" style={{ fontFamily: "Poppins, sans-serif" }}>
+                WHITEBOARD
+              </div>
+              <div className="text-[#ffa300] text-[8px] font-semibold tracking-[0.25em] uppercase mt-0.5">
+                Education
+              </div>
+            </div>
           )}
         </div>
-        {!collapsed && (
-          <div className="text-[11px] text-sidebar-foreground/70 truncate w-full" title={user?.email || ""}>
-            {user?.email} {hasRole("admin") && <span className="text-sidebar-primary font-semibold">(Admin)</span>}
-          </div>
-        )}
       </div>
 
       {/* Sidebar Content containing shifted-down menu items */}

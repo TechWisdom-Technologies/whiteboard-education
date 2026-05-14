@@ -10,7 +10,7 @@ const fields: FieldConfig[] = [
   { key: "duration", label: "Duration", showInTable: false, placeholder: "e.g. 6 months" },
   { key: "overview", label: "Overview", type: "textarea", showInTable: false },
   { key: "intake_months", label: "Intake Months", type: "tag_input", showInTable: false, placeholder: "e.g. January, May, September" },
-  { key: "curriculum", label: "Curriculum", type: "json_array", showInTable: false, helpText: 'JSON array: [{"module":"Grammar","hours":40}]', placeholder: '[{"module":"Grammar","hours":40}]' },
+  { key: "curriculum", label: "Curriculum", type: "json_array", showInTable: false, placeholder: '[{"module":"Grammar","hours":40}]' },
 ];
 
 export default function AdminLanguageCenters() {

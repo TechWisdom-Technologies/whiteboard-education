@@ -2,9 +2,11 @@ import { Outlet, useLocation } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminNotificationCenter } from "@/components/admin/AdminNotificationCenter";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function AdminLayout() {
   const location = useLocation();
+  const { user, hasRole } = useAuth();
 
   const getPageTitle = () => {
     const path = location.pathname;
@@ -12,10 +14,8 @@ export default function AdminLayout() {
     if (path.includes("/admin/universities")) return "Universities";
     if (path.includes("/admin/courses")) return "Courses";
     if (path.includes("/admin/accommodations")) return "Accommodations";
-    if (path.includes("/admin/scholarships")) return "Scholarships";
     if (path.includes("/admin/language-centers")) return "Language Centers";
     if (path.includes("/admin/blogs")) return "Blog Posts";
-    if (path.includes("/admin/events")) return "Events";
     if (path.includes("/admin/partners")) return "B2B Partners";
     if (path.includes("/admin/students")) return "Students";
     if (path.includes("/admin/leads")) return "Leads";
@@ -35,7 +35,11 @@ export default function AdminLayout() {
                 {getPageTitle()}
               </span>
             </div>
-            <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-end">
+            <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto justify-end">
+              <span className="text-[11px] text-muted-foreground truncate max-w-[200px] hidden sm:inline" title={user?.email || ""}>
+                {user?.email}
+                {hasRole("admin") && <span className="text-primary font-semibold ml-1">(Admin)</span>}
+              </span>
               <AdminNotificationCenter />
             </div>
           </header>

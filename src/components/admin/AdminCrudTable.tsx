@@ -99,64 +99,285 @@ function TagInput({ value, onChange, placeholder }: { value: string[]; onChange:
 }
 
 function JsonObjectEditor({ value, onChange, placeholder }: { value: any; onChange: (v: any) => void; placeholder?: string }) {
-  const [text, setText] = useState(() => {
-    try { return typeof value === "string" ? value : JSON.stringify(value, null, 2); } catch { return "{}"; }
-  });
-  const [error, setError] = useState("");
-
-  const handleBlur = () => {
+  // Parse initial value into key-value pairs
+  const getEntries = (): Array<{ key: string; value: string }> => {
     try {
-      const parsed = JSON.parse(text);
-      onChange(parsed);
-      setError("");
-    } catch {
-      setError("Invalid JSON");
-    }
+      const obj = typeof value === "string" ? JSON.parse(value) : value;
+      if (obj && typeof obj === "object" && !Array.isArray(obj)) {
+        return Object.entries(obj).map(([k, v]) => ({ key: k, value: String(v) }));
+      }
+    } catch { /* ignore */ }
+    return [];
   };
 
+  const [entries, setEntries] = useState(getEntries);
+
+  const sync = (updated: Array<{ key: string; value: string }>) => {
+    setEntries(updated);
+    const obj: Record<string, string> = {};
+    updated.forEach(({ key, value: val }) => { if (key.trim()) obj[key.trim()] = val; });
+    onChange(obj);
+  };
+
+  const updateEntry = (index: number, field: "key" | "value", val: string) => {
+    const updated = [...entries];
+    updated[index] = { ...updated[index], [field]: val };
+    sync(updated);
+  };
+
+  const addEntry = () => sync([...entries, { key: "", value: "" }]);
+  const removeEntry = (i: number) => sync(entries.filter((_, j) => j !== i));
+
+  // Parse hint keys from placeholder like {"IELTS":"6.0"}
+  const hintKeys = (() => {
+    if (!placeholder) return null;
+    try {
+      const parsed = JSON.parse(placeholder);
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) return Object.keys(parsed);
+    } catch { /* ignore */ }
+    return null;
+  })();
+
   return (
-    <div>
-      <Textarea
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        onBlur={handleBlur}
-        placeholder={placeholder || '{"key": "value"}'}
-        rows={4}
-        className="font-mono text-xs"
-      />
-      {error && <p className="text-xs text-destructive mt-1">{error}</p>}
+    <div className="space-y-2">
+      {entries.length === 0 && (
+        <p className="text-xs text-muted-foreground italic py-2">No entries yet. Click "Add" to start.</p>
+      )}
+      {entries.map((entry, i) => (
+        <div key={i} className="flex items-center gap-2">
+          <Input
+            value={entry.key}
+            onChange={(e) => updateEntry(i, "key", e.target.value)}
+            placeholder={hintKeys?.[0] || "Key"}
+            className="flex-1 h-8 text-xs"
+          />
+          <Input
+            value={entry.value}
+            onChange={(e) => updateEntry(i, "value", e.target.value)}
+            placeholder="Value"
+            className="flex-1 h-8 text-xs"
+          />
+          <Button type="button" variant="ghost" size="icon" className="h-7 w-7 text-destructive flex-shrink-0" onClick={() => removeEntry(i)}>
+            <X className="h-3 w-3" />
+          </Button>
+        </div>
+      ))}
+      <Button type="button" variant="outline" size="sm" className="h-7 text-xs" onClick={addEntry}>
+        <Plus className="h-3 w-3 mr-1" /> Add Entry
+      </Button>
     </div>
   );
 }
 
 function JsonArrayEditor({ value, onChange, placeholder }: { value: any; onChange: (v: any) => void; placeholder?: string }) {
-  const [text, setText] = useState(() => {
-    try { return typeof value === "string" ? value : JSON.stringify(value, null, 2); } catch { return "[]"; }
-  });
-  const [error, setError] = useState("");
-
-  const handleBlur = () => {
-    try {
-      const parsed = JSON.parse(text);
-      if (!Array.isArray(parsed)) throw new Error("Must be array");
-      onChange(parsed);
-      setError("");
-    } catch {
-      setError("Invalid JSON array");
+  // Detect the shape from the placeholder/existing data
+  const detectKeys = (): string[] | null => {
+    // Try from placeholder
+    if (placeholder) {
+      try {
+        const parsed = JSON.parse(placeholder);
+        if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === "object" && parsed[0] !== null) {
+          return Object.keys(parsed[0]);
+        }
+      } catch { /* ignore */ }
     }
+    // Try from existing value
+    const arr = Array.isArray(value) ? value : (() => { try { return JSON.parse(value); } catch { return []; } })();
+    if (Array.isArray(arr) && arr.length > 0 && typeof arr[0] === "object" && arr[0] !== null) {
+      return Object.keys(arr[0]);
+    }
+    return null;
   };
 
+  const objectKeys = detectKeys();
+  const isObjectArray = objectKeys !== null;
+
+  const getItems = (): any[] => {
+    try {
+      const arr = Array.isArray(value) ? value : JSON.parse(value);
+      if (Array.isArray(arr)) return arr;
+    } catch { /* ignore */ }
+    return [];
+  };
+
+  const [items, setItems] = useState(getItems);
+
+  const sync = (updated: any[]) => {
+    setItems(updated);
+    onChange(updated);
+  };
+
+  // --- Plain string array mode ---
+  if (!isObjectArray) {
+    const addItem = () => sync([...items, ""]);
+    const updateItem = (i: number, val: string) => {
+      const updated = [...items];
+      updated[i] = val;
+      sync(updated);
+    };
+    const removeItem = (i: number) => sync(items.filter((_, j) => j !== i));
+
+    return (
+      <div className="space-y-2">
+        {items.length === 0 && (
+          <p className="text-xs text-muted-foreground italic py-2">No items yet. Click "Add" to start.</p>
+        )}
+        {items.map((item, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <Input
+              value={String(item || "")}
+              onChange={(e) => updateItem(i, e.target.value)}
+              placeholder={`Item ${i + 1}`}
+              className="flex-1 h-8 text-xs"
+            />
+            <Button type="button" variant="ghost" size="icon" className="h-7 w-7 text-destructive flex-shrink-0" onClick={() => removeItem(i)}>
+              <X className="h-3 w-3" />
+            </Button>
+          </div>
+        ))}
+        <Button type="button" variant="outline" size="sm" className="h-7 text-xs" onClick={addItem}>
+          <Plus className="h-3 w-3 mr-1" /> Add Item
+        </Button>
+      </div>
+    );
+  }
+
+  // --- Object array mode ---
+  const addItem = () => {
+    const empty: Record<string, any> = {};
+    objectKeys.forEach((k) => (empty[k] = ""));
+    sync([...items, empty]);
+  };
+
+  const updateField = (itemIndex: number, key: string, val: string) => {
+    const updated = [...items];
+    updated[itemIndex] = { ...updated[itemIndex], [key]: val };
+    sync(updated);
+  };
+
+  const removeItem = (i: number) => sync(items.filter((_, j) => j !== i));
+
+  // Check if any key likely holds long text (description, answer, etc.)
+  const longKeys = new Set(
+    objectKeys.filter((k) => /desc|answer|content|text|body|note|detail|overview|summary/i.test(k))
+  );
+
+  // Check for nested array keys (like "modules")
+  const nestedArrayKeys = new Set(
+    objectKeys.filter((k) => {
+      return items.some((item) => Array.isArray(item?.[k]));
+    })
+  );
+
   return (
-    <div>
-      <Textarea
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        onBlur={handleBlur}
-        placeholder={placeholder || '[{"key": "value"}]'}
-        rows={4}
-        className="font-mono text-xs"
-      />
-      {error && <p className="text-xs text-destructive mt-1">{error}</p>}
+    <div className="space-y-2">
+      {items.length === 0 && (
+        <p className="text-xs text-muted-foreground italic py-2">No items yet. Click "Add" to start.</p>
+      )}
+      {items.map((item, i) => (
+        <div key={i} className="border bg-muted/30 p-3 space-y-2 relative group">
+          {/* Item number badge and delete */}
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">
+              Item {i + 1}
+            </span>
+            <Button type="button" variant="ghost" size="icon" className="h-6 w-6 text-destructive opacity-60 hover:opacity-100" onClick={() => removeItem(i)}>
+              <X className="h-3 w-3" />
+            </Button>
+          </div>
+          {objectKeys.map((key) => {
+            // Skip rendering nested arrays as simple inputs — show a sub-list
+            if (nestedArrayKeys.has(key)) {
+              const subItems: any[] = Array.isArray(item?.[key]) ? item[key] : [];
+              return (
+                <div key={key}>
+                  <label className="text-[11px] font-semibold text-muted-foreground capitalize block mb-1">
+                    {key.replace(/_/g, " ")}
+                  </label>
+                  <div className="space-y-1 pl-2 border-l-2 border-primary/20">
+                    {subItems.map((sub, si) => (
+                      <div key={si} className="flex items-center gap-1.5">
+                        {typeof sub === "object" && sub !== null ? (
+                          Object.keys(sub).map((sk) => (
+                            <Input
+                              key={sk}
+                              value={String(sub[sk] || "")}
+                              onChange={(e) => {
+                                const updatedSub = [...subItems];
+                                updatedSub[si] = { ...updatedSub[si], [sk]: e.target.value };
+                                updateField(i, key, updatedSub);
+                              }}
+                              placeholder={sk.replace(/_/g, " ")}
+                              className="flex-1 h-7 text-xs"
+                            />
+                          ))
+                        ) : (
+                          <Input
+                            value={String(sub || "")}
+                            onChange={(e) => {
+                              const updatedSub = [...subItems];
+                              updatedSub[si] = e.target.value;
+                              updateField(i, key, updatedSub);
+                            }}
+                            placeholder={`${key} ${si + 1}`}
+                            className="flex-1 h-7 text-xs"
+                          />
+                        )}
+                        <Button type="button" variant="ghost" size="icon" className="h-6 w-6 text-destructive flex-shrink-0" onClick={() => {
+                          const updatedSub = subItems.filter((_, j) => j !== si);
+                          updateField(i, key, updatedSub);
+                        }}>
+                          <X className="h-2.5 w-2.5" />
+                        </Button>
+                      </div>
+                    ))}
+                    <Button
+                      type="button" variant="ghost" size="sm" className="h-6 text-[10px] px-2"
+                      onClick={() => {
+                        // Detect sub-item shape
+                        const sample = subItems[0];
+                        const newSub = sample && typeof sample === "object"
+                          ? Object.fromEntries(Object.keys(sample).map((k) => [k, ""]))
+                          : "";
+                        updateField(i, key, [...subItems, newSub]);
+                      }}
+                    >
+                      <Plus className="h-2.5 w-2.5 mr-0.5" /> Add {key.replace(/_/g, " ").replace(/s$/, "")}
+                    </Button>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div key={key}>
+                <label className="text-[11px] font-semibold text-muted-foreground capitalize block mb-0.5">
+                  {key.replace(/_/g, " ")}
+                </label>
+                {longKeys.has(key) ? (
+                  <Textarea
+                    value={String(item?.[key] || "")}
+                    onChange={(e) => updateField(i, key, e.target.value)}
+                    placeholder={key.replace(/_/g, " ")}
+                    rows={2}
+                    className="text-xs"
+                  />
+                ) : (
+                  <Input
+                    value={String(item?.[key] || "")}
+                    onChange={(e) => updateField(i, key, e.target.value)}
+                    placeholder={key.replace(/_/g, " ")}
+                    className="h-8 text-xs"
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      ))}
+      <Button type="button" variant="outline" size="sm" className="h-7 text-xs" onClick={addItem}>
+        <Plus className="h-3 w-3 mr-1" /> Add Item
+      </Button>
     </div>
   );
 }
@@ -709,7 +930,7 @@ export default function AdminCrudTable({
             </Button>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

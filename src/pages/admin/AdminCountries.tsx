@@ -19,8 +19,8 @@ export default function AdminCountries() {
     { key: "banner_image", label: "Banner Image URL", showInTable: false },
     { key: "about_text", label: "About Text", type: "textarea", showInTable: false },
     { key: "post_study_work_rights", label: "Post-Study Work Rights", type: "textarea", showInTable: false },
-    { key: "reasons_to_study", label: "Reasons to Study", type: "json_array", showInTable: false, helpText: 'JSON array: [{"title":"...","description":"..."}]', placeholder: '[{"title":"Affordable Tuition","description":"Low cost..."}]' },
-    { key: "cost_of_living", label: "Cost of Living", type: "json_array", showInTable: false, helpText: 'JSON object: {"rent":"$300","food":"$150",...}', placeholder: '{"rent":"$300","food":"$150","transport":"$50"}' },
+    { key: "reasons_to_study", label: "Reasons to Study", type: "json_array", showInTable: false, placeholder: '[{"title":"Affordable Tuition","description":"Low cost..."}]' },
+    { key: "cost_of_living", label: "Cost of Living", type: "json_array", showInTable: false, placeholder: '{"rent":"$300","food":"$150","transport":"$50"}' },
   ];
 
   return (

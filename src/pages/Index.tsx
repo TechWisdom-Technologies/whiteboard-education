@@ -6,7 +6,7 @@ import { ServicesGrid } from "@/components/public/ServicesGrid";
 import { StatsBanner } from "@/components/public/StatsBanner";
 import { WhyMalaysiaSection } from "@/components/public/WhyMalaysiaSection";
 import { TestimonialsSection } from "@/components/public/TestimonialsSection";
-import { CounselorTeamSection } from "@/components/public/CounselorTeamSection";
+
 import { BlogSection } from "@/components/public/BlogSection";
 import { UniversityPartnersSection } from "@/components/public/UniversityPartnersSection";
 import { PreFooterCTA } from "@/components/public/PreFooterCTA";
@@ -36,8 +36,7 @@ const Index = () => {
         {/* 5. Testimonials/Student Stories */}
         <TestimonialsSection />
 
-        {/* 6. Counselor/Team Introduction */}
-        <CounselorTeamSection />
+
 
         {/* 7. Latest Articles/Guides */}
         <BlogSection />
