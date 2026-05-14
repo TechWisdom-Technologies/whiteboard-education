@@ -3,25 +3,25 @@ import { Link } from "react-router-dom";
 
 const services = [
   {
-    icon: "https://cdn-icons-png.flaticon.com/512/1995/1995539.png", // Handshake/Consultation
+    image: "/images/services/consultation.png",
     title: "Free consultations",
     description: "Choose the perfect courses and universities in Malaysia according to your interest, eligibility and budget.",
     link: "/eligibility"
   },
   {
-    icon: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", // Document/Admission
+    image: "/images/services/admission.png",
     title: "University admission & visa",
     description: "Submit all necessary documents to complete the university's admission procedures as well as visa application.",
     link: "/visa-guide"
   },
   {
-    icon: "https://cdn-icons-png.flaticon.com/512/619/619153.png", // Accommodation/House
+    image: "/images/services/accommodation.png",
     title: "Preparing accommodation",
     description: "Cost-saving for students to arrange accommodation before arriving. We send a variety of options for you to choose.",
     link: "/housing"
   },
   {
-    icon: "https://cdn-icons-png.flaticon.com/512/754/754848.png", // Airport Pickup
+    image: "/images/services/airport.png",
     title: "Airport pickup",
     description: "We have a team that will pick you up from the airport and drive you to the selected accommodation.",
     link: "/pre-departure"
@@ -55,9 +55,9 @@ export function ServicesGrid() {
             {services.map((s, i) => (
               <Link key={s.title} to={s.link} className="relative group">
                 <div className="text-center">
-                  {/* Step Icon */}
+                  {/* Step Image */}
                   <div className="mx-auto mb-8 h-24 w-24 flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
-                    <img src={s.icon} alt={s.title} className="w-full h-full object-contain" />
+                    <img src={s.image} alt={s.title} className="w-full h-full object-contain drop-shadow-sm" />
                   </div>
 
                   {/* Step Number with Shadow/Offset */}
@@ -71,13 +71,13 @@ export function ServicesGrid() {
                   </div>
 
                   <h3
-                    className="font-bold text-lg mb-3 group-hover:text-[#ffa300] transition-colors"
+                    className="font-semibold text-lg mb-3 group-hover:text-[#ffa300] transition-colors"
                     style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}
                   >
                     {s.title}
                   </h3>
                   <p
-                    className="text-sm leading-relaxed"
+                    className="text-[13px] leading-relaxed"
                     style={{ color: "#515768", fontFamily: "Poppins, sans-serif" }}
                   >
                     {s.description}
