@@ -1,4 +1,3 @@
-import { useState, useCallback } from "react";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { HeroSection } from "@/components/public/HeroSection";
@@ -10,13 +9,9 @@ import { TestimonialsSection } from "@/components/public/TestimonialsSection";
 import { BlogSection } from "@/components/public/BlogSection";
 import { UniversityPartnersSection } from "@/components/public/UniversityPartnersSection";
 import { PreFooterCTA } from "@/components/public/PreFooterCTA";
-import { LeadBanner } from "@/components/public/LeadBanner";
 import { VideoExpertWidget } from "@/components/public/VideoExpertWidget";
 
 const Index = () => {
-  const [bannerVisible, setBannerVisible] = useState(false);
-  const handleBannerVisibility = useCallback((visible: boolean) => setBannerVisible(visible), []);
-
   return (
     <div className="min-h-screen bg-white">
       <MegaMenu />
@@ -48,9 +43,8 @@ const Index = () => {
         <PreFooterCTA />
       </main>
 
-      <PublicFooter bannerVisible={bannerVisible} />
-      <LeadBanner onVisibilityChange={handleBannerVisibility} />
-      <VideoExpertWidget bannerVisible={bannerVisible} />
+      <PublicFooter />
+      <VideoExpertWidget />
     </div>
   );
 };

@@ -84,7 +84,7 @@ export function TestimonialsSection() {
                 <p className="testimonial-quote">{t.quote}</p>
 
                 {/* Rating */}
-                <div className="flex gap-0.5 mb-4">
+                <div className="flex gap-0.5 mb-3">
                   {Array.from({ length: t.rating }).map((_, i) => (
                     <Star key={i} className="h-4 w-4 fill-[#ffa300] text-[#ffa300]" />
                   ))}

@@ -55,19 +55,21 @@ export function WhyMalaysiaSection() {
                 <div className={`absolute -inset-4 rounded-sm z-0 ${i % 2 === 0 ? 'bg-[#ffa300]/10 -rotate-2' : 'bg-[#181d29]/5 rotate-2'}`} />
               </div>
 
-              <div className="flex-1 space-y-6">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-[#ffa300]/10 text-[#ffa300] text-sm font-bold uppercase tracking-wider">
-                  Reason 0{i + 1}
+              <div className="flex-1 space-y-6 relative">
+                {/* Large watermark number */}
+                <div className="absolute -top-4 -left-4 md:-top-6 md:-left-8 text-7xl md:text-8xl font-black text-[#ffa300]/5 select-none pointer-events-none z-0">
+                  0{i + 1}
                 </div>
-                <h3 className="">{p.title}</h3>
-                <p className="">
+                
+                <h3 className="text-xl font-semibold text-[#181d29] relative z-10">{p.title}</h3>
+                <p className="text-[15px] text-[#515768] text-justify leading-relaxed">
                   {p.desc}
                 </p>
-                <ul className="space-y-4">
+                <ul className="space-y-2 text-[13px]">
                   {p.benefits.map((benefit, j) => (
-                    <li key={j} className="flex items-center gap-3 text-gray-700">
-                      <CheckCircle2 className="h-5 w-5 text-[#ffa300]" />
-                      <span className="font-medium">{benefit}</span>
+                    <li key={j} className="flex items-center gap-3 text-[#515768]">
+                      <CheckCircle2 className="h-4 w-4 text-[#ffa300] flex-shrink-0" />
+                      <span>{benefit}</span>
                     </li>
                   ))}
                 </ul>
