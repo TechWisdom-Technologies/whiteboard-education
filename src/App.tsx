@@ -106,8 +106,8 @@ const App = () => (
             {/* Directories */}
             <Route path="/universities" element={<Universities2 />} />
             <Route path="/universities/:universityId" element={<UniversityDetail />} />
-            <Route path="/courses" element={<CoursesPage />} />
-            <Route path="/courses2" element={<Courses2 />} />
+            <Route path="/courses" element={<Courses2 />} />
+            <Route path="/courses-legacy" element={<CoursesPage />} />
             <Route path="/courses/:courseId" element={<CourseDetail />} />
 
             {/* Tools */}

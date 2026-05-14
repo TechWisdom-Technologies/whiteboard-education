@@ -200,17 +200,25 @@ export default function Universities() {
   // Generate page numbers for pagination
   const getPageNumbers = () => {
     const pages: (number | "ellipsis")[] = [];
-    if (totalPages <= 7) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
-      pages.push(1);
-      if (currentPage > 3) pages.push("ellipsis");
-      const start = Math.max(2, currentPage - 1);
-      const end = Math.min(totalPages - 1, currentPage + 1);
-      for (let i = start; i <= end; i++) pages.push(i);
-      if (currentPage < totalPages - 2) pages.push("ellipsis");
-      pages.push(totalPages);
+    
+    // Dynamic sliding window of 10 pages (e.g., 1-10, 10-19, 19-28)
+    const startPage = Math.floor((currentPage - 1) / 9) * 9 + 1;
+    const endPage = Math.min(startPage + 9, totalPages);
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
     }
+    
+    if (endPage < totalPages - 2) {
+      pages.push("ellipsis");
+      pages.push(totalPages - 1);
+      pages.push(totalPages);
+    } else if (endPage < totalPages) {
+      for (let i = endPage + 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    }
+    
     return pages;
   };
 
@@ -460,9 +468,9 @@ export default function Universities() {
                 </div>
               )}
 
-              {/* Pagination */}      {/* Pagination */}
+              {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-end gap-1.5 mt-10 mb-4">
+                <div className="flex items-center justify-center gap-1.5 mt-10 mb-4">
                   {/* Previous */}
                   <button
                     disabled={currentPage === 1}
@@ -470,7 +478,7 @@ export default function Universities() {
                     className="h-9 w-9 flex items-center justify-center border transition-colors disabled:opacity-30"
                     style={{
                       borderColor: "#cacdd4",
-                      borderRadius: "4px",
+                      borderRadius: "2px",
                       color: "#515768",
                       backgroundColor: "#ffffff",
                     }}
@@ -483,18 +491,18 @@ export default function Universities() {
                     page === "ellipsis" ? (
                       <span
                         key={`ellipsis-${i}`}
-                        className="h-9 w-9 flex items-center justify-center text-sm"
-                        style={{ color: "#999999" }}
+                        className="h-9 w-9 flex items-center justify-center text-sm font-medium tracking-[0.2em]"
+                        style={{ color: "#515768" }}
                       >
-                        …
+                        ...
                       </span>
                     ) : (
                       <button
                         key={page}
                         onClick={() => changePage(page)}
-                        className="h-9 w-9 flex items-center justify-center border text-sm font-bold transition-colors"
+                        className="h-9 w-9 flex items-center justify-center border text-sm font-medium transition-colors"
                         style={{
-                          borderRadius: "4px",
+                          borderRadius: "2px",
                           fontFamily: "Poppins, sans-serif",
                           backgroundColor: currentPage === page ? "#ffa300" : "#ffffff",
                           color: currentPage === page ? "#181d29" : "#515768",
@@ -513,7 +521,7 @@ export default function Universities() {
                     className="h-9 w-9 flex items-center justify-center border transition-colors disabled:opacity-30"
                     style={{
                       borderColor: "#cacdd4",
-                      borderRadius: "4px",
+                      borderRadius: "2px",
                       color: "#515768",
                       backgroundColor: "#ffffff",
                     }}
