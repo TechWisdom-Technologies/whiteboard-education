@@ -12,6 +12,7 @@ import Login from "./pages/Login";
 import Universities from "./pages/Universities";
 import Universities2 from "./pages/Universities2";
 import CoursesPage from "./pages/Courses";
+import Courses2 from "./pages/Courses2";
 import CourseDetail from "./pages/CourseDetail";
 import StudyInMalaysia from "./pages/StudyInMalaysia";
 import CityHub from "./pages/CityHub";
@@ -103,10 +104,10 @@ const App = () => (
             <Route path="/destinations/malaysia/:citySlug" element={<CityHub />} />
 
             {/* Directories */}
-            <Route path="/universities" element={<Universities />} />
-            <Route path="/universities2" element={<Universities2 />} />
+            <Route path="/universities" element={<Universities2 />} />
             <Route path="/universities/:universityId" element={<UniversityDetail />} />
             <Route path="/courses" element={<CoursesPage />} />
+            <Route path="/courses2" element={<Courses2 />} />
             <Route path="/courses/:courseId" element={<CourseDetail />} />
 
             {/* Tools */}

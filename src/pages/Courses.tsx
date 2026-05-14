@@ -119,12 +119,33 @@ export default function Courses() {
     setCurrentPage(1);
   }, [search, selectedLevel, selectedArea, selectedUniId]);
 
+  const AREA_KEYWORDS: Record<string, string[]> = {
+    "Business & Management": ["business", "management", "commerce", "accounting", "finance", "marketing", "mba", "administration", "economics", "entrepreneurship"],
+    "Engineering": ["engineering", "mechanical", "civil", "electrical", "mechatronics", "manufacturing", "chemical", "petroleum", "aerospace"],
+    "Computer Science & IT": ["computer", "computing", "software", "information technology", "cyber", "data", "ai", "intelligence", "it", "network", "programming", "cloud"],
+    "Medicine & Health": ["medicine", "nursing", "pharmacy", "dental", "health", "biomedical", "mbbs", "clinical", "surgery", "physiotherapy", "nutrition"],
+    "Arts & Design": ["art", "design", "media", "creative", "communication", "animation", "music", "film", "architecture", "interior", "fashion"],
+    "Natural Sciences": ["science", "mathematics", "physics", "chemistry", "biology", "actuarial", "statistics", "environmental", "biotechnology"],
+    "Law": ["law", "llb", "legal", "jurisprudence"],
+    "Social Sciences": ["social", "psychology", "education", "arts", "language", "english", "politics", "international relations", "sociology"]
+  };
+
   const filtered = useMemo(() => {
     return courses.filter((c: any) => {
       if (search && !c.title.toLowerCase().includes(search.toLowerCase())) return false;
       if (selectedLevel !== "All Levels" && !c.degree_level?.includes(selectedLevel)) return false;
       if (selectedUniId !== "all" && String(c.university_id) !== selectedUniId) return false;
-      if (selectedArea !== "All Areas" && !c.category?.includes(selectedArea)) return false;
+      
+      if (selectedArea !== "All Areas") {
+        const keywords = AREA_KEYWORDS[selectedArea];
+        if (keywords) {
+          const title = c.title?.toLowerCase() || "";
+          const category = c.category?.toLowerCase() || "";
+          const matches = keywords.some(kw => title.includes(kw) || category.includes(kw));
+          if (!matches) return false;
+        }
+      }
+      
       return true;
     });
   }, [courses, search, selectedLevel, selectedArea, selectedUniId]);

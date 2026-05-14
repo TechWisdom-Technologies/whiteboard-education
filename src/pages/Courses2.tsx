@@ -119,12 +119,33 @@ export default function Courses2() {
     setCurrentPage(1);
   }, [search, selectedLevel, selectedArea, selectedUniId]);
 
+  const AREA_KEYWORDS: Record<string, string[]> = {
+    "Business & Management": ["business", "management", "commerce", "accounting", "finance", "marketing", "mba", "administration", "economics", "entrepreneurship"],
+    "Engineering": ["engineering", "mechanical", "civil", "electrical", "mechatronics", "manufacturing", "chemical", "petroleum", "aerospace"],
+    "Computer Science & IT": ["computer", "computing", "software", "information technology", "cyber", "data", "ai", "intelligence", "it", "network", "programming", "cloud"],
+    "Medicine & Health": ["medicine", "nursing", "pharmacy", "dental", "health", "biomedical", "mbbs", "clinical", "surgery", "physiotherapy", "nutrition"],
+    "Arts & Design": ["art", "design", "media", "creative", "communication", "animation", "music", "film", "architecture", "interior", "fashion"],
+    "Natural Sciences": ["science", "mathematics", "physics", "chemistry", "biology", "actuarial", "statistics", "environmental", "biotechnology"],
+    "Law": ["law", "llb", "legal", "jurisprudence"],
+    "Social Sciences": ["social", "psychology", "education", "arts", "language", "english", "politics", "international relations", "sociology"]
+  };
+
   const filtered = useMemo(() => {
     return courses.filter((c: any) => {
       if (search && !c.title.toLowerCase().includes(search.toLowerCase())) return false;
       if (selectedLevel !== "All Levels" && !c.degree_level?.includes(selectedLevel)) return false;
       if (selectedUniId !== "all" && String(c.university_id) !== selectedUniId) return false;
-      if (selectedArea !== "All Areas" && !c.category?.includes(selectedArea)) return false;
+      
+      if (selectedArea !== "All Areas") {
+        const keywords = AREA_KEYWORDS[selectedArea];
+        if (keywords) {
+          const title = c.title?.toLowerCase() || "";
+          const category = c.category?.toLowerCase() || "";
+          const matches = keywords.some(kw => title.includes(kw) || category.includes(kw));
+          if (!matches) return false;
+        }
+      }
+      
       return true;
     });
   }, [courses, search, selectedLevel, selectedArea, selectedUniId]);
@@ -267,38 +288,32 @@ export default function Courses2() {
                       </Link>
                       <div className="flex-1 min-w-0">
                         <Link to={`/courses/${c.id}`}>
-                          <h3 className="font-bold hover:underline mb-2" style={{ fontFamily: "Poppins, sans-serif", fontSize: "22px", lineHeight: "28px", color: "#181d29" }}>{c.title}</h3>
+                          <h3 className="font-semibold hover:underline" style={{ fontFamily: "Poppins, sans-serif", fontSize: "20px", color: "#181d29" }}>{c.title}</h3>
                         </Link>
-                        <div className="flex items-center gap-2 mb-3">
+                        <div className="flex items-center gap-2 mt-6 mb-6">
                           <Building2 className="h-4 w-4 text-[#ffa300]" />
-                          <span className="text-sm font-medium text-gray-500">{uni?.name || "Malaysian University"} [{uni?.city || "Malaysia"}]</span>
+                          <span className="text-[15px] font-medium text-gray-600">{uni?.name || "Malaysian University"} [{uni?.city || "Malaysia"}]</span>
                         </div>
                         
-                        {/* Metadata Row - your-uni style */}
-                        <div className="flex flex-wrap items-center gap-y-2 gap-x-3 text-[13px] text-gray-600 mb-4 bg-gray-50/50 p-2.5 rounded-sm border border-gray-100/50">
+                        {/* Metadata Row - minimal style */}
+                        <div className="flex flex-wrap items-center gap-y-3 gap-x-6 text-[13px] text-gray-500 mb-4">
                           <div className="flex items-center gap-1.5">
-                            <DollarSign className="h-3.5 w-3.5 text-[#ffa300]" />
+                            <DollarSign className="h-4 w-4 text-[#ffa300]" />
                             <span className="font-semibold text-[#181d29]">MYR {Number(c.tuition_fee).toLocaleString()} / Year</span>
                           </div>
-                          
-                          <div className="hidden sm:block text-gray-300">•</div>
                           
                           <div className="flex items-center gap-1.5">
                             <span className={`h-1.5 w-1.5 rounded-sm ${uni && PAID_OFFER_LETTER_UNIS.includes(uni.name) ? "bg-red-400" : "bg-green-400"}`} />
                             <span>{uni && PAID_OFFER_LETTER_UNIS.includes(uni.name) ? "Offer Letter Fees Applies" : "Free Offer Letter"}</span>
                           </div>
 
-                          <div className="hidden sm:block text-gray-300">•</div>
-
                           <div className="flex items-center gap-1.5">
-                            <Clock className="h-3.5 w-3.5 text-gray-400" />
+                            <Clock className="h-4 w-4 text-gray-400" />
                             <span>{c.duration || "N/A"}</span>
                           </div>
 
-                          <div className="hidden sm:block text-gray-300">•</div>
-
                           <div className="flex items-center gap-1.5">
-                            <BookOpen className="h-3.5 w-3.5 text-gray-400" />
+                            <BookOpen className="h-4 w-4 text-gray-400" />
                             <span>Intake: {Array.isArray(c.intake_months) ? c.intake_months.join(", ") : "Various"}</span>
                           </div>
                         </div>
