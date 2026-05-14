@@ -44,15 +44,26 @@ export function WhyMalaysiaSection() {
           </p>
         </div>
 
-        <div className="space-y-32">
+        <div className="space-y-24">
           {points.map((p, i) => (
             <div key={p.title} className={`flex flex-col ${i % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'} items-center gap-12 md:gap-20`}>
-              <div className="flex-1 relative">
-                <div className="aspect-[4/3] rounded-sm overflow-hidden shadow-2xl relative z-10">
-                  <img src={p.image} alt={p.title} className="w-full h-full object-cover" />
+              <div className="flex-1 flex justify-center">
+                <div className="relative group w-full max-w-[440px]">
+                  {/* Background accent block - offset to the bottom-right */}
+                  <div className={`absolute inset-0 translate-x-4 translate-y-4 rounded-sm transition-transform duration-500 group-hover:translate-x-2 group-hover:translate-y-2 ${i % 2 === 0 ? 'bg-[#ffa300]/10' : 'bg-[#181d29]/5'}`} />
+                  
+                  {/* Main image container */}
+                  <div className="relative aspect-[4/3] rounded-sm overflow-hidden border border-[#e5e7eb] bg-white shadow-xl z-10">
+                    <img 
+                      src={p.image} 
+                      alt={p.title} 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                    />
+                  </div>
+
+                  {/* Elegant corner accent */}
+                  <div className={`absolute -top-2 -left-2 w-12 h-12 border-t-2 border-l-2 z-20 transition-all duration-500 group-hover:-top-1 group-hover:-left-1 ${i % 2 === 0 ? 'border-[#ffa300]' : 'border-[#181d29]/20'}`} />
                 </div>
-                {/* Decorative background element */}
-                <div className={`absolute -inset-4 rounded-sm z-0 ${i % 2 === 0 ? 'bg-[#ffa300]/10 -rotate-2' : 'bg-[#181d29]/5 rotate-2'}`} />
               </div>
 
               <div className="flex-1 space-y-6">
