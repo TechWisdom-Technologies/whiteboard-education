@@ -91,6 +91,9 @@ export function StatsBanner() {
           <h2 className="text-2xl md:text-3xl font-semibold text-[#181d29] mb-2">
             Numbers That Speak <span className="stats-banner-heading-accent">For Themselves</span>
           </h2>
+          <p className="text-[#515768] max-w-2xl mx-auto text-sm">
+            A snapshot of our growing network and the extensive opportunities we provide for students across the globe.
+          </p>
         </div>
 
         {/* Cards */}
@@ -125,8 +128,17 @@ function StatCard({
 
   return (
     <div ref={ref} className="stats-card group">
-      {/* Top accent bar */}
-      <div className="stats-card-accent" style={{ background: stat.accentColor }} />
+      {/* Top-left angle accent */}
+      <div 
+        className="absolute top-0 left-0 w-10 h-10 rounded-tl pointer-events-none" 
+        style={{ borderTop: `3px solid ${stat.accentColor}`, borderLeft: `3px solid ${stat.accentColor}` }} 
+      />
+      
+      {/* Bottom-right angle accent */}
+      <div 
+        className="absolute bottom-0 right-0 w-10 h-10 rounded-br pointer-events-none" 
+        style={{ borderBottom: `3px solid ${stat.accentColor}`, borderRight: `3px solid ${stat.accentColor}` }} 
+      />
 
       {/* Icon */}
       <div className="stats-card-icon-wrap">

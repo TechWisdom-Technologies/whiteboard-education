@@ -39,39 +39,41 @@ export function BlogSection() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {latestPosts.map((post: any) => (
               <Link key={post.id} to={`/blog/${post.id}`} className="group">
-                <article className="blog-card">
+                <article className="relative rounded-md overflow-hidden aspect-[4/3] group/card shadow-sm hover:shadow-md transition-shadow">
                   {/* Image */}
-                  {post.cover_image && (
-                    <div className="blog-card-img-wrap">
-                      <img
-                        src={post.cover_image}
-                        alt={post.title}
-                        className="blog-card-img"
-                      />
-                    </div>
-                  )}
+                  <img
+                    src={post.cover_image || "/placeholder-blog.jpg"}
+                    alt={post.title}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110"
+                  />
+                  {/* Overlay Gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#181d29]/90 via-[#181d29]/20 to-[#181d29]/40 transition-opacity duration-300" />
 
-                  {/* Content */}
-                  <div className="blog-card-body">
-                    {post.category && (
-                      <span className="blog-card-tag">{post.category}</span>
+                  {/* Top Meta (Category & Date) */}
+                  <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-10">
+                    {post.category ? (
+                      <span className="bg-[#ffa300] text-white text-[10px] font-normal px-2 py-0.5 rounded-sm uppercase tracking-wider shadow-sm">
+                        {post.category}
+                      </span>
+                    ) : (
+                      <div />
                     )}
-                    <h3 className="blog-card-title">{post.title}</h3>
-                    <p className="blog-card-excerpt">{post.excerpt}</p>
+                    <span className="text-white/90 text-[10px] font-normal flex items-center gap-1 backdrop-blur-md bg-black/30 px-2 py-0.5 rounded-sm border border-white/10 shadow-sm">
+                      <Calendar className="w-3 h-3" />
+                      {new Date(post.date || post.created_at).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </span>
+                  </div>
 
-                    <div className="blog-card-meta">
-                      <span className="blog-card-date">
-                        <Calendar className="h-3.5 w-3.5" />
-                        {new Date(post.date || post.created_at).toLocaleDateString("en-US", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </span>
-                      <span className="blog-card-read">
-                        Read More <ArrowRight className="h-3.5 w-3.5" />
-                      </span>
-                    </div>
+                  {/* Bottom Title */}
+                  <div className="absolute bottom-5 left-5 right-5 z-10">
+                    <h3 className="text-white font-medium uppercase text-lg md:text-xl leading-snug line-clamp-3 group-hover/card:text-[#ffa300] transition-colors shadow-sm">
+                      {post.title}
+                      <ArrowRight className="inline-block w-5 h-5 ml-2 opacity-0 -translate-x-2 transition-all duration-300 group-hover/card:opacity-100 group-hover/card:translate-x-0" />
+                    </h3>
                   </div>
                 </article>
               </Link>
