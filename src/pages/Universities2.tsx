@@ -374,11 +374,11 @@ export default function Universities() {
                         <div className="flex-1 min-w-0">
                           <Link to={`/universities/${u.id}`}>
                             <h3
-                              className="font-bold hover:underline mb-4"
+                              className="font-semibold hover:underline mb-3"
                               style={{
                                 fontFamily: "Poppins, sans-serif",
-                                fontSize: "24px",
-                                lineHeight: "32px",
+                                fontSize: "22px",
+                                lineHeight: "30px",
                                 color: "#181d29",
                               }}
                             >
@@ -389,11 +389,11 @@ export default function Universities() {
                           <div className="flex flex-col gap-2">
                             {/* Location */}
                             <div className="flex items-center gap-2">
-                              <MapPin className="h-5 w-5 shrink-0" style={{ color: "#ffa300" }} />
+                              <MapPin className="shrink-0" style={{ width: "15px", height: "15px", color: "#ffa300" }} />
                               <span
                                 style={{
                                   fontFamily: "Poppins, sans-serif",
-                                  fontSize: "16px",
+                                  fontSize: "15px",
                                   color: "#444444",
                                 }}
                               >
@@ -403,11 +403,11 @@ export default function Universities() {
 
                             {/* Offer Letter */}
                             <div className="flex items-center gap-2">
-                              <FileText className="h-5 w-5 shrink-0" style={{ color: "#515768" }} />
+                              <FileText className="shrink-0" style={{ width: "15px", height: "15px", color: "#515768" }} />
                               <span
                                 style={{
                                   fontFamily: "Poppins, sans-serif",
-                                  fontSize: "16px",
+                                  fontSize: "15px",
                                   color: "#444444",
                                 }}
                               >
@@ -417,12 +417,12 @@ export default function Universities() {
 
                             {/* Course count */}
                             <div className="flex items-center gap-2">
-                              <BookOpen className="h-5 w-5 shrink-0" style={{ color: "#515768" }} />
+                              <BookOpen className="shrink-0" style={{ width: "15px", height: "15px", color: "#515768" }} />
                               <span
-                                className="font-bold"
+                                className="font-semibold"
                                 style={{
                                   fontFamily: "Poppins, sans-serif",
-                                  fontSize: "16px",
+                                  fontSize: "15px",
                                   color: "#444444",
                                 }}
                               >

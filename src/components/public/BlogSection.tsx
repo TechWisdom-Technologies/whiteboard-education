@@ -14,7 +14,7 @@ export function BlogSection() {
             new Date(b.date || b.created_at).getTime() -
             new Date(a.date || a.created_at).getTime()
         )
-        .slice(0, 3),
+        .slice(0, 4),
     [blogPosts]
   );
 
@@ -36,10 +36,10 @@ export function BlogSection() {
             className="py-10"
           />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {latestPosts.map((post: any) => (
               <Link key={post.id} to={`/blog/${post.id}`} className="group">
-                <article className="relative rounded-md overflow-hidden aspect-[4/3] group/card shadow-sm hover:shadow-md transition-shadow">
+                <article className="relative rounded-md overflow-hidden aspect-square group/card shadow-sm hover:shadow-md transition-shadow">
                   {/* Image */}
                   <img
                     src={post.cover_image || "/placeholder-blog.jpg"}
@@ -50,16 +50,16 @@ export function BlogSection() {
                   <div className="absolute inset-0 bg-gradient-to-t from-[#181d29]/90 via-[#181d29]/20 to-[#181d29]/40 transition-opacity duration-300" />
 
                   {/* Top Meta (Category & Date) */}
-                  <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-10">
+                  <div className="absolute top-3 left-3 right-3 flex justify-between items-start z-10">
                     {post.category ? (
-                      <span className="bg-[#ffa300] text-white text-[10px] font-normal px-2 py-0.5 rounded-sm uppercase tracking-wider shadow-sm">
+                      <span className="bg-[#ffa300] text-white text-[9px] font-normal px-1.5 py-0.5 rounded-sm uppercase tracking-wider shadow-sm">
                         {post.category}
                       </span>
                     ) : (
                       <div />
                     )}
-                    <span className="text-white/90 text-[10px] font-normal flex items-center gap-1 backdrop-blur-md bg-black/30 px-2 py-0.5 rounded-sm border border-white/10 shadow-sm">
-                      <Calendar className="w-3 h-3" />
+                    <span className="text-white/90 text-[9px] font-normal flex items-center gap-1 backdrop-blur-md bg-black/30 px-1.5 py-0.5 rounded-sm border border-white/10 shadow-sm">
+                      <Calendar className="w-2.5 h-2.5" />
                       {new Date(post.date || post.created_at).toLocaleDateString("en-US", {
                         year: "numeric",
                         month: "short",
@@ -69,10 +69,10 @@ export function BlogSection() {
                   </div>
 
                   {/* Bottom Title */}
-                  <div className="absolute bottom-5 left-5 right-5 z-10">
-                    <h3 className="text-white font-medium uppercase text-lg md:text-xl leading-snug line-clamp-3 group-hover/card:text-[#ffa300] transition-colors shadow-sm">
+                  <div className="absolute bottom-4 left-4 right-4 z-10">
+                    <h3 className="text-white font-medium uppercase text-[13px] md:text-sm leading-snug group-hover/card:text-[#ffa300] transition-colors shadow-sm">
                       {post.title}
-                      <ArrowRight className="inline-block w-5 h-5 ml-2 opacity-0 -translate-x-2 transition-all duration-300 group-hover/card:opacity-100 group-hover/card:translate-x-0" />
+                      <ArrowRight className="inline-block w-4 h-4 ml-1.5 opacity-0 -translate-x-2 transition-all duration-300 group-hover/card:opacity-100 group-hover/card:translate-x-0" />
                     </h3>
                   </div>
                 </article>

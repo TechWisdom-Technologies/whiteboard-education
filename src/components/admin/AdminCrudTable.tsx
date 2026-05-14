@@ -249,7 +249,7 @@ function JsonArrayEditor({ value, onChange, placeholder }: { value: any; onChang
     sync([...items, empty]);
   };
 
-  const updateField = (itemIndex: number, key: string, val: string) => {
+  const updateField = (itemIndex: number, key: string, val: any) => {
     const updated = [...items];
     updated[itemIndex] = { ...updated[itemIndex], [key]: val };
     sync(updated);
