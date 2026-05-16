@@ -133,7 +133,7 @@ export default function Courses() {
   const filtered = useMemo(() => {
     return courses.filter((c: any) => {
       if (search && !c.title.toLowerCase().includes(search.toLowerCase())) return false;
-      if (selectedLevel !== "All Levels" && !c.degree_level?.includes(selectedLevel)) return false;
+      if (selectedLevel !== "All Levels" && !c.degree_level?.toLowerCase().includes(selectedLevel.toLowerCase())) return false;
       if (selectedUniId !== "all" && String(c.university_id) !== selectedUniId) return false;
       
       if (selectedArea !== "All Areas") {
@@ -352,11 +352,11 @@ export default function Courses() {
                 </div>
               ) : (
                 <div className="space-y-5">
-                  {paged.map((c: any) => {
+                  {paged.map((c: any, idx: number) => {
                     const uni = universities.find((u: any) => u.id === c.university_id);
                     return (
                       <div
-                        key={c.id}
+                        key={`${c.id || idx}-${selectedLevel}-${selectedArea}`}
                         className="bg-white py-10 md:py-12 px-6 md:px-8 flex flex-col md:flex-row items-start md:items-center gap-6 border"
                         style={{
                           borderColor: "#e8e8e8",

@@ -187,7 +187,9 @@ export default function UniversityDetail() {
   const filtered = uniCourses.filter((c: any) => {
     const s = cSearch.toLowerCase();
     const matchesSearch = !cSearch || c.title.toLowerCase().includes(s);
-    const matchesLevel = cLevel === "all" || levelKey(c.degree_level).toLowerCase() === cLevel;
+    const matchesLevel = cLevel === "all" || 
+      (c.degree_level && c.degree_level.toLowerCase().includes(cLevel)) || 
+      levelKey(c.degree_level).toLowerCase() === cLevel;
     // Aligning category filter with the Overview table's logic
     const matchesCategory = cCategory === "all" || categoryKey(c.title).toLowerCase() === cCategory.toLowerCase();
     return matchesSearch && matchesLevel && matchesCategory;
@@ -219,11 +221,11 @@ export default function UniversityDetail() {
       <MegaMenu disableSticky />
 
       {/* ═══ HERO: Big Logo + Name + Buttons ═══ */}
-      <section className="bg-[#fdf0d5] py-10">
+      <section className="bg-[#fdf0d5] py-16">
         <div className="container mx-auto px-4 max-w-5xl flex flex-col md:flex-row items-center gap-6">
           <img src={logo} alt={uni.name} className="h-28 w-28 md:h-36 md:w-36 object-contain rounded-sm bg-white p-3 shadow" />
           <div className="flex-1 text-center md:text-left">
-            <h1 className="text-2xl md:text-4xl font-extrabold text-[#181d29] mb-1" style={{ fontFamily: "Poppins, sans-serif" }}>{uni.name}</h1>
+            <h1 className="text-3xl font-semibold text-[#181d29] mb-1" style={{ fontFamily: "Poppins, sans-serif" }}>{uni.name}</h1>
             {uni.city && <p className="text-gray-600 flex items-center gap-1 justify-center md:justify-start"><MapPin className="h-4 w-4 text-[#ffa300]" />{uni.city}, Malaysia</p>}
           </div>
           <div className="flex flex-col gap-2 shrink-0">
@@ -331,7 +333,7 @@ export default function UniversityDetail() {
                               {gc.map((c: any, i: number) => (
                                 <tr key={c.id} className={`border-t ${i % 2 ? "bg-white" : "bg-gray-50/50"} hover:bg-[#ffa300]/5 transition-colors`}>
                                   <td className="px-5 py-3">
-                                    <Link to={`/courses/${c.id}`} className="text-[#181d29] font-medium hover:text-[#ffa300] transition-colors">{c.title}</Link>
+                                    <Link to={`/courses/${c.id}`} className="text-[#181d29] font-semibold text-md hover:text-[#ffa300] transition-colors">{c.title}</Link>
                                     <span className="block text-xs text-gray-400 mt-0.5">{c.degree_level}</span>
                                   </td>
                                   <td className="px-5 py-3 font-semibold text-[#ffa300] whitespace-nowrap">MYR {Number(c.tuition_fee).toLocaleString()}</td>
@@ -509,17 +511,17 @@ export default function UniversityDetail() {
 
             <p className="text-sm text-gray-500 mb-4"><span className="font-bold text-[#181d29]">{filtered.length}</span> courses found</p>
             <div className="space-y-5">
-              {paged.map((c: any) => (
-                <Card key={c.id} className="bg-white hover:shadow-lg transition-all border-gray-200 overflow-hidden group">
+              {paged.map((c: any, idx: number) => (
+                <Card key={`${c.id || idx}-${cLevel}-${cCategory}`} className="bg-white hover:shadow-lg transition-all border-gray-200 overflow-hidden group">
                   <CardContent className="p-0">
                     <div className="flex flex-col md:flex-row items-stretch">
                       {/* Left: Info Section */}
-                      <div className="flex-1 p-6 space-y-6">
+                      <div className="flex-1 p-10 space-y-6">
                         <div>
-                          <Link to={`/courses/${c.id}`} className="font-extrabold text-lg text-[#181d29] hover:text-[#ffa300] transition-colors block mb-1">
+                          <Link to={`/courses/${c.id}`} className="font-semibold text-md text-[#181d29] hover:text-[#ffa300] transition-colors block mb-1">
                             {c.title}
                           </Link>
-                          <div className="flex items-center gap-2 text-sm text-gray-500 font-medium">
+                          <div className="flex items-center gap-2 text-sm text-gray-500 my-4 font-normal">
                             <Building className="h-4 w-4 text-[#ffa300]" />
                             {uni.name}
                           </div>
@@ -527,29 +529,29 @@ export default function UniversityDetail() {
 
                         <div className="flex flex-wrap items-center gap-y-3 gap-x-6">
                           <div className="flex flex-col">
-                            <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Tuition Fee</span>
-                            <span className="text-sm font-bold text-[#ffa300]">MYR {Number(c.tuition_fee).toLocaleString()}/Year</span>
+                            <span className="text-[12px] uppercase font-normal text-black tracking-wider mb-2">Tuition Fee</span>
+                            <span className="text-sm font-normal text-[#ffa300]">MYR {Number(c.tuition_fee).toLocaleString()}/Year</span>
                           </div>
                           <div className="flex flex-col">
-                            <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Perks</span>
-                            <span className="text-sm font-bold text-green-600 flex items-center gap-1">
+                            <span className="text-[12px] uppercase font-normal text-black tracking-wider mb-2">Perks</span>
+                            <span className="text-sm font-normal text-green-600 flex items-center gap-1">
                               <CheckCircle className="h-3 w-3" />
                               {isPaid ? "Paid Offer" : "Free Offer"}
                             </span>
                           </div>
                           <div className="flex flex-col">
-                            <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Duration</span>
-                            <span className="text-sm font-bold text-gray-700">{c.duration}</span>
+                            <span className="text-[12px] uppercase font-normal text-black tracking-wider mb-2">Duration</span>
+                            <span className="text-sm font-normal text-gray-700">{c.duration}</span>
                           </div>
                           {c.intake_months?.length > 0 && (
                             <div className="flex flex-col">
-                              <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Intakes</span>
-                              <span className="text-sm font-bold text-gray-700">{c.intake_months.slice(0, 3).join(", ")}</span>
+                              <span className="text-[12px] uppercase font-normal text-black tracking-wider mb-2">Intakes</span>
+                              <span className="text-sm font-normal text-gray-700">{c.intake_months.slice(0, 3).join(", ")}</span>
                             </div>
                           )}
                         </div>
 
-                        <div className="pt-2">
+                        <div className="pt-0">
                           <Badge variant="outline" className={`text-[10px] font-bold uppercase tracking-widest ${levelColor(c.degree_level)} bg-opacity-10 border-current rounded-sm`}>
                             {c.degree_level}
                           </Badge>
@@ -557,7 +559,7 @@ export default function UniversityDetail() {
                       </div>
 
                       {/* Right: Actions Section */}
-                      <div className="bg-gray-50/50 md:w-56 border-t md:border-t-0 md:border-l border-gray-100 p-6 flex flex-col justify-center gap-3">
+                      <div className="bg-gray-50/50 md:w-56 border-t md:border-t-0 md:border-l border-gray-100 p-10 flex flex-col justify-center gap-3">
                         <Button className="w-full bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold h-11" onClick={e => { e.preventDefault(); open("course_apply", c.title); }}>
                           Apply Now
                         </Button>

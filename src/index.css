@@ -562,3 +562,55 @@
   text-align: center;
   line-height: 1.3;
 }
+
+/* ── Rich Text Content (from React Quill) ────────────────── */
+.rich-text-content p {
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+}
+
+.rich-text-content h1, .rich-text-content h2, .rich-text-content h3, .rich-text-content h4 {
+  color: #181d29;
+  font-family: 'Poppins', sans-serif;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.rich-text-content h2 { font-size: 1.5rem; }
+.rich-text-content h3 { font-size: 1.25rem; }
+
+.rich-text-content ul {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.rich-text-content ol {
+  list-style-type: decimal;
+  margin-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.rich-text-content li {
+  margin-bottom: 0.5rem;
+}
+
+.rich-text-content a {
+  color: #ffa300;
+  text-decoration: underline;
+}
+
+.rich-text-content blockquote {
+  border-left: 4px solid #ffa300;
+  padding-left: 1rem;
+  font-style: italic;
+  color: #515768;
+  margin-bottom: 1.5rem;
+}
+
+.rich-text-content img {
+  max-width: 100%;
+  border-radius: 0.25rem;
+  margin: 1.5rem 0;
+}
