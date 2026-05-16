@@ -79,6 +79,23 @@ export default function AdminPartners() {
           .upsert({ user_id: selectedReg.user_id, role: "partner" }, { onConflict: "user_id,role" });
 
         if (roleError) throw roleError;
+        
+        // Notify the partner agent that their account has been approved
+        await fetch(`${SUPABASE_URL}/rest/v1/partner_notifications`, {
+          method: "POST",
+          headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": `Bearer ${session.access_token}`,
+            "Content-Type": "application/json",
+            "Prefer": "return=minimal",
+          },
+          body: JSON.stringify({
+            partner_id: selectedReg.user_id,
+            title: "Account Approved",
+            message: "Your partner agency account has been approved. You can now access the partner portal.",
+            type: "success",
+          }),
+        });
       }
 
       toast.success(`Partner registration ${action}!`);

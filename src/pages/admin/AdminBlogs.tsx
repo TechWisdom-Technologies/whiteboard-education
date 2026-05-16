@@ -27,7 +27,7 @@ export default function AdminBlogs() {
       fields={fields}
       searchKey="title"
       onInsert={(row) => insert.mutate({ ...row, date: new Date().toISOString().split('T')[0] })}
-      onUpdate={(row) => update.mutate(row)}
+      onUpdate={(row) => update.mutate({ ...row, date: new Date().toISOString().split('T')[0] })}
       onDelete={(id) => del.mutate(id)}
       onBulkUpsert={(rows) => bulkUpsert.mutateAsync(rows).then(() => undefined)}
     />

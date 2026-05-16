@@ -84,7 +84,15 @@ export default function BlogPost() {
             )}
             <span className="flex items-center gap-1.5 text-sm font-medium text-white/90">
               <Calendar className="h-4 w-4" />
-              {new Date(post.date || post.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+              {(() => {
+                const createdDateStr = post.created_at ? new Date(post.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : null;
+                const updatedDateStr = post.date ? new Date(post.date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : null;
+                
+                if (updatedDateStr && createdDateStr && updatedDateStr !== createdDateStr) {
+                  return `Updated ${updatedDateStr}`;
+                }
+                return updatedDateStr || createdDateStr || "Unknown Date";
+              })()}
             </span>
             <span className="flex items-center gap-1.5 text-sm font-medium text-white/90">
               <Clock className="h-4 w-4" />

@@ -23,7 +23,7 @@ const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 export default function Login() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, signOut } = useAuth();
 
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [loading, setLoading] = useState(false);
@@ -59,6 +59,7 @@ export default function Login() {
     setRegStatus(null);
     const result = await signIn(email, password);
     setLoading(false);
+    
     if (!result.success) {
       const reg = await checkPartnerRegistration(email);
       if (reg && (reg.status === "pending" || reg.status === "rejected")) {
@@ -67,6 +68,17 @@ export default function Login() {
         toast({ title: "Login failed", description: result.error, variant: "destructive" });
       }
     } else {
+      // Login successful, but if they are supposed to be a partner and lack the role, check registration.
+      if (result.redirectTo === "/") {
+        const reg = await checkPartnerRegistration(email);
+        if (reg && (reg.status === "pending" || reg.status === "rejected")) {
+          setRegStatus(reg);
+          // Sign them back out since they shouldn't have access yet
+          await signOut();
+          return;
+        }
+      }
+      
       toast({ title: "Welcome back!" });
       navigate(result.redirectTo || "/");
     }
@@ -409,11 +421,17 @@ export default function Login() {
                     <><UserPlus className="h-4 w-4" /> Create Account</>
                   )}
                 </button>
-                <p className="text-center text-[10px] text-gray-400">
+                <p className="text-center text-[10px] text-gray-400 mt-2">
                   By signing up you agree to our{" "}
                   <Link to="/" className="underline hover:text-[#ffa300]">Terms</Link> &{" "}
                   <Link to="/" className="underline hover:text-[#ffa300]">Privacy Policy</Link>
                 </p>
+                <div className="mt-4 p-2 bg-blue-50 border border-blue-100 rounded-sm text-center">
+                  <p className="text-[10px] text-blue-800 font-medium">
+                    Note: This creates a standard student account. <br />
+                    To register as a partner agency, please use the <Link to="/partner" className="underline font-bold">Partner Application Form</Link>.
+                  </p>
+                </div>
               </form>
             )}
 

@@ -82,19 +82,14 @@ export function AdminNotificationCenter() {
       .order("created_at", { ascending: false })
       .limit(30);
 
-    // Preferred: event-based admin notifications table.
-    if (!error && data && data.length > 0) {
-      const next: AdminNotificationItem[] = (data as AdminNotificationRow[]).map((row) => ({
-        key: row.id,
-        title: row.title,
-        message: row.message,
-        createdAt: row.created_at,
-        href: row.href,
-        read: !!readMap[row.id],
-      }));
-      setItems(next);
-      return;
-    }
+    const explicitItems: AdminNotificationItem[] = (!error && data) ? (data as AdminNotificationRow[]).map((row) => ({
+      key: row.id,
+      title: row.title,
+      message: row.message,
+      createdAt: row.created_at,
+      href: row.href,
+      read: !!readMap[row.id],
+    })) : [];
 
     // Fallback: derive notifications directly from source tables.
     const [leadRes, partnerRes, studentRes] = await Promise.all([
@@ -154,11 +149,11 @@ export function AdminNotificationCenter() {
       };
     });
 
-    const fallback = [...leadItems, ...partnerItems, ...studentItems]
+    const allItems = [...explicitItems, ...leadItems, ...partnerItems, ...studentItems]
       .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt))
       .slice(0, 30);
 
-    setItems(fallback);
+    setItems(allItems);
   }, [readMap]);
 
   useEffect(() => {
