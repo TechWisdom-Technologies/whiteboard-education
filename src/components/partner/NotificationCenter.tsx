@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { Bell } from "lucide-react";
+import { Bell, CheckSquare, CheckCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -85,7 +85,8 @@ export function NotificationCenter() {
     setItems((prev) => prev.map((n) => ({ ...n, read: true })));
   };
 
-  const markOneRead = async (id: string) => {
+  const markOneRead = async (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
     if (!user) return;
     await supabase
       .from("partner_notifications")
@@ -93,6 +94,17 @@ export function NotificationCenter() {
       .eq("id", id)
       .eq("partner_id", user.id);
     setItems((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
+  };
+
+  const markOneUnread = async (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (!user) return;
+    await supabase
+      .from("partner_notifications")
+      .update({ read: false })
+      .eq("id", id)
+      .eq("partner_id", user.id);
+    setItems((prev) => prev.map((n) => (n.id === id ? { ...n, read: false } : n)));
   };
 
   const handleNotificationClick = async (notification: PartnerNotification) => {
@@ -110,8 +122,8 @@ export function NotificationCenter() {
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="relative text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10">
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
@@ -120,45 +132,61 @@ export function NotificationCenter() {
             </span>
           )}
         </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="end">
-        <div className="flex items-center justify-between p-3 border-b">
-          <h3 className="font-semibold text-sm">Notifications</h3>
-          {unreadCount > 0 && (
-            <Button variant="ghost" size="sm" className="text-xs text-secondary h-auto py-1" onClick={markAllRead}>
-              Mark all read
-            </Button>
-          )}
-        </div>
-        <div className="max-h-80 overflow-y-auto">
+      </SheetTrigger>
+      <SheetContent side="right" className="w-[400px] sm:w-[540px] p-0 flex flex-col">
+        <SheetHeader className="p-4 border-b shrink-0">
+          <div className="flex items-center justify-between pr-8">
+            <SheetTitle className="text-base font-semibold">Notifications</SheetTitle>
+            {unreadCount > 0 && (
+              <Button variant="ghost" size="sm" className="text-xs text-secondary h-auto py-1" onClick={markAllRead}>
+                Mark all as read
+              </Button>
+            )}
+          </div>
+        </SheetHeader>
+        <div className="flex-1 overflow-y-auto">
           {sortedItems.length === 0 && (
-            <div className="p-4 text-xs text-muted-foreground">No notifications yet.</div>
+            <div className="p-6 text-center text-sm text-muted-foreground">No notifications yet.</div>
           )}
           {sortedItems.map((n, i) => (
             <div
               key={n.id}
-              className={`p-3 border-b last:border-0 transition-colors cursor-pointer hover:bg-muted/40 ${!n.read ? "bg-muted/30" : ""} animate-fade-in`}
+              className={`px-3 py-2.5 border-b last:border-0 hover:bg-muted/40 transition-colors animate-fade-in ${!n.read ? "bg-muted/20" : "opacity-90"}`}
               style={{ animationDelay: `${i * 50}ms` }}
-              onClick={() => handleNotificationClick(n)}
             >
               <div className="flex items-start gap-2.5">
-                <div className={`h-2 w-2 rounded-sm mt-1.5 flex-shrink-0 ${dotStyles[n.type]}`} />
-                <div className="flex-1 min-w-0">
-                  <p className={`text-xs mb-0.5 ${!n.read ? "font-semibold" : "font-medium"}`}>{n.title}</p>
-                  <p className={`text-xs leading-relaxed ${!n.read ? "font-medium" : "text-muted-foreground"}`}>
+                <div className={`h-2 w-2 rounded-sm mt-1.5 flex-shrink-0 ${dotStyles[n.type as keyof typeof dotStyles] || dotStyles.info}`} />
+                
+                <button
+                  className="flex-1 text-left min-w-0 pr-2"
+                  onClick={() => handleNotificationClick(n)}
+                >
+                  <p className={`text-[13px] leading-snug mb-0.5 ${n.read ? "text-gray-700 font-semibold" : "text-black font-bold"}`}>{n.title}</p>
+                  <p className={`text-[12px] leading-snug line-clamp-2 ${n.read ? "text-gray-600" : "text-gray-900 font-medium"}`}>
                     {n.message}
                   </p>
-                  <p className="text-[10px] text-muted-foreground mt-1">{formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}</p>
+                  <p className={`text-[10px] mt-1.5 ${n.read ? "text-gray-500" : "text-gray-700 font-medium"}`}>{formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}</p>
+                </button>
+
+                <div className="flex-shrink-0 pt-0.5">
+                  {n.read ? (
+                    <Button variant="ghost" size="icon" className="h-7 w-7 text-primary" onClick={(e) => markOneUnread(n.id, e)} title="Mark as unread">
+                      <CheckCheck className="h-4 w-4" />
+                    </Button>
+                  ) : (
+                    <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-primary" onClick={(e) => markOneRead(n.id, e)} title="Mark as read">
+                      <CheckSquare className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
           ))}
         </div>
-        <div className="p-2 border-t">
+        <div className="p-4 border-t shrink-0">
           <Button
-            variant="ghost"
-            size="sm"
-            className="w-full text-xs"
+            variant="outline"
+            className="w-full"
             onClick={() => {
               setOpen(false);
               navigate("/partner-dashboard/notifications");
@@ -167,7 +195,7 @@ export function NotificationCenter() {
             View all notifications
           </Button>
         </div>
-      </PopoverContent>
-    </Popover>
+      </SheetContent>
+    </Sheet>
   );
 }

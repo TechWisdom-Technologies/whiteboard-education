@@ -13,7 +13,6 @@ interface DashboardStats {
   students: number;
   enrolledStudents: number;
   blogs: number;
-  countries: number;
 }
 
 interface RecentStudent {
@@ -54,13 +53,12 @@ export default function AdminDashboard() {
     if (!session) return;
     const fetchAll = async () => {
       try {
-        const [uniRes, courseRes, partnerRes, studentRes, blogRes, countryRes] = await Promise.all([
+        const [uniRes, courseRes, partnerRes, studentRes, blogRes] = await Promise.all([
           supabase.from("universities").select("id", { count: "exact", head: true }),
           supabase.from("courses").select("id", { count: "exact", head: true }),
           supabase.from("partner_registrations").select("id, status", { count: "exact" }),
           supabase.from("students").select("id, full_name, status, target_university, created_at"),
           supabase.from("blogs").select("id", { count: "exact", head: true }),
-          supabase.from("countries").select("id", { count: "exact", head: true }),
         ]);
 
         const allPartners = partnerRes.data || [];
@@ -74,7 +72,6 @@ export default function AdminDashboard() {
           students: allStudents.length,
           enrolledStudents: allStudents.filter(s => s.status === "enrolled").length,
           blogs: blogRes.count || 0,
-          countries: countryRes.count || 0,
         });
 
         setRecentStudents(
@@ -114,7 +111,6 @@ export default function AdminDashboard() {
     { label: "Total Students", value: stats.students, icon: UserCheck, color: "text-secondary" },
     { label: "Enrolled", value: stats.enrolledStudents, icon: TrendingUp, color: "text-green-600" },
     { label: "Blog Posts", value: stats.blogs, icon: FileText, color: "text-primary" },
-    { label: "Countries", value: stats.countries, icon: Globe, color: "text-warning" },
   ];
 
   return (

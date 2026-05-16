@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Bell, Circle } from "lucide-react";
+import { Bell, Circle, CheckSquare, CheckCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
@@ -224,8 +224,8 @@ export function AdminNotificationCenter() {
   };
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
+    <Sheet>
+      <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
@@ -234,61 +234,58 @@ export function AdminNotificationCenter() {
             </span>
           )}
         </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="end">
-        <div className="p-3 border-b flex items-center justify-between">
-          <h3 className="text-sm font-semibold">Admin Notifications</h3>
-          <div className="flex items-center gap-1">
-            {unreadCount > 0 && (
-              <Button variant="ghost" size="sm" className="h-auto py-1 text-xs" onClick={markAllRead}>
-                Mark all read
-              </Button>
-            )}
-            {items.length > 0 && unreadCount < items.length && (
-              <Button variant="ghost" size="sm" className="h-auto py-1 text-xs" onClick={markAllUnread}>
-                Mark all unread
-              </Button>
-            )}
+      </SheetTrigger>
+      <SheetContent side="right" className="w-[400px] sm:w-[540px] p-0 flex flex-col">
+        <SheetHeader className="p-4 border-b shrink-0">
+          <div className="flex items-center justify-between pr-8">
+            <SheetTitle className="text-base font-semibold">Notifications</SheetTitle>
+            <div className="flex items-center gap-1">
+              {unreadCount > 0 && (
+                <Button variant="ghost" size="sm" className="h-auto py-1 text-xs" onClick={markAllRead}>
+                  Mark all as read
+                </Button>
+              )}
+            </div>
           </div>
-        </div>
-        <div className="max-h-80 overflow-y-auto">
+        </SheetHeader>
+        <div className="flex-1 overflow-y-auto">
           {items.length === 0 ? (
-            <div className="p-4 text-xs text-muted-foreground">No pending notifications.</div>
+            <div className="p-6 text-center text-sm text-muted-foreground">No pending notifications.</div>
           ) : (
             items.map((item) => (
-              <div key={item.key} className={`px-3 py-3 border-b last:border-0 ${!item.read ? "bg-muted/30" : ""}`}>
-                <button
-                  className="w-full text-left hover:bg-muted/40 transition-colors rounded-sm p-1"
-                  onClick={async () => {
-                    await markRead(item.key);
-                    navigate(item.href);
-                  }}
-                >
-                  <div className="flex items-start gap-2">
-                    <Circle className={`h-2.5 w-2.5 mt-1.5 ${item.read ? "fill-muted text-muted" : "fill-primary text-primary"}`} />
-                    <div className="flex-1 min-w-0">
-                      <p className={`text-sm ${item.read ? "font-medium" : "font-semibold"}`}>{item.title}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{item.message}</p>
-                      <p className="text-[10px] text-muted-foreground mt-1">{formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}</p>
-                    </div>
+              <div key={item.key} className={`px-3 py-2.5 border-b last:border-0 hover:bg-muted/40 transition-colors ${!item.read ? "bg-muted/20" : "opacity-90"}`}>
+                <div className="flex items-start gap-2.5">
+                  <Circle className={`h-2 w-2 mt-1.5 flex-shrink-0 ${item.read ? "fill-muted text-muted" : "fill-primary text-primary"}`} />
+                  
+                  <button
+                    className="flex-1 text-left min-w-0 pr-2"
+                    onClick={async () => {
+                      await markRead(item.key);
+                      navigate(item.href);
+                    }}
+                  >
+                    <p className={`text-[13px] leading-snug ${item.read ? "text-gray-700 font-semibold" : "text-black font-bold"}`}>{item.title}</p>
+                    <p className={`text-[12px] leading-snug line-clamp-2 mt-0.5 ${item.read ? "text-gray-600" : "text-gray-900 font-medium"}`}>{item.message}</p>
+                    <p className={`text-[10px] mt-1.5 ${item.read ? "text-gray-500" : "text-gray-700 font-medium"}`}>{formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}</p>
+                  </button>
+
+                  <div className="flex-shrink-0 pt-0.5">
+                    {item.read ? (
+                      <Button variant="ghost" size="icon" className="h-7 w-7 text-primary" onClick={() => markUnread(item.key)} title="Mark as unread">
+                        <CheckCheck className="h-4 w-4" />
+                      </Button>
+                    ) : (
+                      <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-primary" onClick={() => markRead(item.key)} title="Mark as read">
+                        <CheckSquare className="h-4 w-4" />
+                      </Button>
+                    )}
                   </div>
-                </button>
-                <div className="mt-1.5 pl-6">
-                  {item.read ? (
-                    <Button variant="ghost" size="sm" className="h-auto py-1 text-[11px]" onClick={() => markUnread(item.key)}>
-                      Mark as unread
-                    </Button>
-                  ) : (
-                    <Button variant="ghost" size="sm" className="h-auto py-1 text-[11px]" onClick={() => markRead(item.key)}>
-                      Mark as read
-                    </Button>
-                  )}
                 </div>
               </div>
             ))
           )}
         </div>
-      </PopoverContent>
-    </Popover>
+      </SheetContent>
+    </Sheet>
   );
 }

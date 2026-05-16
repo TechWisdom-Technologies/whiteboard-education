@@ -1,6 +1,6 @@
-import { LayoutDashboard, Users, Megaphone, UserCircle, Bell } from "lucide-react";
+import { LayoutDashboard, Users, Megaphone, UserCircle, Bell, GraduationCap, LogOut } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -25,7 +25,8 @@ const items = [
 ];
 
 export function PartnerSidebar() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
@@ -70,16 +71,38 @@ export function PartnerSidebar() {
     };
   }, [user?.id]);
 
-  const isActive = (path: string) =>
-    path === "/partner-dashboard"
-      ? currentPath === "/partner-dashboard"
-      : currentPath.startsWith(path);
+  const handleSignOut = () => {
+    signOut();
+    navigate("/login");
+  };
 
   return (
-    <Sidebar collapsible="icon" className="border-r-0">
-      <SidebarContent className="bg-sidebar">
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-sidebar-foreground/50">Partner Portal</SidebarGroupLabel>
+    <Sidebar collapsible="icon" className="border-r border-[#2d1b4e] bg-[#1a0f2e]">
+      {/* Sidebar Header containing logo */}
+      <div className="border-b border-[#2d1b4e] py-4 px-4 bg-[#1a0f2e] flex flex-col gap-1 flex-shrink-0">
+        <div className="flex items-center gap-2">
+          <div
+            className="h-8 w-8 bg-[#ffa300] flex items-center justify-center flex-shrink-0"
+            style={{ clipPath: "polygon(0 0, 100% 0, 100% 75%, 75% 100%, 0 100%)" }}
+          >
+            <GraduationCap className="h-4 w-4 text-[#1a0f2e]" />
+          </div>
+          {!collapsed && (
+            <div className="leading-none min-w-0">
+              <div className="text-white font-extrabold text-[13px] tracking-wide" style={{ fontFamily: "Poppins, sans-serif" }}>
+                WHITEBOARD
+              </div>
+              <div className="text-[#ffa300] text-[8px] font-semibold tracking-[0.25em] uppercase mt-0.5">
+                Partner Portal
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Sidebar Content containing shifted-down menu items */}
+      <SidebarContent className="bg-[#1a0f2e]">
+        <SidebarGroup className="pt-6">
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
@@ -88,20 +111,42 @@ export function PartnerSidebar() {
                     <NavLink
                       to={item.url}
                       end={item.url === "/partner-dashboard"}
-                      className="relative hover:bg-sidebar-accent/40 transition-colors"
-                      activeClassName="bg-sidebar-accent/80 text-sidebar-accent-foreground font-semibold border-l-4 border-sidebar-primary"
+                      className={`relative hover:bg-[#2d1b4e] transition-colors py-1.5 flex items-center w-full ${collapsed ? "justify-center" : "justify-between"}`}
+                      activeClassName="bg-transparent text-[#ffa300] font-semibold"
                     >
-                      <item.icon className="mr-2 h-5 w-5" />
-                      {!collapsed && <span className="text-sm font-medium">{item.title}</span>}
-                      {!collapsed && item.title === "Notifications" && unreadCount > 0 && (
-                        <span className="ml-auto h-[18px] min-w-[18px] px-1 rounded-sm bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center">
-                          {unreadCount > 99 ? "99+" : unreadCount}
-                        </span>
+                      {({ isActive }) => (
+                        <>
+                          {isActive && (
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-3.5 w-[2px] bg-[#ffa300] rounded-r-sm" />
+                          )}
+                          {!collapsed && (
+                            <div className="flex items-center gap-2">
+                              <span className={`text-[13px] ${isActive ? "text-[#ffa300]" : "text-[#d1bfe8] font-medium"}`}>{item.title}</span>
+                              {item.title === "Notifications" && unreadCount > 0 && (
+                                <span className="h-[16px] min-w-[16px] px-1 rounded-sm bg-destructive text-destructive-foreground text-[9px] font-bold flex items-center justify-center">
+                                  {unreadCount > 99 ? "99+" : unreadCount}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                          <item.icon className={`h-4 w-4 flex-shrink-0 ${isActive ? "text-[#ffa300]" : "text-[#a38cbd]"}`} />
+                        </>
                       )}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  onClick={handleSignOut} 
+                  className={`relative hover:bg-[#2d1b4e] transition-colors py-1.5 text-red-400 hover:text-red-300 bg-transparent w-full flex items-center ${collapsed ? "justify-center" : "justify-between"}`}
+                >
+                  {!collapsed && <span className="text-[13px] font-medium">Sign Out</span>}
+                  <LogOut className="h-4 w-4 flex-shrink-0" />
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
