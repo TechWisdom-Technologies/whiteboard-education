@@ -5,10 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Handshake, Users, Globe, CheckCircle2, ArrowRight, Upload, X, FileText, Loader2, ShieldCheck, Zap, HeadphonesIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+
+const stepImages = ["/images/partner-step1.png", "/images/partner-step2.png", "/images/partner-step3.png", "/images/partner-step4.png"];
 
 const benefits = [
   { icon: Globe, title: "Malaysia Market Access", desc: "Tap into Malaysia's booming international education sector through our established university partnerships across the country." },
@@ -200,8 +203,8 @@ export default function B2BLanding() {
     <div className="min-h-screen bg-white">
       <MegaMenu />
       <main>
-        {/* Hero - matches homepage HeroSection style */}
-        <section className="relative bg-[#f8f9fb] pt-0 pb-16 overflow-hidden">
+        {/* Hero */}
+        <section className="relative bg-[#f8f9fb] pt-0 pb-10 overflow-hidden">
           <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
             <div className="absolute top-[-10%] left-[-10%] w-[120%] h-[120%] flex flex-col gap-24 transform -rotate-12">
               {[...Array(6)].map((_, i) => (
@@ -213,22 +216,22 @@ export default function B2BLanding() {
               ))}
             </div>
           </div>
-          <div className="absolute -bottom-1 left-0 w-full h-32 bg-gradient-to-t from-white to-transparent z-10" />
-          <div className="container relative z-20 mx-auto px-4 pt-16 lg:pt-20">
-            <div className="max-w-3xl mx-auto text-center">
-              <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 bg-white shadow-sm border border-gray-100 rounded-sm">
-                <Handshake className="h-4 w-4 text-[#ffa300]" />
-                <span className="text-xs font-bold text-[#181d29] tracking-tight">Malaysia's Leading Education Partnership Network</span>
+          <div className="absolute -bottom-1 left-0 w-full h-24 bg-gradient-to-t from-white to-transparent z-10" />
+          <div className="container relative z-20 mx-auto px-4 pt-10 lg:pt-14">
+            <div className="max-w-2xl mx-auto text-center">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-5 bg-white shadow-sm border border-gray-100 rounded-sm">
+                <Handshake className="h-3.5 w-3.5 text-[#ffa300]" />
+                <span className="text-[11px] font-bold text-[#181d29] tracking-tight">Malaysia's Leading Education Partnership Network</span>
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-[1.2] text-[#181d29] tracking-tighter" style={{ fontFamily: "Poppins, sans-serif" }}>
-                <span className="block mb-2">Your Students Want</span>
-                <span className="inline-block bg-[#ffa300] text-[#181d29] px-4 py-1 rounded-sm mb-2 shadow-sm">To Study in Malaysia?</span>
+              <h1 className="text-3xl md:text-4xl font-bold mb-3 leading-[1.2] text-[#181d29] tracking-tight" style={{ fontFamily: "Poppins, sans-serif" }}>
+                <span className="block mb-1">Your Students Want</span>
+                <span className="inline-block bg-[#ffa300] text-[#181d29] px-3 py-0.5 rounded-sm mb-1 shadow-sm">To Study in Malaysia?</span>
                 <span className="block">We Make It Happen.</span>
               </h1>
-              <p className="text-lg text-gray-600 mb-8 max-w-xl mx-auto leading-relaxed font-light">
-                Whiteboard Education is Malaysia's specialist education agency. We partner with international agencies worldwide to place their students into top Malaysian universities - handling admissions, visa, accommodation, and everything in between.
+              <p className="text-sm text-gray-600 mb-6 max-w-lg mx-auto leading-relaxed">
+                We partner with international agencies worldwide to place their students into top Malaysian universities - handling admissions, visa, accommodation, and everything in between.
               </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Dialog open={regOpen} onOpenChange={setRegOpen}>
                   <DialogTrigger asChild>
                     <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#e08e00] font-semibold text-sm rounded-md h-11 px-6 group shadow-lg shadow-[#ffa300]/20 transition-all hover:shadow-[#ffa300]/40 hover:-translate-y-0.5">
@@ -279,71 +282,64 @@ export default function B2BLanding() {
           </div>
         </section>
 
-        {/* Benefits - matches ServicesGrid style */}
+        {/* Why Partner - creative 2-column layout */}
         <section className="py-16 bg-white relative overflow-hidden">
           <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#ffa300]/5 rounded-full blur-[80px] pointer-events-none" />
-          <div className="container mx-auto px-4 relative z-10">
+          <div className="container mx-auto px-4 max-w-6xl relative z-10">
             <div className="text-center mb-12">
               <h2 className="text-2xl md:text-3xl font-semibold text-[#181d29] mb-2">Why Partner With Whiteboard?</h2>
               <p className="text-[#515768] max-w-2xl mx-auto text-sm">We are Malaysia's on-the-ground education experts. You handle your market - we handle Malaysia.</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
-              {benefits.map((b, i) => (
-                <div key={b.title} className="text-center group">
-                  <div className="mx-auto mb-6 h-16 w-16 rounded-sm bg-[#ffa300]/10 flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
-                    <b.icon className="h-7 w-7 text-[#ffa300]" />
+            <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+              <div className="flex-1 w-full max-w-md lg:max-w-none">
+                <img src="/images/partner-benefits.png" alt="Partnership benefits" className="w-full h-auto" />
+              </div>
+              <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5">
+                {benefits.map((b, i) => (
+                  <div key={b.title} className="relative group p-6 rounded-sm border border-[#e5e7eb] bg-white hover:border-[#ffa300]/40 hover:shadow-md transition-all duration-300">
+                    <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-[#ffa300] rounded-tl-sm opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="h-10 w-10 rounded-sm bg-[#ffa300]/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                      <b.icon className="h-5 w-5 text-[#ffa300]" />
+                    </div>
+                    <h3 className="font-semibold text-[15px] mb-2 text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>{b.title}</h3>
+                    <p className="text-[13px] leading-relaxed text-[#515768]">{b.desc}</p>
                   </div>
-                  <div className="relative inline-block mb-6">
-                    <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-[#ffa300] rounded-sm" />
-                    <div className="relative w-8 h-8 bg-[#181d29] text-white flex items-center justify-center font-bold text-sm rounded-sm z-10 border border-[#181d29]">{i + 1}</div>
-                  </div>
-                  <h3 className="font-semibold text-lg mb-3 group-hover:text-[#ffa300] transition-colors" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>{b.title}</h3>
-                  <p className="text-[13px] leading-relaxed" style={{ color: "#515768", fontFamily: "Poppins, sans-serif" }}>{b.desc}</p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </section>
 
-        {/* How It Works - matches WhyMalaysia alternating layout */}
+        {/* How The Partnership Works - cards with vector images */}
         <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4 max-w-6xl">
             <div className="text-center mb-12">
               <h2 className="text-2xl md:text-3xl font-semibold mb-2">How The Partnership Works</h2>
               <p className="text-sm text-[#515768] max-w-2xl mx-auto">A simple, transparent process from registration to successful student placement.</p>
             </div>
-            <div className="space-y-24">
-              {registrationSteps.map((s, i) => (
-                <div key={s.step} className={`flex flex-col ${i % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'} items-center gap-12 md:gap-20`}>
-                  <div className="flex-1 flex justify-center">
-                    <div className="relative group w-full max-w-[360px]">
-                      <div className={`absolute inset-0 translate-x-4 translate-y-4 rounded-sm transition-transform duration-500 group-hover:translate-x-2 group-hover:translate-y-2 ${i % 2 === 0 ? 'bg-[#ffa300]/10' : 'bg-[#181d29]/5'}`} />
-                      <div className="relative aspect-square rounded-sm overflow-hidden border border-[#e5e7eb] bg-white shadow-xl z-10 flex items-center justify-center">
-                        <div className="text-center p-8">
-                          <div className="w-20 h-20 mx-auto mb-4 bg-[#ffa300]/10 rounded-sm flex items-center justify-center">
-                            <span className="text-3xl font-extrabold text-[#ffa300]" style={{ fontFamily: "Poppins, sans-serif" }}>{s.step}</span>
+            <div className="relative">
+              <div className="hidden lg:block absolute top-[100px] left-[10%] right-[10%] h-0.5 bg-[#ffa300]/15 z-0" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {registrationSteps.map((s, i) => (
+                  <div key={s.step} className="relative z-10 group">
+                    <div className="bg-white rounded-sm border border-[#e5e7eb] overflow-hidden hover:shadow-lg hover:border-[#ffa300]/30 transition-all duration-300">
+                      <div className="relative h-44 bg-[#f8f9fb] flex items-center justify-center overflow-hidden">
+                        <img src={stepImages[i]} alt={s.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <div className="absolute top-3 left-3">
+                          <div className="relative inline-block">
+                            <div className="absolute -bottom-0.5 -right-0.5 w-7 h-7 bg-[#ffa300] rounded-sm" />
+                            <div className="relative w-7 h-7 bg-[#181d29] text-white flex items-center justify-center font-bold text-xs rounded-sm z-10">{s.step}</div>
                           </div>
-                          <p className="text-lg font-bold text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>{s.title}</p>
                         </div>
                       </div>
-                      <div className={`absolute -top-2 -left-2 w-12 h-12 border-t-2 border-l-2 z-20 transition-all duration-500 group-hover:-top-1 group-hover:-left-1 ${i % 2 === 0 ? 'border-[#ffa300]' : 'border-[#181d29]/20'}`} />
-                    </div>
-                  </div>
-                  <div className="flex-1 space-y-6">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-xl font-semibold text-[#181d29]">{s.title}</h3>
-                      <div className="w-9 h-9 bg-[#ffa300]/10 rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-sm font-bold text-[#ffa300]">{s.step}</span>
+                      <div className="p-5">
+                        <h3 className="font-semibold text-[15px] text-[#181d29] mb-2" style={{ fontFamily: "Poppins, sans-serif" }}>{s.title}</h3>
+                        <p className="text-[13px] text-[#515768] leading-relaxed">{s.desc}</p>
                       </div>
                     </div>
-                    <p className="text-[15px] text-[#515768] text-justify leading-relaxed">{s.desc}</p>
-                    <ul className="space-y-2 text-[13px]">
-                      <li className="flex items-center gap-3 text-[#515768]"><CheckCircle2 className="h-4 w-4 text-[#ffa300] flex-shrink-0" />Fully managed by our Malaysia team</li>
-                      <li className="flex items-center gap-3 text-[#515768]"><CheckCircle2 className="h-4 w-4 text-[#ffa300] flex-shrink-0" />Transparent updates at every stage</li>
-                    </ul>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -379,21 +375,25 @@ export default function B2BLanding() {
           </div>
         </section>
 
-        {/* FAQ - clean white section */}
+        {/* FAQ - Accordion */}
         <section className="py-16 bg-white">
-          <div className="container mx-auto px-4 max-w-4xl">
+          <div className="container mx-auto px-4 max-w-3xl">
             <div className="text-center mb-12">
               <h2 className="text-2xl md:text-3xl font-semibold text-[#181d29] mb-2">Frequently Asked Questions</h2>
               <p className="text-sm text-[#515768] max-w-2xl mx-auto">Everything you need to know about partnering with Whiteboard Education.</p>
             </div>
-            <div className="space-y-4">
+            <Accordion type="single" collapsible className="w-full">
               {faqs.map((item, i) => (
-                <div key={i} className="border border-[#e5e7eb] rounded-sm p-6 hover:shadow-sm transition-shadow">
-                  <p className="font-semibold text-[#181d29] mb-2" style={{ fontFamily: "Poppins, sans-serif" }}>{item.q}</p>
-                  <p className="text-[13px] text-[#515768] leading-relaxed">{item.a}</p>
-                </div>
+                <AccordionItem key={i} value={`faq-${i}`} className="border border-[#e5e7eb] rounded-sm mb-3 px-5 data-[state=open]:border-[#ffa300]/40 transition-colors">
+                  <AccordionTrigger className="text-[15px] font-semibold text-[#181d29] hover:no-underline py-5" style={{ fontFamily: "Poppins, sans-serif" }}>
+                    {item.q}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-[13px] text-[#515768] leading-relaxed pb-5">
+                    {item.a}
+                  </AccordionContent>
+                </AccordionItem>
               ))}
-            </div>
+            </Accordion>
           </div>
         </section>
 
