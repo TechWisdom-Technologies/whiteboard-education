@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 const stepImages = ["/images/partner-step1.png", "/images/partner-step2.png", "/images/partner-step3.png", "/images/partner-step4.png"];
+const benefitImages = ["/images/benefit-market.png", "/images/benefit-manager.png", "/images/benefit-trusted.png", "/images/benefit-fast.png"];
 
 const benefits = [
   { icon: Globe, title: "Malaysia Market Access", desc: "Tap into Malaysia's booming international education sector through our established university partnerships across the country." },
@@ -204,38 +205,53 @@ export default function B2BLanding() {
       <MegaMenu />
       <main>
         {/* Hero */}
-        <section className="relative bg-[#f8f9fb] pt-0 pb-10 overflow-hidden">
-          <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
-            <div className="absolute top-[-10%] left-[-10%] w-[120%] h-[120%] flex flex-col gap-24 transform -rotate-12">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="flex gap-32 whitespace-nowrap text-8xl font-black tracking-widest uppercase">
-                  {[...Array(4)].map((_, j) => (
-                    <span key={j} className={j % 2 === 0 ? "text-[#181d29]/[0.04]" : "text-[#ffa300]/[0.08]"}>PARTNER WITH US</span>
-                  ))}
-                </div>
-              ))}
-            </div>
+        <section className="relative bg-gradient-to-b from-[#f8f9fb] to-white min-h-screen pt-0 pb-10 overflow-hidden flex flex-col">
+          {/* Premium gradient overlay background */}
+          <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
+            {/* Primary radial gradient - warm amber glow from top-right */}
+            <div className="absolute -top-1/4 -right-1/4 w-[70%] h-[70%] rounded-full bg-[#ffa300]/[0.08] blur-[100px]" />
+            {/* Secondary radial gradient - navy depth from bottom-left */}
+            <div className="absolute -bottom-1/4 -left-1/4 w-[60%] h-[60%] rounded-full bg-[#181d29]/[0.06] blur-[80px]" />
+            {/* Tertiary accent - subtle amber center glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40%] h-[40%] rounded-full bg-[#ffa300]/[0.04] blur-[60px]" />
+            {/* Dot grid pattern */}
+            <div 
+              className="absolute inset-0 opacity-[0.04]"
+              style={{
+                backgroundImage: "radial-gradient(circle, #181d29 1px, transparent 1px)",
+                backgroundSize: "24px 24px"
+              }}
+            />
+            {/* Diagonal decorative lines */}
+            <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="hero-lines" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse" patternTransform="rotate(30)">
+                  <line x1="0" y1="0" x2="0" y2="60" stroke="#181d29" strokeWidth="1" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#hero-lines)" />
+            </svg>
           </div>
-          <div className="absolute -bottom-1 left-0 w-full h-24 bg-gradient-to-t from-white to-transparent z-10" />
-          <div className="container relative z-20 mx-auto px-4 pt-10 lg:pt-14">
-            <div className="max-w-2xl mx-auto text-center">
+
+          <div className="container relative z-20 mx-auto px-4 flex-1 flex items-center justify-center">
+            <div className="max-w-3xl mx-auto text-center">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-5 bg-white shadow-sm border border-gray-100 rounded-sm">
                 <Handshake className="h-3.5 w-3.5 text-[#ffa300]" />
-                <span className="text-[11px] font-bold text-[#181d29] tracking-tight">Malaysia's Leading Education Partnership Network</span>
+                <span className="text-xs font-bold text-[#181d29] tracking-tight">Malaysia's Leading Education Partnership Network</span>
               </div>
-              <h1 className="text-3xl md:text-4xl font-bold mb-3 leading-[1.2] text-[#181d29] tracking-tight" style={{ fontFamily: "Poppins, sans-serif" }}>
+              <h1 className="text-4xl md:text-5xl lg:text-5xl font-bold mb-5 leading-[1.15] text-[#181d29] tracking-tight" style={{ fontFamily: "Poppins, sans-serif" }}>
                 <span className="block mb-1">Your Students Want</span>
                 <span className="inline-block bg-[#ffa300] text-[#181d29] px-3 py-0.5 rounded-sm mb-1 shadow-sm">To Study in Malaysia?</span>
                 <span className="block">We Make It Happen.</span>
               </h1>
-              <p className="text-sm text-gray-600 mb-6 max-w-lg mx-auto leading-relaxed">
+              <p className="text-base text-gray-600 mb-8 max-w-xl mx-auto leading-relaxed">
                 We partner with international agencies worldwide to place their students into top Malaysian universities - handling admissions, visa, accommodation, and everything in between.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Dialog open={regOpen} onOpenChange={setRegOpen}>
                   <DialogTrigger asChild>
                     <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#e08e00] font-semibold text-sm rounded-md h-11 px-6 group shadow-lg shadow-[#ffa300]/20 transition-all hover:shadow-[#ffa300]/40 hover:-translate-y-0.5">
-                      Register Your Agency <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
+                      Register as a partner <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
@@ -274,7 +290,7 @@ export default function B2BLanding() {
                 </Dialog>
                 <Link to="/login" className="w-full sm:w-auto">
                   <Button variant="outline" className="w-full sm:w-auto border-[#181d29] text-[#181d29] font-semibold text-sm rounded-md h-11 px-6 transition-all hover:-translate-y-0.5">
-                    Existing Partner Login
+                    Login as partner
                   </Button>
                 </Link>
               </div>
@@ -282,7 +298,7 @@ export default function B2BLanding() {
           </div>
         </section>
 
-        {/* Why Partner - creative 2-column layout */}
+        {/* Why Partner - 4 boxes in a single row with watermark background images only */}
         <section className="py-16 bg-white relative overflow-hidden">
           <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#ffa300]/5 rounded-full blur-[80px] pointer-events-none" />
           <div className="container mx-auto px-4 max-w-6xl relative z-10">
@@ -290,22 +306,17 @@ export default function B2BLanding() {
               <h2 className="text-2xl md:text-3xl font-semibold text-[#181d29] mb-2">Why Partner With Whiteboard?</h2>
               <p className="text-[#515768] max-w-2xl mx-auto text-sm">We are Malaysia's on-the-ground education experts. You handle your market - we handle Malaysia.</p>
             </div>
-            <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
-              <div className="flex-1 w-full max-w-md lg:max-w-none">
-                <img src="/images/partner-benefits.png" alt="Partnership benefits" className="w-full h-auto" />
-              </div>
-              <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5">
-                {benefits.map((b, i) => (
-                  <div key={b.title} className="relative group p-6 rounded-sm border border-[#e5e7eb] bg-white hover:border-[#ffa300]/40 hover:shadow-md transition-all duration-300">
-                    <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-[#ffa300] rounded-tl-sm opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="h-10 w-10 rounded-sm bg-[#ffa300]/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <b.icon className="h-5 w-5 text-[#ffa300]" />
-                    </div>
-                    <h3 className="font-semibold text-[15px] mb-2 text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>{b.title}</h3>
-                    <p className="text-[13px] leading-relaxed text-[#515768]">{b.desc}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {benefits.map((b, i) => (
+                <div key={b.title} className="text-center group flex flex-col items-center">
+                  {/* Big vector icon at the top */}
+                  <div className="w-32 h-32 mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <img src={benefitImages[i]} alt={b.title} className="w-full h-full object-contain" />
                   </div>
-                ))}
-              </div>
+                  <h3 className="font-semibold text-base mb-3 text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>{b.title}</h3>
+                  <p className="text-[13px] leading-relaxed text-[#515768] max-w-xs">{b.desc}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -415,11 +426,11 @@ export default function B2BLanding() {
               <p className="text-sm text-gray-300 mb-10 max-w-xl mx-auto leading-relaxed">Join our growing network of international agencies and start placing students into Malaysia's top universities.</p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button className="w-full sm:w-auto bg-[#ffa300] text-[#181d29] hover:bg-[#e08e00] font-semibold text-sm rounded-md h-11 px-6 group shadow-lg shadow-[#ffa300]/20 transition-all hover:shadow-[#ffa300]/40 hover:-translate-y-0.5" onClick={() => setRegOpen(true)}>
-                  Register Your Agency <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
+                  Register as a partner <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
                 </Button>
-                <Link to="/contact" className="w-full sm:w-auto">
+                <Link to="/login" className="w-full sm:w-auto">
                   <Button variant="outline" className="w-full sm:w-auto border-white/20 text-white hover:bg-white hover:text-[#181d29] font-semibold text-sm rounded-md h-11 px-6 bg-white/5 backdrop-blur-sm transition-all hover:-translate-y-0.5">
-                    Contact Us First
+                    Login as partner
                   </Button>
                 </Link>
               </div>

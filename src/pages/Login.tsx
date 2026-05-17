@@ -23,13 +23,11 @@ const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 export default function Login() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { signIn, signUp, signOut } = useAuth();
+  const { signIn, signOut } = useAuth();
 
-  const [mode, setMode] = useState<"login" | "signup">("login");
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [displayName, setDisplayName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [regStatus, setRegStatus] = useState<{ status: string; admin_notes: string } | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -84,17 +82,6 @@ export default function Login() {
     }
   };
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    const result = await signUp(email, password, displayName);
-    setLoading(false);
-    if (!result.success) {
-      toast({ title: "Sign up failed", description: result.error, variant: "destructive" });
-    } else {
-      toast({ title: "Check your email", description: "We sent you a confirmation link to verify your account." });
-    }
-  };
 
   const inputCls =
     "w-full h-11 px-4 text-sm border border-gray-200 bg-white text-gray-900 placeholder:text-gray-400 outline-none focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] transition-colors";
@@ -269,31 +256,13 @@ export default function Login() {
           <div className="w-full max-w-sm mx-auto">
 
             {/* Heading */}
-            <div className="mb-4">
+            <div className="mb-6">
               <h2 className="font-extrabold text-[#0c0f16] text-2xl mb-0.5" style={{ fontFamily: "Poppins, sans-serif" }}>
-                {mode === "login" ? "Welcome back" : "Create account"}
+                Welcome back
               </h2>
               <p className="text-xs text-gray-400">
-                {mode === "login" ? "Sign in to your portal account" : "Register for portal access"}
+                Sign in to your portal account
               </p>
-            </div>
-
-            {/* Tab switcher */}
-            <div className="flex border border-gray-200 mb-3 bg-white">
-              {(["login", "signup"] as const).map((m) => (
-                <button
-                  key={m}
-                  onClick={() => { setMode(m); setRegStatus(null); }}
-                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-all duration-150"
-                  style={{
-                    background: mode === m ? "#0c0f16" : "transparent",
-                    color: mode === m ? "#ffa300" : "#9ca3af",
-                  }}
-                >
-                  {m === "login" ? <LogIn className="h-3 w-3" /> : <UserPlus className="h-3 w-3" />}
-                  {m === "login" ? "Sign In" : "Sign Up"}
-                </button>
-              ))}
             </div>
 
             {/* Alerts */}
@@ -318,122 +287,52 @@ export default function Login() {
             )}
 
             {/* Login form */}
-            {mode === "login" && (
-              <form onSubmit={handleLogin} className="space-y-2">
+            <form onSubmit={handleLogin} className="space-y-2">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email address"
+                required
+                className={inputCls}
+              />
+              <div className="relative">
                 <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email address"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password"
                   required
-                  className={inputCls}
+                  className={inputCls + " pr-10"}
                 />
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Password"
-                    required
-                    className={inputCls + " pr-10"}
-                  />
-                  <button
-                    type="button"
-                    tabIndex={-1}
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
                 <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full h-10 text-sm font-bold flex items-center justify-center gap-2 transition-all duration-150 hover:brightness-110 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
-                  style={{ background: "#ffa300", color: "#0c0f16" }}
+                  type="button"
+                  tabIndex={-1}
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  {loading ? (
-                    <>
-                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.37 0 0 5.37 0 12h4z" />
-                      </svg>
-                      Signing in...
-                    </>
-                  ) : (
-                    <><LogIn className="h-4 w-4" /> Sign In</>
-                  )}
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
-              </form>
-            )}
-
-            {/* Signup form */}
-            {mode === "signup" && (
-              <form onSubmit={handleSignUp} className="space-y-2">
-                <input
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder="Full name"
-                  className={inputCls}
-                />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email address"
-                  required
-                  className={inputCls}
-                />
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Password (min. 6 characters)"
-                    required
-                    minLength={6}
-                    className={inputCls + " pr-10"}
-                  />
-                  <button
-                    type="button"
-                    tabIndex={-1}
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full h-10 text-sm font-bold flex items-center justify-center gap-2 transition-all duration-150 hover:brightness-110 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
-                  style={{ background: "#ffa300", color: "#0c0f16" }}
-                >
-                  {loading ? (
-                    <>
-                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.37 0 0 5.37 0 12h4z" />
-                      </svg>
-                      Creating account...
-                    </>
-                  ) : (
-                    <><UserPlus className="h-4 w-4" /> Create Account</>
-                  )}
-                </button>
-                <p className="text-center text-[10px] text-gray-400 mt-2">
-                  By signing up you agree to our{" "}
-                  <Link to="/" className="underline hover:text-[#ffa300]">Terms</Link> &{" "}
-                  <Link to="/" className="underline hover:text-[#ffa300]">Privacy Policy</Link>
-                </p>
-                <div className="mt-4 p-2 bg-blue-50 border border-blue-100 rounded-sm text-center">
-                  <p className="text-[10px] text-blue-800 font-medium">
-                    Note: This creates a standard student account. <br />
-                    To register as a partner agency, please use the <Link to="/partner" className="underline font-bold">Partner Application Form</Link>.
-                  </p>
-                </div>
-              </form>
-            )}
+              </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full h-10 text-sm font-bold flex items-center justify-center gap-2 transition-all duration-150 hover:brightness-110 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
+                style={{ background: "#ffa300", color: "#0c0f16" }}
+              >
+                {loading ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.37 0 0 5.37 0 12h4z" />
+                    </svg>
+                    Signing in...
+                  </>
+                ) : (
+                  <><LogIn className="h-4 w-4" /> Sign In</>
+                )}
+              </button>
+            </form>
 
             {/* Divider + partner link */}
             <div className="mt-4 pt-3 border-t border-gray-200 flex items-center justify-between">
