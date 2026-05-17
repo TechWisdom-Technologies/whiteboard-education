@@ -1,98 +1,43 @@
 import { useState, useRef } from "react";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Handshake, DollarSign, Users, Globe, CheckCircle, ArrowRight, Upload, X, FileText, Loader2 } from "lucide-react";
+import { Handshake, Users, Globe, CheckCircle2, ArrowRight, Upload, X, FileText, Loader2, ShieldCheck, Zap, HeadphonesIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 const benefits = [
-  { icon: DollarSign, title: "Competitive Commission", desc: "Earn up to 15% commission on every successful enrollment through your agency." },
-  { icon: Users, title: "Dedicated Support", desc: "Get a dedicated account manager to help you and your students every step of the way." },
-  { icon: Globe, title: "Global Network", desc: "Access 50+ universities across Malaysia, UK, Australia, and Canada." },
-  { icon: CheckCircle, title: "Fast Processing", desc: "Average application processing time of just 5 business days." },
-];
-
-const commissionTiers = [
-  { tier: "Bronze", students: "1-10", rate: "8%", color: "bg-warning/10 text-warning" },
-  { tier: "Silver", students: "11-50", rate: "10%", color: "bg-muted text-muted-foreground" },
-  { tier: "Gold", students: "51-100", rate: "12%", color: "bg-[#ffa300]/10 text-[#ffa300]" },
-  { tier: "Platinum", students: "100+", rate: "15%", color: "bg-primary/10 text-primary" },
+  { icon: Globe, title: "Malaysia Market Access", desc: "Tap into Malaysia's booming international education sector through our established university partnerships across the country." },
+  { icon: Users, title: "Dedicated Account Manager", desc: "Every partner agency is assigned a dedicated relationship manager to assist with student cases and documentation." },
+  { icon: ShieldCheck, title: "Trusted & Compliant", desc: "We handle all Malaysian regulatory requirements, visa processing, and institutional compliance on behalf of your students." },
+  { icon: Zap, title: "Fast Application Processing", desc: "Our streamlined processes ensure average turnaround of 5 business days from submission to university acknowledgement." },
 ];
 
 const registrationSteps = [
-  {
-    step: "01",
-    title: "Submit Agency Registration",
-    desc: "Provide agency profile, contact information, and required documents such as NID and trade license.",
-  },
-  {
-    step: "02",
-    title: "Compliance & Quality Review",
-    desc: "Our admin team reviews your documents, background, and student handling capacity.",
-  },
-  {
-    step: "03",
-    title: "Account Activation",
-    desc: "Once approved, your partner account is activated with access to student tools and tracking features.",
-  },
-  {
-    step: "04",
-    title: "Start Submitting Students",
-    desc: "Create student profiles, upload documents, and monitor each stage from review to visa and enrollment.",
-  },
+  { step: "01", title: "Submit Your Application", desc: "Provide your agency profile, representative details, and upload required verification documents." },
+  { step: "02", title: "Verification & Review", desc: "Our compliance team reviews your credentials, operational history, and student handling capacity." },
+  { step: "03", title: "Account Activation", desc: "Once approved, you receive partner dashboard access with full student management and tracking tools." },
+  { step: "04", title: "Start Referring Students", desc: "Submit student applications, upload documents, and track every stage from offer letter to enrollment." },
 ];
 
 const platformFeatures = [
-  {
-    title: "Student Application Management",
-    desc: "Add and manage unlimited student profiles, including intake preferences and target universities.",
-  },
-  {
-    title: "Document Upload & Tracking",
-    desc: "Upload passports, transcripts, IELTS, and statements securely with status visibility for each case.",
-  },
-  {
-    title: "Realtime Status Updates",
-    desc: "Receive timely updates for document review, offers, visa progress, approvals, and enrollment milestones.",
-  },
-  {
-    title: "Commission Visibility",
-    desc: "Track successful cases and commission tiers transparently so your team can forecast growth.",
-  },
-  {
-    title: "Marketing & Sales Support",
-    desc: "Use ready-to-share assets and program resources to acquire more students faster.",
-  },
-  {
-    title: "Dedicated Partner Assistance",
-    desc: "Get operational help from our team for escalations, documentation checks, and process optimization.",
-  },
+  { title: "Student Application Management", desc: "Create and manage unlimited student profiles with intake preferences and target Malaysian universities." },
+  { title: "Document Upload & Tracking", desc: "Upload passports, transcripts, IELTS scores, and financial statements with real-time status visibility." },
+  { title: "Live Status Updates", desc: "Receive timely notifications for document review, offer letters, visa progress, and enrollment milestones." },
+  { title: "Marketing & Sales Support", desc: "Access ready-to-share brochures, program guides, and promotional materials to attract Malaysia-bound students." },
+  { title: "Dedicated Partner Assistance", desc: "Get operational support for escalations, documentation checks, and process optimization from our team." },
+  { title: "Transparent Reporting", desc: "Track all referred students, successful placements, and partnership performance from a single dashboard." },
 ];
 
 const faqs = [
-  {
-    q: "How long does approval take?",
-    a: "Most registrations are reviewed within 2-5 business days, depending on document completeness.",
-  },
-  {
-    q: "Can multiple staff members manage one agency account?",
-    a: "Yes. You can operate through one main agency account and coordinate internal submissions as a team.",
-  },
-  {
-    q: "When do commissions get finalized?",
-    a: "Commissions are calculated on successful enrollments and follow your active tier rate.",
-  },
-  {
-    q: "Which destinations and institutions are supported?",
-    a: "You get access to a curated global network including Malaysia and other strategic study destinations.",
-  },
+  { q: "Who can become a Whiteboard Education partner?", a: "Any registered education consultancy or agency operating outside Malaysia that has students interested in studying in Malaysia can apply for partnership." },
+  { q: "How long does the approval process take?", a: "Most applications are reviewed within 2–5 business days. Complete documentation speeds up the process." },
+  { q: "What universities do you work with?", a: "We have direct partnerships with 50+ Malaysian universities, including top-ranked public and private institutions." },
+  { q: "How does the referral process work?", a: "Once approved, you submit student profiles through your partner dashboard. We handle admissions, visa, accommodation, and airport pickup on your behalf." },
 ];
 
 interface FileUploadProps {
@@ -252,215 +197,238 @@ export default function B2BLanding() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
-      <MegaMenu disableSticky />
-      <main className="flex-1">
-        {/* Hero Section */}
-        <div className="relative pt-24 pb-20 md:pt-32 md:pb-36 overflow-hidden bg-[#181d29] text-white">
-          <div className="absolute inset-0 bg-black/60 z-10" />
-          <img
-            src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80"
-            alt="Business Partnership"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-          <div className="container relative z-20 mx-auto px-4 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8 shadow-sm">
-              <Handshake className="h-4 w-4 text-[#ffa300]" />
-              <span className="text-xs font-bold tracking-widest text-white uppercase">Whiteboard B2B Network</span>
+    <div className="min-h-screen bg-white">
+      <MegaMenu />
+      <main>
+        {/* Hero - matches homepage HeroSection style */}
+        <section className="relative bg-[#f8f9fb] pt-0 pb-16 overflow-hidden">
+          <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
+            <div className="absolute top-[-10%] left-[-10%] w-[120%] h-[120%] flex flex-col gap-24 transform -rotate-12">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="flex gap-32 whitespace-nowrap text-8xl font-black tracking-widest uppercase">
+                  {[...Array(4)].map((_, j) => (
+                    <span key={j} className={j % 2 === 0 ? "text-[#181d29]/[0.04]" : "text-[#ffa300]/[0.08]"}>PARTNER WITH US</span>
+                  ))}
+                </div>
+              ))}
             </div>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 font-['Poppins'] leading-tight tracking-tight">
-              Empower Your Agency.<br />
-              <span className="text-[#ffa300]">Multiply Your Growth.</span>
-            </h1>
-            <p className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto mb-10 font-light leading-relaxed">
-              Join our elite global network of education partners. Leverage our streamlined platform to place students seamlessly and earn highly lucrative commissions.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Dialog open={regOpen} onOpenChange={setRegOpen}>
-                <DialogTrigger asChild>
-                  <Button size="lg" className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] h-14 px-8 font-bold text-base rounded-sm shadow-lg hover:shadow-xl transition-all">
-                    Register as Agency <ArrowRight className="h-4 w-4 ml-2" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-                  <DialogHeader><DialogTitle>Register Your Agency</DialogTitle></DialogHeader>
-                  <p className="text-sm text-muted-foreground">Fill in your details and upload required documents. Your registration will be reviewed by our team.</p>
-                  <div className="space-y-4 pt-2">
-                    <div><Label>Agency Name <span className="text-destructive">*</span></Label><Input value={agencyName} onChange={(e) => setAgencyName(e.target.value)} placeholder="Your company name" /></div>
-                    <div><Label>Contact Person <span className="text-destructive">*</span></Label><Input value={contactPerson} onChange={(e) => setContactPerson(e.target.value)} placeholder="Full name" /></div>
-                    <div><Label>Email <span className="text-destructive">*</span></Label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@agency.com" /></div>
-                    <div><Label>Password <span className="text-destructive">*</span></Label><Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Create a password (min 6 chars)" /></div>
-                    <div><Label>Phone</Label><Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+880 1XXXXXXXXX" /></div>
-                    <div><Label>Country</Label><Input value={country} onChange={(e) => setCountry(e.target.value)} placeholder="Country of operation" /></div>
-                    <div><Label>Number of Students (Annual)</Label><Input type="number" value={annualStudents} onChange={(e) => setAnnualStudents(e.target.value)} placeholder="e.g. 50" /></div>
-
-                    <div className="border-t pt-4">
-                      <h3 className="font-semibold mb-3">Required Documents</h3>
-                      <FileUploadField label="National ID (NID)" file={nidFile} onFileChange={setNidFile} required />
-                    </div>
-
-                    <FileUploadField label="Trade License (if any)" file={tradeLicenseFile} onFileChange={setTradeLicenseFile} />
-
-                    <div>
-                      <Label>Other Certificates</Label>
-                      {certificateFiles.map((f, i) => (
-                        <div key={i} className="flex items-center gap-2 mt-1 text-sm bg-muted rounded px-3 py-2">
-                          <FileText className="h-4 w-4 text-[#ffa300]" />
-                          <span className="truncate flex-1">{f.name}</span>
-                          <Button type="button" variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeCertificate(i)}>
-                            <X className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      ))}
-                      <FileUploadField
-                        label="Add certificate"
-                        file={null}
-                        onFileChange={addCertificate}
-                      />
-                    </div>
-
-                    <Button
-                      className="w-full bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90"
-                      onClick={handleSubmit}
-                      disabled={submitting}
-                    >
-                      {submitting ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Submitting...</> : "Submit Registration"}
+          </div>
+          <div className="absolute -bottom-1 left-0 w-full h-32 bg-gradient-to-t from-white to-transparent z-10" />
+          <div className="container relative z-20 mx-auto px-4 pt-16 lg:pt-20">
+            <div className="max-w-3xl mx-auto text-center">
+              <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 bg-white shadow-sm border border-gray-100 rounded-sm">
+                <Handshake className="h-4 w-4 text-[#ffa300]" />
+                <span className="text-xs font-bold text-[#181d29] tracking-tight">Malaysia's Leading Education Partnership Network</span>
+              </div>
+              <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-[1.2] text-[#181d29] tracking-tighter" style={{ fontFamily: "Poppins, sans-serif" }}>
+                <span className="block mb-2">Your Students Want</span>
+                <span className="inline-block bg-[#ffa300] text-[#181d29] px-4 py-1 rounded-sm mb-2 shadow-sm">To Study in Malaysia?</span>
+                <span className="block">We Make It Happen.</span>
+              </h1>
+              <p className="text-lg text-gray-600 mb-8 max-w-xl mx-auto leading-relaxed font-light">
+                Whiteboard Education is Malaysia's specialist education agency. We partner with international agencies worldwide to place their students into top Malaysian universities — handling admissions, visa, accommodation, and everything in between.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Dialog open={regOpen} onOpenChange={setRegOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#e08e00] font-semibold text-sm rounded-md h-11 px-6 group shadow-lg shadow-[#ffa300]/20 transition-all hover:shadow-[#ffa300]/40 hover:-translate-y-0.5">
+                      Register Your Agency <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
                     </Button>
-
-                    <p className="text-xs text-muted-foreground text-center">
-                      By registering, you agree to our terms. Your account will be activated after admin approval.
-                    </p>
-                  </div>
-                </DialogContent>
-              </Dialog>
-              <Link to="/login" className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="h-14 px-8 border-white/30 text-white hover:bg-white/10 hover:text-white font-bold text-base w-full rounded-sm backdrop-blur-sm transition-all">
-                  Existing Partner Login
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Benefits Section */}
-        <div className="bg-white py-24 relative">
-          <div className="absolute top-0 right-0 -mt-20 w-64 h-64 bg-[#ffa300]/5 rounded-full blur-3xl pointer-events-none" />
-          <div className="container mx-auto px-4 max-w-6xl relative z-10">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-extrabold text-[#181d29] font-['Poppins'] mb-4">Unmatched Partner Benefits</h2>
-              <p className="text-gray-600 max-w-2xl mx-auto text-lg font-light">We provide the tools, support, and financial incentives to help your education agency scale globally.</p>
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {benefits.map((b) => (
-                <div key={b.title} className="p-8 rounded-xl border border-gray-100 bg-white shadow-sm hover:shadow-xl hover:border-[#ffa300]/30 transition-all duration-300 group relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#ffa300]/10 to-transparent rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110" />
-                  <div className="h-14 w-14 rounded-lg bg-[#fef1da] flex items-center justify-center mb-6 text-[#ffa300] group-hover:scale-110 transition-transform">
-                    <b.icon className="h-7 w-7" />
-                  </div>
-                  <h3 className="text-xl font-bold text-[#181d29] mb-3 font-['Poppins']">{b.title}</h3>
-                  <p className="text-gray-600 leading-relaxed text-sm">{b.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Commission Tiers Section */}
-        <div className="bg-[#f7f8fa] py-24 relative overflow-hidden border-y border-gray-100">
-          <div className="absolute -top-40 -left-40 w-96 h-96 bg-[#ffa300]/5 rounded-full blur-3xl pointer-events-none" />
-          <div className="container mx-auto px-4 max-w-6xl relative z-10">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-extrabold text-[#181d29] font-['Poppins'] mb-4">Lucrative Commission Tiers</h2>
-              <p className="text-gray-600 max-w-2xl mx-auto text-lg font-light">Your growth is our success. Scale up your student placements to unlock premium rates.</p>
-            </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {commissionTiers.map((t, idx) => (
-                <div key={t.tier} className={`relative p-8 rounded-xl bg-white flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-2 ${idx === 3 ? 'border-2 border-[#ffa300] shadow-xl' : 'border border-gray-100 shadow-sm hover:shadow-md'}`}>
-                  {idx === 3 && <div className="absolute -top-3 px-4 py-1 bg-[#ffa300] text-[#181d29] text-[11px] font-bold uppercase tracking-widest rounded-full shadow-sm">Top Tier</div>}
-                  <div className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-6 ${t.color}`}>{t.tier} Partner</div>
-                  <div className="flex items-baseline gap-1 mb-2">
-                    <span className="text-4xl font-extrabold text-[#181d29]">{t.rate}</span>
-                  </div>
-                  <p className="text-gray-500 font-medium mb-6 text-sm">{t.students} students/yr</p>
-                  <div className="w-full h-px bg-gray-100 mb-6" />
-                  <ul className="text-sm text-gray-600 space-y-3 w-full text-left">
-                    <li className="flex items-center gap-2.5"><CheckCircle className="h-4 w-4 text-green-500 shrink-0" /> Guaranteed payout</li>
-                    <li className="flex items-center gap-2.5"><CheckCircle className="h-4 w-4 text-green-500 shrink-0" /> {idx >= 2 ? "Priority processing" : "Standard processing"}</li>
-                    {idx >= 2 && <li className="flex items-center gap-2.5"><CheckCircle className="h-4 w-4 text-green-500 shrink-0" /> Marketing support</li>}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Registration Process (Timeline) */}
-        <div className="py-24 bg-white relative">
-          <div className="container mx-auto px-4 max-w-5xl relative z-10">
-            <div className="text-center mb-20">
-              <h2 className="text-3xl md:text-4xl font-extrabold text-[#181d29] font-['Poppins'] mb-4">Simple Onboarding Process</h2>
-              <p className="text-gray-600 max-w-2xl mx-auto text-lg font-light">Start placing students globally in four easy steps.</p>
-            </div>
-            <div className="relative">
-              <div className="hidden md:block absolute top-10 left-12 right-12 h-0.5 bg-gray-100 -z-10" />
-              <div className="grid md:grid-cols-4 gap-10 md:gap-6">
-                {registrationSteps.map((s) => (
-                  <div key={s.step} className="relative z-10 flex flex-col items-center text-center group">
-                    <div className="w-20 h-20 rounded-full bg-white border-4 border-[#fef1da] shadow-sm flex items-center justify-center mb-6 group-hover:border-[#ffa300] transition-colors duration-300">
-                      <span className="text-[#ffa300] font-extrabold text-2xl font-['Poppins']">{s.step}</span>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+                    <DialogHeader><DialogTitle>Register Your Agency</DialogTitle></DialogHeader>
+                    <p className="text-sm text-muted-foreground">Fill in your details and upload required documents. Your registration will be reviewed by our team.</p>
+                    <div className="space-y-4 pt-2">
+                      <div><Label>Agency Name <span className="text-destructive">*</span></Label><Input value={agencyName} onChange={(e) => setAgencyName(e.target.value)} placeholder="Your company name" /></div>
+                      <div><Label>Contact Person <span className="text-destructive">*</span></Label><Input value={contactPerson} onChange={(e) => setContactPerson(e.target.value)} placeholder="Full name" /></div>
+                      <div><Label>Email <span className="text-destructive">*</span></Label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@agency.com" /></div>
+                      <div><Label>Password <span className="text-destructive">*</span></Label><Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Create a password (min 6 chars)" /></div>
+                      <div><Label>Phone</Label><Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+880 1XXXXXXXXX" /></div>
+                      <div><Label>Country</Label><Input value={country} onChange={(e) => setCountry(e.target.value)} placeholder="Country of operation" /></div>
+                      <div><Label>Number of Students (Annual)</Label><Input type="number" value={annualStudents} onChange={(e) => setAnnualStudents(e.target.value)} placeholder="e.g. 50" /></div>
+                      <div className="border-t pt-4">
+                        <h3 className="font-semibold mb-3">Required Documents</h3>
+                        <FileUploadField label="National ID (NID)" file={nidFile} onFileChange={setNidFile} required />
+                      </div>
+                      <FileUploadField label="Trade License (if any)" file={tradeLicenseFile} onFileChange={setTradeLicenseFile} />
+                      <div>
+                        <Label>Other Certificates</Label>
+                        {certificateFiles.map((f, i) => (
+                          <div key={i} className="flex items-center gap-2 mt-1 text-sm bg-muted rounded px-3 py-2">
+                            <FileText className="h-4 w-4 text-[#ffa300]" />
+                            <span className="truncate flex-1">{f.name}</span>
+                            <Button type="button" variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeCertificate(i)}><X className="h-3 w-3" /></Button>
+                          </div>
+                        ))}
+                        <FileUploadField label="Add certificate" file={null} onFileChange={addCertificate} />
+                      </div>
+                      <Button className="w-full bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90" onClick={handleSubmit} disabled={submitting}>
+                        {submitting ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Submitting...</> : "Submit Registration"}
+                      </Button>
+                      <p className="text-xs text-muted-foreground text-center">By registering, you agree to our terms. Your account will be activated after admin approval.</p>
                     </div>
-                    <h3 className="font-bold text-[#181d29] mb-3 text-lg font-['Poppins']">{s.title}</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed font-light">{s.desc}</p>
-                  </div>
-                ))}
+                  </DialogContent>
+                </Dialog>
+                <Link to="/login" className="w-full sm:w-auto">
+                  <Button variant="outline" className="w-full sm:w-auto border-[#181d29] text-[#181d29] font-semibold text-sm rounded-md h-11 px-6 transition-all hover:-translate-y-0.5">
+                    Existing Partner Login
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Platform Capabilities */}
-        <div className="bg-[#181d29] py-24 text-white relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffa300 2px, transparent 2px)', backgroundSize: '40px 40px' }} />
-          <div className="container mx-auto px-4 max-w-6xl relative z-10">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-extrabold font-['Poppins'] mb-4">Powerful B2B Platform</h2>
-              <p className="text-gray-400 max-w-2xl mx-auto text-lg font-light">Manage your entire agency workflow from a single, intuitive, and secure dashboard.</p>
+        {/* Benefits - matches ServicesGrid style */}
+        <section className="py-16 bg-white relative overflow-hidden">
+          <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#ffa300]/5 rounded-full blur-[80px] pointer-events-none" />
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl md:text-3xl font-semibold text-[#181d29] mb-2">Why Partner With Whiteboard?</h2>
+              <p className="text-[#515768] max-w-2xl mx-auto text-sm">We are Malaysia's on-the-ground education experts. You handle your market — we handle Malaysia.</p>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {platformFeatures.map((f, i) => (
-                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-8 hover:bg-white/10 transition-colors duration-300">
-                  <div className="h-12 w-12 rounded-lg bg-[#ffa300]/20 flex items-center justify-center mb-6 text-[#ffa300]">
-                    <CheckCircle className="h-6 w-6" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+              {benefits.map((b, i) => (
+                <div key={b.title} className="text-center group">
+                  <div className="mx-auto mb-6 h-16 w-16 rounded-sm bg-[#ffa300]/10 flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
+                    <b.icon className="h-7 w-7 text-[#ffa300]" />
                   </div>
-                  <h3 className="text-lg font-bold mb-3 font-['Poppins']">{f.title}</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed font-light">{f.desc}</p>
+                  <div className="relative inline-block mb-6">
+                    <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-[#ffa300] rounded-sm" />
+                    <div className="relative w-8 h-8 bg-[#181d29] text-white flex items-center justify-center font-bold text-sm rounded-sm z-10 border border-[#181d29]">{i + 1}</div>
+                  </div>
+                  <h3 className="font-semibold text-lg mb-3 group-hover:text-[#ffa300] transition-colors" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>{b.title}</h3>
+                  <p className="text-[13px] leading-relaxed" style={{ color: "#515768", fontFamily: "Poppins, sans-serif" }}>{b.desc}</p>
                 </div>
               ))}
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* FAQ Section */}
-        <div className="bg-gray-50 py-24 border-t border-gray-100">
-          <div className="container mx-auto px-4 max-w-4xl">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-extrabold text-[#181d29] font-['Poppins'] mb-4">Agency FAQs</h2>
-              <p className="text-gray-600 max-w-2xl mx-auto text-lg font-light">Common questions about partnering with Whiteboard Education.</p>
+        {/* How It Works - matches WhyMalaysia alternating layout */}
+        <section className="py-16 bg-gray-50">
+          <div className="container mx-auto px-4 max-w-6xl">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl md:text-3xl font-semibold mb-2">How The Partnership Works</h2>
+              <p className="text-sm text-[#515768] max-w-2xl mx-auto">A simple, transparent process from registration to successful student placement.</p>
             </div>
-            <div className="space-y-4">
-              {faqs.map((item, i) => (
-                <Card key={i} className="border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                  <CardContent className="p-6 md:p-8">
-                    <p className="text-lg font-bold text-[#181d29] mb-3 font-['Poppins']">{item.q}</p>
-                    <p className="text-[15px] text-gray-600 leading-relaxed font-light">{item.a}</p>
-                  </CardContent>
-                </Card>
+            <div className="space-y-24">
+              {registrationSteps.map((s, i) => (
+                <div key={s.step} className={`flex flex-col ${i % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'} items-center gap-12 md:gap-20`}>
+                  <div className="flex-1 flex justify-center">
+                    <div className="relative group w-full max-w-[360px]">
+                      <div className={`absolute inset-0 translate-x-4 translate-y-4 rounded-sm transition-transform duration-500 group-hover:translate-x-2 group-hover:translate-y-2 ${i % 2 === 0 ? 'bg-[#ffa300]/10' : 'bg-[#181d29]/5'}`} />
+                      <div className="relative aspect-square rounded-sm overflow-hidden border border-[#e5e7eb] bg-white shadow-xl z-10 flex items-center justify-center">
+                        <div className="text-center p-8">
+                          <div className="w-20 h-20 mx-auto mb-4 bg-[#ffa300]/10 rounded-sm flex items-center justify-center">
+                            <span className="text-3xl font-extrabold text-[#ffa300]" style={{ fontFamily: "Poppins, sans-serif" }}>{s.step}</span>
+                          </div>
+                          <p className="text-lg font-bold text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>{s.title}</p>
+                        </div>
+                      </div>
+                      <div className={`absolute -top-2 -left-2 w-12 h-12 border-t-2 border-l-2 z-20 transition-all duration-500 group-hover:-top-1 group-hover:-left-1 ${i % 2 === 0 ? 'border-[#ffa300]' : 'border-[#181d29]/20'}`} />
+                    </div>
+                  </div>
+                  <div className="flex-1 space-y-6">
+                    <div className="flex items-center gap-3">
+                      <h3 className="text-xl font-semibold text-[#181d29]">{s.title}</h3>
+                      <div className="w-9 h-9 bg-[#ffa300]/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="text-sm font-bold text-[#ffa300]">{s.step}</span>
+                      </div>
+                    </div>
+                    <p className="text-[15px] text-[#515768] text-justify leading-relaxed">{s.desc}</p>
+                    <ul className="space-y-2 text-[13px]">
+                      <li className="flex items-center gap-3 text-[#515768]"><CheckCircle2 className="h-4 w-4 text-[#ffa300] flex-shrink-0" />Fully managed by our Malaysia team</li>
+                      <li className="flex items-center gap-3 text-[#515768]"><CheckCircle2 className="h-4 w-4 text-[#ffa300] flex-shrink-0" />Transparent updates at every stage</li>
+                    </ul>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
-        </div>
+        </section>
+
+        {/* Platform Features - dark CTA section like PreFooterCTA */}
+        <section className="relative py-24 overflow-hidden">
+          <div className="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=2000&q=80" alt="Team collaboration" className="w-full h-full object-cover" />
+          </div>
+          <div className="absolute inset-0 z-0 bg-[#181d29]/90 mix-blend-multiply" />
+          <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#181d29]/95 via-[#181d29]/80 to-transparent" />
+          <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-[#ffa300]/20 to-transparent mix-blend-overlay z-0 pointer-events-none" />
+          <div className="container relative z-10 mx-auto px-4 max-w-6xl">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-sm bg-[#ffa300]/20 border border-[#ffa300]/30 text-[#ffa300] mb-6 backdrop-blur-sm">
+                <HeadphonesIcon className="h-4 w-4" />
+                <span className="text-xs font-semibold tracking-wide uppercase">Partner Dashboard</span>
+              </div>
+              <h2 className="text-2xl md:text-3xl font-semibold text-white mb-2">What You Get Access To</h2>
+              <p className="text-sm text-gray-300 max-w-xl mx-auto leading-relaxed">Manage your entire student referral pipeline from one powerful, intuitive dashboard.</p>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {platformFeatures.map((f, i) => (
+                <div key={i} className="bg-white/5 border border-white/10 rounded-sm p-6 hover:bg-white/10 transition-colors">
+                  <div className="flex items-center gap-3 mb-3">
+                    <CheckCircle2 className="h-5 w-5 text-[#ffa300] flex-shrink-0" />
+                    <h3 className="font-semibold text-white text-[15px]" style={{ fontFamily: "Poppins, sans-serif" }}>{f.title}</h3>
+                  </div>
+                  <p className="text-[13px] text-gray-400 leading-relaxed pl-8">{f.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ - clean white section */}
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-4 max-w-4xl">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl md:text-3xl font-semibold text-[#181d29] mb-2">Frequently Asked Questions</h2>
+              <p className="text-sm text-[#515768] max-w-2xl mx-auto">Everything you need to know about partnering with Whiteboard Education.</p>
+            </div>
+            <div className="space-y-4">
+              {faqs.map((item, i) => (
+                <div key={i} className="border border-[#e5e7eb] rounded-sm p-6 hover:shadow-sm transition-shadow">
+                  <p className="font-semibold text-[#181d29] mb-2" style={{ fontFamily: "Poppins, sans-serif" }}>{item.q}</p>
+                  <p className="text-[13px] text-[#515768] leading-relaxed">{item.a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Final CTA - matches PreFooterCTA */}
+        <section className="relative py-24 overflow-hidden">
+          <div className="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=2000&q=80" alt="Business handshake" className="w-full h-full object-cover" />
+          </div>
+          <div className="absolute inset-0 z-0 bg-[#181d29]/90 mix-blend-multiply" />
+          <div className="container relative z-10 mx-auto px-4">
+            <div className="max-w-3xl mx-auto text-center">
+              <div className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-sm bg-[#ffa300]/20 border border-[#ffa300]/30 text-[#ffa300] mb-6 backdrop-blur-sm">
+                <Handshake className="h-4 w-4" />
+                <span className="text-xs font-semibold tracking-wide uppercase">Become a Partner Today</span>
+              </div>
+              <h2 className="text-2xl md:text-3xl font-semibold text-white mb-2 leading-tight">
+                Ready to Expand Your <br /><span className="text-[#ffa300]">Malaysia Education Portfolio?</span>
+              </h2>
+              <p className="text-sm text-gray-300 mb-10 max-w-xl mx-auto leading-relaxed">Join our growing network of international agencies and start placing students into Malaysia's top universities.</p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Button className="w-full sm:w-auto bg-[#ffa300] text-[#181d29] hover:bg-[#e08e00] font-semibold text-sm rounded-md h-11 px-6 group shadow-lg shadow-[#ffa300]/20 transition-all hover:shadow-[#ffa300]/40 hover:-translate-y-0.5" onClick={() => setRegOpen(true)}>
+                  Register Your Agency <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
+                </Button>
+                <Link to="/contact" className="w-full sm:w-auto">
+                  <Button variant="outline" className="w-full sm:w-auto border-white/20 text-white hover:bg-white hover:text-[#181d29] font-semibold text-sm rounded-md h-11 px-6 bg-white/5 backdrop-blur-sm transition-all hover:-translate-y-0.5">
+                    Contact Us First
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
       <PublicFooter />
     </div>
   );
 }
+
