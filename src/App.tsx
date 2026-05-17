@@ -22,6 +22,7 @@ import B2BLanding from "./pages/B2BLanding";
 import CostCalculator from "./pages/CostCalculator";
 import GpaConverter from "./pages/GpaConverter";
 import Compare from "./pages/Compare";
+import Application from "./pages/Application";
 
 import VisaGuide from "./pages/VisaGuide";
 import Housing from "./pages/Housing";
@@ -109,6 +110,9 @@ const App = () => (
             <Route path="/courses" element={<Courses2 />} />
             <Route path="/courses-legacy" element={<CoursesPage />} />
             <Route path="/courses/:courseId" element={<CourseDetail />} />
+
+            {/* Application */}
+            <Route path="/apply" element={<Application />} />
 
             {/* Tools */}
             <Route path="/tools/calculator" element={<CostCalculator />} />

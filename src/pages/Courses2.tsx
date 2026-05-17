@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
@@ -102,6 +102,7 @@ const PAID_OFFER_LETTER_UNIS = [
 ];
 
 export default function Courses2() {
+  const navigate = useNavigate();
   const { data: courses = [], isLoading: loadingCourses } = useTableData("courses");
   const { data: universities = [], isLoading: loadingUnis } = useTableData("universities");
   
@@ -333,10 +334,33 @@ export default function Courses2() {
                         </div>
                       </div>
                       <div className="flex flex-col gap-3 shrink-0 w-full md:w-[180px]">
-                        <Button className="h-11 px-8 font-bold text-base" style={{ backgroundColor: "#ffa300", color: "#181d29", borderRadius: "5px", fontFamily: "Poppins, sans-serif", border: "1px solid #ffa300" }} onClick={() => handleApply(c.title)}>Apply Now</Button>
-                        <Link to={`/courses/${c.id}`} className="block">
-                          <Button variant="outline" className="h-11 px-8 font-bold text-base w-full" style={{ borderColor: "#9273b6", color: "#9273b6", borderRadius: "5px", fontFamily: "Poppins, sans-serif", backgroundColor: "transparent" }}>Ask Us</Button>
-                        </Link>
+                        <Button
+                          className="h-11 px-8 font-bold text-base"
+                          style={{
+                            backgroundColor: "#ffa300",
+                            color: "#181d29",
+                            borderRadius: "5px",
+                            fontFamily: "Poppins, sans-serif",
+                            border: "1px solid #ffa300",
+                          }}
+                          onClick={() => navigate(`/apply?courseId=${c.id}`)}
+                        >
+                          Apply Now
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="h-11 px-8 font-bold text-base w-full"
+                          style={{
+                            borderColor: "#9273b6",
+                            color: "#9273b6",
+                            borderRadius: "5px",
+                            fontFamily: "Poppins, sans-serif",
+                            backgroundColor: "transparent",
+                          }}
+                          onClick={() => navigate("/contact")}
+                        >
+                          Ask Us
+                        </Button>
                       </div>
                     </div>
                   );

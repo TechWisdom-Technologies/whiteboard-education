@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
@@ -139,6 +139,7 @@ function categoryKey(title: string): string {
 
 export default function UniversityDetail() {
   const { universityId } = useParams();
+  const navigate = useNavigate();
   const { data: liveU = [], isLoading } = useTableData("universities");
   const { data: liveC = [] } = useTableData("courses");
   const { data: liveA = [] } = useTableData("accommodations");
@@ -229,8 +230,8 @@ export default function UniversityDetail() {
             {uni.city && <p className="text-gray-600 flex items-center gap-1 justify-center md:justify-start"><MapPin className="h-4 w-4 text-[#ffa300]" />{uni.city}, Malaysia</p>}
           </div>
           <div className="flex flex-col gap-2 shrink-0">
-            <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold px-8 h-11" onClick={() => open("hero_apply")}>Apply Now</Button>
-            <Button variant="outline" className="font-bold px-8 h-11" onClick={() => open("hero_ask")}>Ask Us</Button>
+            <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold px-8 h-11" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>Apply Now</Button>
+            <Button variant="outline" className="font-bold px-8 h-11" onClick={() => navigate("/contact")}>Ask Us</Button>
           </div>
         </div>
       </section>
@@ -252,9 +253,9 @@ export default function UniversityDetail() {
             </div>
           </div>
           {/* Right: CTA Buttons */}
-          <div className={`hidden lg:flex items-center gap-3 transition-all duration-300 ${isScrolled ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none'} shrink-0`}>
-            <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-normal px-6 h-10 text-sm" onClick={() => open("subnav_apply")}>Apply Now</Button>
-            <Button variant="outline" className="font-normal px-6 h-10 text-sm border-gray-200" onClick={() => open("subnav_ask")}>Ask Us</Button>
+          <div className={`flex items-center gap-2 transition-all duration-300 ${isScrolled ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none hidden md:flex'}`}>
+            <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-normal px-6 h-10 text-sm" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>Apply Now</Button>
+            <Button variant="outline" className="font-normal px-6 h-10 text-sm border-gray-200" onClick={() => navigate("/contact")}>Ask Us</Button>
           </div>
         </div>
       </nav>

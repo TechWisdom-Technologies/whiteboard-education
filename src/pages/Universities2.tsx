@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
@@ -120,6 +120,7 @@ const UNIVERSITY_LOGOS: Record<string, string> = {
 };
 
 export default function Universities() {
+  const navigate = useNavigate();
   const { data: universities = [], isLoading } = useTableData("universities", { orderBy: "ranking" });
   const { data: courses = [], isLoading: loadingCourses } = useTableData("courses");
   const [search, setSearch] = useState("");
@@ -442,25 +443,24 @@ export default function Universities() {
                               fontFamily: "Poppins, sans-serif",
                               border: "1px solid #ffa300",
                             }}
-                            onClick={() => handleApply(u.name)}
+                            onClick={() => navigate(`/apply?universityId=${u.id}`)}
                           >
                             Apply Now
                           </Button>
-                          <Link to={`/universities/${u.id}`} className="block">
-                            <Button
-                              variant="outline"
-                              className="h-11 px-8 font-bold text-base w-full"
-                              style={{
-                                borderColor: "#9273b6",
-                                color: "#9273b6",
-                                borderRadius: "5px",
-                                fontFamily: "Poppins, sans-serif",
-                                backgroundColor: "transparent",
-                              }}
-                            >
-                              Ask Us
-                            </Button>
-                          </Link>
+                          <Button
+                            variant="outline"
+                            className="h-11 px-8 font-bold text-base w-full"
+                            style={{
+                              borderColor: "#9273b6",
+                              color: "#9273b6",
+                              borderRadius: "5px",
+                              fontFamily: "Poppins, sans-serif",
+                              backgroundColor: "transparent",
+                            }}
+                            onClick={() => navigate("/contact")}
+                          >
+                            Ask Us
+                          </Button>
                         </div>
                       </div>
                     );

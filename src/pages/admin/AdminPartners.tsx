@@ -137,43 +137,42 @@ export default function AdminPartners() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Agency Name</TableHead>
-                <TableHead>Contact Person</TableHead>
+                <TableHead>Agency</TableHead>
+                <TableHead>Representative</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>Country</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Documents</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="w-[80px]">Status</TableHead>
+                <TableHead className="w-[100px]">Documents</TableHead>
+                <TableHead className="w-[120px]">Approval Date</TableHead>
+                <TableHead className="text-right w-[80px]">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {registrations.map((reg) => (
-                <TableRow key={reg.id}>
-                  <TableCell className="font-medium">{reg.agency_name}</TableCell>
-                  <TableCell>{reg.contact_person}</TableCell>
-                  <TableCell className="text-sm">{reg.email}</TableCell>
-                  <TableCell>{reg.country}</TableCell>
-                  <TableCell>{statusBadge(reg.status)}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-1">
-                      {reg.nid_document_url && <Badge variant="outline" className="text-xs">NID</Badge>}
-                      {reg.trade_license_url && <Badge variant="outline" className="text-xs">License</Badge>}
-                      {(reg.certificate_urls as string[])?.length > 0 && (
-                        <Badge variant="outline" className="text-xs">+{(reg.certificate_urls as string[]).length} certs</Badge>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    {new Date(reg.created_at).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="icon" onClick={() => openDetail(reg)}>
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {registrations.map((reg) => {
+                const docCount = (reg.nid_document_url ? 1 : 0) + (reg.trade_license_url ? 1 : 0) + ((reg.certificate_urls as string[])?.length || 0);
+                return (
+                  <TableRow key={reg.id}>
+                    <TableCell className="font-medium max-w-[150px] truncate" title={reg.agency_name}>{reg.agency_name}</TableCell>
+                    <TableCell className="max-w-[150px] truncate" title={reg.contact_person}>{reg.contact_person}</TableCell>
+                    <TableCell className="text-sm max-w-[150px] truncate" title={reg.email}>{reg.email}</TableCell>
+                    <TableCell>
+                      {reg.status === 'approved' && <CheckCircle className="h-5 w-5 text-green-600" title="Approved" />}
+                      {reg.status === 'pending' && <Clock className="h-5 w-5 text-warning" title="Pending" />}
+                      {reg.status === 'rejected' && <XCircle className="h-5 w-5 text-destructive" title="Rejected" />}
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm font-medium text-muted-foreground">{docCount} Docs</span>
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
+                      {new Date(reg.created_at).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="icon" onClick={() => openDetail(reg)}>
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </div>

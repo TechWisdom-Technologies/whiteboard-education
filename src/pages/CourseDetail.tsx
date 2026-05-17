@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import DOMPurify from 'dompurify';
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
@@ -13,6 +13,7 @@ import { BookOpen, Copy, Check, Info, Building2 } from "lucide-react";
 
 export default function CourseDetail() {
   const { courseId } = useParams();
+  const navigate = useNavigate();
   const { data: liveCourses = [], isLoading: loadingC } = useTableData("courses");
   const { data: liveUniversities = [] } = useTableData("universities");
   const courses = liveCourses.length > 0 ? liveCourses : (mockCourses as any[]);
@@ -180,7 +181,7 @@ ${window.location.href}`;
         {/* Top Hero Section */}
         <div className="w-full bg-[#ffecd8] border-b border-[#ffb870]/20">
           <div className="container mx-auto px-4 py-16 md:py-20 max-w-5xl">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 w-full">
               {uni?.logo_url && (
                 <div className="w-32 h-32 md:w-40 md:h-40 bg-white rounded-sm border border-gray-200 p-4 shrink-0 flex items-center justify-center overflow-hidden shadow-sm">
@@ -197,8 +198,8 @@ ${window.location.href}`;
                     </div>
                     
                     <div className="flex items-center gap-3 shrink-0 justify-center md:justify-end">
-                      <Button className="bg-[#f1a51c] hover:bg-[#e09819] text-black font-semibold rounded-sm px-6 h-10 shadow-none text-sm" onClick={() => setLeadOpen(true)}>Apply Now</Button>
-                      <Button variant="outline" className="rounded-sm px-6 border-gray-300 text-gray-700 hover:bg-gray-50 font-medium h-10 text-sm shadow-none bg-white">Ask Us</Button>
+                      <Button className="bg-[#f1a51c] hover:bg-[#e09819] text-black font-semibold rounded-sm px-6 h-10 shadow-none text-sm" onClick={() => navigate(`/apply?courseId=${course.id}`)}>Apply Now</Button>
+                      <Button variant="outline" className="rounded-sm px-6 border-gray-300 text-gray-700 hover:bg-gray-50 font-medium h-10 text-sm shadow-none bg-white" onClick={() => navigate("/contact")}>Ask Us</Button>
                     </div>
                   </div>
                 </div>
@@ -227,8 +228,8 @@ ${window.location.href}`;
               {/* Actions in sticky nav (visible mostly on desktop) */}
               {isScrolledPastHero && (
                 <div className="hidden md:flex items-center gap-3 shrink-0 ml-6">
-                  <Button className="bg-[#f1a51c] hover:bg-[#e09819] text-black font-normal rounded-sm px-6 h-10 shadow-none text-lg" onClick={() => setLeadOpen(true)}>Apply Now</Button>
-                  <Button variant="outline" className="rounded-sm px-6 border-gray-300 text-gray-700 hover:bg-gray-50 font-normal h-10 text-lg shadow-none bg-white">Ask Us</Button>
+                  <Button className="bg-[#f1a51c] hover:bg-[#e09819] text-black font-normal rounded-sm px-6 h-10 shadow-none text-lg" onClick={() => navigate(`/apply?courseId=${course.id}`)}>Apply Now</Button>
+                  <Button variant="outline" className="rounded-sm px-6 border-gray-300 text-gray-700 hover:bg-gray-50 font-normal h-10 text-lg shadow-none bg-white" onClick={() => navigate("/contact")}>Ask Us</Button>
                 </div>
               )}
             </div>
@@ -416,7 +417,7 @@ ${window.location.href}`;
                 <h2 className="text-[20px] font-semibold text-gray-900 max-w-md relative z-10 leading-tight">
                   Would you like to apply to {uni?.name} ?
                 </h2>
-                <Button variant="outline" className="relative z-10 bg-transparent border-2 border-gray-900 text-gray-900 hover:bg-gray-50 h-14 px-8 rounded-sm font-bold text-base transition-colors shadow-none w-full md:w-auto" onClick={() => setLeadOpen(true)}>
+                <Button variant="outline" className="relative z-10 bg-transparent border-2 border-gray-900 text-gray-900 hover:bg-gray-50 h-14 px-8 rounded-sm font-bold text-base transition-colors shadow-none w-full md:w-auto" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
                   Apply now
                 </Button>
               </div>

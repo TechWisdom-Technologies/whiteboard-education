@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { LeadCaptureModal } from "@/components/public/LeadCaptureModal";
@@ -12,6 +12,7 @@ import { useState } from "react";
 
 export default function LanguageCenterDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { data: languageCenters = [], isLoading } = useTableData("language_centers");
   const lc = languageCenters.find((l: any) => l.id === id);
   const [leadOpen, setLeadOpen] = useState(false);
@@ -113,7 +114,9 @@ export default function LanguageCenterDetail() {
                     ))}
                   </div>
                   <div className="pt-2 space-y-3">
-                    <Button className="w-full bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 h-12 text-base font-bold" onClick={() => setLeadOpen(true)}>Apply Now</Button>
+                    <Button className="w-full bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 h-12 text-base font-bold" onClick={() => navigate("/apply")}>Apply Now</Button>
+                  </div>
+                  <div className="pt-3 border-t">
                     <Button variant="outline" className="w-full h-10"><Download className="h-4 w-4 mr-2" /> Download Brochure</Button>
                   </div>
                 </CardContent>

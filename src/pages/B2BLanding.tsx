@@ -252,21 +252,33 @@ export default function B2BLanding() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <MegaMenu />
+    <div className="min-h-screen flex flex-col bg-white">
+      <MegaMenu disableSticky />
       <main className="flex-1">
-        {/* Hero */}
-        <div className="intro-surface py-20">
-          <div className="container mx-auto px-4 text-center">
-            <Handshake className="h-16 w-16 mx-auto mb-4 text-[#ffa300]" />
-            <h1 className="text-4xl md:text-5xl font-extrabold mb-4">Partner With Whiteboard Education</h1>
-            <p className="text-primary-foreground/70 text-lg max-w-2xl mx-auto mb-8">
-              Join our global network of education agencies. Earn competitive commissions while providing world-class university placement services.
+        {/* Hero Section */}
+        <div className="relative pt-24 pb-20 md:pt-32 md:pb-36 overflow-hidden bg-[#181d29] text-white">
+          <div className="absolute inset-0 bg-black/60 z-10" />
+          <img
+            src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80"
+            alt="Business Partnership"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="container relative z-20 mx-auto px-4 text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8 shadow-sm">
+              <Handshake className="h-4 w-4 text-[#ffa300]" />
+              <span className="text-xs font-bold tracking-widest text-white uppercase">Whiteboard B2B Network</span>
+            </div>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 font-['Poppins'] leading-tight tracking-tight">
+              Empower Your Agency.<br />
+              <span className="text-[#ffa300]">Multiply Your Growth.</span>
+            </h1>
+            <p className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto mb-10 font-light leading-relaxed">
+              Join our elite global network of education partners. Leverage our streamlined platform to place students seamlessly and earn highly lucrative commissions.
             </p>
-            <div className="flex gap-3 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Dialog open={regOpen} onOpenChange={setRegOpen}>
                 <DialogTrigger asChild>
-                  <Button size="lg" className="bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90">
+                  <Button size="lg" className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] h-14 px-8 font-bold text-base rounded-sm shadow-lg hover:shadow-xl transition-all">
                     Register as Agency <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
                 </DialogTrigger>
@@ -321,8 +333,8 @@ export default function B2BLanding() {
                   </div>
                 </DialogContent>
               </Dialog>
-              <Link to="/login">
-                <Button size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
+              <Link to="/login" className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="h-14 px-8 border-white/30 text-white hover:bg-white/10 hover:text-white font-bold text-base w-full rounded-sm backdrop-blur-sm transition-all">
                   Existing Partner Login
                 </Button>
               </Link>
@@ -330,110 +342,117 @@ export default function B2BLanding() {
           </div>
         </div>
 
-        {/* Benefits */}
-        <div className="container mx-auto px-4 py-16">
-          <h2 className="text-2xl font-extrabold text-center mb-10">Why Partner With Us?</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {benefits.map((b) => (
-              <Card key={b.title} className="text-center hover:shadow-lg transition-shadow">
-                <CardContent className="p-8">
-                  <div className="h-14 w-14 rounded-sm bg-[#ffa300]/10 flex items-center justify-center mx-auto mb-4">
-                    <b.icon className="h-7 w-7 text-[#ffa300]" />
+        {/* Benefits Section */}
+        <div className="bg-white py-24 relative">
+          <div className="absolute top-0 right-0 -mt-20 w-64 h-64 bg-[#ffa300]/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="container mx-auto px-4 max-w-6xl relative z-10">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-extrabold text-[#181d29] font-['Poppins'] mb-4">Unmatched Partner Benefits</h2>
+              <p className="text-gray-600 max-w-2xl mx-auto text-lg font-light">We provide the tools, support, and financial incentives to help your education agency scale globally.</p>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {benefits.map((b) => (
+                <div key={b.title} className="p-8 rounded-xl border border-gray-100 bg-white shadow-sm hover:shadow-xl hover:border-[#ffa300]/30 transition-all duration-300 group relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#ffa300]/10 to-transparent rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110" />
+                  <div className="h-14 w-14 rounded-lg bg-[#fef1da] flex items-center justify-center mb-6 text-[#ffa300] group-hover:scale-110 transition-transform">
+                    <b.icon className="h-7 w-7" />
                   </div>
-                  <h3 className="font-bold mb-2">{b.title}</h3>
-                  <p className="text-sm text-muted-foreground">{b.desc}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Commission Tiers */}
-        <div className="bg-muted/50 py-16">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl font-extrabold text-center mb-10">Commission Structure</h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto">
-              {commissionTiers.map((t) => (
-                <Card key={t.tier} className="text-center hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <Badge className={`${t.color} mb-3`}>{t.tier}</Badge>
-                    <div className="text-3xl font-extrabold text-[#ffa300] mb-1">{t.rate}</div>
-                    <p className="text-sm text-muted-foreground">{t.students} students/year</p>
-                  </CardContent>
-                </Card>
+                  <h3 className="text-xl font-bold text-[#181d29] mb-3 font-['Poppins']">{b.title}</h3>
+                  <p className="text-gray-600 leading-relaxed text-sm">{b.desc}</p>
+                </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Registration Process */}
-        <div className="container mx-auto px-4 py-16">
-          <h2 className="text-2xl font-extrabold text-center mb-10">Registration Process</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {registrationSteps.map((s) => (
-              <Card key={s.step} className="border-dashed">
-                <CardContent className="p-6">
-                  <div className="text-xs font-bold text-[#ffa300] mb-2">STEP {s.step}</div>
-                  <h3 className="font-bold mb-2">{s.title}</h3>
-                  <p className="text-sm text-muted-foreground">{s.desc}</p>
-                </CardContent>
-              </Card>
-            ))}
+        {/* Commission Tiers Section */}
+        <div className="bg-[#f7f8fa] py-24 relative overflow-hidden border-y border-gray-100">
+          <div className="absolute -top-40 -left-40 w-96 h-96 bg-[#ffa300]/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="container mx-auto px-4 max-w-6xl relative z-10">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-extrabold text-[#181d29] font-['Poppins'] mb-4">Lucrative Commission Tiers</h2>
+              <p className="text-gray-600 max-w-2xl mx-auto text-lg font-light">Your growth is our success. Scale up your student placements to unlock premium rates.</p>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {commissionTiers.map((t, idx) => (
+                <div key={t.tier} className={`relative p-8 rounded-xl bg-white flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-2 ${idx === 3 ? 'border-2 border-[#ffa300] shadow-xl' : 'border border-gray-100 shadow-sm hover:shadow-md'}`}>
+                  {idx === 3 && <div className="absolute -top-3 px-4 py-1 bg-[#ffa300] text-[#181d29] text-[11px] font-bold uppercase tracking-widest rounded-full shadow-sm">Top Tier</div>}
+                  <div className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-6 ${t.color}`}>{t.tier} Partner</div>
+                  <div className="flex items-baseline gap-1 mb-2">
+                    <span className="text-4xl font-extrabold text-[#181d29]">{t.rate}</span>
+                  </div>
+                  <p className="text-gray-500 font-medium mb-6 text-sm">{t.students} students/yr</p>
+                  <div className="w-full h-px bg-gray-100 mb-6" />
+                  <ul className="text-sm text-gray-600 space-y-3 w-full text-left">
+                    <li className="flex items-center gap-2.5"><CheckCircle className="h-4 w-4 text-green-500 shrink-0" /> Guaranteed payout</li>
+                    <li className="flex items-center gap-2.5"><CheckCircle className="h-4 w-4 text-green-500 shrink-0" /> {idx >= 2 ? "Priority processing" : "Standard processing"}</li>
+                    {idx >= 2 && <li className="flex items-center gap-2.5"><CheckCircle className="h-4 w-4 text-green-500 shrink-0" /> Marketing support</li>}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Registration Process (Timeline) */}
+        <div className="py-24 bg-white relative">
+          <div className="container mx-auto px-4 max-w-5xl relative z-10">
+            <div className="text-center mb-20">
+              <h2 className="text-3xl md:text-4xl font-extrabold text-[#181d29] font-['Poppins'] mb-4">Simple Onboarding Process</h2>
+              <p className="text-gray-600 max-w-2xl mx-auto text-lg font-light">Start placing students globally in four easy steps.</p>
+            </div>
+            <div className="relative">
+              <div className="hidden md:block absolute top-10 left-12 right-12 h-0.5 bg-gray-100 -z-10" />
+              <div className="grid md:grid-cols-4 gap-10 md:gap-6">
+                {registrationSteps.map((s) => (
+                  <div key={s.step} className="relative z-10 flex flex-col items-center text-center group">
+                    <div className="w-20 h-20 rounded-full bg-white border-4 border-[#fef1da] shadow-sm flex items-center justify-center mb-6 group-hover:border-[#ffa300] transition-colors duration-300">
+                      <span className="text-[#ffa300] font-extrabold text-2xl font-['Poppins']">{s.step}</span>
+                    </div>
+                    <h3 className="font-bold text-[#181d29] mb-3 text-lg font-['Poppins']">{s.title}</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed font-light">{s.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Platform Capabilities */}
-        <div className="bg-muted/40 py-16">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl font-extrabold text-center mb-10">What You Can Do Through Our Platform</h2>
+        <div className="bg-[#181d29] py-24 text-white relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffa300 2px, transparent 2px)', backgroundSize: '40px 40px' }} />
+          <div className="container mx-auto px-4 max-w-6xl relative z-10">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-extrabold font-['Poppins'] mb-4">Powerful B2B Platform</h2>
+              <p className="text-gray-400 max-w-2xl mx-auto text-lg font-light">Manage your entire agency workflow from a single, intuitive, and secure dashboard.</p>
+            </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {platformFeatures.map((f) => (
-                <Card key={f.title} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
-                    <h3 className="font-semibold mb-2">{f.title}</h3>
-                    <p className="text-sm text-muted-foreground">{f.desc}</p>
-                  </CardContent>
-                </Card>
+              {platformFeatures.map((f, i) => (
+                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-8 hover:bg-white/10 transition-colors duration-300">
+                  <div className="h-12 w-12 rounded-lg bg-[#ffa300]/20 flex items-center justify-center mb-6 text-[#ffa300]">
+                    <CheckCircle className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-lg font-bold mb-3 font-['Poppins']">{f.title}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed font-light">{f.desc}</p>
+                </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Operational Workflow */}
-        <div className="container mx-auto px-4 py-16">
-          <div className="max-w-4xl mx-auto rounded-sm border bg-background p-8">
-            <h2 className="text-2xl font-extrabold mb-6 text-center">How Agency Operations Work</h2>
-            <div className="grid md:grid-cols-4 gap-4 text-center">
-              <div className="p-4 rounded-sm bg-muted/50">
-                <p className="font-semibold">Create Student</p>
-                <p className="text-xs text-muted-foreground mt-1">Profile and intake details</p>
-              </div>
-              <div className="p-4 rounded-sm bg-muted/50">
-                <p className="font-semibold">Upload Documents</p>
-                <p className="text-xs text-muted-foreground mt-1">Passport, transcripts, IELTS</p>
-              </div>
-              <div className="p-4 rounded-sm bg-muted/50">
-                <p className="font-semibold">Track Status</p>
-                <p className="text-xs text-muted-foreground mt-1">Review, offer, visa, enrollment</p>
-              </div>
-              <div className="p-4 rounded-sm bg-muted/50">
-                <p className="font-semibold">Earn Commission</p>
-                <p className="text-xs text-muted-foreground mt-1">Based on successful outcomes</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* FAQ */}
-        <div className="bg-muted/50 py-16">
+        {/* FAQ Section */}
+        <div className="bg-gray-50 py-24 border-t border-gray-100">
           <div className="container mx-auto px-4 max-w-4xl">
-            <h2 className="text-2xl font-extrabold text-center mb-10">Agency FAQs</h2>
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-extrabold text-[#181d29] font-['Poppins'] mb-4">Agency FAQs</h2>
+              <p className="text-gray-600 max-w-2xl mx-auto text-lg font-light">Common questions about partnering with Whiteboard Education.</p>
+            </div>
             <div className="space-y-4">
-              {faqs.map((item) => (
-                <Card key={item.q}>
-                  <CardContent className="p-5">
-                    <p className="font-semibold mb-1">{item.q}</p>
-                    <p className="text-sm text-muted-foreground">{item.a}</p>
+              {faqs.map((item, i) => (
+                <Card key={i} className="border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                  <CardContent className="p-6 md:p-8">
+                    <p className="text-lg font-bold text-[#181d29] mb-3 font-['Poppins']">{item.q}</p>
+                    <p className="text-[15px] text-gray-600 leading-relaxed font-light">{item.a}</p>
                   </CardContent>
                 </Card>
               ))}
