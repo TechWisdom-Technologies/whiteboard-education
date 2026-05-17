@@ -182,7 +182,7 @@ export default function AdminPartners() {
       <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Registration Details — {selectedReg?.agency_name}</DialogTitle>
+            <DialogTitle>Registration Details - {selectedReg?.agency_name}</DialogTitle>
           </DialogHeader>
           {selectedReg && (
             <div className="space-y-6">

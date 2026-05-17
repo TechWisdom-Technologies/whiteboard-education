@@ -310,8 +310,8 @@ export default function PartnerStudents() {
                       className={highlightedStudentId === s.id ? "bg-[#ffa300]/10 ring-1 ring-[#ffa300]/40" : undefined}
                     >
                       <TableCell className="font-medium">{s.full_name}</TableCell>
-                      <TableCell>{s.target_university || "—"}</TableCell>
-                      <TableCell>{s.target_course || "—"}</TableCell>
+                      <TableCell>{s.target_university || "-"}</TableCell>
+                      <TableCell>{s.target_course || "-"}</TableCell>
                       <TableCell>{s.degree_level}</TableCell>
                       <TableCell><Badge variant="outline" className={st.class}>{st.label}</Badge></TableCell>
                       <TableCell><Badge variant="secondary">{docCount}/5</Badge></TableCell>
@@ -332,7 +332,7 @@ export default function PartnerStudents() {
       {/* Detail / Upload Dialog */}
       <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>Student Profile — {selected?.full_name}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Student Profile - {selected?.full_name}</DialogTitle></DialogHeader>
           {selected && (
             <div className="space-y-6">
               {/* Status */}
@@ -349,29 +349,29 @@ export default function PartnerStudents() {
               {/* Info Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div><Label className="text-muted-foreground text-xs">Email</Label><p className="font-medium text-sm">{selected.email}</p></div>
-                <div><Label className="text-muted-foreground text-xs">Phone</Label><p className="font-medium text-sm">{selected.phone || "—"}</p></div>
-                <div><Label className="text-muted-foreground text-xs">Passport</Label><p className="font-medium text-sm">{selected.passport_number || "—"}</p></div>
-                <div><Label className="text-muted-foreground text-xs">Nationality</Label><p className="font-medium text-sm">{selected.nationality || "—"}</p></div>
-                <div><Label className="text-muted-foreground text-xs">DOB</Label><p className="font-medium text-sm">{selected.date_of_birth ? new Date(selected.date_of_birth).toLocaleDateString() : "—"}</p></div>
-                <div><Label className="text-muted-foreground text-xs">Gender</Label><p className="font-medium text-sm">{selected.gender || "—"}</p></div>
+                <div><Label className="text-muted-foreground text-xs">Phone</Label><p className="font-medium text-sm">{selected.phone || "-"}</p></div>
+                <div><Label className="text-muted-foreground text-xs">Passport</Label><p className="font-medium text-sm">{selected.passport_number || "-"}</p></div>
+                <div><Label className="text-muted-foreground text-xs">Nationality</Label><p className="font-medium text-sm">{selected.nationality || "-"}</p></div>
+                <div><Label className="text-muted-foreground text-xs">DOB</Label><p className="font-medium text-sm">{selected.date_of_birth ? new Date(selected.date_of_birth).toLocaleDateString() : "-"}</p></div>
+                <div><Label className="text-muted-foreground text-xs">Gender</Label><p className="font-medium text-sm">{selected.gender || "-"}</p></div>
               </div>
 
               <div className="border-t pt-4">
                 <h3 className="font-semibold mb-3">Academic Background</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><Label className="text-muted-foreground text-xs">Previous Institution</Label><p className="font-medium text-sm">{selected.previous_institution || "—"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Previous Degree</Label><p className="font-medium text-sm">{selected.previous_degree || "—"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">GPA</Label><p className="font-medium text-sm">{selected.gpa || "—"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">IELTS Score</Label><p className="font-medium text-sm">{selected.ielts_score || "—"}</p></div>
+                  <div><Label className="text-muted-foreground text-xs">Previous Institution</Label><p className="font-medium text-sm">{selected.previous_institution || "-"}</p></div>
+                  <div><Label className="text-muted-foreground text-xs">Previous Degree</Label><p className="font-medium text-sm">{selected.previous_degree || "-"}</p></div>
+                  <div><Label className="text-muted-foreground text-xs">GPA</Label><p className="font-medium text-sm">{selected.gpa || "-"}</p></div>
+                  <div><Label className="text-muted-foreground text-xs">IELTS Score</Label><p className="font-medium text-sm">{selected.ielts_score || "-"}</p></div>
                 </div>
               </div>
 
               <div className="border-t pt-4">
                 <h3 className="font-semibold mb-3">Target Program</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><Label className="text-muted-foreground text-xs">University</Label><p className="font-medium text-sm">{selected.target_university || "—"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Course</Label><p className="font-medium text-sm">{selected.target_course || "—"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Intake</Label><p className="font-medium text-sm">{selected.intake_month || "—"}</p></div>
+                  <div><Label className="text-muted-foreground text-xs">University</Label><p className="font-medium text-sm">{selected.target_university || "-"}</p></div>
+                  <div><Label className="text-muted-foreground text-xs">Course</Label><p className="font-medium text-sm">{selected.target_course || "-"}</p></div>
+                  <div><Label className="text-muted-foreground text-xs">Intake</Label><p className="font-medium text-sm">{selected.intake_month || "-"}</p></div>
                   <div><Label className="text-muted-foreground text-xs">Degree Level</Label><p className="font-medium text-sm">{selected.degree_level}</p></div>
                 </div>
               </div>

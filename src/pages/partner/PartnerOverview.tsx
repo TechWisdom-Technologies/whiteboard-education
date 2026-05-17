@@ -154,7 +154,7 @@ export default function PartnerOverview() {
                 <div key={s.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 py-2 border-b last:border-0">
                   <div>
                     <p className="font-medium text-sm">{s.full_name}</p>
-                    <p className="text-xs text-muted-foreground">{s.target_university} — {s.target_course}</p>
+                    <p className="text-xs text-muted-foreground">{s.target_university} - {s.target_course}</p>
                   </div>
                   <Badge variant="outline" className={statusMap[s.status]?.color || ""}>
                     {statusMap[s.status]?.label || s.status}

@@ -78,7 +78,7 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
 
       <SupportFaqWidget bannerVisible={bannerVisible} />
 
-      {/* WhatsApp Floating Widget — matching reference green circle */}
+      {/* WhatsApp Floating Widget - matching reference green circle */}
       <a
         href="https://wa.me/60123456789"
         target="_blank"

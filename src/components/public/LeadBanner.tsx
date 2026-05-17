@@ -50,7 +50,7 @@ export function LeadBanner({ onVisibilityChange }: LeadBannerProps) {
             <div className="flex items-center gap-3 min-w-0">
               <span className="text-2xl flex-shrink-0">📘</span>
               <p className="text-sm font-medium">
-                Get the <strong>Ultimate 2026 Guide to Studying in Malaysia</strong> — free!
+                Get the <strong>Ultimate 2026 Guide to Studying in Malaysia</strong> - free!
               </p>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">

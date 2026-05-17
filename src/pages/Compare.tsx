@@ -69,7 +69,7 @@ export default function Compare() {
                     <SelectValue placeholder={`Select University ${i + 1}`} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">— Select —</SelectItem>
+                    <SelectItem value="none">- Select -</SelectItem>
                     {universities.map((u) => (
                       <SelectItem key={u.id} value={u.id.toString()} disabled={selected.includes(u.id)}>{u.name}</SelectItem>
                     ))}
@@ -166,7 +166,7 @@ export default function Compare() {
                               )}
                             </div>
                           ) : (
-                            <p className="text-muted-foreground/40">—</p>
+                            <p className="text-muted-foreground/40">-</p>
                           )}
                         </div>
                       ))}
@@ -195,7 +195,7 @@ export default function Compare() {
                             ))}
                           </div>
                         ) : (
-                          <p className="text-muted-foreground/40 text-center py-6">—</p>
+                          <p className="text-muted-foreground/40 text-center py-6">-</p>
                         )}
                       </div>
                     ))}

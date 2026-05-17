@@ -7,7 +7,7 @@ const testimonials = [
     university: "Taylor's University",
     program: "BSc in Computer Science",
     quote:
-      "Choosing Whiteboard Education was the best decision I made for my academic career. From the very first consultation, their team guided me through every step — from shortlisting universities to preparing my visa documents. I was worried about the entire process being overwhelming, but they made it incredibly smooth. Now I'm studying at Taylor's University, one of the top-ranked institutions in Malaysia, and I couldn't be happier with the experience. The campus, the faculty, and the multicultural environment have all exceeded my expectations.",
+      "Choosing Whiteboard Education was the best decision I made for my academic career. From the very first consultation, their team guided me through every step - from shortlisting universities to preparing my visa documents. I was worried about the entire process being overwhelming, but they made it incredibly smooth. Now I'm studying at Taylor's University, one of the top-ranked institutions in Malaysia, and I couldn't be happier with the experience. The campus, the faculty, and the multicultural environment have all exceeded my expectations.",
     rating: 5,
   },
   {
@@ -16,7 +16,7 @@ const testimonials = [
     university: "UCSI University",
     program: "MBBS",
     quote:
-      "I always dreamed of studying medicine abroad, but the costs in countries like the UK or Australia were simply out of reach for my family. Whiteboard Education introduced me to UCSI University in Malaysia, where I'm now pursuing my MBBS at a fraction of the cost. They helped me with everything — from understanding the admission requirements to finding affordable accommodation near campus. Their counselors genuinely care about your future, and that personal touch made all the difference during such a life-changing move.",
+      "I always dreamed of studying medicine abroad, but the costs in countries like the UK or Australia were simply out of reach for my family. Whiteboard Education introduced me to UCSI University in Malaysia, where I'm now pursuing my MBBS at a fraction of the cost. They helped me with everything - from understanding the admission requirements to finding affordable accommodation near campus. Their counselors genuinely care about your future, and that personal touch made all the difference during such a life-changing move.",
     rating: 5,
   },
   {
@@ -25,7 +25,7 @@ const testimonials = [
     university: "APU University",
     program: "MSc in Data Science",
     quote:
-      "After completing my undergraduate degree in Dhaka, I wanted to pursue a master's in data science at a globally recognized university. Whiteboard Education not only helped me find the perfect program at APU but also guided me through the scholarship application process. Thanks to their support, I received a partial scholarship that significantly reduced my tuition fees. The entire journey — from application to arrival in Kuala Lumpur — was stress-free because their team handled every detail with professionalism and care.",
+      "After completing my undergraduate degree in Dhaka, I wanted to pursue a master's in data science at a globally recognized university. Whiteboard Education not only helped me find the perfect program at APU but also guided me through the scholarship application process. Thanks to their support, I received a partial scholarship that significantly reduced my tuition fees. The entire journey - from application to arrival in Kuala Lumpur - was stress-free because their team handled every detail with professionalism and care.",
     rating: 5,
   },
   {

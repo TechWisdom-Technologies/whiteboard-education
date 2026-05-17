@@ -43,37 +43,37 @@ const cityData: Record<string, CityInfo> = {
     image: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=1400&h=600&fit=crop",
     description:
       "Kuala Lumpur is the cultural and economic heart of Malaysia, home to iconic landmarks like the Petronas Twin Towers. The city hosts some of the country's most prestigious universities and offers an unmatched urban student experience with affordable living, world-class transit (LRT/MRT), and a thriving food scene. With over 7 million residents in the greater metro area, KL is a true megacity that remains remarkably affordable for international students.",
-    studentLifeIntro: "KL offers the most dynamic student lifestyle in Malaysia — from world-class malls and street food markets to cultural festivals and nightlife. Students enjoy easy access to co-working spaces, tech meetups, and a massive international community.",
+    studentLifeIntro: "KL offers the most dynamic student lifestyle in Malaysia - from world-class malls and street food markets to cultural festivals and nightlife. Students enjoy easy access to co-working spaces, tech meetups, and a massive international community.",
     highlights: [
       { icon: Train, title: "World-Class Transit", text: "LRT, MRT, KTM, and monorail connect you to every corner of the city for under RM5/trip." },
-      { icon: Utensils, title: "Food Capital", text: "From Jalan Alor hawker stalls to fine dining — eat world-class food for $2-5 a meal." },
+      { icon: Utensils, title: "Food Capital", text: "From Jalan Alor hawker stalls to fine dining - eat world-class food for $2-5 a meal." },
       { icon: ShoppingBag, title: "Shopping & Entertainment", text: "Bukit Bintang, KLCC, and Mid Valley offer endless shopping, cinema, and social spots." },
       { icon: Users, title: "International Community", text: "Home to the largest international student population in Malaysia with 50+ nationalities." },
     ],
     topCourseFields: ["Computer Science", "Business & MBA", "Medicine", "Pharmacy", "Psychology", "Data Science"],
     transport: ["MRT Putrajaya Line", "LRT Kelana Jaya Line", "KTM Komuter", "Grab (ride-hailing)", "Go KL free city bus"],
-    foodScene: "KL's food scene is legendary — Nasi Lemak for RM3, Roti Canai for RM1.50, and bubble tea on every corner. Jalan Alor, Bangsar, and SS15 are student food hotspots.",
-    safetyRating: "Safe — Well-lit streets, CCTV coverage, and active tourist police",
+    foodScene: "KL's food scene is legendary - Nasi Lemak for RM3, Roti Canai for RM1.50, and bubble tea on every corner. Jalan Alor, Bangsar, and SS15 are student food hotspots.",
+    safetyRating: "Safe - Well-lit streets, CCTV coverage, and active tourist police",
     averageTemp: "27-33°C year-round",
     costLabel: "Kuala Lumpur",
   },
   cyberjaya: {
     name: "Cyberjaya",
-    tagline: "Malaysia's Silicon Valley — built for tech students",
+    tagline: "Malaysia's Silicon Valley - built for tech students",
     image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1400&h=600&fit=crop",
     description:
-      "Cyberjaya is Malaysia's flagship tech city, purpose-built as part of the Multimedia Super Corridor initiative. It hosts leading tech universities like MMU and APU, and is surrounded by 900+ multinational tech companies — giving students direct access to internships and graduate employment. The city is designed around innovation, with smart infrastructure, free Wi-Fi zones, and tech incubators within walking distance of campus.",
+      "Cyberjaya is Malaysia's flagship tech city, purpose-built as part of the Multimedia Super Corridor initiative. It hosts leading tech universities like MMU and APU, and is surrounded by 900+ multinational tech companies - giving students direct access to internships and graduate employment. The city is designed around innovation, with smart infrastructure, free Wi-Fi zones, and tech incubators within walking distance of campus.",
     studentLifeIntro: "Life in Cyberjaya revolves around tech, gaming, and campus culture. It's quieter than KL but has a tight-knit student community with esports tournaments, hackathons, and startup weekends. Living costs are significantly lower than in the capital.",
     highlights: [
-      { icon: Cpu, title: "Tech Ecosystem", text: "900+ tech companies including Dell, DHL, BMW, and Huawei — internships are everywhere." },
+      { icon: Cpu, title: "Tech Ecosystem", text: "900+ tech companies including Dell, DHL, BMW, and Huawei - internships are everywhere." },
       { icon: Wifi, title: "Smart City", text: "Free public Wi-Fi, smart traffic systems, and digital government services." },
-      { icon: Coffee, title: "Campus-Centric Living", text: "Everything is walkable — cafés, convenience stores, and student housing are clustered near campuses." },
+      { icon: Coffee, title: "Campus-Centric Living", text: "Everything is walkable - cafés, convenience stores, and student housing are clustered near campuses." },
       { icon: Palette, title: "Creative Hub", text: "MMU's animation and film programs make Cyberjaya a hub for creative technology and digital media." },
     ],
     topCourseFields: ["Software Engineering", "Cybersecurity", "Multimedia Design", "IT & Computing", "Animation & Film"],
     transport: ["Dedicated bus routes to KL Sentral", "Grab (ride-hailing)", "Cyberjaya-Putrajaya ERL feeder bus", "Bicycle-friendly roads"],
     foodScene: "Cyberjaya has a growing food scene with affordable mamak stalls, food courts at D'Pulze Mall, and student-favourite spots along Persiaran Multimedia. Expect meals from RM5-10.",
-    safetyRating: "Very Safe — Gated communities, 24/7 security patrols",
+    safetyRating: "Very Safe - Gated communities, 24/7 security patrols",
     averageTemp: "26-32°C year-round",
     costLabel: "Cyberjaya",
   },
@@ -82,18 +82,18 @@ const cityData: Record<string, CityInfo> = {
     tagline: "Heritage charm meets modern education",
     image: "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=1400&h=600&fit=crop",
     description:
-      "Penang, a UNESCO World Heritage Site, offers a unique blend of colonial architecture, street art, and cutting-edge engineering campuses. Known for its lower cost of living compared to KL, Penang is home to USM — one of Malaysia's top research universities — and a booming electronics manufacturing sector. The island vibe creates a relaxed yet intellectually stimulating environment that students love.",
-    studentLifeIntro: "Penang offers the most unique student lifestyle in Malaysia — ride a bicycle through Georgetown's street art alleys, eat the best hawker food in the country, and study with ocean breezes. The pace is slower than KL, and students describe it as the perfect balance between focus and fun.",
+      "Penang, a UNESCO World Heritage Site, offers a unique blend of colonial architecture, street art, and cutting-edge engineering campuses. Known for its lower cost of living compared to KL, Penang is home to USM - one of Malaysia's top research universities - and a booming electronics manufacturing sector. The island vibe creates a relaxed yet intellectually stimulating environment that students love.",
+    studentLifeIntro: "Penang offers the most unique student lifestyle in Malaysia - ride a bicycle through Georgetown's street art alleys, eat the best hawker food in the country, and study with ocean breezes. The pace is slower than KL, and students describe it as the perfect balance between focus and fun.",
     highlights: [
       { icon: Landmark, title: "UNESCO Heritage", text: "Georgetown's colonial architecture, temples, and street art make every walk an adventure." },
       { icon: Waves, title: "Island Living", text: "Beaches, national parks, and hilltop trails are minutes from campus." },
-      { icon: Sun, title: "Best Food in Malaysia", text: "Penang is widely considered Malaysia's food capital — Char Kway Teow, Assam Laksa, and Cendol are legendary." },
-      { icon: Building, title: "Electronics Hub", text: "Intel, Bosch, and Osram have manufacturing plants here — engineering internships abound." },
+      { icon: Sun, title: "Best Food in Malaysia", text: "Penang is widely considered Malaysia's food capital - Char Kway Teow, Assam Laksa, and Cendol are legendary." },
+      { icon: Building, title: "Electronics Hub", text: "Intel, Bosch, and Osram have manufacturing plants here - engineering internships abound." },
     ],
     topCourseFields: ["Medical Sciences", "Sustainable Development", "Engineering", "Environmental Science", "Pharmacology"],
     transport: ["Rapid Penang bus network", "Penang Ferry", "Grab (ride-hailing)", "Bicycle rentals", "Penang Bridge to mainland"],
     foodScene: "Penang is Malaysia's undisputed food capital. Gurney Drive, New Lane, and Kimberly Street serve world-famous hawker food for RM3-8. Students eat like kings on a tight budget.",
-    safetyRating: "Very Safe — Tight island community with low crime rates",
+    safetyRating: "Very Safe - Tight island community with low crime rates",
     averageTemp: "27-32°C year-round",
     costLabel: "Penang",
   },
@@ -206,7 +206,7 @@ export default function CityHub() {
                   <div className="h-8 w-8 rounded-sm bg-[#ffa300]/10 flex items-center justify-center shrink-0">
                     <MapPin className="h-4 w-4 text-[#ffa300]" />
                   </div>
-                  <span className="text-muted-foreground">{city.safetyRating.split("—")[0].trim()}</span>
+                  <span className="text-muted-foreground">{city.safetyRating.split("-")[0].trim()}</span>
                 </div>
               </div>
             </div>
@@ -451,7 +451,7 @@ export default function CityHub() {
                   <h3 className="font-bold text-foreground mb-1 flex items-center gap-2 text-sm">
                     <Sun className="h-4 w-4 text-[#ffa300]" /> Climate
                   </h3>
-                  <p className="text-xs text-muted-foreground">Tropical — {city.averageTemp}. Pack light clothes, an umbrella, and sunscreen.</p>
+                  <p className="text-xs text-muted-foreground">Tropical - {city.averageTemp}. Pack light clothes, an umbrella, and sunscreen.</p>
                 </div>
                 <div>
                   <h3 className="font-bold text-foreground mb-1 flex items-center gap-2 text-sm">
@@ -497,7 +497,7 @@ export default function CityHub() {
             Ready to start your journey in {city.name}?
           </h2>
           <p className="text-[#181d29]/80 max-w-md mx-auto mb-8">
-            Our expert counselors will guide you from application to arrival — completely free.
+            Our expert counselors will guide you from application to arrival - completely free.
           </p>
           <div className="flex items-center justify-center gap-3 flex-wrap">
             <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold h-13 px-8" onClick={handleConsult}>

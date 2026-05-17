@@ -54,7 +54,7 @@ export function IntakeCalendar() {
         <div className="text-center mb-10">
           <Badge className="bg-[#ffa300]/10 text-[#ffa300] mb-3"><Calendar className="h-3 w-3 mr-1" /> Upcoming Deadlines</Badge>
           <h2 className="text-3xl font-extrabold mb-2">Intake & Application Deadlines</h2>
-          <p className="text-muted-foreground max-w-lg mx-auto">Don't miss your chance — apply before these deadlines close</p>
+          <p className="text-muted-foreground max-w-lg mx-auto">Don't miss your chance - apply before these deadlines close</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

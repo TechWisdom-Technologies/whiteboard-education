@@ -130,7 +130,7 @@ export default function Login() {
         {/* Right divider */}
         <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#ffa300]/25 to-transparent" />
 
-        {/* Content — full height flex column spread */}
+        {/* Content - full height flex column spread */}
         <div
           className="relative z-10 flex flex-col justify-between h-full px-14 py-12"
           style={{
@@ -264,7 +264,7 @@ export default function Login() {
           </Link>
         </div>
 
-        {/* Form section — centered, takes all remaining height */}
+        {/* Form section - centered, takes all remaining height */}
         <div className="flex-1 flex flex-col justify-center min-h-0 px-10 py-4">
           <div className="w-full max-w-sm mx-auto">
 
@@ -445,7 +445,7 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Bottom info bar — fills remaining space visually */}
+        {/* Bottom info bar - fills remaining space visually */}
         <div className="flex-shrink-0 border-t border-gray-200 bg-white px-10 py-3">
           <div className="flex items-center gap-6">
             {[

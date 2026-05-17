@@ -616,7 +616,7 @@ export default function UniversityDetail() {
       <section className="bg-[#ffa300] py-10 mt-auto">
         <div className="container mx-auto px-4 max-w-5xl text-center">
           <h2 className="text-xl font-extrabold text-[#181d29] mb-2">Ready to Start Your Journey?</h2>
-          <p className="text-[#181d29]/70 text-sm mb-6">Fill in your details and our counsellors will guide you — completely free.</p>
+          <p className="text-[#181d29]/70 text-sm mb-6">Fill in your details and our counsellors will guide you - completely free.</p>
           <Button size="lg" className="bg-[#181d29] text-white hover:bg-[#181d29]/90 font-bold px-10 h-12" onClick={() => open("bottom")}>Start Your Application</Button>
         </div>
       </section>

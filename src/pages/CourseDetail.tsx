@@ -136,7 +136,7 @@ export default function CourseDetail() {
     if (entryReqs && typeof entryReqs === 'object') {
       const rawIelts = (entryReqs as any).IELTS || (entryReqs as any).ielts;
       if (rawIelts) {
-        const parts = String(rawIelts).split(/[-–—]/);
+        const parts = String(rawIelts).split(/[-–-]/);
         engReq = `IELTS ${parts[parts.length - 1].trim()}`;
       }
     }
@@ -302,7 +302,7 @@ ${window.location.href}`;
                         if (!rawIelts) return 'Not Specified';
                         
                         // If it's a range like "6.0 - 6.5", take the last part
-                        const parts = String(rawIelts).split(/[-–—]/);
+                        const parts = String(rawIelts).split(/[-–-]/);
                         const displayScore = parts[parts.length - 1].trim();
                         
                         return `IELTS ${displayScore}`;

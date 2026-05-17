@@ -145,7 +145,7 @@ export default function AdminStudents() {
 
       // Insert in-app notification for partner dashboard.
       const notifType = newStatus === "rejected" ? "warning" : (["documents_verified", "offer_received", "visa_approved", "enrolled"].includes(newStatus) ? "success" : "info");
-      const notifTitle = `${selected.full_name} — Status Updated`;
+      const notifTitle = `${selected.full_name} - Status Updated`;
       const notifMessage = `Status changed to ${newStatus.replace(/_/g, " ")}.${adminNotes ? ` Note: ${adminNotes}` : ""}`;
 
       await fetch(`${SUPABASE_URL}/rest/v1/partner_notifications`, {
@@ -260,8 +260,8 @@ export default function AdminStudents() {
                   <TableRow key={s.id}>
                     <TableCell className="font-medium">{s.full_name}</TableCell>
                     <TableCell className="text-sm">{partner?.agency_name || "Unknown"}</TableCell>
-                    <TableCell className="text-sm">{s.target_university || "—"}</TableCell>
-                    <TableCell className="text-sm">{s.target_course || "—"}</TableCell>
+                    <TableCell className="text-sm">{s.target_university || "-"}</TableCell>
+                    <TableCell className="text-sm">{s.target_course || "-"}</TableCell>
                     <TableCell><Badge variant="outline" className={statusColors[s.status] || ""}>{st?.label || s.status}</Badge></TableCell>
                     <TableCell><Badge variant="secondary">{docCount}/5</Badge></TableCell>
                     <TableCell className="text-sm text-muted-foreground">{new Date(s.created_at).toLocaleDateString()}</TableCell>
@@ -279,13 +279,13 @@ export default function AdminStudents() {
       {/* Detail Dialog */}
       <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>Student Details — {selected?.full_name}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Student Details - {selected?.full_name}</DialogTitle></DialogHeader>
           {selected && (
             <div className="space-y-6">
               {/* Partner Info */}
               <div className="p-3 rounded-sm bg-muted/50 border">
                 <p className="text-xs text-muted-foreground">Submitted by Partner</p>
-                <p className="font-semibold text-sm">{getPartner(selected.partner_id)?.agency_name || "Unknown"} — {getPartner(selected.partner_id)?.contact_person}</p>
+                <p className="font-semibold text-sm">{getPartner(selected.partner_id)?.agency_name || "Unknown"} - {getPartner(selected.partner_id)?.contact_person}</p>
               </div>
 
               {/* Personal Info */}
@@ -293,11 +293,11 @@ export default function AdminStudents() {
                 <h3 className="font-semibold mb-3">Personal Information</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div><Label className="text-muted-foreground text-xs">Email</Label><p className="font-medium text-sm">{selected.email}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Phone</Label><p className="font-medium text-sm">{selected.phone || "—"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Passport</Label><p className="font-medium text-sm">{selected.passport_number || "—"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Nationality</Label><p className="font-medium text-sm">{selected.nationality || "—"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">DOB</Label><p className="font-medium text-sm">{selected.date_of_birth ? new Date(selected.date_of_birth).toLocaleDateString() : "—"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Gender</Label><p className="font-medium text-sm">{selected.gender || "—"}</p></div>
+                  <div><Label className="text-muted-foreground text-xs">Phone</Label><p className="font-medium text-sm">{selected.phone || "-"}</p></div>
+                  <div><Label className="text-muted-foreground text-xs">Passport</Label><p className="font-medium text-sm">{selected.passport_number || "-"}</p></div>
+                  <div><Label className="text-muted-foreground text-xs">Nationality</Label><p className="font-medium text-sm">{selected.nationality || "-"}</p></div>
+                  <div><Label className="text-muted-foreground text-xs">DOB</Label><p className="font-medium text-sm">{selected.date_of_birth ? new Date(selected.date_of_birth).toLocaleDateString() : "-"}</p></div>
+                  <div><Label className="text-muted-foreground text-xs">Gender</Label><p className="font-medium text-sm">{selected.gender || "-"}</p></div>
                 </div>
               </div>
 
@@ -305,10 +305,10 @@ export default function AdminStudents() {
               <div className="border-t pt-4">
                 <h3 className="font-semibold mb-3">Academic Background</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><Label className="text-muted-foreground text-xs">Previous Institution</Label><p className="font-medium text-sm">{selected.previous_institution || "—"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Previous Degree</Label><p className="font-medium text-sm">{selected.previous_degree || "—"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">GPA</Label><p className="font-medium text-sm">{selected.gpa || "—"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">IELTS Score</Label><p className="font-medium text-sm">{selected.ielts_score || "—"}</p></div>
+                  <div><Label className="text-muted-foreground text-xs">Previous Institution</Label><p className="font-medium text-sm">{selected.previous_institution || "-"}</p></div>
+                  <div><Label className="text-muted-foreground text-xs">Previous Degree</Label><p className="font-medium text-sm">{selected.previous_degree || "-"}</p></div>
+                  <div><Label className="text-muted-foreground text-xs">GPA</Label><p className="font-medium text-sm">{selected.gpa || "-"}</p></div>
+                  <div><Label className="text-muted-foreground text-xs">IELTS Score</Label><p className="font-medium text-sm">{selected.ielts_score || "-"}</p></div>
                 </div>
               </div>
 
@@ -316,9 +316,9 @@ export default function AdminStudents() {
               <div className="border-t pt-4">
                 <h3 className="font-semibold mb-3">Target Program</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><Label className="text-muted-foreground text-xs">University</Label><p className="font-medium text-sm">{selected.target_university || "—"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Course</Label><p className="font-medium text-sm">{selected.target_course || "—"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Intake</Label><p className="font-medium text-sm">{selected.intake_month || "—"}</p></div>
+                  <div><Label className="text-muted-foreground text-xs">University</Label><p className="font-medium text-sm">{selected.target_university || "-"}</p></div>
+                  <div><Label className="text-muted-foreground text-xs">Course</Label><p className="font-medium text-sm">{selected.target_course || "-"}</p></div>
+                  <div><Label className="text-muted-foreground text-xs">Intake</Label><p className="font-medium text-sm">{selected.intake_month || "-"}</p></div>
                   <div><Label className="text-muted-foreground text-xs">Degree Level</Label><p className="font-medium text-sm">{selected.degree_level}</p></div>
                 </div>
               </div>

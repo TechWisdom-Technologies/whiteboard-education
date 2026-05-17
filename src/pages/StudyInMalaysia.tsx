@@ -241,7 +241,7 @@ export default function StudyInMalaysia() {
             <div className="lg:w-1/2 space-y-4">
               <h2 className="text-2xl md:text-3xl font-extrabold text-foreground">The EMGS Student Visa Process</h2>
               <p className="text-muted-foreground leading-relaxed">
-                Malaysia uses the Education Malaysia Global Services (EMGS) system — a centralised, online platform that streamlines the entire student visa process. Here's how it works:
+                Malaysia uses the Education Malaysia Global Services (EMGS) system - a centralised, online platform that streamlines the entire student visa process. Here's how it works:
               </p>
               <ol className="space-y-3 mt-4">
                 {[
@@ -283,7 +283,7 @@ export default function StudyInMalaysia() {
             Ready to Start Your Journey in Malaysia?
           </h2>
           <p className="text-[#181d29]/80 max-w-xl mx-auto mb-8">
-            Our expert counselors will guide you from application to arrival — completely free of charge.
+            Our expert counselors will guide you from application to arrival - completely free of charge.
           </p>
           <div className="flex items-center justify-center gap-3 flex-wrap">
             <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold h-13 px-8" onClick={handleConsult}>

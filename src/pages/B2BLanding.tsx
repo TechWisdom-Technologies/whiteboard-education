@@ -220,13 +220,13 @@ export default function B2BLanding() {
                 <Handshake className="h-4 w-4 text-[#ffa300]" />
                 <span className="text-xs font-bold text-[#181d29] tracking-tight">Malaysia's Leading Education Partnership Network</span>
               </div>
-              <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-[1.2] text-[#181d29] tracking-tighter" style={{ fontFamily: "Poppins, sans-serif" }}>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-[1.2] text-[#181d29] tracking-tighter" style={{ fontFamily: "Poppins, sans-serif" }}>
                 <span className="block mb-2">Your Students Want</span>
                 <span className="inline-block bg-[#ffa300] text-[#181d29] px-4 py-1 rounded-sm mb-2 shadow-sm">To Study in Malaysia?</span>
                 <span className="block">We Make It Happen.</span>
               </h1>
               <p className="text-lg text-gray-600 mb-8 max-w-xl mx-auto leading-relaxed font-light">
-                Whiteboard Education is Malaysia's specialist education agency. We partner with international agencies worldwide to place their students into top Malaysian universities — handling admissions, visa, accommodation, and everything in between.
+                Whiteboard Education is Malaysia's specialist education agency. We partner with international agencies worldwide to place their students into top Malaysian universities - handling admissions, visa, accommodation, and everything in between.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Dialog open={regOpen} onOpenChange={setRegOpen}>
@@ -285,7 +285,7 @@ export default function B2BLanding() {
           <div className="container mx-auto px-4 relative z-10">
             <div className="text-center mb-12">
               <h2 className="text-2xl md:text-3xl font-semibold text-[#181d29] mb-2">Why Partner With Whiteboard?</h2>
-              <p className="text-[#515768] max-w-2xl mx-auto text-sm">We are Malaysia's on-the-ground education experts. You handle your market — we handle Malaysia.</p>
+              <p className="text-[#515768] max-w-2xl mx-auto text-sm">We are Malaysia's on-the-ground education experts. You handle your market - we handle Malaysia.</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
               {benefits.map((b, i) => (

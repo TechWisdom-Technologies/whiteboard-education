@@ -286,7 +286,7 @@ function JsonArrayEditor({ value, onChange, placeholder }: { value: any; onChang
             </Button>
           </div>
           {objectKeys.map((key) => {
-            // Skip rendering nested arrays as simple inputs — show a sub-list
+            // Skip rendering nested arrays as simple inputs - show a sub-list
             if (nestedArrayKeys.has(key)) {
               const subItems: any[] = Array.isArray(item?.[key]) ? item[key] : [];
               return (
@@ -768,8 +768,8 @@ export default function AdminCrudTable({
 
   const formatCellValue = (row: any, key: string) => {
     const val = row[key];
-    if (val === null || val === undefined) return "—";
-    if (Array.isArray(val)) return val.length > 0 ? val.slice(0, 3).join(", ") + (val.length > 3 ? "…" : "") : "—";
+    if (val === null || val === undefined) return "-";
+    if (Array.isArray(val)) return val.length > 0 ? val.slice(0, 3).join(", ") + (val.length > 3 ? "…" : "") : "-";
     if (typeof val === "object") return JSON.stringify(val).slice(0, 50) + "…";
     return String(val);
   };

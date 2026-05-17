@@ -71,7 +71,7 @@ export function ReminderModal({ open, onOpenChange, universityName, intakeLabel,
           <>
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2"><Bell className="h-5 w-5 text-[#ffa300]" /> Set Deadline Reminder</DialogTitle>
-              <DialogDescription>Share your name and email for {universityName} — {intakeLabel} intake (deadline: {deadlineDate}).</DialogDescription>
+              <DialogDescription>Share your name and email for {universityName} - {intakeLabel} intake (deadline: {deadlineDate}).</DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4 mt-2">
               <div className="space-y-2">
