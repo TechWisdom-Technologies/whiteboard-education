@@ -28,7 +28,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { LeadCaptureModal } from "@/components/public/LeadCaptureModal";
+
 
 const resourceToolsLinks = [
   { label: "Blog", to: "/blog", icon: PenTool, bgImage: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=500&q=80" },
@@ -42,7 +42,7 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const [leadOpen, setLeadOpen] = useState(false);
+
   const [avatarUrl, setAvatarUrl] = useState<string>("");
   const pathname = location.pathname;
 
@@ -313,7 +313,7 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
                         <SheetClose asChild>
                           <Button
                             className="w-full bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 font-semibold rounded-sm border border-[#ffa300]"
-                            onClick={() => setLeadOpen(true)}
+                            onClick={() => navigate("/contact")}
                           >
                             <Phone className="h-4 w-4 mr-1.5" /> Free Consultation
                           </Button>
@@ -351,11 +351,7 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
       {/* Bottom accent line - thinner */}
       <div className="h-[2px] w-full bg-[#ffa300]" />
 
-      <LeadCaptureModal
-        open={leadOpen}
-        onOpenChange={setLeadOpen}
-        source="mega_menu_free_consult"
-      />
+      
     </header>
   );
 }

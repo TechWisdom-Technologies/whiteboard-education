@@ -6,7 +6,6 @@ import { useTableData } from "@/hooks/useSupabaseData";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoadingScreen } from "@/components/ui/loading-screen";
-import { LeadCaptureModal } from "@/components/public/LeadCaptureModal";
 import {
   Search,
   MapPin,
@@ -110,8 +109,7 @@ export default function Courses() {
   const [selectedArea, setSelectedArea] = useState<string>("All Areas");
   const [selectedUniId, setSelectedUniId] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [leadOpen, setLeadOpen] = useState(false);
-  const [leadCourse, setLeadCourse] = useState("");
+  // removed lead variables
   
   const gridRef = useRef<HTMLDivElement>(null);
 
@@ -158,10 +156,7 @@ export default function Courses() {
     gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const handleApply = (courseTitle: string) => {
-    setLeadCourse(courseTitle);
-    setLeadOpen(true);
-  };
+  // removed handleApply
 
   const getPageNumbers = () => {
     const pages: (number | "ellipsis")[] = [];
@@ -448,7 +443,7 @@ export default function Courses() {
                               fontFamily: "Poppins, sans-serif",
                               border: "1px solid #ffa300",
                             }}
-                            onClick={() => handleApply(c.title)}
+                            onClick={() => navigate(`/apply?courseId=${c.id}`)}
                           >
                             Apply Now
                           </Button>
@@ -533,12 +528,7 @@ export default function Courses() {
       </div>
 
       <PublicFooter />
-      <LeadCaptureModal
-        open={leadOpen}
-        onOpenChange={setLeadOpen}
-        defaultCourse={leadCourse}
-        source="course_listing"
-      />
+      
     </div>
   );
 }

@@ -116,6 +116,9 @@ export default function AdminPartners() {
     if (!window.confirm("Are you sure you want to delete this partner? This action cannot be undone.")) return;
 
     try {
+      // Find the partner to get their user_id
+      const partner = registrations.find(r => r.id === id);
+      
       const res = await fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?id=eq.${id}`, {
         method: "DELETE",
         headers: {
@@ -126,6 +129,17 @@ export default function AdminPartners() {
 
       if (!res.ok) {
         throw new Error("Failed to delete partner");
+      }
+
+      // Also delete from user_roles if user_id exists
+      if (partner?.user_id) {
+        await fetch(`${SUPABASE_URL}/rest/v1/user_roles?user_id=eq.${partner.user_id}`, {
+          method: "DELETE",
+          headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": `Bearer ${session.access_token}`,
+          },
+        });
       }
 
       toast.success("Partner deleted successfully");
@@ -156,17 +170,29 @@ export default function AdminPartners() {
     if (!window.confirm(`Are you sure you want to delete ${selectedIds.length} partners? This action cannot be undone.`)) return;
 
     try {
-      await Promise.all(selectedIds.map(id => 
-        fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?id=eq.${id}`, {
+      await Promise.all(selectedIds.map(async id => {
+        const partner = registrations.find(r => r.id === id);
+        
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?id=eq.${id}`, {
           method: "DELETE",
           headers: {
             "apikey": SUPABASE_KEY,
             "Authorization": `Bearer ${session.access_token}`,
           },
-        }).then(res => {
-          if (!res.ok) throw new Error("Failed to delete partner");
-        })
-      ));
+        });
+        
+        if (!res.ok) throw new Error("Failed to delete partner");
+
+        if (partner?.user_id) {
+          await fetch(`${SUPABASE_URL}/rest/v1/user_roles?user_id=eq.${partner.user_id}`, {
+            method: "DELETE",
+            headers: {
+              "apikey": SUPABASE_KEY,
+              "Authorization": `Bearer ${session.access_token}`,
+            },
+          });
+        }
+      }));
 
       toast.success(`${selectedIds.length} partners deleted successfully`);
       setSelectedIds([]);

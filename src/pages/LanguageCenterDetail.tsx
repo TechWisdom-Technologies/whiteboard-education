@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
-import { LeadCaptureModal } from "@/components/public/LeadCaptureModal";
 import { useTableData } from "@/hooks/useSupabaseData";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -34,8 +33,6 @@ export default function LanguageCenterDetail() {
   const navigate = useNavigate();
   const { data: languageCenters = [], isLoading } = useTableData("language_centers");
   const lc = languageCenters.find((l: any) => l.id === id);
-  const [leadOpen, setLeadOpen] = useState(false);
-  const [leadCtx, setLeadCtx] = useState({ source: "apply", course: "" });
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -43,11 +40,6 @@ export default function LanguageCenterDetail() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const open = (source: string) => {
-    setLeadCtx({ source, course: lc?.name || "" });
-    setLeadOpen(true);
-  };
 
   // Similar language centers — same city or level, excluding current
   const similarCenters = useMemo(() => {
@@ -176,7 +168,7 @@ export default function LanguageCenterDetail() {
           <div className="flex flex-col gap-2 shrink-0">
             <Button
               className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold px-8 h-11"
-              onClick={() => navigate("/apply")}
+              onClick={() => navigate(`/apply?centerId=${lc.id}`)}
             >
               Apply Now
             </Button>
@@ -217,7 +209,7 @@ export default function LanguageCenterDetail() {
           >
             <Button
               className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-normal px-6 h-10 text-sm"
-              onClick={() => navigate("/apply")}
+              onClick={() => navigate(`/apply?centerId=${lc.id}`)}
             >
               Apply Now
             </Button>
@@ -401,7 +393,7 @@ export default function LanguageCenterDetail() {
           <Button
             size="lg"
             className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold px-10 h-12"
-            onClick={() => open("register")}
+            onClick={() => navigate(`/apply?centerId=${lc.id}`)}
           >
             Register Now
           </Button>
@@ -471,13 +463,6 @@ export default function LanguageCenterDetail() {
       )}
 
       <PublicFooter />
-      <LeadCaptureModal
-        open={leadOpen}
-        onOpenChange={setLeadOpen}
-        defaultCourse={leadCtx.course}
-        defaultUniversity={lc?.institute || ""}
-        source={`language_center_detail_${leadCtx.source}`}
-      />
     </div>
   );
 }

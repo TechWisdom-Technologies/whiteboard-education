@@ -44,6 +44,7 @@ export default function Application() {
   
   const universityId = searchParams.get("universityId");
   const courseId = searchParams.get("courseId");
+  const centerId = searchParams.get("centerId");
 
   const [uni, setUni] = useState<any>(null);
   const [courses, setCourses] = useState<any[]>([]);
@@ -79,6 +80,17 @@ export default function Application() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        if (centerId) {
+          const { data: cData } = await supabase.from("language_centers").select("*").eq("id", centerId).single();
+          if (cData) {
+            setUni({ ...cData, isCenter: true });
+            setCourses([cData.name]);
+            setForm(f => ({ ...f, target_course: cData.name }));
+            setLoadingInitial(false);
+            return;
+          }
+        }
+
         let uId = universityId;
         
         // If we only have courseId, fetch course to get universityId

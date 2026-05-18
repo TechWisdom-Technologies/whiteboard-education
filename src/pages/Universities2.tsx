@@ -6,7 +6,6 @@ import { useTableData } from "@/hooks/useSupabaseData";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoadingScreen } from "@/components/ui/loading-screen";
-import { LeadCaptureModal } from "@/components/public/LeadCaptureModal";
 import {
   Search,
   MapPin,
@@ -129,8 +128,7 @@ export default function Universities() {
   const [selectedField, setSelectedField] = useState<string>("All Fields");
   const [selectedOfferLetter, setSelectedOfferLetter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [leadOpen, setLeadOpen] = useState(false);
-  const [leadUni, setLeadUni] = useState("");
+
   const gridRef = useRef<HTMLDivElement>(null);
 
   // Count courses per university
@@ -193,10 +191,7 @@ export default function Universities() {
     gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const handleApply = (uniName: string) => {
-    setLeadUni(uniName);
-    setLeadOpen(true);
-  };
+
 
   // Generate page numbers for pagination
   const getPageNumbers = () => {
@@ -535,12 +530,7 @@ export default function Universities() {
       </div>
 
       <PublicFooter />
-      <LeadCaptureModal
-        open={leadOpen}
-        onOpenChange={setLeadOpen}
-        defaultUniversity={leadUni}
-        source="university_listing"
-      />
+      
     </div>
   );
 }

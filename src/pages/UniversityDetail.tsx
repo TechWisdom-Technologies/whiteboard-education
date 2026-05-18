@@ -4,7 +4,7 @@ import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
 import { universities as mockU, courses as mockC, accommodations as mockA } from "@/data/mockData";
-import { LeadCaptureModal } from "@/components/public/LeadCaptureModal";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -153,8 +153,7 @@ export default function UniversityDetail() {
   const similarUnis = uni ? unis.filter((u: any) => u.id !== uni.id).slice(0, 3) : [];
 
   const [tab, setTab] = useState<TabKey>("overview");
-  const [leadOpen, setLeadOpen] = useState(false);
-  const [leadCtx, setLeadCtx] = useState({ source: "apply", course: "" });
+  // removed leadOpen and leadCtx
   const [cSearch, setCSearch] = useState("");
   const [cLevel, setCLevel] = useState("all");
   const [cCategory, setCCategory] = useState("all");
@@ -209,7 +208,7 @@ export default function UniversityDetail() {
   if (isLoading) return <div className="min-h-screen flex flex-col bg-background"><MegaMenu /><LoadingScreen label="Loading university" className="flex-1" /><PublicFooter /></div>;
   if (!uni) return <div className="min-h-screen flex flex-col bg-background"><MegaMenu /><div className="flex-1 flex items-center justify-center"><div className="text-center space-y-4"><Building className="h-16 w-16 text-muted-foreground mx-auto" /><h1 className="text-2xl font-bold">University Not Found</h1><Link to="/universities"><Button>Browse All</Button></Link></div></div><PublicFooter /></div>;
 
-  const open = (s: string, c = "") => { setLeadCtx({ source: s, course: c }); setLeadOpen(true); };
+  // removed open function
   const about = uni.about_text || uni.aboutText || uni.description || "";
   const faqs: any[] = Array.isArray(uni.faqs) ? uni.faqs : [];
   const steps: string[] = Array.isArray(uni.registration_steps || uni.registrationSteps) ? (uni.registration_steps || uni.registrationSteps) : [];
@@ -376,7 +375,7 @@ export default function UniversityDetail() {
               <h2 className="text-xl md:text-2xl font-extrabold text-[#181d29] mb-2">Register Now and Secure Your Spot!</h2>
               <p className="text-gray-700 text-sm mb-2">Your Future Starts Here: Register Today for the Upcoming Intake</p>
               <p className="text-gray-600 text-sm mb-6">Secure Your Seat Now! Join {uni.name} and Start Your Journey</p>
-              <Button size="lg" className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold px-10 h-12" onClick={() => open("register")}>Register Now</Button>
+              <Button size="lg" className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold px-10 h-12" onClick={() => navigate("/contact")}>Register Now</Button>
               {steps.length > 0 && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 mt-10 max-w-4xl mx-auto">
                   {steps.slice(0, 5).map((s: string, i: number) => {
@@ -561,10 +560,10 @@ export default function UniversityDetail() {
 
                       {/* Right: Actions Section */}
                       <div className="bg-gray-50/50 md:w-56 border-t md:border-t-0 md:border-l border-gray-100 p-10 flex flex-col justify-center gap-3">
-                        <Button className="w-full bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold h-11" onClick={e => { e.preventDefault(); open("course_apply", c.title); }}>
+                        <Button className="w-full bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold h-11" onClick={e => { e.preventDefault(); navigate(`/apply?courseId=${c.id}`); }}>
                           Apply Now
                         </Button>
-                        <Button variant="outline" className="w-full font-bold h-11 border-gray-200 text-[#181d29] hover:bg-white" onClick={e => { e.preventDefault(); open("course_ask", c.title); }}>
+                        <Button variant="outline" className="w-full font-bold h-11 border-gray-200 text-[#181d29] hover:bg-white" onClick={e => { e.preventDefault(); navigate("/contact"); }}>
                           Ask Us
                         </Button>
                       </div>
@@ -617,11 +616,11 @@ export default function UniversityDetail() {
         <div className="container mx-auto px-4 max-w-5xl text-center">
           <h2 className="text-xl font-extrabold text-[#181d29] mb-2">Ready to Start Your Journey?</h2>
           <p className="text-[#181d29]/70 text-sm mb-6">Fill in your details and our counsellors will guide you - completely free.</p>
-          <Button size="lg" className="bg-[#181d29] text-white hover:bg-[#181d29]/90 font-bold px-10 h-12" onClick={() => open("bottom")}>Start Your Application</Button>
+          <Button size="lg" className="bg-[#181d29] text-white hover:bg-[#181d29]/90 font-bold px-10 h-12" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>Start Your Application</Button>
         </div>
       </section>
 
-      <LeadCaptureModal open={leadOpen} onOpenChange={setLeadOpen} defaultCourse={leadCtx.course} defaultUniversity={uni.name} source={leadCtx.source} />
+      
       <PublicFooter />
     </div>
   );

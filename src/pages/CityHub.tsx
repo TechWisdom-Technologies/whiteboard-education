@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import {
@@ -8,7 +8,7 @@ import {
   costOfLivingData,
 } from "@/data/mockData";
 import { useTableData } from "@/hooks/useSupabaseData";
-import { LeadCaptureModal } from "@/components/public/LeadCaptureModal";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -108,7 +108,7 @@ export default function CityHub() {
   const { citySlug } = useParams<{ citySlug: string }>();
   const city = cityData[citySlug || ""];
   const { toast } = useToast();
-  const [leadOpen, setLeadOpen] = useState(false);
+  const navigate = useNavigate();
   const { data: liveUniversities = [] } = useTableData("universities");
   const { data: liveCourses = [] } = useTableData("courses");
   const { data: liveAccommodations = [] } = useTableData("accommodations");
@@ -152,7 +152,7 @@ export default function CityHub() {
   const maxCost = 900;
 
   const handleConsult = () => {
-    setLeadOpen(true);
+    navigate("/contact");
     toast({ title: "Consultation booked!", description: `Our ${city.name} advisor will contact you within 24 hours.` });
   };
 
@@ -508,12 +508,7 @@ export default function CityHub() {
         </div>
       </section>
 
-      <LeadCaptureModal
-        open={leadOpen}
-        onOpenChange={setLeadOpen}
-        defaultUniversity={city.name}
-        source={`city-${citySlug || "unknown"}`}
-      />
+      
 
       <PublicFooter />
     </div>

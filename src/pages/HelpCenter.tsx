@@ -1,12 +1,13 @@
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
-import { LeadCaptureModal } from "@/components/public/LeadCaptureModal";
+
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { HelpCircle, Search, MessageCircle, GraduationCap, FileText, CreditCard, Globe } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const categories = [
   {
@@ -50,7 +51,7 @@ const categories = [
 
 export default function HelpCenter() {
   const [search, setSearch] = useState("");
-  const [leadOpen, setLeadOpen] = useState(false);
+  const navigate = useNavigate();
 
   const filteredCategories = categories.map((cat) => ({
     ...cat,
@@ -110,17 +111,13 @@ export default function HelpCenter() {
       <div className="sticky bottom-0 bg-background border-t py-4 z-40">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <p className="text-sm text-muted-foreground">Can't find your answer?</p>
-          <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90" onClick={() => setLeadOpen(true)}>
+          <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90" onClick={() => navigate("/contact")}>
             <MessageCircle className="h-4 w-4 mr-2" /> Contact Support
           </Button>
         </div>
       </div>
 
-      <LeadCaptureModal
-        open={leadOpen}
-        onOpenChange={setLeadOpen}
-        source="help_center_contact_support"
-      />
+      
 
       <PublicFooter />
     </div>

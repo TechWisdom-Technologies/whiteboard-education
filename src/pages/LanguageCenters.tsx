@@ -1,12 +1,11 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoadingScreen } from "@/components/ui/loading-screen";
-import { LeadCaptureModal } from "@/components/public/LeadCaptureModal";
 import {
   Search,
   MapPin,
@@ -35,8 +34,7 @@ export default function LanguageCentersPage() {
   const [level, setLevel] = useState("All Levels");
   const [selectedCity, setSelectedCity] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [leadOpen, setLeadOpen] = useState(false);
-  const [leadUni, setLeadUni] = useState("");
+  const navigate = useNavigate();
   const gridRef = useRef<HTMLDivElement>(null);
 
   const cities = useMemo(
@@ -70,10 +68,7 @@ export default function LanguageCentersPage() {
     gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const handleApply = (centerName: string) => {
-    setLeadUni(centerName);
-    setLeadOpen(true);
-  };
+
 
   // Generate page numbers for pagination with sliding window matching Universities2 / Courses2
   const getPageNumbers = () => {
@@ -302,7 +297,7 @@ export default function LanguageCentersPage() {
                             fontFamily: "Poppins, sans-serif",
                             border: "1px solid #ffa300",
                           }}
-                          onClick={() => handleApply(lc.name)}
+                          onClick={() => navigate(`/apply?centerId=${lc.id}`)}
                         >
                           Apply Now
                         </Button>
@@ -395,12 +390,7 @@ export default function LanguageCentersPage() {
       </div>
 
       <PublicFooter />
-      <LeadCaptureModal
-        open={leadOpen}
-        onOpenChange={setLeadOpen}
-        defaultUniversity={leadUni}
-        source="language_center_listing"
-      />
+      
     </div>
   );
 }

@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { useTableData } from "@/hooks/useSupabaseData";
-import { LeadCaptureModal } from "@/components/public/LeadCaptureModal";
 import {
   Select,
   SelectContent,
@@ -24,7 +23,7 @@ const trustPoints = [
 export function HeroSection() {
   const [activeTab, setActiveTab] = useState("University");
   const [query, setQuery] = useState("");
-  const [leadOpen, setLeadOpen] = useState(false);
+
   const navigate = useNavigate();
   const [loaded, setLoaded] = useState(false);
   const { data: universities = [] } = useTableData("universities", { orderBy: "name" });
@@ -179,7 +178,7 @@ export function HeroSection() {
         </svg>
       </div>
 
-      <LeadCaptureModal open={leadOpen} onOpenChange={setLeadOpen} source="homepage_hero" />
+      
     </section>
   );
 }

@@ -5,7 +5,7 @@ import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
 import { courses as mockCourses, universities as mockUniversities } from "@/data/mockData";
-import { LeadCaptureModal } from "@/components/public/LeadCaptureModal";
+
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -18,7 +18,6 @@ export default function CourseDetail() {
   const { data: liveUniversities = [] } = useTableData("universities");
   const courses = liveCourses.length > 0 ? liveCourses : (mockCourses as any[]);
   const universities = liveUniversities.length > 0 ? liveUniversities : (mockUniversities as any[]);
-  const [leadOpen, setLeadOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("key-info");
   const [copied, setCopied] = useState(false);
   const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
@@ -540,13 +539,7 @@ ${window.location.href}`;
         </div>
       </div>
 
-      <LeadCaptureModal
-        open={leadOpen}
-        onOpenChange={setLeadOpen}
-        defaultCourse={course.title}
-        defaultUniversity={uni?.name || ""}
-        source="course_apply"
-      />
+      
 
       <PublicFooter />
     </div>
