@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
@@ -118,6 +118,7 @@ const UNIVERSITY_LOGOS: Record<string, string> = {
 };
 
 export default function Universities() {
+  const navigate = useNavigate();
   const { data: universities = [], isLoading } = useTableData("universities", { orderBy: "ranking" });
   const { data: courses = [], isLoading: loadingCourses } = useTableData("courses");
   const [search, setSearch] = useState("");
