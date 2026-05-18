@@ -5,10 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Eye, CheckCircle, XCircle, Loader2, FileText, ExternalLink, Clock } from "lucide-react";
+import { Eye, CheckCircle, XCircle, Loader2, FileText, ExternalLink, Clock, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -38,6 +39,7 @@ export default function AdminPartners() {
   const [detailOpen, setDetailOpen] = useState(false);
   const [adminNotes, setAdminNotes] = useState("");
   const [processing, setProcessing] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const fetchRegistrations = async () => {
     try {
@@ -108,6 +110,73 @@ export default function AdminPartners() {
     }
   };
 
+  const handleDelete = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!session) return;
+    if (!window.confirm("Are you sure you want to delete this partner? This action cannot be undone.")) return;
+
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?id=eq.${id}`, {
+        method: "DELETE",
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to delete partner");
+      }
+
+      toast.success("Partner deleted successfully");
+      fetchRegistrations();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete partner");
+    }
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedIds(registrations.map(r => r.id));
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+  const handleSelectRow = (id: string, checked: boolean) => {
+    if (checked) {
+      setSelectedIds(prev => [...prev, id]);
+    } else {
+      setSelectedIds(prev => prev.filter(v => v !== id));
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (!session) return;
+    if (!window.confirm(`Are you sure you want to delete ${selectedIds.length} partners? This action cannot be undone.`)) return;
+
+    try {
+      await Promise.all(selectedIds.map(id => 
+        fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?id=eq.${id}`, {
+          method: "DELETE",
+          headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": `Bearer ${session.access_token}`,
+          },
+        }).then(res => {
+          if (!res.ok) throw new Error("Failed to delete partner");
+        })
+      ));
+
+      toast.success(`${selectedIds.length} partners deleted successfully`);
+      setSelectedIds([]);
+      fetchRegistrations();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete partners");
+    }
+  };
+
+
   const statusBadge = (status: string) => {
     switch (status) {
       case "pending": return <Badge variant="outline" className="bg-warning/10 text-warning border-warning/30"><Clock className="h-3 w-3 mr-1" />Pending</Badge>;
@@ -124,6 +193,11 @@ export default function AdminPartners() {
   return (
     <div>
       <div className="flex justify-end gap-2 text-xs mb-6">
+        {selectedIds.length > 0 && (
+          <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-6 text-xs px-2 py-0">
+            <Trash2 className="h-3 w-3 mr-1" /> Delete Selected ({selectedIds.length})
+          </Button>
+        )}
         <Badge variant="secondary" className="px-2 py-0.5">{registrations.filter(r => r.status === "pending").length} Pending</Badge>
         <Badge variant="secondary" className="px-2 py-0.5">{registrations.filter(r => r.status === "approved").length} Approved</Badge>
       </div>
@@ -137,6 +211,12 @@ export default function AdminPartners() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[40px] text-center px-0">
+                  <Checkbox 
+                    checked={registrations.length > 0 && selectedIds.length === registrations.length}
+                    onCheckedChange={handleSelectAll}
+                  />
+                </TableHead>
                 <TableHead>Agency</TableHead>
                 <TableHead>Representative</TableHead>
                 <TableHead>Email</TableHead>
@@ -151,13 +231,19 @@ export default function AdminPartners() {
                 const docCount = (reg.nid_document_url ? 1 : 0) + (reg.trade_license_url ? 1 : 0) + ((reg.certificate_urls as string[])?.length || 0);
                 return (
                   <TableRow key={reg.id}>
+                    <TableCell className="text-center px-0">
+                      <Checkbox 
+                        checked={selectedIds.includes(reg.id)}
+                        onCheckedChange={(c) => handleSelectRow(reg.id, c as boolean)}
+                      />
+                    </TableCell>
                     <TableCell className="font-medium max-w-[150px] truncate" title={reg.agency_name}>{reg.agency_name}</TableCell>
                     <TableCell className="max-w-[150px] truncate" title={reg.contact_person}>{reg.contact_person}</TableCell>
                     <TableCell className="text-sm max-w-[150px] truncate" title={reg.email}>{reg.email}</TableCell>
                     <TableCell>
-                      {reg.status === 'approved' && <CheckCircle className="h-5 w-5 text-green-600" title="Approved" />}
-                      {reg.status === 'pending' && <Clock className="h-5 w-5 text-warning" title="Pending" />}
-                      {reg.status === 'rejected' && <XCircle className="h-5 w-5 text-destructive" title="Rejected" />}
+                      {reg.status === 'approved' && <span title="Approved"><CheckCircle className="h-5 w-5 text-green-600" /></span>}
+                      {reg.status === 'pending' && <span title="Pending"><Clock className="h-5 w-5 text-warning" /></span>}
+                      {reg.status === 'rejected' && <span title="Rejected"><XCircle className="h-5 w-5 text-destructive" /></span>}
                     </TableCell>
                     <TableCell>
                       <span className="text-sm font-medium text-muted-foreground">{docCount} Docs</span>
@@ -166,9 +252,14 @@ export default function AdminPartners() {
                       {new Date(reg.created_at).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => openDetail(reg)}>
-                        <Eye className="h-4 w-4" />
-                      </Button>
+                      <div className="flex items-center justify-end gap-1">
+                        <Button variant="ghost" size="icon" onClick={() => openDetail(reg)} title="View Details">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10" onClick={(e) => handleDelete(reg.id, e)} title="Delete Partner">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 );

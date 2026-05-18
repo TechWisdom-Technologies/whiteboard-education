@@ -4,11 +4,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Users, UserPlus, Clock, CheckCircle, Phone, Mail } from "lucide-react";
+import { Loader2, Users, UserPlus, Clock, CheckCircle, Phone, Mail, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useState } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const statusColors: Record<string, string> = {
   new: "bg-primary/10 text-primary",
@@ -21,6 +22,7 @@ const statusColors: Record<string, string> = {
 export default function AdminLeads() {
   const { data: leads = [], isLoading } = useTableData("leads");
   const [filter, setFilter] = useState("all");
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const qc = useQueryClient();
 
   const updateStatus = async (id: string, status: string) => {
@@ -34,6 +36,40 @@ export default function AdminLeads() {
   };
 
   const filtered = filter === "all" ? leads : leads.filter((l: any) => l.status === filter);
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedIds(filtered.map((l: any) => l.id));
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+  const handleSelectRow = (id: string, checked: boolean) => {
+    if (checked) {
+      setSelectedIds(prev => [...prev, id]);
+    } else {
+      setSelectedIds(prev => prev.filter(v => v !== id));
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (!window.confirm(`Are you sure you want to delete ${selectedIds.length} leads? This action cannot be undone.`)) return;
+
+    try {
+      await Promise.all(selectedIds.map(id => 
+        (supabase.from("leads" as any) as any).delete().eq("id", id).then((res: any) => {
+          if (res.error) throw new Error("Failed to delete lead");
+        })
+      ));
+
+      toast.success(`${selectedIds.length} leads deleted successfully`);
+      setSelectedIds([]);
+      qc.invalidateQueries({ queryKey: ["leads"] });
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete leads");
+    }
+  };
 
   const stats = {
     total: leads.length,
@@ -70,7 +106,14 @@ export default function AdminLeads() {
 
       <Card>
         <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 gap-3">
-          <CardTitle>All Leads</CardTitle>
+          <div className="flex items-center gap-3">
+            <CardTitle>All Leads</CardTitle>
+            {selectedIds.length > 0 && (
+              <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-7 text-xs px-2.5">
+                <Trash2 className="h-3 w-3 mr-1" /> Delete Selected ({selectedIds.length})
+              </Button>
+            )}
+          </div>
           <Select value={filter} onValueChange={setFilter}>
             <SelectTrigger className="w-full sm:w-[150px]"><SelectValue /></SelectTrigger>
             <SelectContent>
@@ -91,6 +134,12 @@ export default function AdminLeads() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-[40px] text-center px-0">
+                      <Checkbox 
+                        checked={filtered.length > 0 && selectedIds.length === filtered.length}
+                        onCheckedChange={handleSelectAll}
+                      />
+                    </TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead>Contact</TableHead>
                     <TableHead>Interest</TableHead>
@@ -103,6 +152,12 @@ export default function AdminLeads() {
                 <TableBody>
                   {filtered.map((lead: any) => (
                     <TableRow key={lead.id}>
+                      <TableCell className="text-center px-0">
+                        <Checkbox 
+                          checked={selectedIds.includes(lead.id)}
+                          onCheckedChange={(c) => handleSelectRow(lead.id, c as boolean)}
+                        />
+                      </TableCell>
                       <TableCell>
                         <div>
                           <p className="font-medium text-foreground">{lead.full_name}</p>

@@ -12,6 +12,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Badge } from "@/components/ui/badge";
 import * as XLSX from "xlsx";
 import { useToast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -59,6 +60,7 @@ interface AdminCrudTableProps {
   onInsert: (row: Record<string, any>) => void;
   onUpdate: (row: Record<string, any>) => void;
   onDelete: (id: string) => void;
+  onBulkDelete?: (ids: string[]) => void;
   onBulkUpsert?: (rows: Record<string, any>[]) => Promise<void>;
   renderCell?: (row: any, key: string) => React.ReactNode;
 }
@@ -383,7 +385,7 @@ function JsonArrayEditor({ value, onChange, placeholder }: { value: any; onChang
 }
 
 export default function AdminCrudTable({
-  title, data, isLoading, fields, searchKey, onInsert, onUpdate, onDelete, onBulkUpsert, renderCell,
+  title, data, isLoading, fields, searchKey, onInsert, onUpdate, onDelete, onBulkDelete, onBulkUpsert, renderCell,
 }: AdminCrudTableProps) {
   const { toast } = useToast();
   const [search, setSearch] = useState("");
@@ -392,8 +394,34 @@ export default function AdminCrudTable({
   const [form, setForm] = useState<Record<string, any>>({});
   const [isImporting, setIsImporting] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const itemsPerPage = 50;
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedIds(paginatedData.map(row => row.id));
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+  const handleSelectRow = (id: string, checked: boolean) => {
+    if (checked) {
+      setSelectedIds(prev => [...prev, id]);
+    } else {
+      setSelectedIds(prev => prev.filter(v => v !== id));
+    }
+  };
+
+  const handleBulkDelete = () => {
+    if (onBulkDelete) {
+      onBulkDelete(selectedIds);
+    } else {
+      selectedIds.forEach(id => onDelete(id));
+    }
+    setSelectedIds([]);
+  };
 
   const tableFields = useMemo(() => fields.filter((f) => f.showInTable !== false), [fields]);
 
@@ -807,6 +835,25 @@ export default function AdminCrudTable({
           />
           
           <div className="flex flex-wrap lg:flex-nowrap items-center gap-1.5 md:gap-2 justify-end flex-shrink-0">
+            {selectedIds.length > 0 && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" className="h-8 text-xs xl:text-[13px] px-2 xl:px-2.5 whitespace-nowrap">
+                    <Trash2 className="h-3.5 w-3.5 mr-1 xl:mr-1.5" />Delete Selected ({selectedIds.length})
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="text-[13px]">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="text-base">Delete {selectedIds.length} items?</AlertDialogTitle>
+                    <AlertDialogDescription className="text-xs">This action cannot be undone.</AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="text-[13px] h-8">Cancel</AlertDialogCancel>
+                    <AlertDialogAction className="text-[13px] h-8 bg-destructive hover:bg-destructive/90" onClick={handleBulkDelete}>Delete All</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
             <Button variant="outline" onClick={handleDownloadTemplate} className="h-8 text-xs xl:text-[13px] px-2 xl:px-2.5 whitespace-nowrap">
               <Download className="h-3.5 w-3.5 mr-1 xl:mr-1.5" />Download Template
             </Button>
@@ -852,6 +899,12 @@ export default function AdminCrudTable({
         <Table className="text-xs md:text-[13px]">
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[40px] text-center px-0">
+                <Checkbox 
+                  checked={paginatedData.length > 0 && selectedIds.length === paginatedData.length}
+                  onCheckedChange={handleSelectAll}
+                />
+              </TableHead>
               {tableFields.map((f) => (
                 <TableHead key={f.key} className="h-10 text-xs text-muted-foreground">{f.label}</TableHead>
               ))}
@@ -861,13 +914,19 @@ export default function AdminCrudTable({
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={tableFields.length + 1} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={tableFields.length + 2} className="text-center py-8 text-muted-foreground">
                   No {title.toLowerCase()} found. Add your first one!
                 </TableCell>
               </TableRow>
             ) : (
               paginatedData.map((row) => (
                 <TableRow key={row.id}>
+                  <TableCell className="text-center px-0">
+                    <Checkbox 
+                      checked={selectedIds.includes(row.id)}
+                      onCheckedChange={(c) => handleSelectRow(row.id, c as boolean)}
+                    />
+                  </TableCell>
                   {tableFields.map((f) => (
                     <TableCell key={f.key} className={`${f.key === searchKey ? "font-medium" : ""} py-2.5 text-xs md:text-[13px]`}>
                       {renderCell ? renderCell(row, f.key) ?? formatCellValue(row, f.key) : formatCellValue(row, f.key)}

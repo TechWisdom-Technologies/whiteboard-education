@@ -9,10 +9,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Eye, Loader2, Search, FileText, ExternalLink, Users, Filter, X, Download, Image, File } from "lucide-react";
+import { Eye, Loader2, Search, FileText, ExternalLink, Users, Filter, X, Download, Image, File, Trash2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -91,6 +92,7 @@ export default function AdminStudents() {
   const [search, setSearch] = useState("");
   const [filterPartner, setFilterPartner] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const fetchData = async () => {
     if (!session) return;
@@ -168,6 +170,74 @@ export default function AdminStudents() {
     } finally { setSaving(false); }
   };
 
+  const handleDelete = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!session) return;
+    if (!window.confirm("Are you sure you want to delete this student? This action cannot be undone.")) return;
+
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${id}`, {
+        method: "DELETE",
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to delete student");
+      }
+
+      toast.success("Student deleted successfully");
+      fetchData();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete student");
+    }
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedIds(filtered.map(s => s.id));
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+  const handleSelectRow = (id: string, checked: boolean) => {
+    if (checked) {
+      setSelectedIds(prev => [...prev, id]);
+    } else {
+      setSelectedIds(prev => prev.filter(v => v !== id));
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (!session) return;
+    if (!window.confirm(`Are you sure you want to delete ${selectedIds.length} students? This action cannot be undone.`)) return;
+
+    try {
+      // Execute all deletions concurrently
+      await Promise.all(selectedIds.map(id => 
+        fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${id}`, {
+          method: "DELETE",
+          headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": `Bearer ${session.access_token}`,
+          },
+        }).then(res => {
+          if (!res.ok) throw new Error("Failed to delete student");
+        })
+      ));
+
+      toast.success(`${selectedIds.length} students deleted successfully`);
+      setSelectedIds([]);
+      fetchData();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete students");
+    }
+  };
+
+
   const filtered = students.filter(s => {
     const matchSearch = s.full_name.toLowerCase().includes(search.toLowerCase()) || s.email.toLowerCase().includes(search.toLowerCase());
     const matchPartner = filterPartner === "all" || s.partner_id === filterPartner;
@@ -186,6 +256,11 @@ export default function AdminStudents() {
   return (
     <div className="space-y-6">
       <div className="flex justify-end gap-2 text-xs">
+        {selectedIds.length > 0 && (
+          <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-6 text-xs px-2 py-0">
+            <Trash2 className="h-3 w-3 mr-1" /> Delete Selected ({selectedIds.length})
+          </Button>
+        )}
         <Badge variant="secondary" className="px-2 py-0.5">{students.length} Total Students</Badge>
         <Badge variant="secondary" className="px-2 py-0.5">{partners.length} Partners</Badge>
       </div>
@@ -241,6 +316,12 @@ export default function AdminStudents() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[40px] text-center px-0">
+                  <Checkbox 
+                    checked={filtered.length > 0 && selectedIds.length === filtered.length}
+                    onCheckedChange={handleSelectAll}
+                  />
+                </TableHead>
                 <TableHead>Student Name</TableHead>
                 <TableHead>Partner Agency</TableHead>
                 <TableHead>University</TableHead>
@@ -258,6 +339,12 @@ export default function AdminStudents() {
                 const docCount = [s.passport_url, s.academic_transcript_url, s.ielts_certificate_url, s.personal_statement_url, s.recommendation_letter_url].filter(Boolean).length;
                 return (
                   <TableRow key={s.id}>
+                    <TableCell className="text-center px-0">
+                      <Checkbox 
+                        checked={selectedIds.includes(s.id)}
+                        onCheckedChange={(c) => handleSelectRow(s.id, c as boolean)}
+                      />
+                    </TableCell>
                     <TableCell className="font-medium">{s.full_name}</TableCell>
                     <TableCell className="text-sm">{partner?.agency_name || "Unknown"}</TableCell>
                     <TableCell className="text-sm">{s.target_university || "-"}</TableCell>
@@ -266,7 +353,14 @@ export default function AdminStudents() {
                     <TableCell><Badge variant="secondary">{docCount}/5</Badge></TableCell>
                     <TableCell className="text-sm text-muted-foreground">{new Date(s.created_at).toLocaleDateString()}</TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => openDetail(s)}><Eye className="h-4 w-4" /></Button>
+                      <div className="flex items-center justify-end gap-1">
+                        <Button variant="ghost" size="icon" onClick={() => openDetail(s)} title="View Details">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10" onClick={(e) => handleDelete(s.id, e)} title="Delete Student">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 );
