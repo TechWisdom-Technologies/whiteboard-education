@@ -101,15 +101,33 @@ export default function LanguageCenterDetail() {
     : [];
   const nextIntake = intakeMonths[0] ? `${intakeMonths[0]} 2026` : "TBA";
 
-  // Deterministic image pick based on name length
-  const aboutImage =
-    ABOUT_IMAGES[Math.abs(lc.name.length) % ABOUT_IMAGES.length];
+  // Check if custom image URL exists inside curriculum column (repurposed from admin)
+  let customAboutImage = "";
+  if (lc.curriculum) {
+    if (typeof lc.curriculum === "object" && !Array.isArray(lc.curriculum)) {
+      customAboutImage = (lc.curriculum as any).about_image_url || "";
+    } else if (typeof lc.curriculum === "string") {
+      try {
+        const parsed = JSON.parse(lc.curriculum);
+        if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+          customAboutImage = parsed.about_image_url || "";
+        } else {
+          customAboutImage = lc.curriculum;
+        }
+      } catch {
+        customAboutImage = lc.curriculum;
+      }
+    }
+  }
+
+  const aboutImage = customAboutImage || ABOUT_IMAGES[Math.abs(lc.name.length) % ABOUT_IMAGES.length];
 
   // About text — split into two paragraphs
   const rawAbout = lc.overview || "";
   const aboutParagraphs = rawAbout
     .split("\n")
-    .filter((p: string) => p.trim() !== "");
+    .map((p: string) => p.trim())
+    .filter((p: string) => p !== "");
   const para1 =
     aboutParagraphs[0] ||
     `${lc.name} at ${lc.institute || "our institute"} is a premier language program located in ${lc.city || "Malaysia"}, designed to provide international students with the highest quality Bahasa Melayu instruction. The program combines intensive classroom learning with real-world immersion, ensuring students develop practical communication skills that are essential for academic success and daily life in Malaysia. Our experienced instructors use a communicative approach that makes learning engaging and effective.`;
