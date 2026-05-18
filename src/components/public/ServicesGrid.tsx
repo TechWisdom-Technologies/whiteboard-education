@@ -12,7 +12,7 @@ const services = [
     image: "/images/services/admission.png",
     title: "University admission & visa",
     description: "Submit all necessary documents to complete the university's admission procedures as well as visa application.",
-    link: "/visa-guide"
+    link: "/contact"
   },
   {
     image: "/images/services/accommodation.png",

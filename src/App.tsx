@@ -19,19 +19,15 @@ import CityHub from "./pages/CityHub";
 import UniversityDetail from "./pages/UniversityDetail";
 import EligibilityWizard from "./pages/EligibilityWizard";
 import B2BLanding from "./pages/B2BLanding";
-import CostCalculator from "./pages/CostCalculator";
-import GpaConverter from "./pages/GpaConverter";
 import Compare from "./pages/Compare";
 import Application from "./pages/Application";
 
-import VisaGuide from "./pages/VisaGuide";
 import Housing from "./pages/Housing";
 import LanguagePrep from "./pages/LanguagePrep";
 import Blog from "./pages/Blog";
 import BlogPostPage from "./pages/BlogPost";
 import LanguageCentersPage from "./pages/LanguageCenters";
 import LanguageCenterDetail from "./pages/LanguageCenterDetail";
-import Alumni from "./pages/Alumni";
 import PreDeparture from "./pages/PreDeparture";
 import HelpCenter from "./pages/HelpCenter";
 import ComingSoon from "./pages/ComingSoon";
@@ -115,16 +111,12 @@ const App = () => (
             <Route path="/apply" element={<Application />} />
 
             {/* Tools */}
-            <Route path="/tools/calculator" element={<CostCalculator />} />
-            <Route path="/tools/gpa-converter" element={<GpaConverter />} />
             <Route path="/eligibility" element={<EligibilityWizard />} />
             <Route path="/compare" element={<Compare />} />
 
             {/* Resources */}
-            <Route path="/visa-guide" element={<VisaGuide />} />
             <Route path="/housing" element={<Housing />} />
             <Route path="/language-prep" element={<LanguagePrep />} />
-            <Route path="/alumni" element={<Alumni />} />
             <Route path="/pre-departure" element={<PreDeparture />} />
             <Route path="/help" element={<HelpCenter />} />
             <Route path="/blog" element={<Blog />} />
@@ -154,9 +146,6 @@ const App = () => (
             <Route path="/countries" element={<Navigate to="/destinations/malaysia" replace />} />
             <Route path="/country/:countryId" element={<Navigate to="/destinations/malaysia" replace />} />
             <Route path="/university/:universityId" element={<LegacyUniversityRedirect />} />
-            <Route path="/cost-calculator" element={<Navigate to="/tools/calculator" replace />} />
-            <Route path="/calculator" element={<Navigate to="/tools/calculator" replace />} />
-            <Route path="/gpa-converter" element={<Navigate to="/tools/gpa-converter" replace />} />
             <Route path="/eligibility-test" element={<Navigate to="/eligibility" replace />} />
             <Route path="/b2b" element={<Navigate to="/partner" replace />} />
 

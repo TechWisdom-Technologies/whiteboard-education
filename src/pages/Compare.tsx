@@ -49,17 +49,26 @@ export default function Compare() {
   }, [activeUnis, hasAny]);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#f7f8fa]">
       <MegaMenu />
-      <main className="flex-1 bg-muted/30">
-        {/* Hero */}
-        <div className="intro-surface py-12 text-center">
-          <Trophy className="h-12 w-12 mx-auto mb-3 text-[#ffa300]" />
-          <h1 className="text-3xl md:text-4xl font-extrabold mb-2">Compare Universities</h1>
-          <p className="text-primary-foreground/70 max-w-xl mx-auto">Select up to 3 universities to compare side-by-side</p>
+      
+      {/* Page Header */}
+      <div className="bg-white border-b border-gray-200/60">
+        <div className="container mx-auto px-4 py-12 md:py-16 text-center max-w-3xl">
+          <div className="h-16 w-16 bg-[#ffa300]/15 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Trophy className="h-8 w-8 text-[#ffa300]" />
+          </div>
+          <h1 className="text-3xl md:text-[40px] font-extrabold mb-4" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29", lineHeight: 1.2 }}>
+            Compare <span className="text-[#ffa300]">Universities</span>
+          </h1>
+          <p className="text-[#515768] text-base md:text-lg">
+            Select up to 3 universities to compare them side-by-side across rankings, affordability, and campus life.
+          </p>
         </div>
+      </div>
 
-        <div className="container mx-auto px-4 py-8">
+      <main className="flex-1">
+        <div className="container mx-auto px-4 py-12 md:py-16 max-w-6xl">
           {/* Selectors */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             {[0, 1, 2].map((i) => (
@@ -85,10 +94,13 @@ export default function Compare() {
           </div>
 
           {!hasAny && (
-            <Card className="text-center py-16 animate-fade-in">
+            <Card className="text-center py-16 animate-fade-in shadow-sm border-gray-200/60 rounded-md">
               <CardContent>
-                <Trophy className="h-16 w-16 mx-auto mb-4 text-muted-foreground/30" />
-                <p className="text-lg text-muted-foreground">Select universities above to start comparing</p>
+                <div className="h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Trophy className="h-8 w-8 text-gray-400" />
+                </div>
+                <p className="text-lg font-semibold text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>No Universities Selected</p>
+                <p className="text-[#515768] mt-1">Select universities from the dropdowns above to start comparing.</p>
               </CardContent>
             </Card>
           )}
@@ -117,8 +129,8 @@ export default function Compare() {
               </div>
 
               {/* Radar Chart */}
-              <Card>
-                <CardHeader><CardTitle>Performance Comparison</CardTitle></CardHeader>
+              <Card className="shadow-sm border-gray-200/60 rounded-md">
+                <CardHeader><CardTitle className="text-xl" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>Performance Comparison</CardTitle></CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={350}>
                     <RadarChart data={radarData}>
@@ -149,7 +161,7 @@ export default function Compare() {
                 { label: "Min. IELTS", render: (a: NonNullable<typeof activeUnis[0]>) => a.comp.min_ielts.toString(), icon: GraduationCap },
                 { label: "Min. TOEFL", render: (a: NonNullable<typeof activeUnis[0]>) => a.comp.min_toefl.toString(), icon: GraduationCap },
               ].map((row) => (
-                <Card key={row.label}>
+                <Card key={row.label} className="shadow-sm border-gray-200/60 rounded-md">
                   <CardContent className="p-5">
                     <div className="flex items-center gap-2 mb-4">
                       <row.icon className="h-4 w-4 text-[#ffa300]" />
@@ -176,7 +188,7 @@ export default function Compare() {
               ))}
 
               {/* Top Courses */}
-              <Card>
+              <Card className="shadow-sm border-gray-200/60 rounded-md">
                 <CardContent className="p-5">
                   <div className="flex items-center gap-2 mb-4">
                     <GraduationCap className="h-4 w-4 text-[#ffa300]" />
@@ -204,7 +216,7 @@ export default function Compare() {
               </Card>
 
               {/* Score Bars */}
-              <Card>
+              <Card className="shadow-sm border-gray-200/60 rounded-md">
                 <CardContent className="p-5">
                   <h3 className="font-semibold text-sm mb-4">Detailed Scores</h3>
                   {["academic_difficulty", "affordability", "campus_life"].map((key) => (

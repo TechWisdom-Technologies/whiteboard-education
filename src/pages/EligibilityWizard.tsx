@@ -87,16 +87,26 @@ export default function EligibilityWizard() {
   const showResults = step === 5;
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#f7f8fa]">
       <MegaMenu />
-      <main className="flex-1 bg-muted/30">
-        <div className="intro-surface py-12 text-center">
-          <GraduationCap className="h-12 w-12 mx-auto mb-3 text-[#ffa300]" />
-          <h1 className="text-3xl font-extrabold mb-2">University Match & Eligibility Test</h1>
-          <p className="text-primary-foreground/70">Answer a few questions and we'll find the best universities for you</p>
+      
+      {/* Page Header */}
+      <div className="bg-white border-b border-gray-200/60">
+        <div className="container mx-auto px-4 py-12 md:py-16 text-center max-w-3xl">
+          <div className="h-16 w-16 bg-[#ffa300]/15 rounded-full flex items-center justify-center mx-auto mb-6">
+            <GraduationCap className="h-8 w-8 text-[#ffa300]" />
+          </div>
+          <h1 className="text-3xl md:text-[40px] font-extrabold mb-4" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29", lineHeight: 1.2 }}>
+            AI <span className="text-[#ffa300]">Eligibility Test</span>
+          </h1>
+          <p className="text-[#515768] text-base md:text-lg">
+            Answer a few simple questions and let our AI engine match you with the perfect universities and courses in Malaysia.
+          </p>
         </div>
+      </div>
 
-        <div className="container mx-auto px-4 py-10 max-w-2xl">
+      <main className="flex-1">
+        <div className="container mx-auto px-4 py-12 md:py-16 max-w-2xl">
           {!showResults && (
             <div className="mb-8">
               <div className="flex justify-between text-sm text-muted-foreground mb-2">
@@ -108,8 +118,8 @@ export default function EligibilityWizard() {
           )}
 
           {step === 1 && (
-            <Card>
-              <CardHeader><CardTitle>What is your highest qualification?</CardTitle></CardHeader>
+            <Card className="shadow-sm border-gray-200/60 rounded-md">
+              <CardHeader><CardTitle className="text-xl" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>What is your highest qualification?</CardTitle></CardHeader>
               <CardContent>
                 <Select value={data.qualification} onValueChange={(v) => setData({ ...data, qualification: v })}>
                   <SelectTrigger><SelectValue placeholder="Select qualification..." /></SelectTrigger>
@@ -122,8 +132,8 @@ export default function EligibilityWizard() {
           )}
 
           {step === 2 && (
-            <Card>
-              <CardHeader><CardTitle>What is your GPA / Academic Percentage?</CardTitle></CardHeader>
+            <Card className="shadow-sm border-gray-200/60 rounded-md">
+              <CardHeader><CardTitle className="text-xl" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>What is your GPA / Academic Percentage?</CardTitle></CardHeader>
               <CardContent>
                 <Label>Enter GPA (out of 4.0) or percentage</Label>
                 <Input type="number" step="0.1" min="0" max="100" placeholder="e.g. 3.5" value={data.gpa} onChange={(e) => setData({ ...data, gpa: e.target.value })} className="mt-2" />
@@ -132,8 +142,8 @@ export default function EligibilityWizard() {
           )}
 
           {step === 3 && (
-            <Card>
-              <CardHeader><CardTitle>Do you have an English Proficiency Test?</CardTitle></CardHeader>
+            <Card className="shadow-sm border-gray-200/60 rounded-md">
+              <CardHeader><CardTitle className="text-xl" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>Do you have an English Proficiency Test?</CardTitle></CardHeader>
               <CardContent className="space-y-4">
                 <div>
                   <Label>Test Type</Label>
@@ -153,8 +163,8 @@ export default function EligibilityWizard() {
           )}
 
           {step === 4 && (
-            <Card>
-              <CardHeader><CardTitle>What is your budget per year? (USD)</CardTitle></CardHeader>
+            <Card className="shadow-sm border-gray-200/60 rounded-md">
+              <CardHeader><CardTitle className="text-xl" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>What is your budget per year? (USD)</CardTitle></CardHeader>
               <CardContent>
                 <div className="text-3xl font-extrabold text-[#ffa300] text-center mb-6">${data.budget[0].toLocaleString()}</div>
                 <Slider value={data.budget} onValueChange={(v) => setData({ ...data, budget: v })} min={5000} max={50000} step={1000} />
@@ -166,15 +176,15 @@ export default function EligibilityWizard() {
           )}
 
           {showResults && (
-            <div>
-              <h2 className="text-2xl font-extrabold mb-6 text-center">Your Results</h2>
+            <div className="animate-fade-in">
+              <h2 className="text-2xl md:text-3xl font-extrabold mb-6 text-center" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>Your Matches</h2>
               {filteredResults().length === 0 ? (
                 <Card><CardContent className="p-10 text-center text-muted-foreground">No matching universities found. Try adjusting your criteria.</CardContent></Card>
               ) : (
                 <div className="space-y-4">
                   {filteredResults().map(({ uni, courses: matchedCourses, chance }) => {
                     return (
-                      <Card key={uni.id} className="hover:shadow-lg transition-shadow">
+                      <Card key={uni.id} className="hover:shadow-md transition-shadow shadow-sm border-gray-200/60 rounded-md mb-4">
                         <CardContent className="p-6">
                           <div className="flex items-start justify-between mb-3">
                             <div>
@@ -202,8 +212,8 @@ export default function EligibilityWizard() {
                   })}
                 </div>
               )}
-              <div className="text-center mt-8">
-                <Button variant="outline" onClick={() => { setStep(1); setData({ qualification: "", gpa: "", englishTest: "", englishScore: "", budget: [20000] }); }}>
+              <div className="text-center mt-10">
+                <Button variant="outline" className="h-10 border-gray-200 text-[#515768] hover:text-[#181d29] rounded-sm bg-white" onClick={() => { setStep(1); setData({ qualification: "", gpa: "", englishTest: "", englishScore: "", budget: [20000] }); }}>
                   Start Over
                 </Button>
               </div>
@@ -211,11 +221,11 @@ export default function EligibilityWizard() {
           )}
 
           {!showResults && (
-            <div className="flex justify-between mt-6">
-              <Button variant="outline" onClick={() => setStep(step - 1)} disabled={step === 1}>
+            <div className="flex justify-between mt-8">
+              <Button variant="outline" className="h-10 border-gray-200 text-[#515768] hover:text-[#181d29] rounded-sm bg-white" onClick={() => setStep(step - 1)} disabled={step === 1}>
                 <ArrowLeft className="h-4 w-4 mr-1" /> Back
               </Button>
-              <Button onClick={() => setStep(step + 1)} disabled={!canNext()} className="bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90">
+              <Button onClick={() => setStep(step + 1)} disabled={!canNext()} className="bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 rounded-sm font-bold h-10 px-6">
                 {step === totalSteps ? "See Results" : "Next"} <ArrowRight className="h-4 w-4 ml-1" />
               </Button>
             </div>

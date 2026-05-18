@@ -47,9 +47,6 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
           <div>
             <h4 className="font-semibold mb-4 text-white text-base" style={{ fontFamily: "Poppins, sans-serif" }}>Tools & Resources</h4>
             <ul className="space-y-2.5 text-sm" style={{ color: "#a2a6b0" }}>
-              <li><Link to="/tools/calculator" className="hover:text-[#ffa300] transition-colors">Cost Calculator</Link></li>
-              <li><Link to="/tools/gpa-converter" className="hover:text-[#ffa300] transition-colors">GPA Converter</Link></li>
-              <li><Link to="/visa-guide" className="hover:text-[#ffa300] transition-colors">Visa Guide</Link></li>
               <li><Link to="/partner" className="hover:text-[#ffa300] transition-colors">For Agencies</Link></li>
               <li><Link to="/login" className="hover:text-[#ffa300] transition-colors">Sign In</Link></li>
             </ul>

@@ -424,14 +424,14 @@ export const courses: Course[] = [
 // ─── Accommodations ──────────────────────────────────────────────────────────
 
 export const accommodations: Accommodation[] = [
-  { id: 1, name: "KL Sentral Residence", city: "Kuala Lumpur", near_university_ids: [1, 5], distance_to_university_id: 1, price_per_month: 800, type: "Apartment", amenities: ["WiFi", "Gym", "Pool", "Security"] },
-  { id: 2, name: "Subang Student Hostel", city: "Subang Jaya", near_university_ids: [3, 4], distance_to_university_id: 3, price_per_month: 450, type: "Hostel", amenities: ["WiFi", "Laundry", "Cafeteria"] },
-  { id: 3, name: "JB Student Lodge", city: "Johor Bahru", near_university_ids: [2], distance_to_university_id: 2, price_per_month: 350, type: "Hostel", amenities: ["WiFi", "Study Room", "Bus Service"] },
-  { id: 4, name: "Serdang Heights Condo", city: "Serdang", near_university_ids: [6], distance_to_university_id: 6, price_per_month: 600, type: "Condominium", amenities: ["WiFi", "Pool", "Parking", "Gym"] },
-  { id: 5, name: "Bangsar South Studio", city: "Kuala Lumpur", near_university_ids: [1, 5], distance_to_university_id: 1, price_per_month: 950, type: "Studio", amenities: ["WiFi", "Gym", "Concierge", "Pool"] },
-  { id: 6, name: "SS15 Shared House", city: "Subang Jaya", near_university_ids: [3, 4], distance_to_university_id: 4, price_per_month: 300, type: "Shared House", amenities: ["WiFi", "Kitchen", "Garden"] },
-  { id: 7, name: "Cyberjaya Student Suites", city: "Cyberjaya", near_university_ids: [11], distance_to_university_id: 11, price_per_month: 400, type: "Apartment", amenities: ["WiFi", "Gym", "Shuttle Bus", "Study Lounge"] },
-  { id: 8, name: "Penang Heritage Hostel", city: "Penang", near_university_ids: [7], distance_to_university_id: 7, price_per_month: 350, type: "Hostel", amenities: ["WiFi", "Rooftop Terrace", "Kitchen", "Bicycle Rental"] },
+  { id: 1, name: "KL Sentral Residence", city: "Kuala Lumpur", near_university_ids: [1, 5], distance_to_university_id: 1, price_per_month: 800, type: "Apartment", amenities: ["WiFi", "Gym", "Pool", "Security"], image_url: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80" },
+  { id: 2, name: "Subang Student Hostel", city: "Subang Jaya", near_university_ids: [3, 4], distance_to_university_id: 3, price_per_month: 450, type: "Hostel", amenities: ["WiFi", "Laundry", "Cafeteria"], image_url: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80" },
+  { id: 3, name: "JB Student Lodge", city: "Johor Bahru", near_university_ids: [2], distance_to_university_id: 2, price_per_month: 350, type: "Hostel", amenities: ["WiFi", "Study Room", "Bus Service"], image_url: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80" },
+  { id: 4, name: "Serdang Heights Condo", city: "Serdang", near_university_ids: [6], distance_to_university_id: 6, price_per_month: 600, type: "Condominium", amenities: ["WiFi", "Pool", "Parking", "Gym"], image_url: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80" },
+  { id: 5, name: "Bangsar South Studio", city: "Kuala Lumpur", near_university_ids: [1, 5], distance_to_university_id: 1, price_per_month: 950, type: "Studio", amenities: ["WiFi", "Gym", "Concierge", "Pool"], image_url: "https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=800&q=80" },
+  { id: 6, name: "SS15 Shared House", city: "Subang Jaya", near_university_ids: [3, 4], distance_to_university_id: 4, price_per_month: 300, type: "Shared House", amenities: ["WiFi", "Kitchen", "Garden"], image_url: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80" },
+  { id: 7, name: "Cyberjaya Student Suites", city: "Cyberjaya", near_university_ids: [11], distance_to_university_id: 11, price_per_month: 400, type: "Apartment", amenities: ["WiFi", "Gym", "Shuttle Bus", "Study Lounge"], image_url: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80" },
+  { id: 8, name: "Penang Heritage Hostel", city: "Penang", near_university_ids: [7], distance_to_university_id: 7, price_per_month: 350, type: "Hostel", amenities: ["WiFi", "Rooftop Terrace", "Kitchen", "Bicycle Rental"], image_url: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800&q=80" },
 ];
 
 // ─── Scholarships ────────────────────────────────────────────────────────────

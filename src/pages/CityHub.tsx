@@ -283,11 +283,7 @@ export default function CityHub() {
                     </ul>
                   </CardContent>
                 </Card>
-                <Link to="/tools/calculator">
-                  <Button variant="outline" className="w-full gap-2">
-                    <DollarSign className="h-4 w-4" /> Open Full Cost Calculator
-                  </Button>
-                </Link>
+
               </div>
             </div>
           </div>

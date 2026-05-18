@@ -43,7 +43,7 @@ const categories = [
     faqs: [
       { q: "How do I find accommodation?", a: "We offer accommodation assistance as part of our services. Visit our Housing page to browse verified student properties near your university." },
       { q: "Is Malaysia safe for international students?", a: "Yes, Malaysia is one of the safest countries in Southeast Asia for students. University campuses have 24/7 security, and major cities have low crime rates." },
-      { q: "What's the cost of living like?", a: "Malaysia is very affordable. A student can live comfortably on $500-800/month including rent. Use our Cost Calculator for detailed estimates." },
+      { q: "What's the cost of living like?", a: "Malaysia is very affordable. A student can live comfortably on $500-800/month including rent." },
     ],
   },
 ];

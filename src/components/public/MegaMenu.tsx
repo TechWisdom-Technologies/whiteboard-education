@@ -37,13 +37,10 @@ const cityLinks = [
 ];
 
 const resourceToolsLinks = [
-  { label: "Blog", to: "/blog", icon: PenTool },
-  { label: "Alumni", to: "/alumni", icon: User },
-  { label: "AI Eligibility Test", to: "/eligibility", icon: Sparkles },
-  { label: "Compare Universities", to: "/compare", icon: GitCompare },
-  { label: "Cost Calculator", to: "/tools/calculator", icon: Calculator },
-  { label: "GPA Converter", to: "/tools/gpa-converter", icon: RefreshCw },
-  { label: "Visa Guide", to: "/visa-guide", icon: FileText },
+  { label: "Blog", to: "/blog", icon: PenTool, bgImage: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=500&q=80" },
+  { label: "AI Eligibility Test", to: "/eligibility", icon: Sparkles, bgImage: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&q=80" },
+  { label: "Compare Universities", to: "/compare", icon: GitCompare, bgImage: "https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?w=500&q=80" },
+  { label: "Housing", to: "/housing", icon: Home, bgImage: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&q=80" },
 ];
 
 export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } = {}) {
@@ -62,11 +59,10 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
 
   const toolsRoots = [
     "/blog",
-    "/alumni",
     "/eligibility",
     "/compare",
     "/tools",
-    "/visa-guide",
+    "/housing",
   ];
 
   const destinationsActive = isRouteActive("/destinations");
@@ -169,25 +165,31 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
                       toolsActive && "text-[#ffa300]",
                     )}
                   >
-                    <Wrench className="h-3.5 w-3.5" /> Tools
+                    <BookOpen className="h-3.5 w-3.5" /> Resources
                     <ChevronDown className="h-3 w-3 opacity-50" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-[480px] p-5 shadow-xl border-[#e8e8e8]">
-                  <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest px-3 pb-3 mb-2">
-                    Tools & Resources
+                <DropdownMenuContent align="end" sideOffset={20} className="w-[520px] p-5 shadow-xl border-[#e8e8e8] border-t-[3px] border-t-[#ffa300] rounded-t-none">
+                  <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest px-3 pb-3 mb-2 text-center">
+                    Resources
                   </p>
-                  <div className="grid grid-cols-2 gap-x-2 gap-y-1">
+                  <div className="grid grid-cols-4 gap-3">
                     {resourceToolsLinks.map((item) => (
                       <Link
                         key={item.to}
                         to={item.to}
-                        className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground hover:bg-[#fef1da]/50 rounded-sm transition-colors group"
+                        className="relative aspect-square rounded-sm overflow-hidden group shadow-sm hover:shadow-md transition-shadow"
                       >
-                        <div className="h-8 w-8 rounded-sm bg-[#fef1da] flex items-center justify-center group-hover:bg-[#ffa300]/15 transition-colors shrink-0">
-                          <item.icon className="h-4 w-4 text-[#515768] group-hover:text-[#ffa300] transition-colors" />
+                        <img 
+                          src={item.bgImage} 
+                          alt={item.label} 
+                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#181d29]/95 via-[#181d29]/60 to-[#181d29]/20" />
+                        <div className="absolute inset-0 p-2 flex flex-col items-center justify-center text-center">
+                          <item.icon className="h-6 w-6 text-[#ffa300] mb-1.5" />
+                          <span className="text-[11px] font-bold text-white leading-tight">{item.label}</span>
                         </div>
-                        <span className="truncate">{item.label}</span>
                       </Link>
                     ))}
                   </div>
