@@ -55,6 +55,7 @@ export default function Application() {
   const [uploading, setUploading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  const [leadCaptured, setLeadCaptured] = useState(false);
 
   // Form State
   const [form, setForm] = useState({
@@ -130,6 +131,29 @@ export default function Application() {
       return false;
     }
     return true;
+  };
+
+  const handleNextStep1 = async () => {
+    if (validateStep1()) {
+      setStep(2);
+      if (!leadCaptured) {
+        setLeadCaptured(true);
+        try {
+          await supabase.from("leads").insert({
+            full_name: form.full_name,
+            email: form.email,
+            phone: form.phone,
+            nationality: form.nationality,
+            interested_course: form.target_course,
+            interested_university: uni?.name || "Any",
+            source: "application",
+            status: "new"
+          });
+        } catch (err) {
+          console.error("Quiet lead capture failed", err);
+        }
+      }
+    }
   };
 
   const validateStep2 = () => {
@@ -324,7 +348,7 @@ export default function Application() {
                   </div>
 
                   <div className="flex justify-end pt-6">
-                    <Button onClick={() => validateStep1() && setStep(2)} className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200]">
+                    <Button onClick={handleNextStep1} className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200]">
                       Next <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>

@@ -10,6 +10,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Eye } from "lucide-react";
 
 const statusColors: Record<string, string> = {
   new: "bg-primary/10 text-primary",
@@ -23,7 +26,21 @@ export default function AdminLeads() {
   const { data: leads = [], isLoading } = useTableData("leads");
   const [filter, setFilter] = useState("all");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [selectedLead, setSelectedLead] = useState<any | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
   const qc = useQueryClient();
+
+  const formatSource = (src: string) => {
+    if (!src) return "Application Page";
+    const lower = src.toLowerCase();
+    if (lower.includes("contact") || lower.includes("event")) return "Contact Page";
+    return "Application Page";
+  };
+
+  const openDetail = (lead: any) => {
+    setSelectedLead(lead);
+    setDetailOpen(true);
+  };
 
   const updateStatus = async (id: string, status: string) => {
     const { error } = await (supabase.from("leads" as any) as any).update({ status }).eq("id", id);
@@ -130,7 +147,7 @@ export default function AdminLeads() {
           {filtered.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">No leads found.</p>
           ) : (
-            <div className="overflow-x-auto rounded-sm border">
+            <div className="rounded-sm border">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -141,12 +158,11 @@ export default function AdminLeads() {
                       />
                     </TableHead>
                     <TableHead>Name</TableHead>
-                    <TableHead>Contact</TableHead>
-                    <TableHead>Interest</TableHead>
-                    <TableHead>Source</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead>Email</TableHead>
                     <TableHead>Date</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Source</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -158,38 +174,17 @@ export default function AdminLeads() {
                           onCheckedChange={(c) => handleSelectRow(lead.id, c as boolean)}
                         />
                       </TableCell>
+                      <TableCell className="font-medium text-foreground">{lead.full_name}</TableCell>
                       <TableCell>
-                        <div>
-                          <p className="font-medium text-foreground">{lead.full_name}</p>
-                          {lead.nationality && <p className="text-xs text-muted-foreground">{lead.nationality}</p>}
-                        </div>
+                        <a href={`mailto:${lead.email}`} className="text-sm text-primary hover:underline">{lead.email}</a>
                       </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
-                          <a href={`mailto:${lead.email}`} className="flex items-center gap-1 text-xs text-primary hover:underline"><Mail className="h-3 w-3" />{lead.email}</a>
-                          {lead.phone && <a href={`tel:${lead.phone}`} className="flex items-center gap-1 text-xs text-muted-foreground"><Phone className="h-3 w-3" />{lead.phone}</a>}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-xs">
-                          {lead.interested_course && <p className="font-medium text-foreground">{lead.interested_course}</p>}
-                          {lead.interested_university && <p className="text-muted-foreground">{lead.interested_university}</p>}
-                        </div>
-                      </TableCell>
-                      <TableCell><Badge variant="outline" className="text-xs">{lead.source}</Badge></TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{new Date(lead.created_at).toLocaleDateString()}</TableCell>
                       <TableCell><Badge className={`${statusColors[lead.status] || ""} border-0`}>{lead.status}</Badge></TableCell>
-                      <TableCell className="text-xs text-muted-foreground">{new Date(lead.created_at).toLocaleDateString()}</TableCell>
-                      <TableCell className="min-w-[150px]">
-                        <Select value={lead.status} onValueChange={(v) => updateStatus(lead.id, v)}>
-                          <SelectTrigger className="h-8 w-full sm:w-[120px] text-xs"><SelectValue /></SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="new">New</SelectItem>
-                            <SelectItem value="contacted">Contacted</SelectItem>
-                            <SelectItem value="qualified">Qualified</SelectItem>
-                            <SelectItem value="converted">Converted</SelectItem>
-                            <SelectItem value="lost">Lost</SelectItem>
-                          </SelectContent>
-                        </Select>
+                      <TableCell className="text-sm text-muted-foreground">{formatSource(lead.source)}</TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="icon" onClick={() => openDetail(lead)}>
+                          <Eye className="h-4 w-4" />
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -199,6 +194,49 @@ export default function AdminLeads() {
           )}
         </CardContent>
       </Card>
+
+      <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
+        <DialogContent className="max-w-2xl text-sm">
+          <DialogHeader>
+            <DialogTitle>Lead Details</DialogTitle>
+          </DialogHeader>
+          {selectedLead && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div><Label className="text-xs text-muted-foreground">Name</Label><p className="font-medium">{selectedLead.full_name}</p></div>
+                <div><Label className="text-xs text-muted-foreground">Email</Label><p className="font-medium">{selectedLead.email}</p></div>
+                <div><Label className="text-xs text-muted-foreground">Phone</Label><p className="font-medium">{selectedLead.phone || "N/A"}</p></div>
+                <div><Label className="text-xs text-muted-foreground">Nationality</Label><p className="font-medium">{selectedLead.nationality || "N/A"}</p></div>
+                <div><Label className="text-xs text-muted-foreground">Interested Course</Label><p className="font-medium">{selectedLead.interested_course || "N/A"}</p></div>
+                <div><Label className="text-xs text-muted-foreground">Interested University</Label><p className="font-medium">{selectedLead.interested_university || "N/A"}</p></div>
+                <div><Label className="text-xs text-muted-foreground">Source</Label><p className="font-medium">{formatSource(selectedLead.source)}</p></div>
+                <div><Label className="text-xs text-muted-foreground">Date</Label><p className="font-medium">{new Date(selectedLead.created_at).toLocaleString()}</p></div>
+              </div>
+              {selectedLead.message && (
+                <div>
+                  <Label className="text-xs text-muted-foreground">Message</Label>
+                  <div className="p-3 bg-muted/50 rounded-sm mt-1 border whitespace-pre-wrap">
+                    {selectedLead.message}
+                  </div>
+                </div>
+              )}
+              <div className="border-t pt-4 mt-4">
+                <Label className="text-xs text-muted-foreground mb-2 block">Update Status</Label>
+                <Select value={selectedLead.status} onValueChange={(v) => { updateStatus(selectedLead.id, v); setSelectedLead({...selectedLead, status: v}); }}>
+                  <SelectTrigger className="w-full sm:w-[200px]"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="new">New</SelectItem>
+                    <SelectItem value="contacted">Contacted</SelectItem>
+                    <SelectItem value="qualified">Qualified</SelectItem>
+                    <SelectItem value="converted">Converted</SelectItem>
+                    <SelectItem value="lost">Lost</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

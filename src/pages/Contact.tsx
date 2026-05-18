@@ -13,23 +13,52 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { MegaMenu } from "@/components/public/MegaMenu";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Contact() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate form submission
-    setTimeout(() => {
-      setLoading(false);
+    
+    const formElement = e.currentTarget;
+    const formData = new FormData(formElement);
+    const fullName = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const phone = formData.get("phone") as string;
+    const subject = formData.get("subject") as string;
+    const messageDetails = formData.get("message") as string;
+
+    const fullMessage = subject ? `Subject: ${subject}\n\n${messageDetails}` : messageDetails;
+
+    try {
+      const { error } = await supabase.from("leads").insert({
+        full_name: fullName,
+        email: email,
+        phone: phone,
+        message: fullMessage,
+        source: "contact",
+        status: "new"
+      });
+
+      if (error) throw error;
+
       toast({
         title: "Message Sent!",
         description: "Thank you for reaching out. We will get back to you shortly.",
       });
-      (e.target as HTMLFormElement).reset();
-    }, 1500);
+      formElement.reset();
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.message || "Failed to send message. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -67,27 +96,28 @@ export default function Contact() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="name" className="text-sm font-semibold text-[#181d29]">Full Name</Label>
-                      <Input id="name" placeholder="Enter your full name" required className="h-12 border-[#cacdd4] focus:border-[#ffa300] focus:ring-[#ffa300]/20" style={{ borderRadius: "5px" }} />
+                      <Input name="name" id="name" placeholder="Enter your full name" required className="h-12 border-[#cacdd4] focus:border-[#ffa300] focus:ring-[#ffa300]/20" style={{ borderRadius: "5px" }} />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email" className="text-sm font-semibold text-[#181d29]">Email Address</Label>
-                      <Input id="email" type="email" placeholder="name@example.com" required className="h-12 border-[#cacdd4] focus:border-[#ffa300] focus:ring-[#ffa300]/20" style={{ borderRadius: "5px" }} />
+                      <Input name="email" id="email" type="email" placeholder="name@example.com" required className="h-12 border-[#cacdd4] focus:border-[#ffa300] focus:ring-[#ffa300]/20" style={{ borderRadius: "5px" }} />
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="phone" className="text-sm font-semibold text-[#181d29]">Contact Number</Label>
-                    <Input id="phone" placeholder="+880 1XXX-XXXXXX" required className="h-12 border-[#cacdd4] focus:border-[#ffa300] focus:ring-[#ffa300]/20" style={{ borderRadius: "5px" }} />
+                    <Input name="phone" id="phone" placeholder="+880 1XXX-XXXXXX" required className="h-12 border-[#cacdd4] focus:border-[#ffa300] focus:ring-[#ffa300]/20" style={{ borderRadius: "5px" }} />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="subject" className="text-sm font-semibold text-[#181d29]">Subject</Label>
-                    <Input id="subject" placeholder="How can we help you?" required className="h-12 border-[#cacdd4] focus:border-[#ffa300] focus:ring-[#ffa300]/20" style={{ borderRadius: "5px" }} />
+                    <Input name="subject" id="subject" placeholder="How can we help you?" required className="h-12 border-[#cacdd4] focus:border-[#ffa300] focus:ring-[#ffa300]/20" style={{ borderRadius: "5px" }} />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="message" className="text-sm font-semibold text-[#181d29]">Message Details</Label>
                     <Textarea 
+                      name="message"
                       id="message" 
                       placeholder="Tell us more about your study goals..." 
                       className="min-h-[150px] border-[#cacdd4] focus:border-[#ffa300] focus:ring-[#ffa300]/20 leading-relaxed" 
