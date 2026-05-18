@@ -30,12 +30,6 @@ import {
 import { cn } from "@/lib/utils";
 import { LeadCaptureModal } from "@/components/public/LeadCaptureModal";
 
-const cityLinks = [
-  { label: "Kuala Lumpur", to: "/destinations/malaysia/kuala-lumpur" },
-  { label: "Cyberjaya", to: "/destinations/malaysia/cyberjaya" },
-  { label: "Penang", to: "/destinations/malaysia/penang" },
-];
-
 const resourceToolsLinks = [
   { label: "Blog", to: "/blog", icon: PenTool, bgImage: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=500&q=80" },
   { label: "AI Eligibility Test", to: "/eligibility", icon: Sparkles, bgImage: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&q=80" },
@@ -65,7 +59,6 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
     "/housing",
   ];
 
-  const destinationsActive = isRouteActive("/destinations");
   const toolsActive = toolsRoots.some((route) => isRouteActive(route));
 
   const handleLogout = () => {

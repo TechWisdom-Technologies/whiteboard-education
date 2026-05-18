@@ -124,8 +124,8 @@ export default function CityHub() {
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center space-y-4">
             <h1 className="text-3xl font-extrabold text-foreground">City Not Found</h1>
-            <Link to="/destinations/malaysia">
-              <Button variant="outline">Back to Malaysia Hub</Button>
+            <Link to="/universities">
+              <Button variant="outline">Explore Universities</Button>
             </Link>
           </div>
         </div>
@@ -499,9 +499,9 @@ export default function CityHub() {
             <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold h-13 px-8" onClick={handleConsult}>
               <Phone className="h-4 w-4 mr-2" /> Free Consultation
             </Button>
-            <Link to="/destinations/malaysia">
+            <Link to="/universities">
               <Button size="lg" variant="outline" className="border-[#181d29]/30 text-[#181d29] hover:bg-[#181d29]/10 font-bold h-13 px-8">
-                <Building className="h-4 w-4 mr-2" /> Explore All of Malaysia
+                <Building className="h-4 w-4 mr-2" /> Explore Universities
               </Button>
             </Link>
           </div>

@@ -14,7 +14,6 @@ import Universities2 from "./pages/Universities2";
 import CoursesPage from "./pages/Courses";
 import Courses2 from "./pages/Courses2";
 import CourseDetail from "./pages/CourseDetail";
-import StudyInMalaysia from "./pages/StudyInMalaysia";
 import CityHub from "./pages/CityHub";
 import UniversityDetail from "./pages/UniversityDetail";
 import EligibilityWizard from "./pages/EligibilityWizard";
@@ -97,7 +96,6 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
 
             {/* Destinations */}
-            <Route path="/destinations/malaysia" element={<StudyInMalaysia />} />
             <Route path="/destinations/malaysia/:citySlug" element={<CityHub />} />
 
             {/* Directories */}
@@ -142,9 +140,10 @@ const App = () => (
             </Route>
 
             {/* Redirects for old routes */}
-            <Route path="/study-in-malaysia" element={<Navigate to="/destinations/malaysia" replace />} />
-            <Route path="/countries" element={<Navigate to="/destinations/malaysia" replace />} />
-            <Route path="/country/:countryId" element={<Navigate to="/destinations/malaysia" replace />} />
+            <Route path="/destinations/malaysia" element={<Navigate to="/" replace />} />
+            <Route path="/study-in-malaysia" element={<Navigate to="/" replace />} />
+            <Route path="/countries" element={<Navigate to="/" replace />} />
+            <Route path="/country/:countryId" element={<Navigate to="/" replace />} />
             <Route path="/university/:universityId" element={<LegacyUniversityRedirect />} />
             <Route path="/eligibility-test" element={<Navigate to="/eligibility" replace />} />
             <Route path="/b2b" element={<Navigate to="/partner" replace />} />

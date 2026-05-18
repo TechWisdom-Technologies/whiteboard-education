@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const tabs = ["University", "Course", "Country"];
+const tabs = ["University", "Course"];
 
 const trustPoints = [
   "50+ Partner Universities",
@@ -41,11 +41,9 @@ export function HeroSection() {
     if (activeTab === "University") {
       const uni = universities.find((u: any) => u.name.toLowerCase().includes(q));
       navigate(uni ? `/universities/${uni.id}` : "/universities");
-    } else if (activeTab === "Course") {
+    } else {
       const course = courses.find((c: any) => c.title.toLowerCase().includes(q));
       navigate(course ? `/courses/${course.id}` : "/courses");
-    } else {
-      navigate("/destinations/malaysia");
     }
   };
 
