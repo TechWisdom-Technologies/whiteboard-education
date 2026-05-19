@@ -130,13 +130,7 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
         <div className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-6">
           {/* Brand - Left */}
           <Link to="/" className="flex items-center gap-3 shrink-0 group">
-            <div className="h-10 w-10 bg-[#181d29] rounded-sm flex items-center justify-center">
-              <GraduationCap className="h-6 w-6 text-[#ffa300]" />
-            </div>
-            <div className="flex flex-col leading-tight">
-              <span className="text-[17px] font-extrabold tracking-tight text-[#181d29]" style={{ fontFamily: "'Poppins', sans-serif" }}>Whiteboard</span>
-              <span className="text-[13px] font-bold text-[#ffa300] uppercase block" style={{ fontFamily: "'Poppins', sans-serif", textAlign: 'justify', textAlignLast: 'justify' as any }}>Education</span>
-            </div>
+            <img src="/LOGO-ON-LIGHT-BG.png" alt="Whiteboard Education" className="h-10 w-auto object-contain" />
           </Link>
 
           {/* Desktop Nav - Right Aligned */}
@@ -247,13 +241,7 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
                   {/* Mobile Header */}
                   <div className="p-5 border-b border-[#cacdd4] flex items-center justify-between">
                     <Link to="/" className="flex items-center gap-2.5">
-                      <div className="h-8 w-8 bg-[#181d29] rounded-sm flex items-center justify-center">
-                        <GraduationCap className="h-5 w-5 text-[#ffa300]" />
-                      </div>
-                      <div className="flex flex-col leading-tight">
-                        <span className="text-sm font-extrabold text-[#181d29]" style={{ fontFamily: "'Poppins', sans-serif" }}>Whiteboard</span>
-                        <span className="text-[10px] font-bold text-[#ffa300] uppercase block" style={{ fontFamily: "'Poppins', sans-serif", textAlign: 'justify', textAlignLast: 'justify' as any }}>Education</span>
-                      </div>
+                      <img src="/LOGO-ON-LIGHT-BG.png" alt="Whiteboard Education" className="h-8 w-auto object-contain" />
                     </Link>
                   </div>
 

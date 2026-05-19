@@ -81,20 +81,14 @@ export function PartnerSidebar() {
       {/* Sidebar Header containing logo */}
       <div className="border-b border-[#2d1b4e] py-4 px-4 bg-[#1a0f2e] flex flex-col gap-1 flex-shrink-0">
         <div className="flex items-center gap-2">
-          <div
-            className="h-8 w-8 bg-[#ffa300] flex items-center justify-center flex-shrink-0"
-            style={{ clipPath: "polygon(0 0, 100% 0, 100% 75%, 75% 100%, 0 100%)" }}
-          >
-            <GraduationCap className="h-4 w-4 text-[#1a0f2e]" />
-          </div>
-          {!collapsed && (
-            <div className="leading-none min-w-0">
-              <div className="text-white font-extrabold text-[13px] tracking-wide" style={{ fontFamily: "Poppins, sans-serif" }}>
-                WHITEBOARD
-              </div>
-              <div className="text-[#ffa300] text-[8px] font-semibold tracking-[0.25em] uppercase mt-0.5">
-                Partner Portal
-              </div>
+          {!collapsed ? (
+            <img src="/LOGO-ON-DARK-BG.png" alt="Whiteboard Education" className="h-8 w-auto object-contain" />
+          ) : (
+            <div
+              className="h-8 w-8 bg-[#ffa300] flex items-center justify-center flex-shrink-0"
+              style={{ clipPath: "polygon(0 0, 100% 0, 100% 75%, 75% 100%, 0 100%)" }}
+            >
+              <GraduationCap className="h-4 w-4 text-[#1a0f2e]" />
             </div>
           )}
         </div>

@@ -128,20 +128,7 @@ export default function Login() {
         >
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <div
-              className="h-10 w-10 bg-[#ffa300] flex items-center justify-center flex-shrink-0"
-              style={{ clipPath: "polygon(0 0, 100% 0, 100% 75%, 75% 100%, 0 100%)" }}
-            >
-              <GraduationCap className="h-5 w-5 text-[#0c0f16]" />
-            </div>
-            <div className="leading-none">
-              <div className="text-white font-extrabold text-sm tracking-widest" style={{ fontFamily: "Poppins, sans-serif" }}>
-                WHITEBOARD
-              </div>
-              <div className="text-[#ffa300] text-[9px] font-semibold tracking-[0.3em] uppercase mt-0.5">
-                Education
-              </div>
-            </div>
+            <img src="/LOGO-ON-DARK-BG.png" alt="Whiteboard Education" className="h-10 w-auto object-contain" />
           </div>
 
           {/* Middle hero */}
@@ -231,12 +218,7 @@ export default function Login() {
         <div className="flex items-center justify-between px-10 py-3 border-b border-gray-200 flex-shrink-0 bg-white">
           {/* Mobile logo */}
           <div className="flex items-center gap-2 lg:hidden">
-            <div className="h-7 w-7 bg-[#0c0f16] flex items-center justify-center">
-              <GraduationCap className="h-4 w-4 text-[#ffa300]" />
-            </div>
-            <span className="font-extrabold text-[#0c0f16] text-xs tracking-widest" style={{ fontFamily: "Poppins, sans-serif" }}>
-              WHITEBOARD EDUCATION
-            </span>
+            <img src="/LOGO-ON-LIGHT-BG.png" alt="Whiteboard Education" className="h-8 w-auto object-contain" />
           </div>
           {/* Desktop label */}
           <span className="hidden lg:block text-xs font-bold text-gray-300 tracking-widest uppercase">

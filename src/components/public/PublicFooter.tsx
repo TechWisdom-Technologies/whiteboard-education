@@ -16,13 +16,7 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
             {/* 1st Column: Logo, Subheadline, Social Icons */}
             <div className="md:col-span-1 space-y-4">
               <div className="flex items-center gap-2.5">
-                <div className="h-9 w-9 bg-[#ffa300]/15 rounded-sm flex items-center justify-center">
-                  <GraduationCap className="h-5 w-5 text-[#ffa300]" />
-                </div>
-                <div className="flex flex-col leading-tight">
-                  <span className="text-[15.5px] font-extrabold text-white" style={{ fontFamily: "'Poppins', sans-serif" }}>Whiteboard</span>
-                  <span className="text-[12.5px] font-bold text-[#ffa300] uppercase block" style={{ fontFamily: "'Poppins', sans-serif", textAlign: 'justify', textAlignLast: 'justify' as any }}>Education</span>
-                </div>
+                <img src="/LOGO-ON-DARK-BG.png" alt="Whiteboard Education" className="h-10 w-auto object-contain" />
               </div>
               <p className="text-[13.5px] font-light leading-relaxed text-gray-400">
                 Expert guidance for international students seeking quality education in Malaysia.
