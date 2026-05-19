@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Users, UserPlus, Eye, Loader2, Upload, FileText, Search } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Users, UserPlus, Eye, Loader2, Upload, FileText, Search, Trash2 } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -76,6 +77,7 @@ export default function PartnerStudents() {
   const [search, setSearch] = useState("");
   const [uploading, setUploading] = useState<Record<string, boolean>>({});
   const [highlightedStudentId, setHighlightedStudentId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const handledStudentParamRef = useRef(false);
   const studentRowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
 
@@ -155,6 +157,72 @@ export default function PartnerStudents() {
     } finally { setSubmitting(false); }
   };
 
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedIds(filtered.map(s => s.id));
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+  const handleSelectRow = (id: string, checked: boolean) => {
+    if (checked) {
+      setSelectedIds(prev => [...prev, id]);
+    } else {
+      setSelectedIds(prev => prev.filter(v => v !== id));
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!session) return;
+    if (!window.confirm("Are you sure you want to delete this student? This action cannot be undone.")) return;
+
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${id}`, {
+        method: "DELETE",
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to delete student");
+      }
+
+      toast.success("Student deleted successfully");
+      setSelectedIds(prev => prev.filter(v => v !== id));
+      fetchStudents();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete student");
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (!session || selectedIds.length === 0) return;
+    if (!window.confirm(`Are you sure you want to delete ${selectedIds.length} students? This action cannot be undone.`)) return;
+
+    try {
+      await Promise.all(selectedIds.map(id => 
+        fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${id}`, {
+          method: "DELETE",
+          headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": `Bearer ${session.access_token}`,
+          },
+        }).then(res => {
+          if (!res.ok) throw new Error("Failed to delete student");
+        })
+      ));
+
+      toast.success(`${selectedIds.length} students deleted successfully`);
+      setSelectedIds([]);
+      fetchStudents();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete some students");
+    }
+  };
+
   const uploadDoc = async (studentId: string, field: string, file: File) => {
     setUploading(p => ({ ...p, [field]: true }));
     try {
@@ -200,12 +268,18 @@ export default function PartnerStudents() {
           <h1 className="text-2xl font-extrabold">Student Profiles</h1>
           <p className="text-muted-foreground text-sm">Manage your students and track their application progress</p>
         </div>
-        <Dialog open={addOpen} onOpenChange={setAddOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 w-full sm:w-auto">
-              <UserPlus className="h-4 w-4 mr-2" />Add Student
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          {selectedIds.length > 0 && (
+            <Button variant="destructive" onClick={handleBulkDelete} className="w-full sm:w-auto">
+              <Trash2 className="h-4 w-4 mr-2" /> Delete Selected ({selectedIds.length})
             </Button>
-          </DialogTrigger>
+          )}
+          <Dialog open={addOpen} onOpenChange={setAddOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 w-full sm:w-auto">
+                <UserPlus className="h-4 w-4 mr-2" />Add Student
+              </Button>
+            </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader><DialogTitle>Add New Student</DialogTitle></DialogHeader>
             <div className="space-y-4 pt-2">
@@ -264,7 +338,8 @@ export default function PartnerStudents() {
               </Button>
             </div>
           </DialogContent>
-        </Dialog>
+          </Dialog>
+        </div>
       </div>
 
       {/* Search */}
@@ -288,6 +363,12 @@ export default function PartnerStudents() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[40px] text-center px-0">
+                    <Checkbox 
+                      checked={filtered.length > 0 && selectedIds.length === filtered.length}
+                      onCheckedChange={handleSelectAll}
+                    />
+                  </TableHead>
                   <TableHead>Student Name</TableHead>
                   <TableHead>Target University</TableHead>
                   <TableHead>Target Course</TableHead>
@@ -309,6 +390,12 @@ export default function PartnerStudents() {
                       }}
                       className={highlightedStudentId === s.id ? "bg-[#ffa300]/10 ring-1 ring-[#ffa300]/40" : undefined}
                     >
+                      <TableCell className="text-center px-0">
+                        <Checkbox 
+                          checked={selectedIds.includes(s.id)}
+                          onCheckedChange={(c) => handleSelectRow(s.id, c as boolean)}
+                        />
+                      </TableCell>
                       <TableCell className="font-medium">{s.full_name}</TableCell>
                       <TableCell>{s.target_university || "-"}</TableCell>
                       <TableCell>{s.target_course || "-"}</TableCell>
@@ -316,9 +403,14 @@ export default function PartnerStudents() {
                       <TableCell><Badge variant="outline" className={st.class}>{st.label}</Badge></TableCell>
                       <TableCell><Badge variant="secondary">{docCount}/5</Badge></TableCell>
                       <TableCell className="text-right min-w-[120px]">
-                        <Button variant="ghost" size="sm" onClick={() => { setSelected(s); setDetailOpen(true); }}>
-                          <Eye className="h-4 w-4 mr-1" />View
-                        </Button>
+                        <div className="flex justify-end gap-1">
+                          <Button variant="ghost" size="icon" onClick={() => { setSelected(s); setDetailOpen(true); }}>
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => handleDelete(s.id)} className="text-destructive hover:bg-destructive hover:text-destructive-foreground">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
