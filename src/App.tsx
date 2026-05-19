@@ -50,6 +50,7 @@ import PartnerMarketing from "./pages/partner/PartnerMarketing";
 import PartnerStudents from "./pages/partner/PartnerStudents";
 import PartnerProfile from "./pages/partner/PartnerProfile";
 import PartnerNotifications from "./pages/partner/PartnerNotifications";
+import StudentProfilePage from "./pages/StudentProfilePage";
 
 const queryClient = new QueryClient();
 
@@ -136,6 +137,7 @@ const App = () => (
             >
               <Route index element={<PartnerOverview />} />
               <Route path="students" element={<PartnerStudents />} />
+              <Route path="students/:studentId" element={<StudentProfilePage mode="partner" />} />
               <Route path="marketing" element={<PartnerMarketing />} />
               <Route path="notifications" element={<PartnerNotifications />} />
               <Route path="profile" element={<PartnerProfile />} />
@@ -172,6 +174,7 @@ const App = () => (
               <Route path="blogs" element={<AdminBlogs />} />
               <Route path="partners" element={<AdminPartners />} />
               <Route path="students" element={<AdminStudents />} />
+              <Route path="students/:studentId" element={<StudentProfilePage mode="admin" />} />
               <Route path="leads" element={<AdminLeads />} />
               <Route path="settings" element={<AdminSettings />} />
             </Route>

@@ -654,6 +654,7 @@ export type Database = {
           payment_verified_at: string | null
           payment_verified_by: string | null
           passport_number: string | null
+          passport_photo_url: string | null
           passport_url: string | null
           personal_statement_url: string | null
           phone: string | null
@@ -689,6 +690,7 @@ export type Database = {
           payment_verified_at?: string | null
           payment_verified_by?: string | null
           passport_number?: string | null
+          passport_photo_url?: string | null
           passport_url?: string | null
           personal_statement_url?: string | null
           phone?: string | null
@@ -724,6 +726,7 @@ export type Database = {
           payment_verified_at?: string | null
           payment_verified_by?: string | null
           passport_number?: string | null
+          passport_photo_url?: string | null
           passport_url?: string | null
           personal_statement_url?: string | null
           phone?: string | null

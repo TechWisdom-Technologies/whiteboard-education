@@ -187,7 +187,7 @@ export default function Application() {
         status: "document_review",
         academic_transcript_url: hsUrl,
         passport_url: passportUrl,
-        personal_statement_url: photoUrl, // Using this for photo for now
+        passport_photo_url: photoUrl,
         recommendation_letter_url: additionalUrl, // Using this for additional docs
         admin_notes: extraInfo,
       });

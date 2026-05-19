@@ -7,10 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Users, UserPlus, Eye, Loader2, Upload, FileText, Search, Trash2 } from "lucide-react";
-import { useSearchParams } from "react-router-dom";
+import { Users, UserPlus, Eye, Loader2, Search, Trash2 } from "lucide-react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -37,6 +36,7 @@ interface Student {
   degree_level: string;
   status: string;
   admin_notes: string;
+  passport_photo_url?: string;
   passport_url: string;
   academic_transcript_url: string;
   ielts_certificate_url: string;
@@ -47,14 +47,16 @@ interface Student {
 }
 
 const statusMap: Record<string, { label: string; class: string }> = {
-  document_review: { label: "Document Review", class: "bg-muted text-muted-foreground" },
+  document_review: { label: "Document Review", class: "bg-gray-100 text-gray-600" },
   documents_verified: { label: "Documents Verified", class: "bg-blue-500/10 text-blue-600 border-blue-500/30" },
-  applied: { label: "Applied", class: "bg-[#ffa300]/10 text-[#ffa300] border-[#ffa300]/20" },
-  offer_received: { label: "Offer Received", class: "bg-warning/10 text-warning border-warning/20" },
-  visa_processing: { label: "Visa Processing", class: "bg-primary/10 text-primary border-primary/20" },
-  visa_approved: { label: "Visa Approved", class: "bg-green-500/10 text-green-600 border-green-500/30" },
+  university_applied: { label: "University Applied", class: "bg-indigo-500/10 text-indigo-600 border-indigo-500/30" },
+  offer_letter: { label: "Offer Letter", class: "bg-purple-500/10 text-purple-600 border-purple-500/30" },
+  emgs_processing: { label: "EMGS Processing", class: "bg-[#ffa300]/10 text-[#ffa300] border-[#ffa300]/20" },
+  visa_approved: { label: "Visa Approved", class: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30" },
+  travel_ready: { label: "Travel Ready", class: "bg-teal-500/10 text-teal-600 border-teal-500/30" },
   enrolled: { label: "Enrolled", class: "bg-green-600/10 text-green-700 border-green-600/30" },
   rejected: { label: "Rejected", class: "bg-destructive/10 text-destructive border-destructive/20" },
+  on_hold: { label: "On Hold", class: "bg-amber-500/10 text-amber-600 border-amber-500/20" },
 };
 
 const emptyForm = {
@@ -70,14 +72,12 @@ export default function PartnerStudents() {
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [addOpen, setAddOpen] = useState(false);
-  const [detailOpen, setDetailOpen] = useState(false);
-  const [selected, setSelected] = useState<Student | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [submitting, setSubmitting] = useState(false);
   const [search, setSearch] = useState("");
-  const [uploading, setUploading] = useState<Record<string, boolean>>({});
   const [highlightedStudentId, setHighlightedStudentId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const navigate = useNavigate();
   const handledStudentParamRef = useRef(false);
   const studentRowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
 
@@ -223,36 +223,6 @@ export default function PartnerStudents() {
     }
   };
 
-  const uploadDoc = async (studentId: string, field: string, file: File) => {
-    setUploading(p => ({ ...p, [field]: true }));
-    try {
-      const path = `${user?.id}/${studentId}/${field}_${Date.now()}_${file.name}`;
-      const { error } = await supabase.storage.from("student-documents").upload(path, file);
-      if (error) throw error;
-      const { data: { publicUrl } } = supabase.storage.from("student-documents").getPublicUrl(path);
-      
-      // Update student record
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${studentId}`, {
-        method: "PATCH",
-        headers: {
-          apikey: SUPABASE_KEY,
-          Authorization: `Bearer ${session?.access_token}`,
-          "Content-Type": "application/json",
-          Prefer: "return=representation",
-        },
-        body: JSON.stringify({ [field]: publicUrl }),
-      });
-      if (!res.ok) throw new Error("Failed to update");
-      toast.success("Document uploaded!");
-      fetchStudents();
-      if (selected?.id === studentId) {
-        setSelected(prev => prev ? { ...prev, [field]: publicUrl } : null);
-      }
-    } catch (e: any) {
-      toast.error(e.message || "Upload failed");
-    } finally { setUploading(p => ({ ...p, [field]: false })); }
-  };
-
   const filtered = students.filter(s =>
     s.full_name.toLowerCase().includes(search.toLowerCase()) ||
     s.email.toLowerCase().includes(search.toLowerCase()) ||
@@ -381,7 +351,7 @@ export default function PartnerStudents() {
               <TableBody>
                 {filtered.map(s => {
                   const st = statusMap[s.status] || { label: s.status, class: "" };
-                  const docCount = [s.passport_url, s.academic_transcript_url, s.ielts_certificate_url, s.personal_statement_url, s.recommendation_letter_url].filter(Boolean).length;
+                  const docCount = [s.passport_photo_url, s.passport_url, s.academic_transcript_url, s.ielts_certificate_url, s.personal_statement_url, s.recommendation_letter_url].filter(Boolean).length;
                   return (
                     <TableRow
                       key={s.id}
@@ -401,10 +371,10 @@ export default function PartnerStudents() {
                       <TableCell>{s.target_course || "-"}</TableCell>
                       <TableCell>{s.degree_level}</TableCell>
                       <TableCell><Badge variant="outline" className={st.class}>{st.label}</Badge></TableCell>
-                      <TableCell><Badge variant="secondary">{docCount}/5</Badge></TableCell>
+                      <TableCell><Badge variant="secondary">{docCount}/6</Badge></TableCell>
                       <TableCell className="text-right min-w-[120px]">
                         <div className="flex justify-end gap-1">
-                          <Button variant="ghost" size="icon" onClick={() => { setSelected(s); setDetailOpen(true); }}>
+                          <Button variant="ghost" size="icon" onClick={() => navigate(`/partner-dashboard/students/${s.id}`)}>
                             <Eye className="h-4 w-4" />
                           </Button>
                           <Button variant="ghost" size="icon" onClick={() => handleDelete(s.id)} className="text-destructive hover:bg-destructive hover:text-destructive-foreground">
@@ -421,99 +391,6 @@ export default function PartnerStudents() {
         </Card>
       )}
 
-      {/* Detail / Upload Dialog */}
-      <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>Student Profile - {selected?.full_name}</DialogTitle></DialogHeader>
-          {selected && (
-            <div className="space-y-6">
-              {/* Status */}
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-muted-foreground">Application Status:</span>
-                <Badge variant="outline" className={statusMap[selected.status]?.class || ""}>
-                  {statusMap[selected.status]?.label || selected.status}
-                </Badge>
-                {selected.admin_notes && (
-                  <span className="text-xs text-muted-foreground italic ml-2">Note: {selected.admin_notes}</span>
-                )}
-              </div>
-
-              {/* Info Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div><Label className="text-muted-foreground text-xs">Email</Label><p className="font-medium text-sm">{selected.email}</p></div>
-                <div><Label className="text-muted-foreground text-xs">Phone</Label><p className="font-medium text-sm">{selected.phone || "-"}</p></div>
-                <div><Label className="text-muted-foreground text-xs">Passport</Label><p className="font-medium text-sm">{selected.passport_number || "-"}</p></div>
-                <div><Label className="text-muted-foreground text-xs">Nationality</Label><p className="font-medium text-sm">{selected.nationality || "-"}</p></div>
-                <div><Label className="text-muted-foreground text-xs">DOB</Label><p className="font-medium text-sm">{selected.date_of_birth ? new Date(selected.date_of_birth).toLocaleDateString() : "-"}</p></div>
-                <div><Label className="text-muted-foreground text-xs">Gender</Label><p className="font-medium text-sm">{selected.gender || "-"}</p></div>
-              </div>
-
-              <div className="border-t pt-4">
-                <h3 className="font-semibold mb-3">Academic Background</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><Label className="text-muted-foreground text-xs">Previous Institution</Label><p className="font-medium text-sm">{selected.previous_institution || "-"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Previous Degree</Label><p className="font-medium text-sm">{selected.previous_degree || "-"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">GPA</Label><p className="font-medium text-sm">{selected.gpa || "-"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">IELTS Score</Label><p className="font-medium text-sm">{selected.ielts_score || "-"}</p></div>
-                </div>
-              </div>
-
-              <div className="border-t pt-4">
-                <h3 className="font-semibold mb-3">Target Program</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><Label className="text-muted-foreground text-xs">University</Label><p className="font-medium text-sm">{selected.target_university || "-"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Course</Label><p className="font-medium text-sm">{selected.target_course || "-"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Intake</Label><p className="font-medium text-sm">{selected.intake_month || "-"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Degree Level</Label><p className="font-medium text-sm">{selected.degree_level}</p></div>
-                </div>
-              </div>
-
-              {/* Documents Upload */}
-              <div className="border-t pt-4">
-                <h3 className="font-semibold mb-3">Documents</h3>
-                <div className="space-y-3">
-                  {[
-                    { field: "passport_url", label: "Passport Copy" },
-                    { field: "academic_transcript_url", label: "Academic Transcript" },
-                    { field: "ielts_certificate_url", label: "IELTS Certificate" },
-                    { field: "personal_statement_url", label: "Personal Statement" },
-                    { field: "recommendation_letter_url", label: "Recommendation Letter" },
-                  ].map(doc => {
-                    const url = (selected as any)[doc.field];
-                    return (
-                      <div key={doc.field} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 rounded-sm border">
-                        <FileText className={`h-5 w-5 ${url ? "text-green-600" : "text-muted-foreground"}`} />
-                        <div className="flex-1">
-                          <p className="font-medium text-sm">{doc.label}</p>
-                          {url ? (
-                            <a href={url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">View document</a>
-                          ) : (
-                            <p className="text-xs text-muted-foreground">Not uploaded</p>
-                          )}
-                        </div>
-                        <label className="cursor-pointer">
-                          <input
-                            type="file"
-                            className="hidden"
-                            onChange={e => {
-                              const file = e.target.files?.[0];
-                              if (file) uploadDoc(selected.id, doc.field, file);
-                            }}
-                          />
-                          <div className="flex items-center gap-1 px-3 py-1.5 rounded-sm bg-muted hover:bg-muted/80 text-sm transition-colors">
-                            {uploading[doc.field] ? <Loader2 className="h-3 w-3 animate-spin" /> : <Upload className="h-3 w-3" />}
-                            {url ? "Replace" : "Upload"}
-                          </div>
-                        </label>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

@@ -14,6 +14,10 @@ import {
   ShieldCheck,
   Layers,
   Award,
+  ArrowRight,
+  Loader2,
+  CheckCircle2,
+  KeyRound,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -23,7 +27,7 @@ const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 export default function Login() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { signIn, signOut } = useAuth();
+  const { signIn, signOut, resetPassword, verifyResetOtp, updatePassword } = useAuth();
 
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
@@ -31,6 +35,14 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [regStatus, setRegStatus] = useState<{ status: string; admin_notes: string } | null>(null);
   const [mounted, setMounted] = useState(false);
+
+  // Forgot password state
+  type FpStep = "idle" | "enter_email" | "sending" | "code_sent" | "verifying" | "verified" | "updating" | "done";
+  const [fpStep, setFpStep] = useState<FpStep>("idle");
+  const [fpEmail, setFpEmail] = useState("");
+  const [fpOtp, setFpOtp] = useState("");
+  const [fpNewPw, setFpNewPw] = useState("");
+  const [fpConfirmPw, setFpConfirmPw] = useState("");
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 30);
@@ -85,6 +97,50 @@ export default function Login() {
 
   const inputCls =
     "w-full h-11 px-4 text-sm border border-gray-200 bg-white text-gray-900 placeholder:text-gray-400 outline-none focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] transition-colors";
+
+  // ─── Forgot Password Handlers ───
+  const handleFpSendCode = async () => {
+    if (!fpEmail) { toast({ title: "Please enter your email.", variant: "destructive" }); return; }
+    setFpStep("sending");
+    const result = await resetPassword(fpEmail);
+    if (result.success) {
+      setFpStep("code_sent");
+    } else {
+      toast({ title: "Error", description: result.error || "Failed to send code.", variant: "destructive" });
+      setFpStep("enter_email");
+    }
+  };
+
+  const handleFpVerify = async () => {
+    if (fpOtp.length < 6) { toast({ title: "Enter the 6-digit code.", variant: "destructive" }); return; }
+    setFpStep("verifying");
+    const result = await verifyResetOtp(fpEmail, fpOtp);
+    if (result.success) {
+      setFpStep("verified");
+    } else {
+      toast({ title: "Invalid code", description: result.error || "Please try again.", variant: "destructive" });
+      setFpStep("code_sent");
+    }
+  };
+
+  const handleFpUpdatePw = async () => {
+    if (fpNewPw.length < 6) { toast({ title: "Password must be at least 6 characters.", variant: "destructive" }); return; }
+    if (fpNewPw !== fpConfirmPw) { toast({ title: "Passwords do not match.", variant: "destructive" }); return; }
+    setFpStep("updating");
+    const result = await updatePassword(fpNewPw);
+    if (result.success) {
+      setFpStep("done");
+      // Sign out from the recovery session so they can log in fresh
+      await signOut();
+    } else {
+      toast({ title: "Error", description: result.error || "Failed to update password.", variant: "destructive" });
+      setFpStep("verified");
+    }
+  };
+
+  const resetFpFlow = () => {
+    setFpStep("idle"); setFpEmail(""); setFpOtp(""); setFpNewPw(""); setFpConfirmPw("");
+  };
 
   return (
     <div className="fixed inset-0 flex" style={{ background: "#0c0f16" }}>
@@ -269,60 +325,204 @@ export default function Login() {
             )}
 
             {/* Login form */}
-            <form onSubmit={handleLogin} className="space-y-2">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email address"
-                required
-                className={inputCls}
-              />
-              <div className="relative">
+            {fpStep === "idle" && (
+              <>
+                <form onSubmit={handleLogin} className="space-y-2">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Email address"
+                    required
+                    className={inputCls}
+                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Password"
+                      required
+                      className={inputCls + " pr-10"}
+                    />
+                    <button
+                      type="button"
+                      tabIndex={-1}
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full h-10 text-sm font-bold flex items-center justify-center gap-2 transition-all duration-150 hover:brightness-110 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
+                    style={{ background: "#ffa300", color: "#0c0f16" }}
+                  >
+                    {loading ? (
+                      <>
+                        <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.37 0 0 5.37 0 12h4z" />
+                        </svg>
+                        Signing in...
+                      </>
+                    ) : (
+                      <><LogIn className="h-4 w-4" /> Sign In</>
+                    )}
+                  </button>
+                </form>
+
+                {/* Forgot password link */}
+                <div className="mt-2 text-right">
+                  <button
+                    type="button"
+                    onClick={() => { setFpStep("enter_email"); setFpEmail(email); }}
+                    className="text-[11px] font-semibold text-[#ffa300] hover:underline"
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* ─── Forgot Password Flow ─── */}
+            {fpStep === "enter_email" && (
+              <div className="space-y-4">
+                <div className="mb-2">
+                  <h3 className="font-bold text-[#0c0f16] text-lg" style={{ fontFamily: "Poppins, sans-serif" }}>Reset Password</h3>
+                  <p className="text-xs text-gray-400">Enter the email associated with your account.</p>
+                </div>
                 <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password"
-                  required
-                  className={inputCls + " pr-10"}
+                  type="email"
+                  value={fpEmail}
+                  onChange={(e) => setFpEmail(e.target.value)}
+                  placeholder="Your login email"
+                  className={inputCls}
                 />
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleFpSendCode}
+                    className="flex-1 h-10 text-sm font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
+                    style={{ background: "#ffa300", color: "#0c0f16" }}
+                  >
+                    <KeyRound className="h-4 w-4" /> Send Code
+                  </button>
+                  <button onClick={resetFpFlow} className="h-10 px-4 text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {fpStep === "sending" && (
+              <div className="flex items-center gap-3 py-8 justify-center text-sm text-gray-500">
+                <Loader2 className="h-5 w-5 animate-spin text-[#ffa300]" /> Sending code...
+              </div>
+            )}
+
+            {fpStep === "code_sent" && (
+              <div className="space-y-4">
+                <div className="flex items-start gap-3 p-3 bg-blue-50 border border-blue-100" style={{ borderRadius: 0 }}>
+                  <ShieldCheck className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
+                  <p className="text-[12px] text-blue-700">A 6-digit code was sent to <span className="font-bold">{fpEmail}</span>. Check your inbox and spam folder.</p>
+                </div>
+                <input
+                  value={fpOtp}
+                  onChange={(e) => setFpOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  placeholder="Enter 6-digit code"
+                  className={inputCls + " tracking-[0.3em] text-center font-bold text-lg"}
+                  maxLength={6}
+                />
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleFpVerify}
+                    disabled={fpOtp.length < 6}
+                    className="flex-1 h-10 text-sm font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-50"
+                    style={{ background: "#0c0f16", color: "#fff" }}
+                  >
+                    <ArrowRight className="h-4 w-4" /> Verify Code
+                  </button>
+                  <button onClick={resetFpFlow} className="h-10 px-4 text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {fpStep === "verifying" && (
+              <div className="flex items-center gap-3 py-8 justify-center text-sm text-gray-500">
+                <Loader2 className="h-5 w-5 animate-spin text-[#ffa300]" /> Verifying...
+              </div>
+            )}
+
+            {fpStep === "verified" && (
+              <div className="space-y-4">
+                <div className="flex items-start gap-3 p-3 bg-green-50 border border-green-100" style={{ borderRadius: 0 }}>
+                  <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                  <p className="text-[12px] text-green-700 font-medium">Code verified! Set your new password below.</p>
+                </div>
+                <input
+                  type="password"
+                  value={fpNewPw}
+                  onChange={(e) => setFpNewPw(e.target.value)}
+                  placeholder="New password (min. 6 chars)"
+                  className={inputCls}
+                />
+                <input
+                  type="password"
+                  value={fpConfirmPw}
+                  onChange={(e) => setFpConfirmPw(e.target.value)}
+                  placeholder="Confirm new password"
+                  className={inputCls}
+                />
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleFpUpdatePw}
+                    className="flex-1 h-10 text-sm font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
+                    style={{ background: "#ffa300", color: "#0c0f16" }}
+                  >
+                    Update Password
+                  </button>
+                  <button onClick={resetFpFlow} className="h-10 px-4 text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {fpStep === "updating" && (
+              <div className="flex items-center gap-3 py-8 justify-center text-sm text-gray-500">
+                <Loader2 className="h-5 w-5 animate-spin text-[#ffa300]" /> Updating password...
+              </div>
+            )}
+
+            {fpStep === "done" && (
+              <div className="space-y-4">
+                <div className="flex items-start gap-3 p-3 bg-green-50 border border-green-100" style={{ borderRadius: 0 }}>
+                  <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                  <p className="text-[12px] text-green-700 font-medium">Password updated successfully! You can now sign in with your new password.</p>
+                </div>
                 <button
-                  type="button"
-                  tabIndex={-1}
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  onClick={resetFpFlow}
+                  className="w-full h-10 text-sm font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
+                  style={{ background: "#ffa300", color: "#0c0f16" }}
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  <LogIn className="h-4 w-4" /> Back to Sign In
                 </button>
               </div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full h-10 text-sm font-bold flex items-center justify-center gap-2 transition-all duration-150 hover:brightness-110 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
-                style={{ background: "#ffa300", color: "#0c0f16" }}
-              >
-                {loading ? (
-                  <>
-                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.37 0 0 5.37 0 12h4z" />
-                    </svg>
-                    Signing in...
-                  </>
-                ) : (
-                  <><LogIn className="h-4 w-4" /> Sign In</>
-                )}
-              </button>
-            </form>
+            )}
 
             {/* Divider + partner link */}
+            {fpStep === "idle" && (
             <div className="mt-4 pt-3 border-t border-gray-200 flex items-center justify-between">
               <span className="text-[11px] text-gray-400">Joining as a partner agency?</span>
               <Link to="/partner" className="text-[11px] font-semibold text-[#ffa300] hover:underline">
                 Apply here →
               </Link>
             </div>
+            )}
           </div>
         </div>
 

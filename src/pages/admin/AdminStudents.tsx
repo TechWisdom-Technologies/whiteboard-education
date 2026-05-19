@@ -1,19 +1,16 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Eye, Loader2, Search, FileText, ExternalLink, Users, Filter, X, Download, Image, File, Trash2 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Eye, Loader2, Search, Users, Filter, Trash2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Checkbox } from "@/components/ui/checkbox";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -21,23 +18,27 @@ const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const statusOptions = [
   { value: "document_review", label: "Document Review" },
   { value: "documents_verified", label: "Documents Verified" },
-  { value: "applied", label: "Applied" },
-  { value: "offer_received", label: "Offer Received" },
-  { value: "visa_processing", label: "Visa Processing" },
+  { value: "university_applied", label: "University Applied" },
+  { value: "offer_letter", label: "Offer Letter" },
+  { value: "emgs_processing", label: "EMGS Processing" },
   { value: "visa_approved", label: "Visa Approved" },
+  { value: "travel_ready", label: "Travel Ready" },
   { value: "enrolled", label: "Enrolled" },
   { value: "rejected", label: "Rejected" },
+  { value: "on_hold", label: "On Hold" },
 ];
 
 const statusColors: Record<string, string> = {
-  document_review: "bg-muted text-muted-foreground",
+  document_review: "bg-gray-100 text-gray-600",
   documents_verified: "bg-blue-500/10 text-blue-600 border-blue-500/30",
-  applied: "bg-secondary/10 text-secondary border-secondary/20",
-  offer_received: "bg-warning/10 text-warning border-warning/20",
-  visa_processing: "bg-primary/10 text-primary border-primary/20",
-  visa_approved: "bg-green-500/10 text-green-600 border-green-500/30",
+  university_applied: "bg-indigo-500/10 text-indigo-600 border-indigo-500/30",
+  offer_letter: "bg-purple-500/10 text-purple-600 border-purple-500/30",
+  emgs_processing: "bg-[#ffa300]/10 text-[#ffa300] border-[#ffa300]/20",
+  visa_approved: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
+  travel_ready: "bg-teal-500/10 text-teal-600 border-teal-500/30",
   enrolled: "bg-green-600/10 text-green-700 border-green-600/30",
   rejected: "bg-destructive/10 text-destructive border-destructive/20",
+  on_hold: "bg-amber-500/10 text-amber-600 border-amber-500/20",
 };
 
 interface Student {
@@ -60,6 +61,7 @@ interface Student {
   degree_level: string;
   status: string;
   admin_notes: string;
+  passport_photo_url?: string;
   passport_url: string;
   academic_transcript_url: string;
   ielts_certificate_url: string;
@@ -79,16 +81,10 @@ interface Partner {
 
 export default function AdminStudents() {
   const { session } = useAuth();
+  const navigate = useNavigate();
   const [students, setStudents] = useState<Student[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<Student | null>(null);
-  const [detailOpen, setDetailOpen] = useState(false);
-  const [newStatus, setNewStatus] = useState("");
-  const [adminNotes, setAdminNotes] = useState("");
-  const [previewDoc, setPreviewDoc] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [paymentProofFile, setPaymentProofFile] = useState<File | null>(null);
   const [search, setSearch] = useState("");
   const [filterPartner, setFilterPartner] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -99,7 +95,7 @@ export default function AdminStudents() {
     const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}` };
     try {
       const [studentsRes, partnersRes] = await Promise.all([
-        fetch(`${SUPABASE_URL}/rest/v1/students?select=id,partner_id,full_name,email,phone,passport_number,nationality,date_of_birth,gender,previous_institution,previous_degree,gpa,ielts_score,target_university,target_course,intake_month,degree_level,status,admin_notes,passport_url,academic_transcript_url,ielts_certificate_url,personal_statement_url,recommendation_letter_url,other_documents,created_at&order=created_at.desc`, { headers }),
+        fetch(`${SUPABASE_URL}/rest/v1/students?select=id,partner_id,full_name,email,phone,passport_number,nationality,date_of_birth,gender,previous_institution,previous_degree,gpa,ielts_score,target_university,target_course,intake_month,degree_level,status,admin_notes,passport_photo_url,passport_url,academic_transcript_url,ielts_certificate_url,personal_statement_url,recommendation_letter_url,other_documents,created_at&order=created_at.desc`, { headers }),
         fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?select=id,agency_name,contact_person,email,user_id`, { headers }),
       ]);
       if (studentsRes.ok) setStudents(await studentsRes.json());
@@ -111,64 +107,6 @@ export default function AdminStudents() {
 
   const getPartner = (partnerId: string) => partners.find(p => p.user_id === partnerId);
 
-  const openDetail = (s: Student) => {
-    setSelected(s);
-    setNewStatus(s.status);
-    setAdminNotes(s.admin_notes || "");
-    setDetailOpen(true);
-  };
-
-  const handleUpdateStatus = async () => {
-    if (!selected || !session) return;
-    setSaving(true);
-    try {
-      const headers = {
-        "apikey": SUPABASE_KEY,
-        "Authorization": `Bearer ${session.access_token}`,
-        "Content-Type": "application/json",
-      };
-
-      const partner = getPartner(selected.partner_id);
-
-      // Update student row
-      const updateRes = await fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${selected.id}`, {
-        method: "PATCH",
-        headers: { ...headers, "Prefer": "return=minimal" },
-        body: JSON.stringify({
-          status: newStatus,
-          admin_notes: adminNotes || "",
-        }),
-      });
-
-      if (!updateRes.ok) {
-        const err = await updateRes.text();
-        throw new Error(err || "Failed to update status");
-      }
-
-      // Insert in-app notification for partner dashboard.
-      const notifType = newStatus === "rejected" ? "warning" : (["documents_verified", "offer_received", "visa_approved", "enrolled"].includes(newStatus) ? "success" : "info");
-      const notifTitle = `${selected.full_name} - Status Updated`;
-      const notifMessage = `Status changed to ${newStatus.replace(/_/g, " ")}.${adminNotes ? ` Note: ${adminNotes}` : ""}`;
-
-      await fetch(`${SUPABASE_URL}/rest/v1/partner_notifications`, {
-        method: "POST",
-        headers: { ...headers, "Prefer": "return=minimal" },
-        body: JSON.stringify({
-          partner_id: selected.partner_id,
-          student_id: selected.id,
-          title: notifTitle,
-          message: notifMessage,
-          type: notifType,
-        }),
-      });
-
-      toast.success(`Student status updated to ${newStatus}!`);
-      setDetailOpen(false);
-      fetchData();
-    } catch (e: any) {
-      toast.error(e.message || "Failed to update");
-    } finally { setSaving(false); }
-  };
 
   const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -336,7 +274,7 @@ export default function AdminStudents() {
               {filtered.map(s => {
                 const partner = getPartner(s.partner_id);
                 const st = statusOptions.find(o => o.value === s.status);
-                const docCount = [s.passport_url, s.academic_transcript_url, s.ielts_certificate_url, s.personal_statement_url, s.recommendation_letter_url].filter(Boolean).length;
+                const docCount = [s.passport_photo_url, s.passport_url, s.academic_transcript_url, s.ielts_certificate_url, s.personal_statement_url, s.recommendation_letter_url].filter(Boolean).length;
                 return (
                   <TableRow key={s.id}>
                     <TableCell className="text-center px-0">
@@ -350,11 +288,11 @@ export default function AdminStudents() {
                     <TableCell className="text-sm">{s.target_university || "-"}</TableCell>
                     <TableCell className="text-sm">{s.target_course || "-"}</TableCell>
                     <TableCell><Badge variant="outline" className={statusColors[s.status] || ""}>{st?.label || s.status}</Badge></TableCell>
-                    <TableCell><Badge variant="secondary">{docCount}/5</Badge></TableCell>
+                    <TableCell><Badge variant="secondary">{docCount}/6</Badge></TableCell>
                     <TableCell className="text-sm text-muted-foreground">{new Date(s.created_at).toLocaleDateString()}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1">
-                        <Button variant="ghost" size="icon" onClick={() => openDetail(s)} title="View Details">
+                        <Button variant="ghost" size="icon" onClick={() => navigate(`/admin/students/${s.id}`)} title="View Details">
                           <Eye className="h-4 w-4" />
                         </Button>
                         <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10" onClick={(e) => handleDelete(s.id, e)} title="Delete Student">
@@ -369,136 +307,6 @@ export default function AdminStudents() {
           </Table>
         </div>
       )}
-
-      {/* Detail Dialog */}
-      <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>Student Details - {selected?.full_name}</DialogTitle></DialogHeader>
-          {selected && (
-            <div className="space-y-6">
-              {/* Partner Info */}
-              <div className="p-3 rounded-sm bg-muted/50 border">
-                <p className="text-xs text-muted-foreground">Submitted by Partner</p>
-                <p className="font-semibold text-sm">{getPartner(selected.partner_id)?.agency_name || "Unknown"} - {getPartner(selected.partner_id)?.contact_person}</p>
-              </div>
-
-              {/* Personal Info */}
-              <div>
-                <h3 className="font-semibold mb-3">Personal Information</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div><Label className="text-muted-foreground text-xs">Email</Label><p className="font-medium text-sm">{selected.email}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Phone</Label><p className="font-medium text-sm">{selected.phone || "-"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Passport</Label><p className="font-medium text-sm">{selected.passport_number || "-"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Nationality</Label><p className="font-medium text-sm">{selected.nationality || "-"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">DOB</Label><p className="font-medium text-sm">{selected.date_of_birth ? new Date(selected.date_of_birth).toLocaleDateString() : "-"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Gender</Label><p className="font-medium text-sm">{selected.gender || "-"}</p></div>
-                </div>
-              </div>
-
-              {/* Academic Info */}
-              <div className="border-t pt-4">
-                <h3 className="font-semibold mb-3">Academic Background</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><Label className="text-muted-foreground text-xs">Previous Institution</Label><p className="font-medium text-sm">{selected.previous_institution || "-"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Previous Degree</Label><p className="font-medium text-sm">{selected.previous_degree || "-"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">GPA</Label><p className="font-medium text-sm">{selected.gpa || "-"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">IELTS Score</Label><p className="font-medium text-sm">{selected.ielts_score || "-"}</p></div>
-                </div>
-              </div>
-
-              {/* Target Program */}
-              <div className="border-t pt-4">
-                <h3 className="font-semibold mb-3">Target Program</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><Label className="text-muted-foreground text-xs">University</Label><p className="font-medium text-sm">{selected.target_university || "-"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Course</Label><p className="font-medium text-sm">{selected.target_course || "-"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Intake</Label><p className="font-medium text-sm">{selected.intake_month || "-"}</p></div>
-                  <div><Label className="text-muted-foreground text-xs">Degree Level</Label><p className="font-medium text-sm">{selected.degree_level}</p></div>
-                </div>
-              </div>
-
-              {/* Documents with Inline Preview */}
-              <div className="border-t pt-4">
-                <h3 className="font-semibold mb-3">Documents</h3>
-                <div className="space-y-2">
-                  {[
-                    { field: "passport_url", label: "Passport Copy" },
-                    { field: "academic_transcript_url", label: "Academic Transcript" },
-                    { field: "ielts_certificate_url", label: "IELTS Certificate" },
-                    { field: "personal_statement_url", label: "Personal Statement" },
-                    { field: "recommendation_letter_url", label: "Recommendation Letter" },
-                  ].map(doc => {
-                    const url = (selected as any)[doc.field] as string | undefined;
-                    const isImage = url && /\.(jpg|jpeg|png|gif|webp|svg)(\?|$)/i.test(url);
-                    const isPdf = url && /\.pdf(\?|$)/i.test(url);
-                    return (
-                      <div key={doc.field} className="rounded-sm border overflow-hidden">
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-2">
-                          {isImage ? <Image className="h-4 w-4 text-primary" /> : isPdf ? <File className="h-4 w-4 text-destructive" /> : <FileText className={`h-4 w-4 ${url ? "text-green-600" : "text-muted-foreground/40"}`} />}
-                          <span className="text-sm flex-1 font-medium">{doc.label}</span>
-                          {url ? (
-                            <div className="flex items-center gap-1">
-                              <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setPreviewDoc(previewDoc === doc.field ? null : doc.field)}>
-                                <Eye className="h-3 w-3 mr-1" /> {previewDoc === doc.field ? "Hide" : "Preview"}
-                              </Button>
-                              <a href={url} target="_blank" rel="noopener noreferrer">
-                                <Button variant="ghost" size="sm" className="h-7 text-xs">
-                                  <ExternalLink className="h-3 w-3 mr-1" /> Open
-                                </Button>
-                              </a>
-                              <a href={url} download>
-                                <Button variant="ghost" size="icon" className="h-7 w-7">
-                                  <Download className="h-3 w-3" />
-                                </Button>
-                              </a>
-                            </div>
-                          ) : (
-                            <span className="text-xs text-muted-foreground">Not uploaded</span>
-                          )}
-                        </div>
-                        {/* Inline preview */}
-                        {previewDoc === doc.field && url && (
-                          <div className="border-t bg-muted/30 p-3">
-                            {isImage ? (
-                              <img src={url} alt={doc.label} className="max-h-[400px] w-auto mx-auto rounded-sm object-contain" />
-                            ) : isPdf ? (
-                              <iframe src={url} className="w-full h-[500px] rounded-sm border" title={doc.label} />
-                            ) : (
-                              <iframe src={url} className="w-full h-[400px] rounded-sm border" title={doc.label} />
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Status Control */}
-              <div className="border-t pt-4 space-y-3">
-                <h3 className="font-semibold">Update Application Status</h3>
-                <Select value={newStatus} onValueChange={setNewStatus}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {statusOptions.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-                <div>
-                  <Label>Admin Notes</Label>
-                  <Textarea value={adminNotes} onChange={e => setAdminNotes(e.target.value)} placeholder="Add notes about this application..." rows={3} className="mt-1" />
-                </div>
-
-
-
-                <Button onClick={handleUpdateStatus} disabled={saving} className="w-full">
-                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
-                  Save Changes
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

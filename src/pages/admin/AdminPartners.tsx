@@ -31,6 +31,15 @@ interface PartnerRegistration {
   created_at: string;
 }
 
+type TabKey = "all" | "approved" | "pending" | "rejected";
+
+const TABS: { key: TabKey; label: string }[] = [
+  { key: "all", label: "All" },
+  { key: "approved", label: "Approved" },
+  { key: "pending", label: "Pending" },
+  { key: "rejected", label: "Rejected" },
+];
+
 export default function AdminPartners() {
   const { session } = useAuth();
   const [registrations, setRegistrations] = useState<PartnerRegistration[]>([]);
@@ -40,6 +49,7 @@ export default function AdminPartners() {
   const [adminNotes, setAdminNotes] = useState("");
   const [processing, setProcessing] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<TabKey>("all");
 
   const fetchRegistrations = async () => {
     try {
@@ -116,7 +126,6 @@ export default function AdminPartners() {
     if (!window.confirm("Are you sure you want to delete this partner? This action cannot be undone.")) return;
 
     try {
-      // Find the partner to get their user_id
       const partner = registrations.find(r => r.id === id);
       
       const res = await fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?id=eq.${id}`, {
@@ -131,7 +140,6 @@ export default function AdminPartners() {
         throw new Error("Failed to delete partner");
       }
 
-      // Also delete from user_roles if user_id exists
       if (partner?.user_id) {
         await fetch(`${SUPABASE_URL}/rest/v1/user_roles?user_id=eq.${partner.user_id}`, {
           method: "DELETE",
@@ -149,9 +157,12 @@ export default function AdminPartners() {
     }
   };
 
+  // Filtered data based on active tab
+  const filtered = activeTab === "all" ? registrations : registrations.filter(r => r.status === activeTab);
+
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedIds(registrations.map(r => r.id));
+      setSelectedIds(filtered.map(r => r.id));
     } else {
       setSelectedIds([]);
     }
@@ -216,21 +227,53 @@ export default function AdminPartners() {
     return <div className="flex items-center justify-center h-64"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
   }
 
+  // Tab counts
+  const counts = {
+    all: registrations.length,
+    approved: registrations.filter(r => r.status === "approved").length,
+    pending: registrations.filter(r => r.status === "pending").length,
+    rejected: registrations.filter(r => r.status === "rejected").length,
+  };
+
   return (
     <div>
-      <div className="flex justify-end gap-2 text-xs mb-6">
-        {selectedIds.length > 0 && (
-          <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-6 text-xs px-2 py-0">
-            <Trash2 className="h-3 w-3 mr-1" /> Delete Selected ({selectedIds.length})
-          </Button>
-        )}
-        <Badge variant="secondary" className="px-2 py-0.5">{registrations.filter(r => r.status === "pending").length} Pending</Badge>
-        <Badge variant="secondary" className="px-2 py-0.5">{registrations.filter(r => r.status === "approved").length} Approved</Badge>
+      {/* Tabs */}
+      <div className="flex items-center gap-1 mb-4 border-b">
+        {TABS.map(tab => (
+          <button
+            key={tab.key}
+            onClick={() => { setActiveTab(tab.key); setSelectedIds([]); }}
+            className={`relative px-4 py-2.5 text-sm font-semibold transition-colors ${
+              activeTab === tab.key
+                ? "text-[#181d29]"
+                : "text-gray-400 hover:text-gray-600"
+            }`}
+          >
+            {tab.label}
+            <span className={`ml-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded-sm ${
+              activeTab === tab.key ? "bg-[#ffa300]/15 text-[#ffa300]" : "bg-gray-100 text-gray-400"
+            }`}>
+              {counts[tab.key]}
+            </span>
+            {activeTab === tab.key && (
+              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#ffa300]" />
+            )}
+          </button>
+        ))}
       </div>
 
-      {registrations.length === 0 ? (
+      {/* Bulk actions */}
+      {selectedIds.length > 0 && (
+        <div className="flex justify-end mb-3">
+          <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-7 text-xs px-3">
+            <Trash2 className="h-3 w-3 mr-1" /> Delete Selected ({selectedIds.length})
+          </Button>
+        </div>
+      )}
+
+      {filtered.length === 0 ? (
         <div className="rounded-sm border bg-card p-12 text-center text-muted-foreground">
-          No partner registrations yet.
+          No {activeTab === "all" ? "" : activeTab} partner registrations{activeTab === "all" ? " yet" : ""}.
         </div>
       ) : (
         <div className="rounded-sm border bg-card overflow-x-auto">
@@ -239,7 +282,7 @@ export default function AdminPartners() {
               <TableRow>
                 <TableHead className="w-[40px] text-center px-0">
                   <Checkbox 
-                    checked={registrations.length > 0 && selectedIds.length === registrations.length}
+                    checked={filtered.length > 0 && selectedIds.length === filtered.length}
                     onCheckedChange={handleSelectAll}
                   />
                 </TableHead>
@@ -248,12 +291,12 @@ export default function AdminPartners() {
                 <TableHead>Email</TableHead>
                 <TableHead className="w-[80px]">Status</TableHead>
                 <TableHead className="w-[100px]">Documents</TableHead>
-                <TableHead className="w-[120px]">Approval Date</TableHead>
+                <TableHead className="w-[120px]">Date</TableHead>
                 <TableHead className="text-right w-[80px]">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {registrations.map((reg) => {
+              {filtered.map((reg) => {
                 const docCount = (reg.nid_document_url ? 1 : 0) + (reg.trade_license_url ? 1 : 0) + ((reg.certificate_urls as string[])?.length || 0);
                 return (
                   <TableRow key={reg.id}>

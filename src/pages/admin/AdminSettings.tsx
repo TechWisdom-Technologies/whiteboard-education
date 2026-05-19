@@ -1,22 +1,397 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { useState, useEffect, useRef } from "react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { Camera, Save, Loader2, Building2, User, Globe, Mail, Phone, Lock, KeyRound, ShieldCheck, ArrowRight, CheckCircle2 } from "lucide-react";
+import { toast } from "sonner";
+
+interface UserProfile {
+  display_name: string;
+  avatar_url: string;
+}
 
 export default function AdminSettings() {
+  const { user, session, resetPassword, verifyResetOtp, updatePassword } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState(true);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [savingSystem, setSavingSystem] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  
+  const [profile, setProfile] = useState<UserProfile>({ display_name: "", avatar_url: "" });
+
+  // Password change state
+  type PwStep = "idle" | "sending" | "code_sent" | "verifying" | "verified" | "updating";
+  const [pwStep, setPwStep] = useState<PwStep>("idle");
+  const [otpCode, setOtpCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  // Dummy state for system settings (since there is no site_settings table yet)
+  const [systemSettings, setSystemSettings] = useState({
+    companyName: "Whiteboard Education",
+    contactEmail: "cambry.bd@gmail.com",
+    phoneNumber: "+880 1730589112",
+  });
+
+  useEffect(() => {
+    if (!session || !user) return;
+    const fetchData = async () => {
+      try {
+        const { data: profileData } = await supabase
+          .from("profiles")
+          .select("display_name, avatar_url")
+          .eq("user_id", user.id)
+          .single();
+          
+        if (profileData) {
+          setProfile({
+            display_name: profileData.display_name || "",
+            avatar_url: profileData.avatar_url || "",
+          });
+        }
+      } catch { /* ignore */ }
+      setLoading(false);
+    };
+    fetchData();
+  }, [session, user]);
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("File too large. Max 2MB.");
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const path = `admin_${user.id}/avatar_${Date.now()}.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("partner-documents")
+        .upload(path, file, { upsert: true });
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage
+        .from("partner-documents")
+        .getPublicUrl(path);
+
+      const avatarUrl = urlData.publicUrl + `?t=${Date.now()}`;
+
+      await supabase
+        .from("profiles")
+        .update({ avatar_url: avatarUrl })
+        .eq("user_id", user.id);
+
+      setProfile(prev => ({ ...prev, avatar_url: avatarUrl }));
+      toast.success("Profile picture updated!");
+    } catch (err: any) {
+      toast.error("Upload failed: " + (err.message || "Unknown error"));
+    }
+    setUploading(false);
+  };
+
+  const handleSaveProfile = async () => {
+    if (!user) return;
+    setSavingProfile(true);
+    try {
+      await supabase
+        .from("profiles")
+        .update({ display_name: profile.display_name })
+        .eq("user_id", user.id);
+      toast.success("Profile saved successfully!");
+    } catch {
+      toast.error("Failed to save profile");
+    }
+    setSavingProfile(false);
+  };
+
+  const handleSaveSystem = async () => {
+    setSavingSystem(true);
+    // Mock save delay
+    setTimeout(() => {
+      toast.success("System settings updated successfully!");
+      setSavingSystem(false);
+    }, 800);
+  };
+
+  // ─── Password Change Flow ───
+  const handleSendCode = async () => {
+    if (!user?.email) return;
+    setPwStep("sending");
+    const result = await resetPassword(user.email);
+    if (result.success) {
+      setPwStep("code_sent");
+      toast.success("A 6-digit code has been sent to your email.");
+    } else {
+      toast.error(result.error || "Failed to send code.");
+      setPwStep("idle");
+    }
+  };
+
+  const handleVerifyCode = async () => {
+    if (!user?.email || otpCode.length < 6) { toast.error("Please enter the 6-digit code."); return; }
+    setPwStep("verifying");
+    const result = await verifyResetOtp(user.email, otpCode);
+    if (result.success) {
+      setPwStep("verified");
+      toast.success("Code verified! Set your new password.");
+    } else {
+      toast.error(result.error || "Invalid code.");
+      setPwStep("code_sent");
+    }
+  };
+
+  const handleUpdatePw = async () => {
+    if (newPassword.length < 6) { toast.error("Password must be at least 6 characters."); return; }
+    if (newPassword !== confirmPassword) { toast.error("Passwords do not match."); return; }
+    setPwStep("updating");
+    const result = await updatePassword(newPassword);
+    if (result.success) {
+      toast.success("Password updated successfully!");
+      setPwStep("idle"); setOtpCode(""); setNewPassword(""); setConfirmPassword("");
+    } else {
+      toast.error(result.error || "Failed to update password.");
+      setPwStep("verified");
+    }
+  };
+
+  const resetPwFlow = () => { setPwStep("idle"); setOtpCode(""); setNewPassword(""); setConfirmPassword(""); };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-sidebar-primary" />
+      </div>
+    );
+  }
+
+  const initials = (profile.display_name || user?.email || "A")
+    .split(" ")
+    .map(w => w[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+
   return (
-    <div>
-      <div className="grid gap-6 max-w-2xl">
-        <Card>
-          <CardHeader><CardTitle>General Settings</CardTitle></CardHeader>
-          <CardContent className="space-y-4">
-            <div><Label>Company Name</Label><Input defaultValue="YourUni" /></div>
-            <div><Label>Contact Email</Label><Input defaultValue="info@youruni.com" /></div>
-            <div><Label>Phone Number</Label><Input defaultValue="+60 12-345 6789" /></div>
-            <Button>Save Changes</Button>
+    <div className="space-y-8 max-w-5xl animate-fade-in pb-10">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-[#181d29]">Settings</h1>
+        <p className="text-muted-foreground text-sm mt-1">Manage your administrator profile and global platform preferences.</p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        {/* Profile Settings */}
+        <Card className="border-sidebar-border shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <User className="h-5 w-5 text-[#ffa300]" />
+              Admin Profile
+            </CardTitle>
+            <CardDescription>Update your personal information and avatar.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+              <div className="relative group shrink-0">
+                <Avatar className="h-24 w-24 border-4 border-background shadow-md">
+                  <AvatarImage src={profile.avatar_url} />
+                  <AvatarFallback className="text-2xl font-bold bg-[#ffa300]/10 text-[#ffa300]">{initials}</AvatarFallback>
+                </Avatar>
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
+                >
+                  {uploading ? (
+                    <Loader2 className="h-6 w-6 text-white animate-spin" />
+                  ) : (
+                    <Camera className="h-6 w-6 text-white" />
+                  )}
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarUpload}
+                />
+              </div>
+              <div className="flex-1 space-y-4 w-full">
+                <div className="space-y-1.5">
+                  <Label htmlFor="displayName" className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Display Name</Label>
+                  <Input
+                    id="displayName"
+                    value={profile.display_name}
+                    onChange={e => setProfile(prev => ({ ...prev, display_name: e.target.value }))}
+                    placeholder="E.g. John Doe"
+                    className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] transition-colors shadow-none"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Login Email</Label>
+                  <Input value={user?.email || ""} disabled className="h-10 text-[13px] bg-gray-100 border-gray-200 cursor-not-allowed text-gray-500" />
+                  <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider">Email cannot be changed here.</p>
+                </div>
+              </div>
+            </div>
+            <div className="pt-2 border-t border-gray-100 mt-6">
+              <Button onClick={handleSaveProfile} disabled={savingProfile} className="w-full sm:w-auto bg-[#181d29] hover:bg-[#181d29]/90 text-white gap-2 font-semibold text-[13px] h-10 mt-4">
+                {savingProfile ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                Save Profile
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* System Settings */}
+        <Card className="border-sidebar-border shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Globe className="h-5 w-5 text-[#ffa300]" />
+              Platform Settings
+            </CardTitle>
+            <CardDescription>Manage global contact information shown on the site.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <div className="space-y-1.5">
+              <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-1.5">
+                <Building2 className="h-3.5 w-3.5" /> Company Name
+              </Label>
+              <Input 
+                value={systemSettings.companyName} 
+                onChange={(e) => setSystemSettings(p => ({ ...p, companyName: e.target.value }))}
+                className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] transition-colors shadow-none"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-1.5">
+                <Mail className="h-3.5 w-3.5" /> Public Support Email
+              </Label>
+              <Input 
+                value={systemSettings.contactEmail} 
+                onChange={(e) => setSystemSettings(p => ({ ...p, contactEmail: e.target.value }))}
+                className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] transition-colors shadow-none"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-1.5">
+                <Phone className="h-3.5 w-3.5" /> Main Phone Number
+              </Label>
+              <Input 
+                value={systemSettings.phoneNumber} 
+                onChange={(e) => setSystemSettings(p => ({ ...p, phoneNumber: e.target.value }))}
+                className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] transition-colors shadow-none"
+              />
+            </div>
+            <div className="pt-2 border-t border-gray-100 mt-6">
+              <Button onClick={handleSaveSystem} disabled={savingSystem} className="w-full sm:w-auto bg-white border border-[#e8e8e8] text-[#181d29] hover:bg-gray-50 hover:border-[#ffa300] gap-2 shadow-sm font-semibold text-[13px] h-10 mt-4">
+                {savingSystem ? <Loader2 className="h-4 w-4 animate-spin text-[#ffa300]" /> : <Save className="h-4 w-4 text-[#ffa300]" />}
+                Update Settings
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* ────────── Security / Change Password Card ────────── */}
+      <Card className="border-sidebar-border shadow-sm max-w-5xl">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Lock className="h-5 w-5 text-[#ffa300]" />
+            Security
+          </CardTitle>
+          <CardDescription>Update your account password using email verification.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {pwStep === "idle" && (
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <div className="flex-1">
+                <p className="text-sm text-gray-600">To change your password, we'll send a 6-digit verification code to <span className="font-semibold text-[#181d29]">{user?.email}</span>.</p>
+              </div>
+              <Button onClick={handleSendCode} className="bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 gap-2 font-semibold text-[13px] h-10 shrink-0">
+                <KeyRound className="h-4 w-4" />
+                Change Password
+              </Button>
+            </div>
+          )}
+
+          {pwStep === "sending" && (
+            <div className="flex items-center gap-3 text-sm text-gray-500">
+              <Loader2 className="h-5 w-5 animate-spin text-[#ffa300]" />
+              Sending verification code to your email...
+            </div>
+          )}
+
+          {pwStep === "code_sent" && (
+            <div className="space-y-4 max-w-md">
+              <div className="flex items-start gap-3 p-3 bg-blue-50 border border-blue-100 rounded-sm">
+                <ShieldCheck className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
+                <p className="text-[13px] text-blue-700">A 6-digit code has been sent to <span className="font-bold">{user?.email}</span>. Check your inbox (and spam folder).</p>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Verification Code</Label>
+                <Input
+                  value={otpCode}
+                  onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  placeholder="Enter 6-digit code"
+                  className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] transition-colors shadow-none tracking-[0.3em] text-center font-bold text-lg"
+                  maxLength={6}
+                />
+              </div>
+              <div className="flex gap-3">
+                <Button onClick={handleVerifyCode} disabled={otpCode.length < 6} className="bg-[#181d29] hover:bg-[#181d29]/90 text-white gap-2 font-semibold text-[13px] h-10">
+                  <ArrowRight className="h-4 w-4" /> Verify Code
+                </Button>
+                <Button variant="ghost" onClick={resetPwFlow} className="text-gray-500 text-[13px] h-10">Cancel</Button>
+              </div>
+            </div>
+          )}
+
+          {pwStep === "verifying" && (
+            <div className="flex items-center gap-3 text-sm text-gray-500">
+              <Loader2 className="h-5 w-5 animate-spin text-[#ffa300]" />
+              Verifying code...
+            </div>
+          )}
+
+          {pwStep === "verified" && (
+            <div className="space-y-4 max-w-md">
+              <div className="flex items-start gap-3 p-3 bg-green-50 border border-green-100 rounded-sm">
+                <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                <p className="text-[13px] text-green-700 font-medium">Code verified! Set your new password below.</p>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">New Password</Label>
+                <Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Min. 6 characters" className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] transition-colors shadow-none" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Confirm Password</Label>
+                <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat new password" className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] transition-colors shadow-none" />
+              </div>
+              <div className="flex gap-3">
+                <Button onClick={handleUpdatePw} className="bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 gap-2 font-semibold text-[13px] h-10">
+                  <Save className="h-4 w-4" /> Update Password
+                </Button>
+                <Button variant="ghost" onClick={resetPwFlow} className="text-gray-500 text-[13px] h-10">Cancel</Button>
+              </div>
+            </div>
+          )}
+
+          {pwStep === "updating" && (
+            <div className="flex items-center gap-3 text-sm text-gray-500">
+              <Loader2 className="h-5 w-5 animate-spin text-[#ffa300]" />
+              Updating your password...
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

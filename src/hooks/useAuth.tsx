@@ -13,6 +13,11 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<{ success: boolean; error?: string; redirectTo?: string }>;
   signUp: (email: string, password: string, displayName?: string) => Promise<{ success: boolean; error?: string }>;
+  resetPassword: (email: string) => Promise<{ success: boolean; error?: string }>;
+  verifyResetOtp: (email: string, token: string) => Promise<{ success: boolean; error?: string }>;
+  updatePassword: (password: string) => Promise<{ success: boolean; error?: string }>;
+  isRecoverySession: boolean;
+  clearRecovery: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -24,6 +29,11 @@ const AuthContext = createContext<AuthContextType>({
   signOut: async () => {},
   signIn: async () => ({ success: false }),
   signUp: async () => ({ success: false }),
+  resetPassword: async () => ({ success: false }),
+  verifyResetOtp: async () => ({ success: false }),
+  updatePassword: async () => ({ success: false }),
+  isRecoverySession: false,
+  clearRecovery: () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -54,9 +64,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [roles, setRoles] = useState<AppRole[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isRecoverySession, setIsRecoverySession] = useState(false);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, sess) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, sess) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setIsRecoverySession(true);
+      }
       setSession(sess);
       if (sess?.user) {
         const r = await fetchUserRoles(sess.user.id, sess.access_token);
@@ -107,6 +121,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setRoles([]);
   }, []);
 
+  const resetPassword = useCallback(async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    if (error) return { success: false, error: error.message };
+    return { success: true };
+  }, []);
+
+  const verifyResetOtp = useCallback(async (email: string, token: string) => {
+    const { error } = await supabase.auth.verifyOtp({ email, token, type: 'recovery' });
+    if (error) return { success: false, error: error.message };
+    return { success: true };
+  }, []);
+
+  const updatePassword = useCallback(async (password: string) => {
+    const { error } = await supabase.auth.updateUser({ password });
+    if (error) return { success: false, error: error.message };
+    return { success: true };
+  }, []);
+
+  const clearRecovery = useCallback(() => {
+    setIsRecoverySession(false);
+  }, []);
+
   const hasRole = useCallback((role: AppRole) => roles.includes(role), [roles]);
 
   return (
@@ -120,6 +156,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signOut,
         signIn,
         signUp,
+        resetPassword,
+        verifyResetOtp,
+        updatePassword,
+        isRecoverySession,
+        clearRecovery,
       }}
     >
       {children}
