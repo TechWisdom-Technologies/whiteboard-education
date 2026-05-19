@@ -187,9 +187,16 @@ export default function UniversityDetail() {
   const filtered = uniCourses.filter((c: any) => {
     const s = cSearch.toLowerCase();
     const matchesSearch = !cSearch || c.title.toLowerCase().includes(s);
+    const titleLower = c.title?.toLowerCase() || "";
+    let effLevel = c.degree_level || "";
+    if (titleLower.includes("advanced diploma")) effLevel = "Advanced Diploma";
+    else if (titleLower.includes("diploma")) effLevel = "Diploma";
+    else if (titleLower.includes("certificate")) effLevel = "Certificate";
+    else if (titleLower.includes("foundation")) effLevel = "Foundation";
+
     const matchesLevel = cLevel === "all" || 
-      (c.degree_level && c.degree_level.toLowerCase().includes(cLevel)) || 
-      levelKey(c.degree_level).toLowerCase() === cLevel;
+      effLevel.toLowerCase().includes(cLevel) || 
+      levelKey(effLevel).toLowerCase() === cLevel;
     // Aligning category filter with the Overview table's logic
     const matchesCategory = cCategory === "all" || categoryKey(c.title).toLowerCase() === cCategory.toLowerCase();
     return matchesSearch && matchesLevel && matchesCategory;
@@ -203,7 +210,17 @@ export default function UniversityDetail() {
     const unique = new Set(uniCourses.map((c: any) => categoryKey(c.title)));
     return CATEGORY_ORDER.filter(cat => unique.has(cat));
   }, [uniCourses]);
-  const levels = useMemo(() => [...new Set(uniCourses.map((c: any) => levelKey(c.degree_level)))], [uniCourses]);
+  const levels = useMemo(() => {
+    return [...new Set(uniCourses.map((c: any) => {
+      const titleLower = c.title?.toLowerCase() || "";
+      let effLevel = c.degree_level || "";
+      if (titleLower.includes("advanced diploma")) effLevel = "Advanced Diploma";
+      else if (titleLower.includes("diploma")) effLevel = "Diploma";
+      else if (titleLower.includes("certificate")) effLevel = "Certificate";
+      else if (titleLower.includes("foundation")) effLevel = "Foundation";
+      return levelKey(effLevel);
+    }))];
+  }, [uniCourses]);
 
   if (isLoading) return <div className="min-h-screen flex flex-col bg-background"><MegaMenu /><LoadingScreen label="Loading university" className="flex-1" /><PublicFooter /></div>;
   if (!uni) return <div className="min-h-screen flex flex-col bg-background"><MegaMenu /><div className="flex-1 flex items-center justify-center"><div className="text-center space-y-4"><Building className="h-16 w-16 text-muted-foreground mx-auto" /><h1 className="text-2xl font-bold">University Not Found</h1><Link to="/universities"><Button>Browse All</Button></Link></div></div><PublicFooter /></div>;
@@ -334,7 +351,17 @@ export default function UniversityDetail() {
                                 <tr key={c.id} className={`border-t ${i % 2 ? "bg-white" : "bg-gray-50/50"} hover:bg-[#ffa300]/5 transition-colors`}>
                                   <td className="px-5 py-3">
                                     <Link to={`/courses/${c.id}`} className="text-[#181d29] font-semibold text-md hover:text-[#ffa300] transition-colors">{c.title}</Link>
-                                    <span className="block text-xs text-gray-400 mt-0.5">{c.degree_level}</span>
+                                    <span className="block text-xs text-gray-400 mt-0.5">
+                                      {(() => {
+                                        const titleLower = c.title?.toLowerCase() || "";
+                                        let effLevel = c.degree_level || "";
+                                        if (titleLower.includes("advanced diploma")) effLevel = "Advanced Diploma";
+                                        else if (titleLower.includes("diploma")) effLevel = "Diploma";
+                                        else if (titleLower.includes("certificate")) effLevel = "Certificate";
+                                        else if (titleLower.includes("foundation")) effLevel = "Foundation";
+                                        return effLevel;
+                                      })()}
+                                    </span>
                                   </td>
                                   <td className="px-5 py-3 font-semibold text-[#ffa300] whitespace-nowrap">MYR {Number(c.tuition_fee).toLocaleString()}</td>
                                   <td className="px-5 py-3 text-gray-600 whitespace-nowrap">{c.duration}</td>
@@ -552,9 +579,19 @@ export default function UniversityDetail() {
                         </div>
 
                         <div className="pt-0">
-                          <Badge variant="outline" className={`text-[10px] font-bold uppercase tracking-widest ${levelColor(c.degree_level)} bg-opacity-10 border-current rounded-sm`}>
-                            {c.degree_level}
-                          </Badge>
+                          {(() => {
+                            const titleLower = c.title?.toLowerCase() || "";
+                            let effLevel = c.degree_level || "";
+                            if (titleLower.includes("advanced diploma")) effLevel = "Advanced Diploma";
+                            else if (titleLower.includes("diploma")) effLevel = "Diploma";
+                            else if (titleLower.includes("certificate")) effLevel = "Certificate";
+                            else if (titleLower.includes("foundation")) effLevel = "Foundation";
+                            return (
+                              <Badge variant="outline" className={`text-[10px] font-bold uppercase tracking-widest ${levelColor(effLevel)} bg-opacity-10 border-current rounded-sm`}>
+                                {effLevel}
+                              </Badge>
+                            );
+                          })()}
                         </div>
                       </div>
 

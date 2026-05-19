@@ -36,13 +36,10 @@ export function HeroSection() {
 
   const handleSearch = () => {
     if (!query.trim()) return;
-    const q = query.toLowerCase();
     if (activeTab === "University") {
-      const uni = universities.find((u: any) => u.name.toLowerCase().includes(q));
-      navigate(uni ? `/universities/${uni.id}` : "/universities");
+      navigate(`/universities?search=${encodeURIComponent(query.trim())}`);
     } else {
-      const course = courses.find((c: any) => c.title.toLowerCase().includes(q));
-      navigate(course ? `/courses/${course.id}` : "/courses");
+      navigate(`/courses?search=${encodeURIComponent(query.trim())}`);
     }
   };
 

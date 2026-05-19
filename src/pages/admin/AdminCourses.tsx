@@ -12,7 +12,7 @@ export default function AdminCourses() {
   const fields: FieldConfig[] = [
     { key: "title", label: "Course Title", showInTable: true },
     { key: "university_id", label: "University", type: "relation", showInTable: false, relationConfig: { data: universities || [], valueKey: "id", labelKey: "name" } },
-    { key: "degree_level", label: "Qualification", type: "select", options: ["Foundation", "Diploma", "Bachelor", "Master", "PhD"], showInTable: true },
+    { key: "degree_level", label: "Qualification", type: "select", options: ["Foundation", "Diploma", "Advanced Diploma", "Certificate", "Bachelor", "Master", "PhD"], showInTable: true },
     { key: "intake_months", label: "Intake", type: "tag_input", showInTable: false, placeholder: "e.g. January, May, September" },
     { key: "offer_letter", label: "Offer Letter", placeholder: "e.g. Free, Fees Applies", showInTable: false },
     { key: "duration", label: "Duration", showInTable: true, placeholder: "e.g. 3 years" },

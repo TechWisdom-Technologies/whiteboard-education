@@ -1,5 +1,5 @@
 import { ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+
 
 const services = [
   {
@@ -57,7 +57,7 @@ export function ServicesGrid() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
             {services.map((s, i) => (
-              <Link key={s.title} to={s.link} className="relative group">
+              <div key={s.title} className="relative group">
                 <div className="text-center">
                   {/* Step Image */}
                   <div className="mx-auto mb-8 h-32 w-32 flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
@@ -87,7 +87,7 @@ export function ServicesGrid() {
                     {s.description}
                   </p>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </div>

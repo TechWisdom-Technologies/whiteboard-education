@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
@@ -119,9 +119,16 @@ const UNIVERSITY_LOGOS: Record<string, string> = {
 
 export default function Universities() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { data: universities = [], isLoading } = useTableData("universities", { orderBy: "ranking" });
   const { data: courses = [], isLoading: loadingCourses } = useTableData("courses");
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(searchParams.get("search") || "");
+  
+  useEffect(() => {
+    const q = searchParams.get("search");
+    if (q) setSearch(q);
+  }, [searchParams]);
+
   const [selectedCity, setSelectedCity] = useState<string>("all");
   const [selectedLevel, setSelectedLevel] = useState<string>("All Levels");
   const [selectedField, setSelectedField] = useState<string>("All Fields");
@@ -162,7 +169,15 @@ export default function Universities() {
       if (selectedLevel !== "All Levels") {
         const mappedLevel = LEVEL_MAP[selectedLevel];
         if (mappedLevel) {
-          const hasLevel = uniCourses.some((c: any) => c.degree_level?.includes(mappedLevel));
+          const hasLevel = uniCourses.some((c: any) => {
+            const titleLower = c.title?.toLowerCase() || "";
+            let effLevel = c.degree_level || "";
+            if (titleLower.includes("advanced diploma")) effLevel = "Advanced Diploma";
+            else if (titleLower.includes("diploma")) effLevel = "Diploma";
+            else if (titleLower.includes("certificate")) effLevel = "Certificate";
+            else if (titleLower.includes("foundation")) effLevel = "Foundation";
+            return effLevel.includes(mappedLevel);
+          });
           if (!hasLevel) return false;
         }
       }

@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
@@ -33,6 +33,7 @@ const DEGREE_LEVELS = [
   "Bachelor",
   "Foundation",
   "Diploma",
+  "Advanced Diploma",
   "Certificate",
   "Master",
   "PhD"
@@ -102,10 +103,17 @@ const PAID_OFFER_LETTER_UNIS = [
 
 export default function Courses() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { data: courses = [], isLoading: loadingCourses } = useTableData("courses");
   const { data: universities = [], isLoading: loadingUnis } = useTableData("universities");
   
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(searchParams.get("search") || "");
+  
+  useEffect(() => {
+    const q = searchParams.get("search");
+    if (q) setSearch(q);
+  }, [searchParams]);
+
   const [selectedLevel, setSelectedLevel] = useState<string>("All Levels");
   const [selectedArea, setSelectedArea] = useState<string>("All Areas");
   const [selectedUniId, setSelectedUniId] = useState<string>("all");
@@ -131,8 +139,15 @@ export default function Courses() {
 
   const filtered = useMemo(() => {
     return courses.filter((c: any) => {
-      if (search && !c.title.toLowerCase().includes(search.toLowerCase())) return false;
-      if (selectedLevel !== "All Levels" && !c.degree_level?.toLowerCase().includes(selectedLevel.toLowerCase())) return false;
+      const titleLower = c.title?.toLowerCase() || "";
+      let effLevel = c.degree_level || "";
+      if (titleLower.includes("advanced diploma")) effLevel = "Advanced Diploma";
+      else if (titleLower.includes("diploma")) effLevel = "Diploma";
+      else if (titleLower.includes("certificate")) effLevel = "Certificate";
+      else if (titleLower.includes("foundation")) effLevel = "Foundation";
+
+      if (search && !titleLower.includes(search.toLowerCase())) return false;
+      if (selectedLevel !== "All Levels" && !effLevel.toLowerCase().includes(selectedLevel.toLowerCase())) return false;
       if (selectedUniId !== "all" && String(c.university_id) !== selectedUniId) return false;
       
       if (selectedArea !== "All Areas") {
@@ -428,7 +443,14 @@ export default function Courses() {
                           <div className="flex items-center gap-3">
                             <div className="flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-600 rounded-sm text-[11px] font-bold uppercase tracking-wider">
                               <GraduationCap className="h-3 w-3" />
-                              {c.degree_level}
+                              {(() => {
+                                const titleLower = c.title?.toLowerCase() || "";
+                                if (titleLower.includes("advanced diploma")) return "Advanced Diploma";
+                                if (titleLower.includes("diploma")) return "Diploma";
+                                if (titleLower.includes("certificate")) return "Certificate";
+                                if (titleLower.includes("foundation")) return "Foundation";
+                                return c.degree_level;
+                              })()}
                             </div>
                           </div>
                         </div>
