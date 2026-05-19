@@ -20,6 +20,7 @@ import EligibilityWizard from "./pages/EligibilityWizard";
 import B2BLanding from "./pages/B2BLanding";
 import Compare from "./pages/Compare";
 import Application from "./pages/Application";
+import PartnerRegistration from "./pages/PartnerRegistration";
 
 import Housing from "./pages/Housing";
 import LanguagePrep from "./pages/LanguagePrep";
@@ -124,6 +125,7 @@ const App = () => (
 
             {/* Partner / Agency */}
             <Route path="/partner" element={<B2BLanding />} />
+            <Route path="/partner/register" element={<PartnerRegistration />} />
             <Route
               path="/partner-dashboard"
               element={

@@ -1,15 +1,9 @@
-import { useState, useRef } from "react";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Handshake, Users, Globe, CheckCircle2, ArrowRight, Upload, X, FileText, Loader2, ShieldCheck, Zap, HeadphonesIcon } from "lucide-react";
+import { Handshake, Users, Globe, CheckCircle2, ArrowRight, ShieldCheck, Zap, HeadphonesIcon } from "lucide-react";
 import { Link } from "react-router-dom";
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 
 const stepImages = ["/images/partner-step1.png", "/images/partner-step2.png", "/images/partner-step3.png", "/images/partner-step4.png"];
 const benefitImages = ["/images/benefit-market.png", "/images/benefit-manager.png", "/images/benefit-trusted.png", "/images/benefit-fast.png"];
@@ -44,161 +38,7 @@ const faqs = [
   { q: "How does the referral process work?", a: "Once approved, you submit student profiles through your partner dashboard. We handle admissions, visa, accommodation, and airport pickup on your behalf." },
 ];
 
-interface FileUploadProps {
-  label: string;
-  accept?: string;
-  file: File | null;
-  onFileChange: (f: File | null) => void;
-  required?: boolean;
-}
-
-function FileUploadField({ label, accept = ".pdf,.jpg,.jpeg,.png", file, onFileChange, required }: FileUploadProps) {
-  const ref = useRef<HTMLInputElement>(null);
-  return (
-    <div>
-      <Label>{label} {required && <span className="text-destructive">*</span>}</Label>
-      <div
-        className="mt-1 border-2 border-dashed rounded-sm p-4 text-center cursor-pointer hover:border-[#ffa300]/50 transition-colors"
-        onClick={() => ref.current?.click()}
-      >
-        <input ref={ref} type="file" accept={accept} className="hidden" onChange={(e) => onFileChange(e.target.files?.[0] || null)} />
-        {file ? (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm">
-              <FileText className="h-4 w-4 text-[#ffa300]" />
-              <span className="truncate max-w-[200px]">{file.name}</span>
-              <span className="text-muted-foreground">({(file.size / 1024).toFixed(0)} KB)</span>
-            </div>
-            <Button type="button" variant="ghost" size="icon" className="h-6 w-6" onClick={(e) => { e.stopPropagation(); onFileChange(null); }}>
-              <X className="h-3 w-3" />
-            </Button>
-          </div>
-        ) : (
-          <div className="text-muted-foreground text-sm">
-            <Upload className="h-6 w-6 mx-auto mb-1" />
-            Click to upload {label.toLowerCase()}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-async function uploadFile(file: File, folder: string): Promise<string> {
-  const ext = file.name.split(".").pop();
-  const path = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-  const { error } = await supabase.storage.from("partner-documents").upload(path, file);
-  if (error) throw error;
-  const { data } = supabase.storage.from("partner-documents").getPublicUrl(path);
-  return data.publicUrl;
-}
-
 export default function B2BLanding() {
-  const [regOpen, setRegOpen] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-
-  // Form state
-  const [agencyName, setAgencyName] = useState("");
-  const [contactPerson, setContactPerson] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [country, setCountry] = useState("");
-  const [annualStudents, setAnnualStudents] = useState("");
-  const [password, setPassword] = useState("");
-
-  // File state
-  const [nidFile, setNidFile] = useState<File | null>(null);
-  const [tradeLicenseFile, setTradeLicenseFile] = useState<File | null>(null);
-  const [certificateFiles, setCertificateFiles] = useState<File[]>([]);
-
-  const addCertificate = (f: File | null) => {
-    if (f) setCertificateFiles((prev) => [...prev, f]);
-  };
-  const removeCertificate = (idx: number) => {
-    setCertificateFiles((prev) => prev.filter((_, i) => i !== idx));
-  };
-
-  const resetForm = () => {
-    setAgencyName(""); setContactPerson(""); setEmail(""); setPhone("");
-    setCountry(""); setAnnualStudents(""); setPassword("");
-    setNidFile(null); setTradeLicenseFile(null); setCertificateFiles([]);
-  };
-
-  const handleSubmit = async () => {
-    if (!agencyName || !contactPerson || !email || !password || !nidFile) {
-      toast.error("Please fill all required fields and upload NID document.");
-      return;
-    }
-
-    setSubmitting(true);
-    try {
-      // 1. Create user account
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { display_name: contactPerson },
-          emailRedirectTo: `${window.location.origin}/login`,
-        },
-      });
-      if (authError) throw authError;
-
-      const userId = authData.user?.id;
-
-      // 2. Upload documents
-      const nidUrl = await uploadFile(nidFile, "nid");
-      const tradeLicenseUrl = tradeLicenseFile ? await uploadFile(tradeLicenseFile, "trade-license") : "";
-      const certUrls: string[] = [];
-      for (const cf of certificateFiles) {
-        certUrls.push(await uploadFile(cf, "certificates"));
-      }
-
-      // 3. Insert registration record using REST API (anon key since user just signed up)
-      const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-      const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-
-      const token = authData.session?.access_token || SUPABASE_KEY;
-
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/partner_registrations`, {
-        method: "POST",
-        headers: {
-          "apikey": SUPABASE_KEY,
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-          "Prefer": "return=minimal",
-        },
-        body: JSON.stringify({
-          user_id: userId,
-          agency_name: agencyName,
-          contact_person: contactPerson,
-          email,
-          phone,
-          country,
-          annual_students: parseInt(annualStudents) || 0,
-          nid_document_url: nidUrl,
-          trade_license_url: tradeLicenseUrl,
-          certificate_urls: certUrls,
-          status: "pending",
-        }),
-      });
-
-      if (!res.ok) {
-        const errText = await res.text();
-        throw new Error(errText);
-      }
-
-      // Sign out since they need approval
-      await supabase.auth.signOut();
-
-      setRegOpen(false);
-      resetForm();
-      toast.success("Registration submitted! Your application is pending admin approval. We'll notify you via email once approved.");
-    } catch (err: any) {
-      toast.error(err.message || "Registration failed. Please try again.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -248,46 +88,11 @@ export default function B2BLanding() {
                 We partner with international agencies worldwide to place their students into top Malaysian universities - handling admissions, visa, accommodation, and everything in between.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Dialog open={regOpen} onOpenChange={setRegOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#e08e00] font-semibold text-sm rounded-md h-11 px-6 group shadow-lg shadow-[#ffa300]/20 transition-all hover:shadow-[#ffa300]/40 hover:-translate-y-0.5">
-                      Register as a partner <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-                    <DialogHeader><DialogTitle>Register Your Agency</DialogTitle></DialogHeader>
-                    <p className="text-sm text-muted-foreground">Fill in your details and upload required documents. Your registration will be reviewed by our team.</p>
-                    <div className="space-y-4 pt-2">
-                      <div><Label>Agency Name <span className="text-destructive">*</span></Label><Input value={agencyName} onChange={(e) => setAgencyName(e.target.value)} placeholder="Your company name" /></div>
-                      <div><Label>Contact Person <span className="text-destructive">*</span></Label><Input value={contactPerson} onChange={(e) => setContactPerson(e.target.value)} placeholder="Full name" /></div>
-                      <div><Label>Email <span className="text-destructive">*</span></Label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@agency.com" /></div>
-                      <div><Label>Password <span className="text-destructive">*</span></Label><Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Create a password (min 6 chars)" /></div>
-                      <div><Label>Phone</Label><Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+880 1XXXXXXXXX" /></div>
-                      <div><Label>Country</Label><Input value={country} onChange={(e) => setCountry(e.target.value)} placeholder="Country of operation" /></div>
-                      <div><Label>Number of Students (Annual)</Label><Input type="number" value={annualStudents} onChange={(e) => setAnnualStudents(e.target.value)} placeholder="e.g. 50" /></div>
-                      <div className="border-t pt-4">
-                        <h3 className="font-semibold mb-3">Required Documents</h3>
-                        <FileUploadField label="National ID (NID)" file={nidFile} onFileChange={setNidFile} required />
-                      </div>
-                      <FileUploadField label="Trade License (if any)" file={tradeLicenseFile} onFileChange={setTradeLicenseFile} />
-                      <div>
-                        <Label>Other Certificates</Label>
-                        {certificateFiles.map((f, i) => (
-                          <div key={i} className="flex items-center gap-2 mt-1 text-sm bg-muted rounded px-3 py-2">
-                            <FileText className="h-4 w-4 text-[#ffa300]" />
-                            <span className="truncate flex-1">{f.name}</span>
-                            <Button type="button" variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeCertificate(i)}><X className="h-3 w-3" /></Button>
-                          </div>
-                        ))}
-                        <FileUploadField label="Add certificate" file={null} onFileChange={addCertificate} />
-                      </div>
-                      <Button className="w-full bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90" onClick={handleSubmit} disabled={submitting}>
-                        {submitting ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Submitting...</> : "Submit Registration"}
-                      </Button>
-                      <p className="text-xs text-muted-foreground text-center">By registering, you agree to our terms. Your account will be activated after admin approval.</p>
-                    </div>
-                  </DialogContent>
-                </Dialog>
+                <Link to="/partner/register" className="w-full sm:w-auto">
+                  <Button className="w-full sm:w-auto bg-[#ffa300] text-[#181d29] hover:bg-[#e08e00] font-semibold text-sm rounded-md h-11 px-6 group shadow-lg shadow-[#ffa300]/20 transition-all hover:shadow-[#ffa300]/40 hover:-translate-y-0.5">
+                    Register as a partner <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
+                  </Button>
+                </Link>
                 <Link to="/login" className="w-full sm:w-auto">
                   <Button variant="outline" className="w-full sm:w-auto border-[#181d29] text-[#181d29] font-semibold text-sm rounded-md h-11 px-6 transition-all hover:-translate-y-0.5">
                     Login as partner
@@ -425,9 +230,11 @@ export default function B2BLanding() {
               </h2>
               <p className="text-sm text-gray-300 mb-10 max-w-xl mx-auto leading-relaxed">Join our growing network of international agencies and start placing students into Malaysia's top universities.</p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Button className="w-full sm:w-auto bg-[#ffa300] text-[#181d29] hover:bg-[#e08e00] font-semibold text-sm rounded-md h-11 px-6 group shadow-lg shadow-[#ffa300]/20 transition-all hover:shadow-[#ffa300]/40 hover:-translate-y-0.5" onClick={() => setRegOpen(true)}>
-                  Register as a partner <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
-                </Button>
+                <Link to="/partner/register" className="w-full sm:w-auto">
+                  <Button className="w-full sm:w-auto bg-[#ffa300] text-[#181d29] hover:bg-[#e08e00] font-semibold text-sm rounded-md h-11 px-6 group shadow-lg shadow-[#ffa300]/20 transition-all hover:shadow-[#ffa300]/40 hover:-translate-y-0.5">
+                    Register as a partner <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
+                  </Button>
+                </Link>
                 <Link to="/login" className="w-full sm:w-auto">
                   <Button variant="outline" className="w-full sm:w-auto border-white/20 text-white hover:bg-white hover:text-[#181d29] font-semibold text-sm rounded-md h-11 px-6 bg-white/5 backdrop-blur-sm transition-all hover:-translate-y-0.5">
                     Login as partner
