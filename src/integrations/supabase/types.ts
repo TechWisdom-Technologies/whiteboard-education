@@ -647,7 +647,10 @@ export type Database = {
           ielts_certificate_url: string | null
           ielts_score: number | null
           intake_month: string | null
+          language_test_name: string | null
+          major: string | null
           nationality: string | null
+          nid_number: string | null
           other_documents: Json | null
           partner_id: string
           payment_verification_url: string | null
@@ -683,7 +686,10 @@ export type Database = {
           ielts_certificate_url?: string | null
           ielts_score?: number | null
           intake_month?: string | null
+          language_test_name?: string | null
+          major?: string | null
           nationality?: string | null
+          nid_number?: string | null
           other_documents?: Json | null
           partner_id: string
           payment_verification_url?: string | null
@@ -719,7 +725,10 @@ export type Database = {
           ielts_certificate_url?: string | null
           ielts_score?: number | null
           intake_month?: string | null
+          language_test_name?: string | null
+          major?: string | null
           nationality?: string | null
+          nid_number?: string | null
           other_documents?: Json | null
           partner_id?: string
           payment_verification_url?: string | null

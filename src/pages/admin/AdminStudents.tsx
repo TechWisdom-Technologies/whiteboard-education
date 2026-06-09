@@ -49,12 +49,15 @@ interface Student {
   phone: string;
   passport_number: string;
   nationality: string;
+  nid_number: string;
   date_of_birth: string | null;
   gender: string;
   previous_institution: string;
   previous_degree: string;
+  major: string;
   gpa: number;
   ielts_score: number;
+  language_test_name: string;
   target_university: string;
   target_course: string;
   intake_month: string;
@@ -76,6 +79,7 @@ interface Partner {
   agency_name: string;
   contact_person: string;
   email: string;
+  phone: string;
   user_id: string;
 }
 
@@ -95,8 +99,8 @@ export default function AdminStudents() {
     const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}` };
     try {
       const [studentsRes, partnersRes] = await Promise.all([
-        fetch(`${SUPABASE_URL}/rest/v1/students?select=id,partner_id,full_name,email,phone,passport_number,nationality,date_of_birth,gender,previous_institution,previous_degree,gpa,ielts_score,target_university,target_course,intake_month,degree_level,status,admin_notes,passport_photo_url,passport_url,academic_transcript_url,ielts_certificate_url,personal_statement_url,recommendation_letter_url,other_documents,created_at&order=created_at.desc`, { headers }),
-        fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?select=id,agency_name,contact_person,email,user_id`, { headers }),
+        fetch(`${SUPABASE_URL}/rest/v1/students?select=id,partner_id,full_name,email,phone,passport_number,nationality,nid_number,date_of_birth,gender,previous_institution,previous_degree,major,gpa,ielts_score,language_test_name,target_university,target_course,intake_month,degree_level,status,admin_notes,passport_photo_url,passport_url,academic_transcript_url,ielts_certificate_url,personal_statement_url,recommendation_letter_url,other_documents,created_at&order=created_at.desc`, { headers }),
+        fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?select=id,agency_name,contact_person,email,phone,user_id`, { headers }),
       ]);
       if (studentsRes.ok) setStudents(await studentsRes.json());
       if (partnersRes.ok) setPartners(await partnersRes.json());

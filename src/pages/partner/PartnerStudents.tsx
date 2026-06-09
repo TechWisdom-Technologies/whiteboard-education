@@ -24,12 +24,15 @@ interface Student {
   phone: string;
   passport_number: string;
   nationality: string;
+  nid_number: string;
   date_of_birth: string | null;
   gender: string;
   previous_institution: string;
   previous_degree: string;
+  major: string;
   gpa: number;
   ielts_score: number;
+  language_test_name: string;
   target_university: string;
   target_course: string;
   intake_month: string;
@@ -61,8 +64,8 @@ const statusMap: Record<string, { label: string; class: string }> = {
 
 const emptyForm = {
   full_name: "", email: "", phone: "", passport_number: "", nationality: "",
-  date_of_birth: "", gender: "", previous_institution: "", previous_degree: "",
-  gpa: "", ielts_score: "", target_university: "", target_course: "",
+  nid_number: "", date_of_birth: "", gender: "", previous_institution: "", previous_degree: "",
+  major: "", gpa: "", ielts_score: "", language_test_name: "", target_university: "", target_course: "",
   intake_month: "", degree_level: "Bachelor",
 };
 
@@ -258,9 +261,6 @@ export default function PartnerStudents() {
                 <div><Label>Full Name *</Label><Input value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))} placeholder="Full name" /></div>
                 <div><Label>Email *</Label><Input value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} placeholder="email@example.com" /></div>
                 <div><Label>Phone</Label><Input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="+880..." /></div>
-                <div><Label>Passport Number</Label><Input value={form.passport_number} onChange={e => setForm(f => ({ ...f, passport_number: e.target.value }))} /></div>
-                <div><Label>Nationality</Label><Input value={form.nationality} onChange={e => setForm(f => ({ ...f, nationality: e.target.value }))} /></div>
-                <div><Label>Date of Birth</Label><Input type="date" value={form.date_of_birth} onChange={e => setForm(f => ({ ...f, date_of_birth: e.target.value }))} /></div>
                 <div>
                   <Label>Gender</Label>
                   <Select value={form.gender} onValueChange={v => setForm(f => ({ ...f, gender: v }))}>
@@ -272,21 +272,28 @@ export default function PartnerStudents() {
                     </SelectContent>
                   </Select>
                 </div>
+                <div><Label>Nationality</Label><Input value={form.nationality} onChange={e => setForm(f => ({ ...f, nationality: e.target.value }))} /></div>
+                <div><Label>NID Number</Label><Input value={form.nid_number} onChange={e => setForm(f => ({ ...f, nid_number: e.target.value }))} placeholder="National ID" /></div>
+                <div><Label>Passport Number</Label><Input value={form.passport_number} onChange={e => setForm(f => ({ ...f, passport_number: e.target.value }))} /></div>
+                <div><Label>Date of Birth</Label><Input type="date" value={form.date_of_birth} onChange={e => setForm(f => ({ ...f, date_of_birth: e.target.value }))} /></div>
               </div>
 
               <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide pt-2">Academic Background</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div><Label>Previous Institution</Label><Input value={form.previous_institution} onChange={e => setForm(f => ({ ...f, previous_institution: e.target.value }))} /></div>
-                <div><Label>Previous Degree</Label><Input value={form.previous_degree} onChange={e => setForm(f => ({ ...f, previous_degree: e.target.value }))} /></div>
-                <div><Label>GPA</Label><Input type="number" step="0.01" value={form.gpa} onChange={e => setForm(f => ({ ...f, gpa: e.target.value }))} /></div>
-                <div><Label>IELTS Score</Label><Input type="number" step="0.5" value={form.ielts_score} onChange={e => setForm(f => ({ ...f, ielts_score: e.target.value }))} /></div>
+                <div><Label>Degree Name</Label><Input value={form.previous_degree} onChange={e => setForm(f => ({ ...f, previous_degree: e.target.value }))} placeholder="e.g. HSC, Bachelor of Science" /></div>
+                <div><Label>Institution</Label><Input value={form.previous_institution} onChange={e => setForm(f => ({ ...f, previous_institution: e.target.value }))} /></div>
+                <div><Label>Major</Label><Input value={form.major} onChange={e => setForm(f => ({ ...f, major: e.target.value }))} placeholder="e.g. Computer Science" /></div>
+                <div><Label>GPA / CGPA</Label><Input type="number" step="0.01" value={form.gpa} onChange={e => setForm(f => ({ ...f, gpa: e.target.value }))} /></div>
+              </div>
+
+              <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide pt-2">Language Proficiency</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div><Label>Test Name</Label><Input value={form.language_test_name} onChange={e => setForm(f => ({ ...f, language_test_name: e.target.value }))} placeholder="e.g. IELTS, TOEFL, Duolingo" /></div>
+                <div><Label>Score</Label><Input type="number" step="0.5" value={form.ielts_score} onChange={e => setForm(f => ({ ...f, ielts_score: e.target.value }))} /></div>
               </div>
 
               <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide pt-2">Target Program</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div><Label>University</Label><Input value={form.target_university} onChange={e => setForm(f => ({ ...f, target_university: e.target.value }))} /></div>
-                <div><Label>Course</Label><Input value={form.target_course} onChange={e => setForm(f => ({ ...f, target_course: e.target.value }))} /></div>
-                <div><Label>Intake Month</Label><Input value={form.intake_month} onChange={e => setForm(f => ({ ...f, intake_month: e.target.value }))} placeholder="e.g. September 2026" /></div>
                 <div>
                   <Label>Degree Level</Label>
                   <Select value={form.degree_level} onValueChange={v => setForm(f => ({ ...f, degree_level: v }))}>
@@ -297,9 +304,13 @@ export default function PartnerStudents() {
                       <SelectItem value="Bachelor">Bachelor</SelectItem>
                       <SelectItem value="Master">Master</SelectItem>
                       <SelectItem value="PhD">PhD</SelectItem>
+                      <SelectItem value="English Course">English Course</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
+                <div><Label>Course</Label><Input value={form.target_course} onChange={e => setForm(f => ({ ...f, target_course: e.target.value }))} /></div>
+                <div><Label>University</Label><Input value={form.target_university} onChange={e => setForm(f => ({ ...f, target_university: e.target.value }))} /></div>
+                <div><Label>Preferred Intake</Label><Input value={form.intake_month} onChange={e => setForm(f => ({ ...f, intake_month: e.target.value }))} placeholder="e.g. September 2026" /></div>
               </div>
 
               <Button className="w-full bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90" onClick={handleAdd} disabled={submitting}>
