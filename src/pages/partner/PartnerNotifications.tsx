@@ -103,6 +103,11 @@ export default function PartnerNotifications() {
       return;
     }
 
+    if (notification.title === "New Update on Registration" || (!notification.student_id && notification.type === "system")) {
+      navigate("/partner-dashboard/profile#admin-notes-section");
+      return;
+    }
+
     navigate("/partner-dashboard/notifications");
   };
 

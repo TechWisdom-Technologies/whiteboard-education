@@ -499,7 +499,15 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
 
   // ── Print / PDF ────────────────────────────────────────────────────────
 
-  const handlePrint = () => window.print();
+  const handlePrint = () => {
+    if (!student) return;
+    const originalTitle = document.title;
+    const passport = student.passport_number || "NoPassport";
+    const uni = student.target_university || "NoUniversity";
+    document.title = `${student.full_name}_${passport}_${uni}`;
+    window.print();
+    document.title = originalTitle;
+  };
 
   // ── Loading & error states ─────────────────────────────────────────────
 
@@ -739,8 +747,8 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
         </Card>
 
         {/* ── Main Single Column Layout ──────────────────────────────── */}
-        <Card>
-          <CardContent className="p-6 sm:p-7">
+        <Card className="print:border-none print:shadow-none">
+          <CardContent className="p-6 sm:p-7 print:p-0">
                 {/* ── Section 1: Personal Information ──────────────── */}
                 <div className="flex items-center justify-between pb-4">
                   <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#181d29] uppercase tracking-wide">
@@ -882,7 +890,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                 )}
 
                 {/* ── Section 2: Academic Background ──────────────── */}
-                <div className="border-t border-border/30 pt-5 mt-4">
+                <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
                   <div className="flex items-center justify-between pb-4">
                     <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#181d29] uppercase tracking-wide">
                       <GraduationCap className="h-4 w-4 text-[#ffa300]" />
@@ -970,7 +978,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                 </div>
 
                 {/* ── Section 3: Language Proficiency ──────────────── */}
-                <div className="border-t border-border/30 pt-5 mt-4">
+                <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
                   <div className="flex items-center justify-between pb-4">
                     <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#181d29] uppercase tracking-wide">
                       <Languages className="h-4 w-4 text-[#ffa300]" />
@@ -1040,7 +1048,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                 </div>
 
                 {/* ── Section 4: Target Program ───────────────────── */}
-                <div className="border-t border-border/30 pt-5 mt-4">
+                <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
                   <div className="flex items-center justify-between pb-4">
                     <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#181d29] uppercase tracking-wide">
                       <Target className="h-4 w-4 text-[#ffa300]" />
@@ -1137,7 +1145,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                 </div>
 
                 {/* ── Section 5: Submitted By ─────────────────────── */}
-                <div className="border-t border-border/30 pt-5 mt-4">
+                <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
                   <div className="flex items-center justify-between pb-4">
                     <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#181d29] uppercase tracking-wide">
                       <Building2 className="h-4 w-4 text-[#ffa300]" />
@@ -1188,6 +1196,31 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
             </CardContent>
           </Card>
         )}
+
+        {/* ── Print-Only Documents Checklist ──────────────────────────── */}
+        <div className="hidden print:block pt-8 mt-8">
+          <h3 className="text-[13px] font-bold text-[#181d29] uppercase tracking-wide mb-5 flex items-center gap-2.5">
+            <FileCheck className="h-4 w-4 text-[#ffa300]" />
+            Uploaded Documents Checklist
+          </h3>
+          <div className="grid grid-cols-2 gap-y-4 gap-x-8">
+            {documentFields.map((doc) => {
+              const url = (student as any)[doc.field] as string | undefined;
+              return (
+                <div key={doc.field} className="flex items-center gap-3 text-[13px]">
+                  {url ? (
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
+                  ) : (
+                    <div className="h-4 w-4 rounded-sm border border-muted-foreground/40" />
+                  )}
+                  <span className={url ? "text-[#181d29] font-medium" : "text-muted-foreground italic"}>
+                    {doc.label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </>
   );
