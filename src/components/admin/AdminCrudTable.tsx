@@ -27,7 +27,7 @@ type TemplateColumnMeta = {
 export interface FieldConfig {
   key: string;
   label: string;
-  type?: "text" | "number" | "textarea" | "select" | "json_array" | "json_object" | "relation" | "tag_input" | "richtext";
+  type?: "text" | "number" | "textarea" | "select" | "json_array" | "json_object" | "relation" | "relation_array" | "tag_input" | "richtext";
   options?: string[];
   showInTable?: boolean;
   placeholder?: string;
@@ -384,6 +384,56 @@ function JsonArrayEditor({ value, onChange, placeholder }: { value: any; onChang
   );
 }
 
+function RelationArrayEditor({ value = [], onChange, relationConfig }: { value: string[]; onChange: (v: string[]) => void; relationConfig: any }) {
+  const [selectedId, setSelectedId] = useState("");
+  const items = relationConfig?.data || [];
+  
+  const addRelation = () => {
+    if (selectedId && !value.includes(selectedId)) {
+      onChange([...value, selectedId]);
+    }
+    setSelectedId("");
+  };
+
+  const getLabel = (id: string) => {
+    const item = items.find(i => String(i[relationConfig.valueKey]) === String(id));
+    return item ? item[relationConfig.labelKey] : id;
+  };
+
+  return (
+    <div className="space-y-2">
+      <div className="flex flex-wrap gap-1.5 min-h-[30px] p-2 border rounded-sm bg-muted/20">
+        {value.length === 0 && (
+          <span className="text-xs text-muted-foreground italic">No selections yet</span>
+        )}
+        {value.map((id, i) => (
+          <Badge key={i} variant="secondary" className="gap-1 pr-1 py-1 text-xs">
+            {getLabel(id)}
+            <button type="button" onClick={() => onChange(value.filter((_, j) => j !== i))} className="hover:text-destructive text-muted-foreground hover:text-foreground">
+              <X className="h-3 w-3" />
+            </button>
+          </Badge>
+        ))}
+      </div>
+      <div className="flex gap-2">
+        <select
+          className="flex-1 h-9 rounded-sm border border-input bg-background px-3 py-1.5 text-sm"
+          value={selectedId}
+          onChange={(e) => setSelectedId(e.target.value)}
+        >
+          <option value="">Select university to add...</option>
+          {items.map((item: any) => (
+            <option key={item[relationConfig.valueKey]} value={item[relationConfig.valueKey]}>
+              {item[relationConfig.labelKey]}
+            </option>
+          ))}
+        </select>
+        <Button type="button" variant="outline" size="sm" className="h-9 font-medium" onClick={addRelation}>Add</Button>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminCrudTable({
   title, data, isLoading, fields, searchKey, onInsert, onUpdate, onDelete, onBulkDelete, onBulkUpsert, renderCell,
 }: AdminCrudTableProps) {
@@ -446,7 +496,7 @@ export default function AdminCrudTable({
 
   const getDefaultValue = (f: FieldConfig) => {
     if (f.type === "number") return 0;
-    if (f.type === "json_array") return [];
+    if (f.type === "json_array" || f.type === "relation_array") return [];
     if (f.type === "json_object") return {};
     if (f.type === "tag_input") return [];
     return "";
@@ -670,7 +720,7 @@ export default function AdminCrudTable({
     const vals: Record<string, any> = {};
     fields.forEach((f) => {
       const val = row[f.key];
-      if (f.type === "json_array" || f.type === "tag_input") {
+      if (f.type === "json_array" || f.type === "relation_array" || f.type === "tag_input") {
         vals[f.key] = Array.isArray(val) ? val : [];
       } else if (f.type === "json_object") {
         vals[f.key] = val && typeof val === "object" ? val : {};
@@ -687,7 +737,7 @@ export default function AdminCrudTable({
     fields.forEach((f) => {
       if (f.type === "number") {
         cleaned[f.key] = Number(form[f.key]) || 0;
-      } else if (f.type === "json_array" || f.type === "tag_input") {
+      } else if (f.type === "json_array" || f.type === "relation_array" || f.type === "tag_input") {
         cleaned[f.key] = Array.isArray(form[f.key]) ? form[f.key] : [];
       } else if (f.type === "json_object") {
         cleaned[f.key] = form[f.key] && typeof form[f.key] === "object" ? form[f.key] : {};
@@ -772,6 +822,15 @@ export default function AdminCrudTable({
           value={form[f.key]}
           onChange={(v) => setForm({ ...form, [f.key]: v })}
           placeholder={f.placeholder}
+        />
+      );
+    }
+    if (f.type === "relation_array") {
+      return (
+        <RelationArrayEditor
+          value={Array.isArray(form[f.key]) ? form[f.key] : []}
+          onChange={(v) => setForm({ ...form, [f.key]: v })}
+          relationConfig={f.relationConfig}
         />
       );
     }

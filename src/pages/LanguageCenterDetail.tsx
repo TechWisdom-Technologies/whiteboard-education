@@ -16,24 +16,20 @@ import {
   Languages,
   BookOpen,
   Building,
+  HelpCircle,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
-
-/* ── Stock images for the "About" section ── */
-const ABOUT_IMAGES = [
-  "https://images.unsplash.com/photo-1523050854058-8df90110c476?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80",
-];
 
 export default function LanguageCenterDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: languageCenters = [], isLoading } = useTableData("language_centers");
-  const lc = languageCenters.find((l: any) => l.id === id);
+  const lc = languageCenters.find((l: any) => l.id === id || l.slug === id);
   const [isScrolled, setIsScrolled] = useState(false);
+  
+  // State for tracking open FAQ items
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 300);
@@ -41,15 +37,11 @@ export default function LanguageCenterDetail() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Similar language centers — same city or level, excluding current
+  // Similar language centers — same city, excluding current
   const similarCenters = useMemo(() => {
     if (!lc) return [];
     return languageCenters
-      .filter(
-        (c: any) =>
-          c.id !== lc.id &&
-          (c.city === lc.city || c.level === lc.level)
-      )
+      .filter((c: any) => c.id !== lc.id && c.city === lc.city)
       .slice(0, 3);
   }, [lc, languageCenters]);
 
@@ -75,10 +67,10 @@ export default function LanguageCenterDetail() {
           <div className="text-center space-y-4">
             <Languages className="h-16 w-16 text-muted-foreground mx-auto" />
             <h1 className="text-2xl font-bold text-foreground">
-              Program Not Found
+              Language Center Not Found
             </h1>
             <Link to="/language-centers">
-              <Button>Browse All Programs</Button>
+              <Button>Browse All Centers</Button>
             </Link>
           </div>
         </div>
@@ -87,45 +79,9 @@ export default function LanguageCenterDetail() {
     );
   }
 
-  const curriculum = Array.isArray(lc.curriculum) ? lc.curriculum : [];
-  const intakeMonths = Array.isArray(lc.intake_months)
-    ? lc.intake_months
-    : [];
-  const nextIntake = intakeMonths[0] ? `${intakeMonths[0]} 2026` : "TBA";
-
-  // Check if custom image URL exists inside curriculum column (repurposed from admin)
-  let customAboutImage = "";
-  if (lc.curriculum) {
-    if (typeof lc.curriculum === "object" && !Array.isArray(lc.curriculum)) {
-      customAboutImage = (lc.curriculum as any).about_image_url || "";
-    } else if (typeof lc.curriculum === "string") {
-      try {
-        const parsed = JSON.parse(lc.curriculum);
-        if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-          customAboutImage = parsed.about_image_url || "";
-        } else {
-          customAboutImage = lc.curriculum;
-        }
-      } catch {
-        customAboutImage = lc.curriculum;
-      }
-    }
-  }
-
-  const aboutImage = customAboutImage || ABOUT_IMAGES[Math.abs(lc.name.length) % ABOUT_IMAGES.length];
-
-  // About text — split into two paragraphs
-  const rawAbout = lc.overview || "";
-  const aboutParagraphs = rawAbout
-    .split("\n")
-    .map((p: string) => p.trim())
-    .filter((p: string) => p !== "");
-  const para1 =
-    aboutParagraphs[0] ||
-    `${lc.name} at ${lc.institute || "our institute"} is a premier language program located in ${lc.city || "Malaysia"}, designed to provide international students with the highest quality Bahasa Melayu instruction. The program combines intensive classroom learning with real-world immersion, ensuring students develop practical communication skills that are essential for academic success and daily life in Malaysia. Our experienced instructors use a communicative approach that makes learning engaging and effective.`;
-  const para2 =
-    aboutParagraphs.slice(1).join("\n\n") ||
-    `Our state-of-the-art facilities include modern language labs, multimedia classrooms, and dedicated study areas where students can practice their skills in a supportive environment. The curriculum is thoughtfully designed to cover all four communication competencies — speaking, listening, reading, and writing — with additional emphasis on cultural understanding and practical vocabulary. Students benefit from small class sizes, personalized attention, and regular progress assessments that help track their language development journey.`;
+  const moreInfo = Array.isArray(lc.more_info) ? lc.more_info : [];
+  const tuitionFees = Array.isArray(lc.tuition_fees) ? lc.tuition_fees : [];
+  const faqs = Array.isArray(lc.faqs) ? lc.faqs : [];
 
   return (
     <div
@@ -139,7 +95,18 @@ export default function LanguageCenterDetail() {
         <div className="container mx-auto px-4 max-w-5xl flex flex-col md:flex-row items-center gap-6">
           {/* Logo / Icon */}
           <div className="h-28 w-28 md:h-36 md:w-36 bg-white rounded-sm shadow flex items-center justify-center shrink-0 p-3">
-            <Languages className="h-16 w-16 text-[#ffa300]" />
+            {lc.logo_url ? (
+              <img
+                src={lc.logo_url}
+                alt={lc.name}
+                className="w-full h-full object-contain"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = "none";
+                }}
+              />
+            ) : (
+              <Languages className="h-16 w-16 text-[#ffa300]" />
+            )}
           </div>
 
           {/* Title + Location */}
@@ -153,7 +120,7 @@ export default function LanguageCenterDetail() {
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-1 text-gray-600 text-[15px]">
               <span className="flex items-center gap-1.5">
                 <Building className="h-4 w-4 text-[#ffa300] shrink-0" />
-                {lc.institute || "Language Center"}
+                Language Center
               </span>
               {lc.city && (
                 <span className="flex items-center gap-1.5">
@@ -165,16 +132,16 @@ export default function LanguageCenterDetail() {
           </div>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col gap-2 shrink-0">
+          <div className="flex flex-col gap-2 shrink-0 w-full md:w-auto">
             <Button
-              className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold px-8 h-11"
+              className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold px-8 h-11 w-full md:w-auto"
               onClick={() => navigate(`/apply?centerId=${lc.id}`)}
             >
               Apply Now
             </Button>
             <Button
               variant="outline"
-              className="font-bold px-8 h-11"
+              className="font-bold px-8 h-11 w-full md:w-auto"
               onClick={() => navigate("/contact")}
             >
               Ask Us
@@ -234,115 +201,121 @@ export default function LanguageCenterDetail() {
             About {lc.name}
           </h2>
 
-          <div className="prose max-w-none text-gray-600 leading-relaxed text-[15px] text-justify space-y-8">
-            {/* Paragraph 1 */}
-            <p>{para1}</p>
+          <div className="space-y-6 text-gray-600 leading-relaxed text-[15px] text-justify">
+            {lc.about_text ? (
+              lc.about_text.split("\n\n").map((p: string, i: number) => (
+                <p key={i}>{p}</p>
+              ))
+            ) : (
+              <p>
+                Welcome to {lc.name}, one of the premier language centers in {lc.city || "Malaysia"}. We are dedicated to delivering exceptional language learning opportunities with experienced instructors, state-of-the-art facilities, and a supportive environment.
+              </p>
+            )}
+          </div>
 
-            {/* High-Res Relevant Image */}
-            <div className="rounded-sm overflow-hidden shadow-md border border-gray-100 bg-gray-50 flex justify-center">
+          {/* Render scraped about section image URL directly under the description */}
+          {lc.about_image_url && (
+            <div className="mt-8 flex justify-center rounded-sm overflow-hidden shadow-md border border-gray-100 bg-gray-50 max-w-2xl mx-auto">
               <img
-                src={aboutImage}
-                alt={`${lc.name} classroom`}
-                className="w-full h-auto object-contain"
+                src={lc.about_image_url}
+                alt={`${lc.name} image`}
+                className="w-full h-auto object-cover"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src =
-                    "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80";
+                  (e.target as HTMLImageElement).style.display = "none";
                 }}
               />
             </div>
-
-            {/* Paragraph 2 */}
-            <p>{para2}</p>
-          </div>
+          )}
         </div>
       </section>
 
-      {/* ═══ WHAT YOU WILL LEARN (Curriculum) ═══ */}
-      {curriculum.length > 0 && (
-        <section className="bg-white py-10">
-          <div className="container mx-auto px-4 max-w-5xl">
-            <h2
-              className="text-xl md:text-2xl font-extrabold text-[#181d29] mb-6"
-              style={{ fontFamily: "Poppins, sans-serif" }}
-            >
-              What You Will Learn
-            </h2>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {curriculum.map((item: string, i: number) => (
-                <div key={i} className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-[#ffa300] mt-0.5 shrink-0" />
-                  <span className="text-[15px] text-gray-700">{item}</span>
-                </div>
-              ))}
-            </div>
+      {/* ═══ MORE INFO SECTION (Courses Offered replaced with More Info Blocks) ═══ */}
+      {moreInfo.length > 0 && (
+        <section className="bg-[#f7f9fb] py-12 border-t border-b">
+          <div className="container mx-auto px-4 max-w-5xl space-y-8">
+            {moreInfo.map((info: any, idx: number) => (
+              <Card key={idx} className="border shadow-sm bg-white hover:shadow-md transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 bg-[#ffa300]/10 rounded-sm shrink-0">
+                      <BookOpen className="h-6 w-6 text-[#ffa300]" />
+                    </div>
+                    <div className="flex-1">
+                      <h2 className="text-xl md:text-2xl font-bold text-[#181d29] mb-3" style={{ fontFamily: "Poppins, sans-serif" }}>
+                        {info.title}
+                      </h2>
+                      <p className="text-gray-600 leading-relaxed text-sm text-justify whitespace-pre-line">
+                        {info.description}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </section>
       )}
 
       {/* ═══ TUITION FEES TABLE ═══ */}
-      <section className="bg-white py-10">
-        <div className="container mx-auto px-4 max-w-5xl">
-          <h2
-            className="text-xl md:text-2xl font-extrabold text-[#181d29] mb-6"
-            style={{ fontFamily: "Poppins, sans-serif" }}
-          >
-            {lc.name} Tuition Fees for International Students
-          </h2>
-          <div className="border rounded-sm overflow-hidden">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-[#181d29] text-left">
-                  <th className="px-5 py-3 font-semibold text-white/90">
-                    Program
-                  </th>
-                  <th className="px-5 py-3 font-semibold text-white/90 whitespace-nowrap">
-                    Level
-                  </th>
-                  <th className="px-5 py-3 font-semibold text-white/90 whitespace-nowrap">
-                    Duration
-                  </th>
-                  <th className="px-5 py-3 font-semibold text-white/90 whitespace-nowrap">
-                    Tuition Fee
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-t bg-gray-50/50 hover:bg-[#ffa300]/5 transition-colors">
-                  <td className="px-5 py-4">
-                    <span className="text-[#181d29] font-semibold text-[15px]">
-                      {lc.name}
-                    </span>
-                    <span className="block text-xs text-gray-400 mt-0.5">
-                      {lc.institute || "Language Center"}
-                    </span>
-                  </td>
-                  <td className="px-5 py-4 text-gray-600 whitespace-nowrap">
-                    {lc.level || "General"}
-                  </td>
-                  <td className="px-5 py-4 text-gray-600 whitespace-nowrap">
-                    {lc.duration || "N/A"}
-                  </td>
-                  <td className="px-5 py-4 font-semibold text-[#ffa300] whitespace-nowrap">
-                    MYR {Number(lc.tuition_fee).toLocaleString()}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+      {tuitionFees.length > 0 && (
+        <section className="bg-white py-12">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <h2
+              className="text-2xl md:text-3xl font-extrabold text-[#181d29] mb-6"
+              style={{ fontFamily: "Poppins, sans-serif" }}
+            >
+              Tuition Fees for International Students
+            </h2>
+            <p className="text-gray-500 text-sm mb-6">
+              Below are the standard tuition fee tiers and visa processing durations for international students at {lc.name}.
+            </p>
+            <div className="border rounded-sm overflow-hidden shadow-sm">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-[#181d29] text-left">
+                    <th className="px-6 py-4 font-semibold text-white/90">
+                      Duration
+                    </th>
+                    <th className="px-6 py-4 font-semibold text-white/90">
+                      Tuition Fees
+                    </th>
+                    <th className="px-6 py-4 font-semibold text-white/90">
+                      Visa
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {tuitionFees.map((tier: any, idx: number) => (
+                    <tr key={idx} className="hover:bg-[#ffa300]/5 transition-colors">
+                      <td className="px-6 py-4 font-medium text-[#181d29] whitespace-nowrap">
+                        {tier.duration}
+                      </td>
+                      <td className="px-6 py-4 font-semibold text-[#ffa300] whitespace-nowrap">
+                        {tier.tuition_fee}
+                      </td>
+                      <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                        {tier.visa}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ═══ KEY INFO CARDS ROW ═══ */}
-      <section className="bg-white py-8">
+      <section className="bg-white py-8 border-t">
         <div className="container mx-auto px-4 max-w-5xl grid sm:grid-cols-3 gap-6">
           <Card className="border shadow-sm">
             <CardContent className="p-5 flex items-start gap-3">
               <CalendarDays className="h-6 w-6 text-[#ffa300] mt-0.5 shrink-0" />
               <div>
                 <h4 className="font-bold text-[#181d29] text-sm mb-1">
-                  Next Intake
+                  Intake Period
                 </h4>
-                <p className="text-gray-600 text-sm">{nextIntake}</p>
+                <p className="text-gray-600 text-sm">Monthly Intake</p>
               </div>
             </CardContent>
           </Card>
@@ -351,11 +324,9 @@ export default function LanguageCenterDetail() {
               <Clock className="h-6 w-6 text-[#ffa300] mt-0.5 shrink-0" />
               <div>
                 <h4 className="font-bold text-[#181d29] text-sm mb-1">
-                  Duration
+                  Flexible Duration
                 </h4>
-                <p className="text-gray-600 text-sm">
-                  {lc.duration || "Contact us for details"}
-                </p>
+                <p className="text-gray-600 text-sm">1 to 12 Month(s)</p>
               </div>
             </CardContent>
           </Card>
@@ -374,6 +345,52 @@ export default function LanguageCenterDetail() {
           </Card>
         </div>
       </section>
+
+      {/* ═══ INTERACTIVE FAQS SECTION ═══ */}
+      {faqs.length > 0 && (
+        <section className="bg-[#f7f9fb] py-12 border-t border-b">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <h2
+              className="text-2xl md:text-3xl font-extrabold text-[#181d29] mb-8"
+              style={{ fontFamily: "Poppins, sans-serif" }}
+            >
+              Frequently Asked Questions
+            </h2>
+            <div className="space-y-4">
+              {faqs.map((faq: any, idx: number) => {
+                const isOpen = openFaqIndex === idx;
+                return (
+                  <div
+                    key={idx}
+                    className="bg-white border rounded-sm shadow-sm overflow-hidden transition-all"
+                    style={{ borderColor: isOpen ? "#ffa300" : "#e8e8e8" }}
+                  >
+                    <button
+                      className="w-full px-6 py-4 flex items-center justify-between text-left font-bold text-gray-800 hover:bg-gray-50/50 transition-colors"
+                      onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
+                    >
+                      <span className="flex items-center gap-3">
+                        <HelpCircle className="h-5 w-5 text-[#ffa300] shrink-0" />
+                        {faq.question}
+                      </span>
+                      {isOpen ? (
+                        <ChevronUp className="h-5 w-5 text-[#ffa300]" />
+                      ) : (
+                        <ChevronDown className="h-5 w-5 text-gray-400" />
+                      )}
+                    </button>
+                    {isOpen && (
+                      <div className="px-6 pb-5 pt-1 text-gray-600 text-sm leading-relaxed whitespace-pre-line border-t border-gray-50">
+                        {faq.answer}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ═══ REGISTER NOW CTA ═══ */}
       <section className="bg-[#fdf0d5] py-12">
@@ -402,10 +419,10 @@ export default function LanguageCenterDetail() {
 
       {/* ═══ SIMILAR LANGUAGE CENTERS ═══ */}
       {similarCenters.length > 0 && (
-        <section className="py-10">
+        <section className="py-12">
           <div className="container mx-auto px-4 max-w-5xl">
             <h2
-              className="text-xl font-extrabold text-[#181d29] mb-6"
+              className="text-2xl font-extrabold text-[#181d29] mb-6"
               style={{ fontFamily: "Poppins, sans-serif" }}
             >
               Similar Language Centers
@@ -419,9 +436,17 @@ export default function LanguageCenterDetail() {
                 >
                   <Card className="bg-white hover:shadow-lg transition-all hover:-translate-y-1 h-full flex flex-col rounded-sm">
                     <CardContent className="p-0 flex flex-col h-full">
-                      {/* Icon Header */}
-                      <div className="h-48 flex items-center justify-center bg-[#ffa300]/5 border-b p-6 shrink-0">
-                        <Languages className="h-16 w-16 text-[#ffa300]" />
+                      {/* Logo Container */}
+                      <div className="h-48 flex items-center justify-center bg-white border-b p-6 shrink-0">
+                        {sc.logo_url ? (
+                          <img
+                            src={sc.logo_url}
+                            alt={sc.name}
+                            className="w-full h-full object-contain"
+                          />
+                        ) : (
+                          <Languages className="h-16 w-16 text-[#ffa300]" />
+                        )}
                       </div>
                       {/* Card Info */}
                       <div className="p-5 flex-1 flex flex-col">
@@ -437,20 +462,16 @@ export default function LanguageCenterDetail() {
                             <MapPin className="h-3.5 w-3.5 text-[#ffa300]" />
                             <span>{sc.city || "Malaysia"}</span>
                           </div>
-                          <div className="flex items-center gap-2 text-xs text-gray-500">
-                            <GraduationCap className="h-3.5 w-3.5 text-[#515768]" />
-                            <span>{sc.level || "General"} Level</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-xs text-gray-500">
-                            <DollarSign className="h-3.5 w-3.5 text-[#515768]" />
-                            <span>
-                              MYR {Number(sc.tuition_fee).toLocaleString()}
-                            </span>
-                          </div>
+                          {sc.more_info && Array.isArray(sc.more_info) && (
+                            <div className="flex items-center gap-2 text-xs text-gray-500">
+                              <BookOpen className="h-3.5 w-3.5 text-[#515768]" />
+                              <span>{sc.more_info.length} Course(s)</span>
+                            </div>
+                          )}
                         </div>
 
                         <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed mt-auto">
-                          {sc.institute || "Language Center"} · {sc.duration}
+                          {sc.about_text || "Language Center"}
                         </p>
                       </div>
                     </CardContent>

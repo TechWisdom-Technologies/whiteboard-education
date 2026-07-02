@@ -3,16 +3,15 @@ import AdminCrudTable, { FieldConfig } from "@/components/admin/AdminCrudTable";
 import { useTableData, useInsertRow, useUpdateRow, useDeleteRow, useBulkUpsertRows } from "@/hooks/useSupabaseData";
 
 const fields: FieldConfig[] = [
-  { key: "name", label: "Program Name", showInTable: true },
-  { key: "institute", label: "Institute", showInTable: true },
+  { key: "name", label: "Center Name", showInTable: true },
+  { key: "slug", label: "Slug", showInTable: true },
   { key: "city", label: "City", showInTable: true },
-  { key: "level", label: "Level", type: "select", options: ["Beginner", "Intermediate", "Advanced"], showInTable: true },
-  { key: "tuition_fee", label: "Tuition Fee (MYR)", type: "number", showInTable: true },
-  { key: "duration", label: "Duration", showInTable: false, placeholder: "e.g. 6 months" },
-  { key: "overview_1", label: "Overview Paragraph 1", type: "textarea", showInTable: false },
-  { key: "overview_2", label: "Overview Paragraph 2", type: "textarea", showInTable: false },
-  { key: "about_image_url", label: "About Image URL", showInTable: false, placeholder: "e.g. https://images.unsplash.com/..." },
-  { key: "intake_months", label: "Intake Months", type: "tag_input", showInTable: false, placeholder: "e.g. January, May, September" },
+  { key: "logo_url", label: "Logo URL", showInTable: false, placeholder: "e.g. https://..." },
+  { key: "about_image_url", label: "About Image URL", showInTable: false, placeholder: "e.g. https://..." },
+  { key: "about_text", label: "About Text", type: "textarea", showInTable: false },
+  { key: "more_info", label: "More Info", type: "json_array", showInTable: false, placeholder: '[{"title": "Intensive English", "description": "..."}]' },
+  { key: "tuition_fees", label: "Tuition Fees", type: "json_array", showInTable: false, placeholder: '[{"duration": "1 month", "tuition_fee": "MYR 2,850", "visa": "0 month"}]' },
+  { key: "faqs", label: "FAQs", type: "json_array", showInTable: false, placeholder: '[{"question": "...", "answer": "..."}]' },
 ];
 
 export default function AdminLanguageCenters() {
@@ -22,82 +21,57 @@ export default function AdminLanguageCenters() {
   const del = useDeleteRow("language_centers");
   const bulkUpsert = useBulkUpsertRows("language_centers");
 
-  // Map Supabase rows to match the front-end fields (overview_1, overview_2, about_image_url)
+  // Map JSONB fields to arrays for visual editing
   const mappedData = useMemo(() => {
     if (!data) return [];
     return data.map((row: any) => {
-      const rawAbout = row.overview || "";
-      const paragraphs = rawAbout
-        .split("\n")
-        .map((p: string) => p.trim())
-        .filter((p: string) => p !== "");
-      
-      const overview_1 = paragraphs[0] || "";
-      const overview_2 = paragraphs.slice(1).join("\n\n") || "";
-
-      let about_image_url = "";
-      if (row.curriculum) {
-        if (typeof row.curriculum === "object") {
-          if (!Array.isArray(row.curriculum)) {
-            about_image_url = (row.curriculum as any).about_image_url || "";
-          }
-        } else if (typeof row.curriculum === "string") {
-          try {
-            const parsed = JSON.parse(row.curriculum);
-            if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-              about_image_url = parsed.about_image_url || "";
-            } else {
-              about_image_url = row.curriculum;
-            }
-          } catch {
-            about_image_url = row.curriculum;
-          }
-        }
-      }
-
       return {
         ...row,
-        overview_1,
-        overview_2,
-        about_image_url,
+        more_info: Array.isArray(row.more_info) ? row.more_info : [],
+        tuition_fees: Array.isArray(row.tuition_fees) ? row.tuition_fees : [],
+        faqs: Array.isArray(row.faqs) ? row.faqs : [],
       };
     });
   }, [data]);
 
-  // Convert form fields back to database structure before saving
+  const parseJsonField = (val: any) => {
+    if (!val) return [];
+    if (typeof val === "object") return val;
+    try {
+      return JSON.parse(val);
+    } catch {
+      return [];
+    }
+  };
+
   const handleInsert = (row: Record<string, any>) => {
-    const { overview_1, overview_2, about_image_url, ...rest } = row;
-    const overview = [overview_1?.trim(), overview_2?.trim()].filter(Boolean).join("\n\n");
-    const curriculum = about_image_url ? { about_image_url } : null;
-    
+    const { more_info, tuition_fees, faqs, ...rest } = row;
     insert.mutate({
       ...rest,
-      overview,
-      curriculum,
+      more_info: parseJsonField(more_info),
+      tuition_fees: parseJsonField(tuition_fees),
+      faqs: parseJsonField(faqs),
     });
   };
 
   const handleUpdate = (row: Record<string, any>) => {
-    const { overview_1, overview_2, about_image_url, ...rest } = row;
-    const overview = [overview_1?.trim(), overview_2?.trim()].filter(Boolean).join("\n\n");
-    const curriculum = about_image_url ? { about_image_url } : null;
-
+    const { more_info, tuition_fees, faqs, ...rest } = row;
     update.mutate({
       ...rest,
-      overview,
-      curriculum,
+      more_info: parseJsonField(more_info),
+      tuition_fees: parseJsonField(tuition_fees),
+      faqs: parseJsonField(faqs),
     });
   };
 
   const handleBulkUpsert = async (rows: Record<string, any>[]) => {
     const mapped = rows.map((row) => {
-      const { overview_1, overview_2, about_image_url, ...rest } = row;
-      const overview = [overview_1?.trim(), overview_2?.trim()].filter(Boolean).join("\n\n");
-      const curriculum = about_image_url ? { about_image_url } : null;
+      const { more_info, tuition_fees, faqs, ...rest } = row;
       return {
         ...rest,
-        overview,
-        curriculum,
+        more_info: parseJsonField(more_info),
+        tuition_fees: parseJsonField(tuition_fees),
+        faqs: parseJsonField(faqs),
       };
     });
     await bulkUpsert.mutateAsync(mapped);

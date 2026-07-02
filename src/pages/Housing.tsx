@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { Home, MapPin, Wifi, Dumbbell, ShieldCheck, Car, BedDouble, Building2, Clock, Phone, Mail, ChevronRight, LayoutGrid, Map } from "lucide-react";
-import { useState, useMemo, lazy, Suspense } from "react";
+import { useState, useEffect, useMemo, lazy, Suspense } from "react";
 import { AccommodationMap } from "@/components/public/AccommodationMap";
 import { accommodations as mockAccommodations } from "@/data/mockData";
 
@@ -56,6 +56,15 @@ export default function Housing() {
   const [maxPrice, setMaxPrice] = useState([2000]);
   const [selected, setSelected] = useState<any | null>(null);
   const [viewMode, setViewMode] = useState<string>("grid");
+  const [activeImage, setActiveImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (selected) {
+      setActiveImage(selected.image_url);
+    } else {
+      setActiveImage(null);
+    }
+  }, [selected]);
 
   const safeAccommodations = useMemo(() => {
     const raw = accommodations.length > 0 ? accommodations : mockAccommodations;
@@ -201,7 +210,16 @@ export default function Housing() {
                           <Badge variant="secondary" className="text-[11px]">{a.property_type}</Badge>
                         </div>
 
-                        {a.travel_distance && (
+                        {a.travel_distance_time && typeof a.travel_distance_time === 'object' && Object.keys(a.travel_distance_time).length > 0 ? (
+                          <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                            {a.travel_distance_time.walking && (
+                              <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5 text-[#ffa300]" /> {a.travel_distance_time.walking} walk</span>
+                            )}
+                            {a.travel_distance_time.car && (
+                              <span className="flex items-center gap-1"><Car className="h-3.5 w-3.5 text-[#ffa300]" /> {a.travel_distance_time.car} drive</span>
+                            )}
+                          </div>
+                        ) : a.travel_distance && (
                           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                             <Clock className="h-3 w-3 text-[#ffa300]" /> {a.travel_distance} from nearest university
                           </div>
@@ -252,11 +270,11 @@ export default function Housing() {
                 <DialogTitle className="text-xl">{selected.name}</DialogTitle>
               </DialogHeader>
 
-              <div className="rounded-sm overflow-hidden h-56 bg-gray-100">
+              <div className="rounded-sm overflow-hidden h-56 bg-gray-100 relative">
                 <img
-                  src={selected.image_url || fallbackImages[0]}
+                  src={activeImage || fallbackImages[0]}
                   alt={selected.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-all duration-300"
                   onError={(e) => {
                     const target = e.currentTarget;
                     if (!target.dataset.retried) {
@@ -265,14 +283,34 @@ export default function Housing() {
                     }
                   }}
                 />
+                {selected.tag && (
+                  <Badge className="absolute top-3 left-3 bg-[#ffa300] hover:bg-[#ffa300]/90 text-[#181d29] font-bold border-0">{selected.tag}</Badge>
+                )}
               </div>
+
+              {/* Thumbnail Gallery */}
+              {selected.image_urls && Array.isArray(selected.image_urls) && selected.image_urls.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
+                  {selected.image_urls.map((img: string, idx: number) => (
+                    <button
+                      key={idx}
+                      onClick={() => setActiveImage(img)}
+                      className={`h-14 w-20 rounded-sm overflow-hidden border-2 shrink-0 transition-all ${
+                        activeImage === img ? "border-[#ffa300] scale-95" : "border-transparent opacity-70 hover:opacity-100"
+                      }`}
+                    >
+                      <img src={img} alt={`thumbnail ${idx}`} className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
 
               <div className="space-y-5 mt-2">
                 {/* Location & Price */}
                 <div className="flex flex-wrap items-center gap-3">
                   <Badge variant="outline" className="gap-1"><MapPin className="h-3 w-3" /> {selected.city}</Badge>
                   <Badge variant="outline">{selected.type}</Badge>
-                  <Badge variant="secondary">{selected.property_type}</Badge>
+                  <Badge variant="secondary">{selected.property_type || "Student Housing"}</Badge>
                   <span className="ml-auto font-extrabold text-lg text-[#ffa300]">RM {Number(selected.price_per_month).toLocaleString()}<span className="text-xs font-normal text-muted-foreground">/mo</span></span>
                 </div>
 
@@ -280,8 +318,32 @@ export default function Housing() {
                   <p className="text-sm text-muted-foreground leading-relaxed">{selected.description}</p>
                 )}
 
-                {/* Travel Distance */}
-                {selected.travel_distance && (
+                {/* Travel Distance & Times */}
+                {selected.travel_distance_time && typeof selected.travel_distance_time === 'object' && Object.keys(selected.travel_distance_time).length > 0 ? (
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-semibold text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Travel Distance / Time</h4>
+                    <div className="flex flex-wrap gap-4 p-3 rounded-md bg-[#ffa300]/10 border border-[#ffa300]/20">
+                      {selected.travel_distance_time.walking && (
+                        <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                          <Clock className="h-4 w-4 text-[#ffa300]" />
+                          <span>{selected.travel_distance_time.walking} walk</span>
+                        </div>
+                      )}
+                      {selected.travel_distance_time.car && (
+                        <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                          <Car className="h-4 w-4 text-[#ffa300]" />
+                          <span>{selected.travel_distance_time.car} by car</span>
+                        </div>
+                      )}
+                      {selected.travel_distance_time.bus && (
+                        <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                          <Building2 className="h-4 w-4 text-[#ffa300]" />
+                          <span>{selected.travel_distance_time.bus} by bus</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : selected.travel_distance && (
                   <div className="flex items-center gap-2 p-3 rounded-sm bg-[#ffa300]/10 border border-[#ffa300]/20">
                     <Clock className="h-4 w-4 text-[#ffa300]" />
                     <span className="text-sm font-medium">{selected.travel_distance}</span>
@@ -292,7 +354,7 @@ export default function Housing() {
                 {/* Unit Types */}
                 {parseJsonArray(selected.unit_types).length > 0 && (
                   <div>
-                    <h4 className="text-sm font-semibold mb-2">Unit Types</h4>
+                    <h4 className="text-sm font-semibold mb-2 text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Unit Types</h4>
                     <div className="flex flex-wrap gap-2">
                       {parseJsonArray(selected.unit_types).map((u: string, i: number) => (
                         <Badge key={i} variant="outline" className="bg-muted/50">{u}</Badge>
@@ -301,12 +363,34 @@ export default function Housing() {
                   </div>
                 )}
 
-                {/* Room Types */}
-                {parseJsonArray(selected.room_types).length > 0 && (
+                {/* Room Rents Table */}
+                {selected.room_rents && Array.isArray(selected.room_rents) && selected.room_rents.length > 0 ? (
                   <div>
-                    <h4 className="text-sm font-semibold mb-2">Available Room Types</h4>
+                    <h4 className="text-sm font-semibold mb-2 text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Available Room Types & Rents</h4>
+                    <div className="border border-gray-200/80 rounded-md overflow-hidden bg-white shadow-sm">
+                      <table className="w-full text-sm text-left">
+                        <thead className="bg-gray-50 border-b border-gray-200/80">
+                          <tr>
+                            <th className="px-4 py-2.5 font-bold text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Room Type</th>
+                            <th className="px-4 py-2.5 font-bold text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Rent / Month</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {selected.room_rents.map((r: any, idx: number) => (
+                            <tr key={idx} className="border-b border-gray-100 last:border-0 hover:bg-gray-50/30 transition-colors">
+                              <td className="px-4 py-2.5 text-gray-700 font-medium">{r.room_type}</td>
+                              <td className="px-4 py-2.5 text-gray-900 font-bold text-[#ffa300]">{r.rent}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ) : parseJsonArray(selected.available_room_types || selected.room_types).length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-semibold mb-2 text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Available Room Types</h4>
                     <div className="flex flex-wrap gap-2">
-                      {parseJsonArray(selected.room_types).map((r: string, i: number) => (
+                      {parseJsonArray(selected.available_room_types || selected.room_types).map((r: string, i: number) => (
                         <Badge key={i} variant="outline" className="gap-1 bg-muted/50"><BedDouble className="h-3 w-3" /> {r}</Badge>
                       ))}
                     </div>

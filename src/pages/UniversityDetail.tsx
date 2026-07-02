@@ -16,8 +16,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import {
   MapPin, BookOpen, GraduationCap, HelpCircle, Building, Clock,
   FileText, CheckCircle, Home as HomeIcon, Car, MapPinCheck,
-  ChevronRight, Search, CalendarDays, Globe, DollarSign, RotateCcw
+  ChevronRight, Search, CalendarDays, Globe, DollarSign, RotateCcw,
+  BedDouble, Building2, Phone, Mail
 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const LOGOS: Record<string, string> = {
   "Multimedia University Malaysia (MMU)": "https://en.your-uni.com/assets/images/university/mmu-university.webp",
@@ -160,6 +162,31 @@ export default function UniversityDetail() {
   const [cPage, setCPage] = useState(1);
   const itemsPerPage = 8;
   const [isScrolled, setIsScrolled] = useState(false);
+  const [selected, setSelected] = useState<any | null>(null);
+  const [activeImage, setActiveImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (selected) {
+      setActiveImage(selected.image_url);
+    } else {
+      setActiveImage(null);
+    }
+  }, [selected]);
+
+  const parseJsonArray = (val: any): string[] => {
+    if (Array.isArray(val)) return val;
+    if (typeof val === "string") {
+      try { const p = JSON.parse(val); return Array.isArray(p) ? p : []; } catch { return []; }
+    }
+    return [];
+  };
+
+  const fallbackImages = [
+    "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80",
+    "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80",
+    "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80",
+    "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80"
+  ];
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 350);
@@ -169,7 +196,10 @@ export default function UniversityDetail() {
 
   const nearbyAccom = useMemo(() => {
     if (!uni) return [];
-    return accoms.filter((a: any) => a.city?.toLowerCase() === uni.city?.toLowerCase());
+    return accoms.filter((a: any) => {
+      const ids = parseJsonArray(a.near_university_ids);
+      return ids.map(String).includes(String(uni.id));
+    });
   }, [uni, accoms]);
 
   // Group courses by field category for Overview table
@@ -633,11 +663,26 @@ export default function UniversityDetail() {
             {nearbyAccom.length > 0 ? (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {nearbyAccom.map((a: any) => (
-                  <Card key={a.id} className="bg-white hover:shadow-md transition-shadow">
-                    <CardContent className="p-4 space-y-2">
+                  <Card key={a.id} className="bg-white hover:shadow-md hover:border-[#ffa300]/40 transition-all cursor-pointer" onClick={() => setSelected(a)}>
+                    <CardContent className="p-4 space-y-2.5">
                       <h4 className="font-bold text-sm text-[#181d29]">{a.name}</h4>
                       <div className="flex items-center gap-1 text-xs text-gray-500"><MapPin className="h-3 w-3" />{a.city}</div>
-                      <Badge variant="outline" className="text-xs">{a.type}</Badge>
+                      <div className="flex flex-wrap gap-1">
+                        <Badge variant="outline" className="text-xs">{a.type}</Badge>
+                        {a.tag && <Badge className="text-[10px] bg-[#ffa300] hover:bg-[#ffa300] text-[#181d29] border-0">{a.tag}</Badge>}
+                      </div>
+                      {a.travel_distance_time && typeof a.travel_distance_time === 'object' && Object.keys(a.travel_distance_time).length > 0 ? (
+                        <div className="flex flex-wrap gap-2 text-[11px] text-muted-foreground">
+                          {a.travel_distance_time.walking && (
+                            <span className="flex items-center gap-1"><Clock className="h-3 w-3 text-[#ffa300]" /> {a.travel_distance_time.walking} walk</span>
+                          )}
+                          {a.travel_distance_time.car && (
+                            <span className="flex items-center gap-1"><Car className="h-3 w-3 text-[#ffa300]" /> {a.travel_distance_time.car} drive</span>
+                          )}
+                        </div>
+                      ) : a.travel_distance && (
+                        <p className="text-[11px] text-gray-500 flex items-center gap-1"><Clock className="h-3 w-3 text-[#ffa300]" /> {a.travel_distance} from campus</p>
+                      )}
                       <p className="font-bold text-[#ffa300] text-sm">RM {Number(a.price_per_month).toLocaleString()}/month</p>
                     </CardContent>
                   </Card>
@@ -658,6 +703,166 @@ export default function UniversityDetail() {
       </section>
 
       
+      {/* Detail Dialog */}
+      <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          {selected && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-xl">{selected.name}</DialogTitle>
+              </DialogHeader>
+
+              <div className="rounded-sm overflow-hidden h-56 bg-gray-100 relative">
+                <img
+                  src={activeImage || fallbackImages[0]}
+                  alt={selected.name}
+                  className="w-full h-full object-cover transition-all duration-300"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (!target.dataset.retried) {
+                      target.dataset.retried = "1";
+                      target.src = fallbackImages[Math.abs(selected.name.length) % fallbackImages.length];
+                    }
+                  }}
+                />
+                {selected.tag && (
+                  <Badge className="absolute top-3 left-3 bg-[#ffa300] hover:bg-[#ffa300]/90 text-[#181d29] font-bold border-0">{selected.tag}</Badge>
+                )}
+              </div>
+
+              {/* Thumbnail Gallery */}
+              {selected.image_urls && Array.isArray(selected.image_urls) && selected.image_urls.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
+                  {selected.image_urls.map((img: string, idx: number) => (
+                    <button
+                      key={idx}
+                      onClick={() => setActiveImage(img)}
+                      className={`h-14 w-20 rounded-sm overflow-hidden border-2 shrink-0 transition-all ${
+                        activeImage === img ? "border-[#ffa300] scale-95" : "border-transparent opacity-70 hover:opacity-100"
+                      }`}
+                    >
+                      <img src={img} alt={`thumbnail ${idx}`} className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              <div className="space-y-5 mt-2">
+                {/* Location & Price */}
+                <div className="flex flex-wrap items-center gap-3">
+                  <Badge variant="outline" className="gap-1"><MapPin className="h-3 w-3" /> {selected.city}</Badge>
+                  <Badge variant="outline">{selected.type}</Badge>
+                  <Badge variant="secondary">{selected.property_type || "Student Housing"}</Badge>
+                  <span className="ml-auto font-extrabold text-lg text-[#ffa300]">RM {Number(selected.price_per_month).toLocaleString()}<span className="text-xs font-normal text-muted-foreground">/mo</span></span>
+                </div>
+
+                {selected.description && (
+                  <p className="text-sm text-muted-foreground leading-relaxed">{selected.description}</p>
+                )}
+
+                {/* Travel Distance & Times */}
+                {selected.travel_distance_time && typeof selected.travel_distance_time === 'object' && Object.keys(selected.travel_distance_time).length > 0 ? (
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-semibold text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Travel Distance / Time</h4>
+                    <div className="flex flex-wrap gap-4 p-3 rounded-md bg-[#ffa300]/10 border border-[#ffa300]/20">
+                      {selected.travel_distance_time.walking && (
+                        <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                          <Clock className="h-4 w-4 text-[#ffa300]" />
+                          <span>{selected.travel_distance_time.walking} walk</span>
+                        </div>
+                      )}
+                      {selected.travel_distance_time.car && (
+                        <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                          <Car className="h-4 w-4 text-[#ffa300]" />
+                          <span>{selected.travel_distance_time.car} by car</span>
+                        </div>
+                      )}
+                      {selected.travel_distance_time.bus && (
+                        <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                          <Building2 className="h-4 w-4 text-[#ffa300]" />
+                          <span>{selected.travel_distance_time.bus} by bus</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : selected.travel_distance && (
+                  <div className="flex items-center gap-2 p-3 rounded-sm bg-[#ffa300]/10 border border-[#ffa300]/20">
+                    <Clock className="h-4 w-4 text-[#ffa300]" />
+                    <span className="text-sm font-medium">{selected.travel_distance}</span>
+                    <span className="text-xs text-muted-foreground">from nearest university</span>
+                  </div>
+                )}
+
+                {/* Unit Types */}
+                {parseJsonArray(selected.unit_types).length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-semibold mb-2 text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Unit Types</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {parseJsonArray(selected.unit_types).map((u: string, i: number) => (
+                        <Badge key={i} variant="outline" className="bg-muted/50">{u}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Room Rents Table */}
+                {selected.room_rents && Array.isArray(selected.room_rents) && selected.room_rents.length > 0 ? (
+                  <div>
+                    <h4 className="text-sm font-semibold mb-2 text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Available Room Types & Rents</h4>
+                    <div className="border border-gray-200/80 rounded-md overflow-hidden bg-white shadow-sm">
+                      <table className="w-full text-sm text-left">
+                        <thead className="bg-gray-50 border-b border-gray-200/80">
+                          <tr>
+                            <th className="px-4 py-2.5 font-bold text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Room Type</th>
+                            <th className="px-4 py-2.5 font-bold text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Rent / Month</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {selected.room_rents.map((r: any, idx: number) => (
+                            <tr key={idx} className="border-b border-gray-100 last:border-0 hover:bg-gray-50/30 transition-colors">
+                              <td className="px-4 py-2.5 text-gray-700 font-medium">{r.room_type}</td>
+                              <td className="px-4 py-2.5 text-gray-900 font-bold text-[#ffa300]">{r.rent}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ) : parseJsonArray(selected.available_room_types || selected.room_types).length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-semibold mb-2 text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Available Room Types</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {parseJsonArray(selected.available_room_types || selected.room_types).map((r: string, i: number) => (
+                        <Badge key={i} variant="outline" className="gap-1 bg-muted/50"><BedDouble className="h-3 w-3" /> {r}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Contact */}
+                {(selected.contact_phone || selected.contact_email) && (
+                  <div className="border-t pt-4">
+                    <h4 className="text-sm font-semibold mb-2">Contact</h4>
+                    <div className="flex flex-wrap gap-4">
+                      {selected.contact_phone && (
+                        <a href={`tel:${selected.contact_phone}`} className="flex items-center gap-2 text-sm text-primary hover:underline">
+                          <Phone className="h-4 w-4" /> {selected.contact_phone}
+                        </a>
+                      )}
+                      {selected.contact_email && (
+                        <a href={`mailto:${selected.contact_email}`} className="flex items-center gap-2 text-sm text-primary hover:underline">
+                          <Mail className="h-4 w-4" /> {selected.contact_email}
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
       <PublicFooter />
     </div>
   );
