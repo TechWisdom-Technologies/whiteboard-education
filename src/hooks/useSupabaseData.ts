@@ -16,11 +16,31 @@ export function useTableData(table: TableName, options?: { select?: string; orde
       const dir = ascending ? "asc" : "desc";
       const selectParam = options?.select || "*";
 
-      // Use user's session token if available (needed for RLS-protected tables like leads)
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token || SUPABASE_KEY;
+      // Use user's session token if available (needed for RLS-protected tables like leads).
+      // On hard page reload getSession() may return a stale/expired token before the
+      // async refresh completes, so we fall back to the anon key on 401 responses.
+      let token = SUPABASE_KEY;
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (sessionData?.session?.access_token) {
+          token = sessionData.session.access_token;
+        }
+      } catch {
+        // Auth not ready yet – fall back to the anonymous key
+      }
 
       const baseUrl = `${SUPABASE_URL}/rest/v1/${table}?select=${encodeURIComponent(selectParam)}&order=${orderCol}.${dir}`;
+
+      const fetchPage = async (offset: number, authToken: string) => {
+        const url = `${baseUrl}&offset=${offset}&limit=${1000}`;
+        const res = await fetch(url, {
+          headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": `Bearer ${authToken}`,
+          },
+        });
+        return res;
+      };
       
       let allData: any[] = [];
       let offset = 0;
@@ -28,13 +48,13 @@ export function useTableData(table: TableName, options?: { select?: string; orde
       let hasMore = true;
 
       while (hasMore) {
-        const url = `${baseUrl}&offset=${offset}&limit=${limit}`;
-        const res = await fetch(url, {
-          headers: {
-            "apikey": SUPABASE_KEY,
-            "Authorization": `Bearer ${token}`,
-          },
-        });
+        let res = await fetchPage(offset, token);
+
+        // If a user-session token returned 401 (expired/stale), retry with the anon key
+        if (res.status === 401 && token !== SUPABASE_KEY) {
+          token = SUPABASE_KEY;
+          res = await fetchPage(offset, token);
+        }
         
         if (!res.ok) {
           const err = await res.text();
@@ -54,6 +74,7 @@ export function useTableData(table: TableName, options?: { select?: string; orde
       return allData;
     },
     retry: 2,
+    staleTime: 5 * 60 * 1000, // 5 minutes – avoid redundant refetches on navigation
   });
 }
 

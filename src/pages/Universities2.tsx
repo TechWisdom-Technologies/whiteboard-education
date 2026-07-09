@@ -121,7 +121,7 @@ const UNIVERSITY_LOGOS: Record<string, string> = {
 export default function Universities() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { data: universities = [], isLoading } = useTableData("universities", { orderBy: "ranking" });
+  const { data: universities = [], isLoading } = useTableData("universities", { orderBy: "name" });
   const { data: courses = [], isLoading: loadingCourses } = useTableData("courses");
   const [search, setSearch] = useState(searchParams.get("search") || "");
   
