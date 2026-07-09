@@ -5,6 +5,7 @@ import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
 import { courses as mockCourses, universities as mockUniversities } from "@/data/mockData";
+import { getActiveIntake } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -281,9 +282,24 @@ ${window.location.href}`;
                       <div className="text-gray-700 text-base font-semibold whitespace-nowrap">Intake</div>
                     </div>
                     <div className="flex flex-wrap justify-start gap-1.5">
-                      {intakeMonths.length > 0 ? intakeMonths.map((m: string, idx: number) => (
-                        <span key={m} className="px-2.5 py-0.5 rounded-[4px] text-sm font-normal bg-[#fcecc9] text-gray-900 border border-[#f5d9a0]">{m}</span>
-                      )) : <span className="text-gray-900 font-normal text-base">TBA</span>}
+                      {intakeMonths.length > 0 ? (() => {
+                        const activeIntake = getActiveIntake(intakeMonths);
+                        return intakeMonths.map((m: string) => {
+                          const isActive = m === activeIntake;
+                          return (
+                            <span 
+                              key={m} 
+                              className={`px-2.5 py-0.5 rounded-[4px] text-sm ${
+                                isActive 
+                                  ? 'bg-[#181d29] text-white border border-[#181d29] font-medium' 
+                                  : 'font-normal bg-[#fcecc9] text-gray-900 border border-[#f5d9a0]'
+                              }`}
+                            >
+                              {m}
+                            </span>
+                          );
+                        });
+                      })() : <span className="text-gray-900 font-normal text-base">TBA</span>}
                     </div>
                   </div>
 

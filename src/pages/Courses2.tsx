@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
+import { getActiveIntake } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -16,7 +17,9 @@ import {
   RotateCcw,
   Clock,
   DollarSign,
-  Building2
+  Building2,
+  Filter,
+  ChevronDown
 } from "lucide-react";
 import {
   Select,
@@ -108,6 +111,7 @@ export default function Courses2() {
   const { data: universities = [], isLoading: loadingUnis } = useTableData("universities");
   
   const [search, setSearch] = useState(searchParams.get("search") || "");
+  const [showFilters, setShowFilters] = useState(false);
   
   useEffect(() => {
     const q = searchParams.get("search");
@@ -217,8 +221,21 @@ export default function Courses2() {
           <LoadingScreen label="Loading courses" sublabel="Finding top programs" className="py-12" />
         ) : (
           <div className="flex flex-col">
-            <div className="sticky top-[112px] z-30 pb-4 -mt-1" style={{ backgroundColor: "#f7f8fa", paddingTop: "16px", marginTop: "-1px", boxShadow: "0 -20px 0 0 #f7f8fa" }}>
-              <div className="bg-white p-4 border flex flex-col lg:flex-row items-center gap-4 shadow-sm" style={{ borderColor: "#e8e8e8", borderRadius: "5px" }}>
+            <div className="mb-6 bg-white border shadow-sm rounded-[5px]" style={{ borderColor: "#e8e8e8" }}>
+              {/* Mobile Filter Toggle Button */}
+              <button 
+                onClick={() => setShowFilters(!showFilters)}
+                className="w-full flex items-center justify-between p-4 lg:hidden text-[#181d29] font-semibold"
+              >
+                <div className="flex items-center gap-2">
+                  <Filter className="h-4 w-4" />
+                  Filter Courses
+                </div>
+                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${showFilters ? 'rotate-180' : ''}`} />
+              </button>
+
+              {/* Filter Content */}
+              <div className={`p-4 flex-col lg:flex-row items-center gap-4 ${showFilters ? 'flex border-t' : 'hidden lg:flex'} lg:border-t-0`} style={{ borderColor: "#e8e8e8" }}>
                 <div className="relative flex-1 w-full">
                   <Input
                     placeholder="Search by Course Title"
@@ -269,7 +286,6 @@ export default function Courses2() {
                     </SelectContent>
                   </Select>
                 </div>
-
                 <button
                   onClick={() => {
                     setSearch("");
@@ -332,7 +348,15 @@ export default function Courses2() {
 
                           <div className="flex items-center gap-1.5">
                             <BookOpen className="h-4 w-4 text-gray-400" />
-                            <span>Intake: {Array.isArray(c.intake_months) ? c.intake_months.join(", ") : "Various"}</span>
+                            <span>Intake: {Array.isArray(c.intake_months) ? (() => {
+                              const active = getActiveIntake(c.intake_months);
+                              return c.intake_months.map((m: string, i: number) => (
+                                <span key={m}>
+                                  <span className={m === active ? "font-bold text-[#181d29]" : ""}>{m}</span>
+                                  {i < c.intake_months.length - 1 ? ", " : ""}
+                                </span>
+                              ));
+                            })() : "Various"}</span>
                           </div>
                         </div>
 

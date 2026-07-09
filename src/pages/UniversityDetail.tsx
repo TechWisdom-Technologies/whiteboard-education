@@ -4,6 +4,7 @@ import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
 import { universities as mockU, courses as mockC, accommodations as mockA } from "@/data/mockData";
+import { getActiveIntake } from "@/lib/utils";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -573,7 +574,16 @@ export default function UniversityDetail() {
                           {c.intake_months?.length > 0 && (
                             <div className="flex flex-col">
                               <span className="text-[12px] uppercase font-normal text-black tracking-wider mb-2">Intakes</span>
-                              <span className="text-sm font-normal text-gray-700">{c.intake_months.slice(0, 3).join(", ")}</span>
+                              <span className="text-sm font-normal text-gray-700">{(() => {
+                                const sliced = c.intake_months.slice(0, 3);
+                                const active = getActiveIntake(c.intake_months);
+                                return sliced.map((m: string, i: number) => (
+                                  <span key={m}>
+                                    <span className={m === active ? "font-bold text-[#181d29]" : ""}>{m}</span>
+                                    {i < sliced.length - 1 ? ", " : ""}
+                                  </span>
+                                ));
+                              })()}</span>
                             </div>
                           )}
                         </div>

@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
+import { getActiveIntake } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -436,7 +437,15 @@ export default function Courses() {
 
                             <div className="flex items-center gap-1.5">
                               <BookOpen className="h-3.5 w-3.5 text-gray-400" />
-                              <span>Intake: {Array.isArray(c.intake_months) ? c.intake_months.join(", ") : "Various"}</span>
+                              <span>Intake: {Array.isArray(c.intake_months) ? (() => {
+                                const active = getActiveIntake(c.intake_months);
+                                return c.intake_months.map((m: string, i: number) => (
+                                  <span key={m}>
+                                    <span className={m === active ? "font-bold text-[#181d29]" : ""}>{m}</span>
+                                    {i < c.intake_months.length - 1 ? ", " : ""}
+                                  </span>
+                                ));
+                              })() : "Various"}</span>
                             </div>
                           </div>
 

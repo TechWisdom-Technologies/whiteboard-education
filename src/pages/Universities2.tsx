@@ -15,6 +15,8 @@ import {
   FileText,
   GraduationCap,
   RotateCcw,
+  Filter,
+  ChevronDown
 } from "lucide-react";
 import {
   Select,
@@ -124,6 +126,7 @@ export default function Universities() {
   const { data: universities = [], isLoading } = useTableData("universities", { orderBy: "name" });
   const { data: courses = [], isLoading: loadingCourses } = useTableData("courses");
   const [search, setSearch] = useState(searchParams.get("search") || "");
+  const [showFilters, setShowFilters] = useState(false);
   
   useEffect(() => {
     const q = searchParams.get("search");
@@ -253,9 +256,21 @@ export default function Universities() {
           <LoadingScreen label="Loading universities" sublabel="Finding top institutions" className="py-12" />
         ) : (
           <div className="flex flex-col">
-            {/* Top Filters Row Wrapper - Sticky */}
-            <div className="sticky top-[112px] z-30 pb-4 -mt-1" style={{ backgroundColor: "#f7f8fa", paddingTop: "16px", marginTop: "-1px", boxShadow: "0 -20px 0 0 #f7f8fa" }}>
-              <div className="bg-white p-4 border flex flex-col lg:flex-row items-center gap-4 shadow-sm" style={{ borderColor: "#e8e8e8", borderRadius: "5px" }}>
+            <div className="mb-6 bg-white border shadow-sm rounded-[5px]" style={{ borderColor: "#e8e8e8" }}>
+              {/* Mobile Filter Toggle Button */}
+              <button 
+                onClick={() => setShowFilters(!showFilters)}
+                className="w-full flex items-center justify-between p-4 lg:hidden text-[#181d29] font-semibold"
+              >
+                <div className="flex items-center gap-2">
+                  <Filter className="h-4 w-4" />
+                  Filter Universities
+                </div>
+                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${showFilters ? 'rotate-180' : ''}`} />
+              </button>
+
+              {/* Filter Content */}
+              <div className={`p-4 flex-col lg:flex-row items-center gap-4 ${showFilters ? 'flex border-t' : 'hidden lg:flex'} lg:border-t-0`} style={{ borderColor: "#e8e8e8" }}>
               <div className="relative flex-1 w-full">
                 <Input
                   placeholder="Search by University Name"
