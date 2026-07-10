@@ -394,18 +394,34 @@ ${window.location.href}`;
                           </tr>
                         </thead>
                         <tbody>
-                          {course.other_fees && course.other_fees.length > 0 ? (
-                            course.other_fees.map((of: any, i: number) => (
-                              <tr key={i} className="border-b border-gray-100 last:border-0">
-                                <td className="py-3 text-gray-600">{of.description}</td>
-                                <td className="py-3 text-gray-600">{of.fee}</td>
+                          {(() => {
+                            const filteredOtherFees = (course.other_fees || []).filter((of: any) => {
+                              const feeStr = String(of.fee || '').toUpperCase();
+                              const descStr = String(of.description || '').toUpperCase();
+                              
+                              if (feeStr.includes('MYR') || feeStr.includes('USD') || feeStr.includes('RM') || feeStr.includes('GBP')) return true;
+                              if (descStr.includes('FEE') || descStr.includes('DEPOSIT') || descStr.includes('BOND') || descStr.includes('ADMIN')) return true;
+                              
+                              // Check if it's purely a number >= 50
+                              const numStr = feeStr.replace(/[^0-9]/g, '');
+                              if (numStr && parseInt(numStr) >= 50) return true;
+                              
+                              return false;
+                            });
+
+                            return filteredOtherFees.length > 0 ? (
+                              filteredOtherFees.map((of: any, i: number) => (
+                                <tr key={i} className="border-b border-gray-100 last:border-0">
+                                  <td className="py-3 text-gray-600">{of.description}</td>
+                                  <td className="py-3 text-gray-600">{of.fee}</td>
+                                </tr>
+                              ))
+                            ) : (
+                              <tr>
+                                <td colSpan={2} className="py-3 text-gray-500 text-center italic">No additional fees data available</td>
                               </tr>
-                            ))
-                          ) : (
-                            <tr>
-                              <td colSpan={2} className="py-3 text-gray-500 text-center italic">No Data</td>
-                            </tr>
-                          )}
+                            );
+                          })()}
                         </tbody>
                       </table>
                     </div>
