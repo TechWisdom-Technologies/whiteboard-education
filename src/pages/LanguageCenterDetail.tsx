@@ -26,7 +26,7 @@ export default function LanguageCenterDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: languageCenters = [], isLoading } = useTableData("language_centers");
-  const lc = languageCenters.find((l: any) => l.id === id);
+  const lc = languageCenters.find((l: any) => generateSlug(l.name) === id || String(l.id) === String(id));
   const [isScrolled, setIsScrolled] = useState(false);
   
   // State for tracking open FAQ items
@@ -89,50 +89,56 @@ export default function LanguageCenterDetail() {
       <MegaMenu disableSticky />
 
       {/* ═══ HERO: Logo + Name + Location + Buttons ═══ */}
-      <section className="bg-[#fdf0d5] py-16">
-        <div className="container mx-auto px-4 max-w-5xl flex flex-col md:flex-row items-center gap-6">
-          {/* Logo / Icon */}
-          <div className="h-28 w-28 md:h-36 md:w-36 bg-white rounded-sm shadow flex items-center justify-center shrink-0 p-3">
-            <Languages className="h-16 w-16 text-[#ffa300]" />
-          </div>
-
-          {/* Title + Location */}
-          <div className="flex-1 text-center md:text-left">
-            <h1
-              className="text-2xl md:text-3xl font-semibold text-[#181d29] mb-2"
-              style={{ fontFamily: "Poppins, sans-serif" }}
-            >
-              {lc.name}
-            </h1>
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-1 text-gray-600 text-[15px]">
-              <span className="flex items-center gap-1.5">
-                <Building className="h-4 w-4 text-[#ffa300] shrink-0" />
-                {lc.institute || "Language Center"}
-              </span>
-              {lc.city && (
-                <span className="flex items-center gap-1.5">
-                  <MapPin className="h-4 w-4 text-[#ffa300] shrink-0" />
-                  {lc.city}, Malaysia
-                </span>
+      <section className="pb-10">
+        <div className="container mx-auto px-4 lg:px-6">
+          <div className="bg-[#fdf0d5] py-16 px-10 flex flex-col md:flex-row items-center md:items-start gap-8 rounded-tl-md rounded-tr-[3rem] rounded-bl-[3rem] rounded-br-md min-h-[220px]">
+            {/* Logo / Icon */}
+            <div className="h-32 w-32 md:h-40 md:w-40 bg-white rounded-sm shadow flex items-center justify-center shrink-0 p-4">
+              {lc.logo_url ? (
+                <img
+                  src={lc.logo_url}
+                  alt={lc.name}
+                  className="w-full h-full object-contain"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = "none";
+                  }}
+                />
+              ) : (
+                <Languages className="h-20 w-20 text-[#ffa300]" />
               )}
             </div>
-          </div>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col gap-2 shrink-0">
-            <Button
-              className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold px-8 h-11"
-              onClick={() => navigate(`/apply?centerId=${lc.id}`)}
-            >
-              Apply Now
-            </Button>
-            <Button
-              variant="outline"
-              className="font-bold px-8 h-11"
-              onClick={() => navigate("/contact")}
-            >
-              Ask Us
-            </Button>
+            
+            {/* Title + Location */}
+            <div className="flex-1 flex flex-col w-full">
+              <h1 className="text-4xl font-bold text-[#181d29] mb-4 text-center md:text-left" style={{ fontFamily: "Poppins, sans-serif" }}>
+                {lc.name}
+              </h1>
+              
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                {lc.city && (
+                  <p className="text-gray-700 flex items-center justify-center md:justify-start gap-2 text-lg">
+                    <MapPin className="h-5 w-5 text-[#ffa300]" />
+                    {lc.city}, Malaysia
+                  </p>
+                )}
+                
+                <div className="flex flex-row gap-3 w-full sm:w-auto justify-center md:justify-end">
+                  <Button
+                    className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold px-8 h-12 text-[16px] flex-1 sm:flex-none"
+                    onClick={() => navigate(`/apply?centerId=${lc.id}`)}
+                  >
+                    Apply Now
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="border-[#9273b6] text-[#9273b6] hover:bg-[#9273b6]/10 font-bold px-8 h-12 text-[16px] bg-transparent flex-1 sm:flex-none"
+                    onClick={() => navigate("/contact")}
+                  >
+                    Ask Us
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -145,8 +151,19 @@ export default function LanguageCenterDetail() {
             <div
               className={`flex items-center min-w-0 transition-all duration-300 ${isScrolled ? "opacity-100 translate-x-0 w-full" : "opacity-0 -translate-x-4 w-0 overflow-hidden"}`}
             >
-              <div className="h-10 w-10 bg-[#ffa300]/10 rounded-sm flex items-center justify-center shrink-0">
-                <Languages className="h-5 w-5 text-[#ffa300]" />
+              <div className="h-10 w-10 bg-white rounded-sm border border-gray-100 shadow-sm flex items-center justify-center shrink-0 overflow-hidden">
+                {lc.logo_url ? (
+                  <img
+                    src={lc.logo_url}
+                    alt={lc.name}
+                    className="w-full h-full object-contain p-1"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = "none";
+                    }}
+                  />
+                ) : (
+                  <Languages className="h-5 w-5 text-[#ffa300]" />
+                )}
               </div>
               <span
                 className="ml-3 font-semibold text-[#181d29] text-sm truncate flex-1"
@@ -248,45 +265,44 @@ export default function LanguageCenterDetail() {
         <section className="bg-white py-12">
           <div className="container mx-auto px-4 max-w-5xl">
             <h2
-              className="text-2xl md:text-3xl font-extrabold text-[#181d29] mb-6"
+              className="text-2xl md:text-3xl font-extrabold text-[#181d29] mb-8"
               style={{ fontFamily: "Poppins, sans-serif" }}
             >
-              Tuition Fees for International Students
+              {lc.name} tuition fees for International students
             </h2>
-            <p className="text-gray-500 text-sm mb-6">
-              Below are the standard tuition fee tiers and visa processing durations for international students at {lc.name}.
-            </p>
-            <div className="border rounded-sm overflow-hidden shadow-sm">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-[#181d29] text-left">
-                    <th className="px-6 py-4 font-semibold text-white/90">
-                      Duration
-                    </th>
-                    <th className="px-6 py-4 font-semibold text-white/90">
-                      Tuition Fees
-                    </th>
-                    <th className="px-6 py-4 font-semibold text-white/90">
-                      Visa
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {tuitionFees.map((tier: any, idx: number) => (
-                    <tr key={idx} className="hover:bg-[#ffa300]/5 transition-colors">
-                      <td className="px-6 py-4 font-medium text-[#181d29] whitespace-nowrap">
-                        {tier.duration}
-                      </td>
-                      <td className="px-6 py-4 font-semibold text-[#ffa300] whitespace-nowrap">
-                        {tier.tuition_fee}
-                      </td>
-                      <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                        {tier.visa}
-                      </td>
+            <div className="border border-gray-400 rounded-lg overflow-hidden bg-white">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-[#fdf0d5] text-center border-b border-gray-400">
+                      <th className="px-4 py-2.5 font-medium text-gray-800">
+                        Duration
+                      </th>
+                      <th className="px-4 py-2.5 font-medium text-gray-800 whitespace-nowrap">
+                        Tuition Fees
+                      </th>
+                      <th className="px-4 py-2.5 font-medium text-gray-800">
+                        Visa
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {tuitionFees.map((tier: any, idx: number) => (
+                      <tr key={idx} className="border-b border-gray-200 last:border-0 hover:bg-gray-50/50 transition-colors">
+                        <td className="px-4 py-2.5 text-gray-600 whitespace-nowrap text-center">
+                          {tier.duration}
+                        </td>
+                        <td className="px-4 py-2.5 text-gray-600 whitespace-nowrap text-center">
+                          {tier.tuition_fee}
+                        </td>
+                        <td className="px-4 py-2.5 text-gray-600 whitespace-nowrap text-center">
+                          {tier.visa}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </section>

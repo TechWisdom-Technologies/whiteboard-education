@@ -18,8 +18,10 @@ import {
   MapPin, BookOpen, GraduationCap, HelpCircle, Building, Clock,
   FileText, CheckCircle, Home as HomeIcon, Car, MapPinCheck,
   ChevronRight, Search, CalendarDays, Globe, DollarSign, RotateCcw,
-  BedDouble, Building2, Phone, Mail
+  BedDouble, Building2, Phone, Mail, Layers
 } from "lucide-react";
+import { toast } from "sonner";
+import { useCourseCompare } from "@/contexts/CourseCompareContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const LOGOS: Record<string, string> = {
@@ -146,6 +148,7 @@ export default function UniversityDetail() {
   const { data: liveU = [], isLoading } = useTableData("universities");
   const { data: liveC = [] } = useTableData("courses");
   const { data: liveA = [] } = useTableData("accommodations");
+  const { addCourse, removeCourse, isComparing, compareList } = useCourseCompare();
 
   const unis = liveU.length > 0 ? liveU : (mockU as any[]);
   const courses = liveC.length > 0 ? liveC : (mockC as any[]);
@@ -647,6 +650,30 @@ export default function UniversityDetail() {
                         </Button>
                         <Button variant="outline" className="w-full font-bold h-11 border-gray-200 text-[#181d29] hover:bg-white" onClick={e => { e.preventDefault(); navigate("/contact"); }}>
                           Ask Us
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className={`w-full font-bold h-11 transition-colors ${
+                            isComparing(c.id) 
+                              ? "bg-[#ffa300]/10 text-[#e69200] border-[#ffa300]" 
+                              : "border-gray-200 text-gray-500 hover:bg-[#ffa300] hover:text-[#181d29] hover:border-[#ffa300]"
+                          }`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            if (isComparing(c.id)) {
+                              removeCourse(c.id);
+                            } else {
+                              if (compareList.length >= 3) {
+                                toast.error("You can only compare up to 3 courses at once.");
+                                return;
+                              }
+                              addCourse(c.id);
+                              toast.success("Added to comparison.");
+                            }
+                          }}
+                        >
+                          <Layers className="h-3.5 w-3.5 mr-1.5" />
+                          {isComparing(c.id) ? "Comparing" : "Compare"}
                         </Button>
                       </div>
                     </div>

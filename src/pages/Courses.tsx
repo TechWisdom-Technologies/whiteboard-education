@@ -3,6 +3,8 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
+import { useCourseCompare } from "@/contexts/CourseCompareContext";
+import { toast } from "sonner";
 import { generateSlug } from "@/lib/utils";
 import { getActiveIntake } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -18,7 +20,8 @@ import {
   RotateCcw,
   Clock,
   DollarSign,
-  Building2
+  Building2,
+  Layers
 } from "lucide-react";
 import {
   Select,
@@ -106,6 +109,7 @@ const PAID_OFFER_LETTER_UNIS = [
 export default function Courses() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { addCourse, removeCourse, isComparing, compareList } = useCourseCompare();
   const { data: courses = [], isLoading: loadingCourses } = useTableData("courses");
   const { data: universities = [], isLoading: loadingUnis } = useTableData("universities");
   
@@ -370,7 +374,7 @@ export default function Courses() {
                     return (
                       <div
                         key={`${c.id || idx}-${selectedLevel}-${selectedArea}`}
-                        className="bg-white py-10 md:py-12 px-6 md:px-8 flex flex-col md:flex-row items-start md:items-center gap-6 border"
+                        className="bg-white p-6 md:p-8 flex flex-col md:flex-row items-start md:items-stretch gap-6 border"
                         style={{
                           borderColor: "#e8e8e8",
                           borderRadius: "5px",
@@ -379,7 +383,7 @@ export default function Courses() {
                         {/* Logo */}
                         <Link
                           to={`/courses/${generateSlug(c.title)}`}
-                          className="shrink-0 w-[180px] h-[110px] flex items-center justify-center overflow-hidden"
+                          className="shrink-0 w-[180px] h-[110px] flex items-center justify-center overflow-hidden self-center md:self-start"
                         >
                           {uni && (uni.logo_url || UNIVERSITY_LOGOS[uni.name]) ? (
                             <img
@@ -393,7 +397,8 @@ export default function Courses() {
                         </Link>
 
                         {/* Info */}
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 min-w-0 flex flex-col justify-between">
+                          <div>
                           <Link to={`/courses/${generateSlug(c.title)}`}>
                             <h3
                               className="font-bold hover:underline mb-2"
@@ -462,10 +467,39 @@ export default function Courses() {
                               })()}
                             </div>
                           </div>
-                        </div>
+                          </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex flex-col gap-2.5 shrink-0 w-full md:w-auto">
+                          {/* Compare Button on bottom-left / inside info area */}
+                          <div className="mt-4 pt-4 border-t border-gray-100/60 mt-auto">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className={`rounded-md font-medium text-xs h-8 px-3 transition-colors ${
+                              isComparing(c.id) 
+                                ? "bg-[#ffa300]/10 text-[#e69200] border-[#ffa300]" 
+                                : "text-gray-500 border-gray-200 hover:bg-[#ffa300] hover:text-[#181d29] hover:border-[#ffa300]"
+                            }`}
+                            onClick={() => {
+                              if (isComparing(c.id)) {
+                                removeCourse(c.id);
+                              } else {
+                                if (compareList.length >= 3) {
+                                  toast.error("You can only compare up to 3 courses at once.");
+                                  return;
+                                }
+                                addCourse(c.id);
+                                toast.success("Added to comparison.");
+                              }
+                            }}
+                          >
+                            <Layers className="h-3.5 w-3.5 mr-1.5" />
+                            {isComparing(c.id) ? "Comparing" : "Compare"}
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex flex-col gap-2.5 shrink-0 w-full md:w-auto self-center">
                           <Button
                             className="h-9 px-6 font-bold text-sm"
                             style={{

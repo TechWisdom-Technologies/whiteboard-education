@@ -19,6 +19,7 @@ import UniversityDetail from "./pages/UniversityDetail";
 import EligibilityWizard from "./pages/EligibilityWizard";
 import B2BLanding from "./pages/B2BLanding";
 import Compare from "./pages/Compare";
+import CourseComparison from "./pages/CourseComparison";
 import Application from "./pages/Application";
 import PartnerRegistration from "./pages/PartnerRegistration";
 
@@ -52,6 +53,8 @@ import PartnerStudents from "./pages/partner/PartnerStudents";
 import PartnerProfile from "./pages/partner/PartnerProfile";
 import PartnerNotifications from "./pages/partner/PartnerNotifications";
 import StudentProfilePage from "./pages/StudentProfilePage";
+import { CourseCompareProvider } from "./contexts/CourseCompareContext";
+import { CourseCompareFAB } from "./components/public/CourseCompareFAB";
 
 const queryClient = new QueryClient();
 
@@ -89,10 +92,12 @@ const App = () => (
     <BrowserRouter>
       <ScrollToTop />
       <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <Routes>
+        <CourseCompareProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <CourseCompareFAB />
+            <Routes>
             {/* Core public routes */}
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
@@ -114,6 +119,7 @@ const App = () => (
             {/* Tools */}
             <Route path="/eligibility" element={<EligibilityWizard />} />
             <Route path="/compare" element={<Compare />} />
+            <Route path="/course-comparison" element={<CourseComparison />} />
 
             {/* Resources */}
             <Route path="/housing" element={<Housing />} />
@@ -183,7 +189,8 @@ const App = () => (
 
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </TooltipProvider>
+          </TooltipProvider>
+        </CourseCompareProvider>
       </AuthProvider>
     </BrowserRouter>
   </QueryClientProvider>
