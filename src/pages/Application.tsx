@@ -84,8 +84,9 @@ export default function Application() {
           const { data: cData } = await supabase.from("language_centers").select("*").eq("id", centerId).single();
           if (cData) {
             setUni({ ...cData, isCenter: true });
-            setCourses([cData.name]);
-            setForm(f => ({ ...f, target_course: cData.name }));
+            const coursesList = Array.isArray(cData.more_info) ? cData.more_info.map((c: any) => c.title) : [];
+            setCourses(coursesList.length > 0 ? coursesList : [cData.name]);
+            setForm(f => ({ ...f, target_course: coursesList.length > 0 ? coursesList[0] : cData.name }));
             setLoadingInitial(false);
             return;
           }
