@@ -4,7 +4,7 @@ import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
 import { universities as mockU, courses as mockC, accommodations as mockA } from "@/data/mockData";
-import { getActiveIntake } from "@/lib/utils";
+import { getActiveIntake, generateSlug } from "@/lib/utils";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -149,8 +149,8 @@ export default function UniversityDetail() {
   const courses = liveC.length > 0 ? liveC : (mockC as any[]);
   const accoms = liveA.length > 0 ? liveA : (mockA as any[]);
 
-  const uni = unis.find((u: any) => String(u.id) === String(universityId));
-  const uniCourses = courses.filter((c: any) => String(c.university_id) === String(universityId));
+  const uni = unis.find((u: any) => generateSlug(u.name) === universityId || String(u.id) === String(universityId));
+  const uniCourses = courses.filter((c: any) => String(c.university_id) === String(uni?.id));
   const similarUnis = uni ? unis.filter((u: any) => u.id !== uni.id).slice(0, 3) : [];
 
   const [tab, setTab] = useState<TabKey>("overview");
@@ -235,20 +235,31 @@ export default function UniversityDetail() {
   const stepIcons = [FileText, CheckCircle, HomeIcon, Car, MapPinCheck];
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#f0f4f8" }}>
+    <div className="min-h-screen flex flex-col bg-white">
       <MegaMenu disableSticky />
 
       {/* ═══ HERO: Big Logo + Name + Buttons ═══ */}
-      <section className="bg-[#fdf0d5] py-16">
-        <div className="container mx-auto px-4 max-w-5xl flex flex-col md:flex-row items-center gap-6">
-          <img src={logo} alt={uni.name} className="h-28 w-28 md:h-36 md:w-36 object-contain rounded-sm bg-white p-3 shadow" />
-          <div className="flex-1 text-center md:text-left">
-            <h1 className="text-3xl font-semibold text-[#181d29] mb-1" style={{ fontFamily: "Poppins, sans-serif" }}>{uni.name}</h1>
-            {uni.city && <p className="text-gray-600 flex items-center gap-1 justify-center md:justify-start"><MapPin className="h-4 w-4 text-[#ffa300]" />{uni.city}, Malaysia</p>}
-          </div>
-          <div className="flex flex-col gap-2 shrink-0">
-            <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold px-8 h-11" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>Apply Now</Button>
-            <Button variant="outline" className="font-bold px-8 h-11" onClick={() => navigate("/contact")}>Ask Us</Button>
+      <section className="pb-10">
+        <div className="container mx-auto px-4 lg:px-6">
+          <div className="bg-[#fdf0d5] py-16 px-10 flex flex-col md:flex-row items-center md:items-start gap-8 rounded-tl-md rounded-tr-[3rem] rounded-bl-[3rem] rounded-br-md min-h-[220px]">
+            <img src={logo} alt={uni.name} className="h-32 w-32 md:h-40 md:w-40 object-contain rounded-sm bg-white p-4 shadow shrink-0" />
+            <div className="flex-1 flex flex-col w-full">
+              <h1 className="text-4xl font-bold text-[#181d29] mb-4 text-center md:text-left" style={{ fontFamily: "Poppins, sans-serif" }}>{uni.name}</h1>
+              
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                {uni.city && (
+                  <p className="text-gray-700 flex items-center justify-center md:justify-start gap-2 text-lg">
+                    <MapPin className="h-5 w-5 text-[#ffa300]" />
+                    {uni.city}, Malaysia
+                  </p>
+                )}
+                
+                <div className="flex flex-row gap-3 w-full sm:w-auto justify-center md:justify-end">
+                  <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold px-8 h-12 text-[16px] flex-1 sm:flex-none" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>Apply Now</Button>
+                  <Button variant="outline" className="border-[#9273b6] text-[#9273b6] hover:bg-[#9273b6]/10 font-bold px-8 h-12 text-[16px] bg-transparent flex-1 sm:flex-none" onClick={() => navigate("/contact")}>Ask Us</Button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -330,46 +341,40 @@ export default function UniversityDetail() {
                 <h2 className="text-xl md:text-2xl font-extrabold text-[#181d29] mb-6">
                   Courses and Fees for International Students
                 </h2>
-                <Accordion type="multiple" defaultValue={[groupedCourses[0]?.category]} className="space-y-3">
+                <Accordion type="multiple" defaultValue={[groupedCourses[0]?.category]} className="space-y-0">
                   {groupedCourses.map(({ category, courses: gc }) => (
-                    <AccordionItem key={category} value={category} className="border rounded-sm overflow-hidden bg-white">
-                      <AccordionTrigger className="px-5 py-4 hover:no-underline bg-gray-50/80 transition-colors text-[#181d29] [&[data-state=open]]:bg-gray-100/50">
-                        <span className="flex items-center gap-2 text-[15px] font-bold">
+                    <AccordionItem key={category} value={category} className="border-b border-gray-200 bg-transparent last:border-b-0">
+                      <AccordionTrigger className="px-0 py-4 hover:no-underline text-gray-700">
+                        <span className="text-[15px] font-medium">
                           {category}
-                          <Badge variant="outline" className="text-xs ml-1 bg-white">{gc.length}</Badge>
                         </span>
                       </AccordionTrigger>
-                      <AccordionContent className="p-0">
-                        <div className="overflow-x-auto">
-                          <table className="w-full text-sm">
-                            <thead><tr className="bg-[#181d29] text-left">
-                              <th className="px-5 py-3 font-semibold text-white/90">Program</th>
-                              <th className="px-5 py-3 font-semibold text-white/90 whitespace-nowrap">Tuition Fee / Year</th>
-                              <th className="px-5 py-3 font-semibold text-white/90">Duration</th>
-                            </tr></thead>
-                            <tbody>
-                              {gc.map((c: any, i: number) => (
-                                <tr key={c.id} className={`border-t ${i % 2 ? "bg-white" : "bg-gray-50/50"} hover:bg-[#ffa300]/5 transition-colors`}>
-                                  <td className="px-5 py-3">
-                                    <Link to={`/courses/${c.id}`} className="text-[#181d29] font-semibold text-md hover:text-[#ffa300] transition-colors">{c.title}</Link>
-                                    <span className="block text-xs text-gray-400 mt-0.5">
-                                      {(() => {
-                                        const titleLower = c.title?.toLowerCase() || "";
-                                        let effLevel = c.degree_level || "";
-                                        if (titleLower.includes("advanced diploma")) effLevel = "Advanced Diploma";
-                                        else if (titleLower.includes("diploma")) effLevel = "Diploma";
-                                        else if (titleLower.includes("certificate")) effLevel = "Certificate";
-                                        else if (titleLower.includes("foundation")) effLevel = "Foundation";
-                                        return effLevel;
-                                      })()}
-                                    </span>
-                                  </td>
-                                  <td className="px-5 py-3 font-semibold text-[#ffa300] whitespace-nowrap">MYR {Number(c.tuition_fee).toLocaleString()}</td>
-                                  <td className="px-5 py-3 text-gray-600 whitespace-nowrap">{c.duration}</td>
+                      <AccordionContent className="p-0 pb-6">
+                        <div className="border border-gray-400 rounded-lg overflow-hidden bg-white">
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-[15px]">
+                              <thead>
+                                <tr className="bg-[#fdf0d5] text-left border-b border-gray-400">
+                                  <th className="px-6 py-4 font-medium text-gray-800">Program</th>
+                                  <th className="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">Tuition Fees per Year</th>
+                                  <th className="px-6 py-4 font-medium text-gray-800">Duration</th>
                                 </tr>
-                              ))}
-                            </tbody>
-                          </table>
+                              </thead>
+                              <tbody>
+                                {gc.map((c: any, i: number) => (
+                                  <tr key={c.id} className="border-b border-gray-200 last:border-0 hover:bg-gray-50/50 transition-colors">
+                                    <td className="px-6 py-4">
+                                      <Link to={`/courses/${generateSlug(c.title)}`} className="text-gray-700 hover:text-[#ffa300] transition-colors">
+                                        {c.title}
+                                      </Link>
+                                    </td>
+                                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap">MYR {c.tuition_fee ? Number(c.tuition_fee).toLocaleString() : 0}</td>
+                                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap">{c.duration}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
                       </AccordionContent>
                     </AccordionItem>
@@ -445,8 +450,8 @@ export default function UniversityDetail() {
                 <h2 className="text-xl font-extrabold text-[#181d29] mb-6">Similar to {uni.name}</h2>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {similarUnis.map((su: any) => (
-                    <Link key={su.id} to={`/universities/${su.id}`} className="h-full">
-                      <Card className="bg-white hover:shadow-lg transition-all hover:-translate-y-1 h-full flex flex-col rounded-sm">
+                    <Link key={su.id} to={`/universities/${generateSlug(su.name)}`} className="h-full">
+                      <Card className="h-full border-[#e8e8e8] group hover:border-[#ffa300] transition-colors" style={{ borderRadius: "5px" }}>
                         <CardContent className="p-0 flex flex-col h-full">
                           <div className="h-48 flex items-center justify-center bg-gray-50/50 border-b p-6 shrink-0">
                             <img 
@@ -546,7 +551,7 @@ export default function UniversityDetail() {
                       {/* Left: Info Section */}
                       <div className="flex-1 p-10 space-y-6">
                         <div>
-                          <Link to={`/courses/${c.id}`} className="font-semibold text-md text-[#181d29] hover:text-[#ffa300] transition-colors block mb-1">
+                          <Link to={`/courses/${generateSlug(c.title)}`} className="font-semibold text-md text-[#181d29] hover:text-[#ffa300] transition-colors block mb-1">
                             {c.title}
                           </Link>
                           <div className="flex items-center gap-2 text-sm text-gray-500 my-4 font-normal">

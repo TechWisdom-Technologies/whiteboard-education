@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
+import { generateSlug } from "@/lib/utils";
 import { getActiveIntake } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -377,7 +378,7 @@ export default function Courses() {
                       >
                         {/* Logo */}
                         <Link
-                          to={`/courses/${c.id}`}
+                          to={`/courses/${generateSlug(c.title)}`}
                           className="shrink-0 w-[180px] h-[110px] flex items-center justify-center overflow-hidden"
                         >
                           {uni && (uni.logo_url || UNIVERSITY_LOGOS[uni.name]) ? (
@@ -393,7 +394,7 @@ export default function Courses() {
 
                         {/* Info */}
                         <div className="flex-1 min-w-0">
-                          <Link to={`/courses/${c.id}`}>
+                          <Link to={`/courses/${generateSlug(c.title)}`}>
                             <h3
                               className="font-bold hover:underline mb-2"
                               style={{
@@ -415,7 +416,6 @@ export default function Courses() {
                           {/* Metadata Row - your-uni style */}
                           <div className="flex flex-wrap items-center gap-y-2 gap-x-3 text-[13px] text-gray-600 mb-4 bg-gray-50/50 p-2.5 rounded-sm border border-gray-100/50">
                             <div className="flex items-center gap-1.5">
-                              <DollarSign className="h-3.5 w-3.5 text-[#ffa300]" />
                               <span className="font-semibold text-[#181d29]">MYR {Number(c.tuition_fee).toLocaleString()} / Year</span>
                             </div>
                             
@@ -479,7 +479,7 @@ export default function Courses() {
                           >
                             Apply Now
                           </Button>
-                          <Link to={`/courses/${c.id}`} className="block">
+                          <Link to={`/courses/${generateSlug(c.title)}`} className="block">
                             <Button
                               variant="outline"
                               className="h-9 px-6 font-bold text-sm w-full"

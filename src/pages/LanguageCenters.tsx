@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
+import { generateSlug } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -230,7 +231,7 @@ export default function LanguageCentersPage() {
                     >
                       {/* Elegant Icon Representation or Image */}
                       <Link
-                        to={`/language-centers/${lc.id}`}
+                        to={`/language-centers/${generateSlug(lc.name)}`}
                         className="shrink-0 w-[200px] h-[120px] bg-[#ffa300]/10 rounded-sm flex items-center justify-center overflow-hidden border border-[#ffa300]/15"
                       >
                         <Languages className="h-12 w-12 text-[#ffa300]" />
@@ -238,7 +239,7 @@ export default function LanguageCentersPage() {
 
                       {/* Info block */}
                       <div className="flex-1 min-w-0">
-                        <Link to={`/language-centers/${lc.id}`}>
+                        <Link to={`/language-centers/${generateSlug(lc.name)}`}>
                           <h3
                             className="font-semibold hover:underline"
                             style={{
@@ -261,7 +262,6 @@ export default function LanguageCentersPage() {
                         {/* Metadata Row - minimal style exactly like Courses2 */}
                         <div className="flex flex-wrap items-center gap-y-3 gap-x-6 text-[13px] text-gray-500 mb-4">
                           <div className="flex items-center gap-1.5">
-                            <DollarSign className="h-4 w-4 text-[#ffa300]" />
                             <span className="font-semibold text-[#181d29]">
                               MYR {Number(lc.tuition_fee).toLocaleString()}
                             </span>
@@ -301,7 +301,7 @@ export default function LanguageCentersPage() {
                         >
                           Apply Now
                         </Button>
-                        <Link to={`/language-centers/${lc.id}`} className="block w-full">
+                        <Link to={`/language-centers/${generateSlug(lc.name)}`} className="block w-full">
                           <Button
                             variant="outline"
                             className="h-11 px-8 font-bold text-base w-full"

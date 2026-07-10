@@ -81,7 +81,7 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
                 </div>
                 <div className="flex items-center gap-2">
                   <Mail className="h-4 w-4 text-[#ffa300] shrink-0" />
-                  <span>info@whiteboardeducation.com</span>
+                  <span className="break-all">info@whiteboardeducation.com</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <Clock className="h-4 w-4 text-[#ffa300] shrink-0 mt-0.5" />

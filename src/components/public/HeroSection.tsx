@@ -44,7 +44,7 @@ export function HeroSection() {
   };
 
   return (
-    <section className="relative bg-[#f8f9fb] pt-0 pb-16 lg:pb-16 overflow-hidden">
+    <section className="relative bg-[#f8f9fb] pt-8 lg:pt-0 pb-16 lg:pb-16 overflow-hidden">
       {/* Background Watermark Text */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
         <div className="absolute top-[-10%] left-[-10%] w-[120%] h-[120%] flex flex-col gap-24 transform -rotate-12">
@@ -66,7 +66,7 @@ export function HeroSection() {
       <div className="container relative z-20 mx-auto px-4">
         <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
           {/* Left Side: Content */}
-          <div className="flex-1 text-left max-w-2xl lg:-mt-40">
+          <div className="flex-1 text-center lg:text-left max-w-2xl lg:-mt-40 mx-auto lg:mx-0">
             <div className={`inline-flex items-center gap-2 px-4 py-2 mb-8 bg-white shadow-sm border border-gray-100 rounded-sm transition-all duration-700 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
               <img
                 src="https://flagcdn.com/w40/my.png"
@@ -76,7 +76,7 @@ export function HeroSection() {
               <span className="text-xs md:text-sm font-bold text-[#181d29] tracking-tight">The Most Trusted Platform for Study in Malaysia</span>
             </div>
 
-            <h1 className={`text-4xl md:text-5xl lg:text-5xl font-extrabold mb-4 leading-[1.2] text-[#181d29] tracking-tighter transition-all duration-700 delay-150 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`} style={{ fontFamily: "Poppins, sans-serif" }}>
+            <h1 className={`text-3xl md:text-5xl lg:text-5xl font-extrabold mb-4 leading-[1.2] text-[#181d29] tracking-tighter transition-all duration-700 delay-150 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`} style={{ fontFamily: "Poppins, sans-serif" }}>
               <span className="block mb-2">Expert Guidance</span>
               <span className="inline-block bg-[#ffa300] text-[#181d29] px-4 py-1 rounded-sm mb-2 shadow-sm">For International</span>
               <span className="block">students In Malaysia</span>
@@ -88,11 +88,11 @@ export function HeroSection() {
 
             {/* Integrated Search Bar - Pulled UP */}
             <div className={`max-w-3xl -mt-4 transition-all duration-700 delay-500 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
-              <div className="bg-white rounded-none border border-[#ffa300] flex flex-col md:flex-row items-stretch p-0.5 gap-0">
-                {/* Category Dropdown - 25% */}
-                <div className="w-full md:w-1/4 shrink-0">
+              <div className="bg-white rounded-none border border-[#ffa300] flex flex-row items-stretch p-0.5 gap-0">
+                {/* Category Dropdown - Auto on mobile, 25% desktop */}
+                <div className="w-[120px] md:w-1/4 shrink-0">
                   <Select value={activeTab} onValueChange={setActiveTab}>
-                    <SelectTrigger className="h-12 border-none bg-transparent focus:ring-0 focus:ring-offset-0 font-bold text-[#181d29] shadow-none rounded-none">
+                    <SelectTrigger className="h-12 border-none bg-transparent focus:ring-0 focus:ring-offset-0 font-bold text-[#181d29] shadow-none rounded-none px-2 md:px-3 text-xs md:text-sm">
                       <SelectValue placeholder="University" />
                     </SelectTrigger>
                     <SelectContent className="rounded-none border-[#ffa300] shadow-xl">
@@ -103,14 +103,14 @@ export function HeroSection() {
                 </div>
 
                 {/* Vertical Divider */}
-                <div className="hidden md:block w-px bg-[#ffa300]/30 my-2" />
+                <div className="block w-px bg-[#ffa300]/30 my-2 shrink-0" />
 
-                {/* Search Input - 50% */}
-                <div className="flex-1 relative min-w-0 md:w-1/2">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                {/* Search Input - Flex 1 */}
+                <div className="flex-1 relative min-w-0">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 hidden sm:block" />
                   <Input
                     placeholder="Search..."
-                    className="w-full h-12 pl-11 border-none bg-transparent focus-visible:ring-0 text-base placeholder:text-gray-400 shadow-none rounded-none"
+                    className="w-full h-12 pl-2 sm:pl-10 border-none bg-transparent focus-visible:ring-0 text-sm md:text-base placeholder:text-gray-400 shadow-none rounded-none"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
@@ -118,14 +118,15 @@ export function HeroSection() {
                 </div>
 
                 {/* Vertical Divider */}
-                <div className="hidden md:block w-px bg-[#ffa300]/30 my-2" />
+                <div className="block w-px bg-[#ffa300]/30 my-2 shrink-0" />
 
-                {/* Search Button - 25% */}
+                {/* Search Button */}
                 <Button
-                  className="h-12 w-full md:w-1/4 bg-[#181d29] text-white hover:bg-[#181d29]/90 font-bold text-sm rounded-none transition-all active:scale-95 shrink-0 px-4"
+                  className="h-12 w-12 md:w-1/4 bg-[#181d29] text-white hover:bg-[#181d29]/90 font-bold text-sm rounded-none transition-all active:scale-95 shrink-0 px-0 md:px-4 flex items-center justify-center"
                   onClick={handleSearch}
                 >
-                  Find Now
+                  <Search className="h-4 w-4 md:hidden block" />
+                  <span className="hidden md:block">Find Now</span>
                 </Button>
               </div>
             </div>

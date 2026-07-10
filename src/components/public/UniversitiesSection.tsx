@@ -2,8 +2,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Trophy, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { useTableData } from "@/hooks/useSupabaseData";
+import { generateSlug } from "@/lib/utils";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 
 export function UniversitiesSection() {
@@ -32,7 +32,7 @@ export function UniversitiesSection() {
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {universities.slice(0, 6).map((uni: any) => (
-            <Link key={uni.id} to={`/universities/${uni.id}`}>
+            <Link key={uni.id} to={`/universities/${generateSlug(uni.name)}`}>
               <Card className="group overflow-hidden hover:border-[#ffa300] transition-all duration-300" style={{ borderRadius: "5px" }}>
                 <div className="h-44 overflow-hidden">
                   <img src={uni.hero_image || uni.logo_url || "/placeholder.svg"} alt={uni.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />

@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
+import { generateSlug } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -435,7 +436,7 @@ export default function Universities() {
                       >
                         {/* Logo */}
                         <Link
-                          to={`/universities/${u.id}`}
+                          to={`/universities/${generateSlug(u.name)}`}
                           className="shrink-0 w-[180px] h-[110px] flex items-center justify-center overflow-hidden"
                         >
                           {u.logo_url || UNIVERSITY_LOGOS[u.name] ? (
@@ -457,7 +458,7 @@ export default function Universities() {
 
                         {/* Info */}
                         <div className="flex-1 min-w-0">
-                          <Link to={`/universities/${u.id}`}>
+                          <Link to={`/universities/${generateSlug(u.name)}`}>
                             <h3
                               className="font-bold hover:underline mb-3"
                               style={{
@@ -532,7 +533,7 @@ export default function Universities() {
                           >
                             Apply Now
                           </Button>
-                          <Link to={`/universities/${u.id}`} className="block">
+                          <Link to={`/universities/${generateSlug(u.name)}`} className="block">
                             <Button
                               variant="outline"
                               className="h-9 px-6 font-bold text-sm w-full"

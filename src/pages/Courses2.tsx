@@ -3,7 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
-import { getActiveIntake } from "@/lib/utils";
+import { getActiveIntake, generateSlug } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -313,7 +313,7 @@ export default function Courses2() {
                   const uni = universities.find((u: any) => u.id === c.university_id);
                   return (
                     <div key={c.id} className="bg-white py-10 md:py-12 px-6 md:px-8 flex flex-col md:flex-row items-start md:items-center gap-6 border" style={{ borderColor: "#e8e8e8", borderRadius: "5px" }}>
-                      <Link to={`/courses/${c.id}`} className="shrink-0 w-[200px] h-[120px] flex items-center justify-center overflow-hidden">
+                      <Link to={`/courses/${generateSlug(c.title)}`} className="shrink-0 w-[200px] h-[120px] flex items-center justify-center overflow-hidden">
                         {uni && (uni.logo_url || UNIVERSITY_LOGOS[uni.name]) ? (
                           <img src={uni.logo_url || UNIVERSITY_LOGOS[uni.name]} alt={uni.name} className="max-w-full max-h-full object-contain p-2" />
                         ) : (
@@ -321,7 +321,7 @@ export default function Courses2() {
                         )}
                       </Link>
                       <div className="flex-1 min-w-0">
-                        <Link to={`/courses/${c.id}`}>
+                        <Link to={`/courses/${generateSlug(c.title)}`}>
                           <h3 className="font-semibold hover:underline" style={{ fontFamily: "Poppins, sans-serif", fontSize: "20px", color: "#181d29" }}>{c.title}</h3>
                         </Link>
                         <div className="flex items-center gap-2 mt-6 mb-6">
@@ -332,7 +332,6 @@ export default function Courses2() {
                         {/* Metadata Row - minimal style */}
                         <div className="flex flex-wrap items-center gap-y-3 gap-x-6 text-[13px] text-gray-500 mb-4">
                           <div className="flex items-center gap-1.5">
-                            <DollarSign className="h-4 w-4 text-[#ffa300]" />
                             <span className="font-semibold text-[#181d29]">MYR {Number(c.tuition_fee).toLocaleString()} / Year</span>
                           </div>
                           

@@ -28,6 +28,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { GlobalBreadcrumbs } from "./GlobalBreadcrumbs";
 
 
 const resourceToolsLinks = [
@@ -95,8 +96,9 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
   const userInitial = user?.email?.charAt(0).toUpperCase() || "U";
 
   return (
-    <header className={`${disableSticky ? 'relative' : 'sticky top-0'} z-50 w-full shadow-sm`}>
-      {/* Top Utility Bar */}
+    <>
+      <header className={`${disableSticky ? 'relative' : 'sticky top-0'} z-50 w-full shadow-sm`}>
+        {/* Top Utility Bar */}
       <div className="bg-[#181d29] text-white py-2 border-b border-white/5">
         <div className="container mx-auto flex justify-end gap-6 px-4 lg:px-6">
           <Link 
@@ -336,11 +338,11 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
           </div>
         </div>
 
-      {/* Bottom accent line - thinner */}
       <div className="h-[2px] w-full bg-[#ffa300]" />
 
-      
     </header>
+    <GlobalBreadcrumbs />
+    </>
   );
 }
 

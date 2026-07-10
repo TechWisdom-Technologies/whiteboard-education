@@ -48,7 +48,7 @@
     --input: 216 10% 82%;
     --ring: 39 100% 50%;
 
-    --radius: 0.25rem;                 /* 4px per requested less-rounded design */
+    --radius: 0.5rem;                  /* Increased per request for a softer, nicer look */
 
     --sidebar-background: 225 24% 13%;
     --sidebar-foreground: 0 0% 100%;
@@ -117,6 +117,7 @@
 
   html {
     overflow-y: scroll;
+    overflow-x: clip;
     scrollbar-gutter: stable;
   }
 
@@ -127,6 +128,7 @@
     font-size: 16px;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
   }
 
   /* Typography System */
@@ -285,7 +287,7 @@
   position: relative;
   background: #ffffff;
   border: 1px solid #e5e7eb;
-  border-radius: 0.25rem;
+  border-radius: var(--radius);
   padding: 2rem 1.5rem 1.5rem;
   text-align: center;
   display: flex;
@@ -305,7 +307,7 @@
 .stats-card-icon-bg {
   width: 3.5rem;
   height: 3.5rem;
-  border-radius: 0.25rem;
+  border-radius: var(--radius);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -363,7 +365,7 @@
   font-size: 0.8rem;
   font-weight: 600;
   padding: 0.55rem 1.25rem;
-  border-radius: 0.25rem;
+  border-radius: var(--radius);
   text-decoration: none;
   letter-spacing: 0.01em;
   transition: opacity 0.2s ease;
@@ -413,7 +415,7 @@
 .testimonial-card {
   background: #ffffff;
   border: 1px solid #e5e7eb;
-  border-radius: 0.25rem;
+  border-radius: var(--radius);
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -442,7 +444,7 @@
 .blog-card {
   background: #ffffff;
   border: 1px solid #e5e7eb;
-  border-radius: 0.25rem;
+  border-radius: var(--radius);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -477,7 +479,7 @@
   color: #ffa300;
   background: rgba(255, 163, 0, 0.08);
   padding: 0.2rem 0.6rem;
-  border-radius: 0.25rem;
+  border-radius: var(--radius);
   margin-bottom: 0.75rem;
   align-self: flex-start;
 }
@@ -539,7 +541,7 @@
 .partner-logo-card {
   background: #ffffff;
   border: 1px solid #e5e7eb;
-  border-radius: 0.25rem;
+  border-radius: var(--radius);
   padding: 1.5rem 1rem;
   display: flex;
   flex-direction: column;
@@ -611,6 +613,6 @@
 
 .rich-text-content img {
   max-width: 100%;
-  border-radius: 0.25rem;
+  border-radius: var(--radius);
   margin: 1.5rem 0;
 }

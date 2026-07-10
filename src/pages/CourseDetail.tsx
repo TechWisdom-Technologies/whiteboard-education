@@ -5,7 +5,7 @@ import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
 import { courses as mockCourses, universities as mockUniversities } from "@/data/mockData";
-import { getActiveIntake } from "@/lib/utils";
+import { getActiveIntake, generateSlug } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -23,7 +23,7 @@ export default function CourseDetail() {
   const [copied, setCopied] = useState(false);
   const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
 
-  const course = courses.find((c: any) => String(c.id) === String(courseId));
+  const course = courses.find((c: any) => generateSlug(c.title) === courseId || String(c.id) === String(courseId));
   const uni = course ? universities.find((u: any) => String(u.id) === String(course.university_id)) : null;
 
   useEffect(() => {
@@ -179,34 +179,34 @@ ${window.location.href}`;
 
       <div className="w-full flex-1 flex flex-col">
         {/* Top Hero Section */}
-        <div className="w-full bg-[#ffecd8] border-b border-[#ffb870]/20">
-          <div className="container mx-auto px-4 py-16 md:py-20 max-w-5xl">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 w-full">
-              {uni?.logo_url && (
-                <div className="w-32 h-32 md:w-40 md:h-40 bg-white rounded-sm border border-gray-200 p-4 shrink-0 flex items-center justify-center overflow-hidden shadow-sm">
-                  <img src={uni.logo_url} alt={uni.name} className="max-w-full max-h-full object-contain" />
-                </div>
-              )}
-              <div className="w-full flex-1">
-                <div className="space-y-1 md:space-y-2 text-center md:text-left">
-                  <h1 className="text-2xl font-semibold text-gray-900 leading-tight">{course.title}</h1>
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                    <div className="flex items-center justify-center md:justify-start gap-2 text-gray-600">
-                      <Building2 className="w-5 h-5 shrink-0" />
-                      <p className="text-base font-medium">{uni?.name}</p>
+        <div className="w-full pb-16">
+          <div className="container mx-auto px-4 lg:px-6">
+            <div className="w-full bg-[#ffecd8] py-20 px-10 border border-[#ffb870]/20 rounded-tl-md rounded-tr-[3rem] rounded-bl-[3rem] rounded-br-md min-h-[220px]">
+              <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
+                {uni?.logo_url && (
+                  <div className="w-32 h-32 md:w-40 md:h-40 bg-white rounded-sm border border-gray-200 p-4 shrink-0 flex items-center justify-center overflow-hidden shadow-sm">
+                    <img src={uni.logo_url} alt={uni.name} className="max-w-full max-h-full object-contain" />
+                  </div>
+                )}
+                <div className="flex-1 flex flex-col w-full">
+                  <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-4 text-center md:text-left">{course.title}</h1>
+                  
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div className="flex items-center justify-center md:justify-start gap-2 text-gray-700">
+                      <Building2 className="w-5 h-5 shrink-0 text-[#ffa300]" />
+                      <p className="text-lg font-medium">{uni?.name}</p>
                     </div>
                     
-                    <div className="flex items-center gap-3 shrink-0 justify-center md:justify-end">
-                      <Button className="bg-[#f1a51c] hover:bg-[#e09819] text-black font-semibold rounded-sm px-6 h-10 shadow-none text-sm" onClick={() => navigate(`/apply?courseId=${course.id}`)}>Apply Now</Button>
-                      <Button variant="outline" className="rounded-sm px-6 border-gray-300 text-gray-700 hover:bg-gray-50 font-medium h-10 text-sm shadow-none bg-white" onClick={() => navigate("/contact")}>Ask Us</Button>
+                    <div className="flex flex-row gap-3 w-full sm:w-auto justify-center md:justify-end">
+                      <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold px-8 h-12 text-[16px] rounded-sm shadow-none flex-1 sm:flex-none" onClick={() => navigate(`/apply?courseId=${course.id}`)}>Apply Now</Button>
+                      <Button variant="outline" className="border-[#9273b6] text-[#9273b6] hover:bg-[#9273b6]/10 font-bold px-8 h-12 text-[16px] bg-transparent rounded-sm shadow-none flex-1 sm:flex-none" onClick={() => navigate("/contact")}>Ask Us</Button>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div></div>
+        </div>
 
         {/* Sticky Tab Bar */}
         <div className="sticky top-0 z-40 bg-white border-y border-gray-200 shadow-sm transition-all duration-200">

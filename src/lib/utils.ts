@@ -22,3 +22,17 @@ export function getActiveIntake(intakes: string[]): string | null {
   const activeIntake = parsedIntakes.find(item => item.monthIndex > currentMonthIndex);
   return activeIntake ? activeIntake.original : parsedIntakes[0].original;
 }
+
+export function generateSlug(text: string | undefined | null): string {
+  if (!text) return "";
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    // Remove characters that are not alphanumeric, spaces, or hyphens
+    .replace(/[^\w\s-]/g, '')
+    // Replace spaces and multiple hyphens with a single hyphen
+    .replace(/[\s_-]+/g, '-')
+    // Remove leading and trailing hyphens
+    .replace(/^-+|-+$/g, '');
+}

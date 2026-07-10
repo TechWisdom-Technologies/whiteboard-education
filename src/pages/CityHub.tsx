@@ -8,6 +8,7 @@ import {
   costOfLivingData,
 } from "@/data/mockData";
 import { useTableData } from "@/hooks/useSupabaseData";
+import { generateSlug } from "@/lib/utils";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -327,7 +328,7 @@ export default function CityHub() {
               {cityCourses.slice(0, 6).map((course: any) => {
                 const uni = universities.find((u: any) => String(u.id) === String(course.university_id));
                 return (
-                  <Link key={course.id} to={`/courses/${course.id}`}>
+                  <Link key={course.id} to={`/courses/${generateSlug(course.title)}`}>
                     <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full">
                       <CardContent className="p-5 space-y-3">
                         <Badge variant="secondary" className="text-xs">{course.degree_level}</Badge>
@@ -374,9 +375,9 @@ export default function CityHub() {
             </Card>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {cityUnis.map((uni) => (
-                <Link key={uni.id} to={`/universities/${uni.id}`}>
-                  <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden h-full">
+              {cityUnis.map((uni: any) => (
+                <Link key={uni.id} to={`/universities/${generateSlug(uni.name)}`}>
+                  <Card className="hover:shadow-lg transition-all duration-300 border-[#e8e8e8] overflow-hidden group">
                     <div className="h-36 overflow-hidden bg-muted">
                       <img src={uni.heroImage || uni.logo_url} alt={uni.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     </div>
