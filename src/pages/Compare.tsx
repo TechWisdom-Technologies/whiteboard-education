@@ -49,7 +49,7 @@ export default function Compare() {
   }, [activeUnis, hasAny]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f7f8fa]">
+    <div className="min-h-screen flex flex-col bg-white">
       <MegaMenu />
       
       {/* Page Header */}

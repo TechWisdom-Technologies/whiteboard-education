@@ -159,7 +159,7 @@ export default function PartnerRegistration() {
   const inputCls = "h-11 bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] text-[13px] rounded-sm transition-colors shadow-none";
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f7f8fa]">
+    <div className="min-h-screen flex flex-col bg-white">
       <main className="flex-1 py-10 md:py-12">
         <div className="container mx-auto px-4 max-w-6xl">
           <Link to="/partner" className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-gray-500 hover:text-[#181d29] transition-colors mb-6">

@@ -124,13 +124,43 @@ export default function Courses() {
   const [selectedArea, setSelectedArea] = useState<string>("All Areas");
   const [selectedUniId, setSelectedUniId] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
-  // removed lead variables
   
   const gridRef = useRef<HTMLDivElement>(null);
 
+  const [appliedFilters, setAppliedFilters] = useState({
+    search: searchParams.get("search") || "",
+    selectedLevel: "All Levels",
+    selectedArea: "All Areas",
+    selectedUniId: "all"
+  });
+
+  const applyFilters = () => {
+    setAppliedFilters({
+      search,
+      selectedLevel,
+      selectedArea,
+      selectedUniId
+    });
+    setCurrentPage(1);
+  };
+
+  const resetFilters = () => {
+    setSearch("");
+    setSelectedLevel("All Levels");
+    setSelectedArea("All Areas");
+    setSelectedUniId("all");
+    setAppliedFilters({
+      search: "",
+      selectedLevel: "All Levels",
+      selectedArea: "All Areas",
+      selectedUniId: "all"
+    });
+    setCurrentPage(1);
+  };
+
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, selectedLevel, selectedArea, selectedUniId]);
+  }, [appliedFilters]);
 
   const AREA_KEYWORDS: Record<string, string[]> = {
     "Business & Management": ["business", "management", "commerce", "accounting", "finance", "marketing", "mba", "administration", "economics", "entrepreneurship"],
@@ -144,6 +174,7 @@ export default function Courses() {
   };
 
   const filtered = useMemo(() => {
+    const { search, selectedLevel, selectedArea, selectedUniId } = appliedFilters;
     return courses.filter((c: any) => {
       const titleLower = c.title?.toLowerCase() || "";
       let effLevel = c.degree_level || "";
@@ -168,10 +199,22 @@ export default function Courses() {
       
       return true;
     });
-  }, [courses, search, selectedLevel, selectedArea, selectedUniId]);
+  }, [courses, appliedFilters]);
 
-  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-  const paged = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const [sortBy, setSortBy] = useState("best_match");
+
+  const sorted = useMemo(() => {
+    let result = [...filtered];
+    if (sortBy === "tuition_low_high") {
+      result.sort((a, b) => Number(a.tuition_fee) - Number(b.tuition_fee));
+    } else if (sortBy === "tuition_high_low") {
+      result.sort((a, b) => Number(b.tuition_fee) - Number(a.tuition_fee));
+    }
+    return result;
+  }, [filtered, sortBy]);
+
+  const totalPages = Math.ceil(sorted.length / ITEMS_PER_PAGE);
+  const paged = sorted.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   const changePage = (page: number) => {
     setCurrentPage(page);
@@ -199,27 +242,17 @@ export default function Courses() {
   const isLoading = loadingCourses || loadingUnis;
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#f7f8fa" }}>
+    <div className="min-h-screen flex flex-col bg-white">
       <MegaMenu />
 
-      {/* Page Header */}
-      <div className="container mx-auto px-4 pt-10 pb-6 flex items-center justify-between">
-        <h1 className="text-[28px] font-extrabold" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>
-          Courses
-        </h1>
-        <div className="text-[15px] font-bold" style={{ color: "#515768", fontFamily: "Poppins, sans-serif" }}>
-          Total courses: <span style={{ color: "#ffa300" }}>{filtered.length}</span>
-        </div>
-      </div>
-
       {/* Main Content */}
-      <div className="container mx-auto px-4 pb-16 flex-1" ref={gridRef}>
+      <div className="container mx-auto px-4 pt-10 pb-16 flex-1 w-full" ref={gridRef}>
         {isLoading ? (
           <LoadingScreen label="Loading courses" sublabel="Finding top programs" className="py-12" />
         ) : (
-          <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
             {/* ─── SIDEBAR ─── */}
-            <aside className="lg:w-[350px] shrink-0">
+            <aside className="lg:w-[300px] xl:w-[320px] shrink-0">
               <div
                 className="overflow-hidden lg:sticky lg:top-[152px] border"
                 style={{
@@ -351,11 +384,54 @@ export default function Courses() {
                     </Select>
                   </div>
                 </div>
+
+                {/* Apply/Reset Buttons */}
+                <div className="flex items-center gap-3 px-5 pb-5 bg-white">
+                  <Button 
+                    className="flex-1 font-bold h-11 text-sm bg-[#ffa300] text-[#181d29] hover:bg-[#e69200]"
+                    onClick={applyFilters}
+                  >
+                    Apply Filter
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    className="flex-1 font-bold h-11 text-sm border-gray-200 text-[#181d29] hover:bg-gray-50"
+                    onClick={resetFilters}
+                  >
+                    Reset Filter
+                  </Button>
+                </div>
               </div>
             </aside>
 
             {/* ─── CONTENT AREA ─── */}
             <div className="flex-1 min-w-0">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-gray-200 pb-4 mb-6 gap-4">
+                <h1 className="text-[20px] md:text-[22px] font-bold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>
+                  Courses
+                </h1>
+                
+                <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 md:gap-4 text-[14px]">
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="font-semibold text-[#181d29] whitespace-nowrap">Sort By:</span>
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="border border-gray-300 rounded-[4px] px-3 py-1.5 text-gray-600 bg-white focus:outline-none focus:border-[#ffa300]"
+                    >
+                      <option value="best_match">Best Match (Default)</option>
+                      <option value="tuition_low_high">Tuition cost (Low to high)</option>
+                      <option value="tuition_high_low">Tuition cost (High to Low)</option>
+                    </select>
+                  </div>
+                  
+                  <div className="text-gray-500 hidden sm:block">|</div>
+                  
+                  <div className="font-medium text-gray-600 whitespace-nowrap shrink-0">
+                    Total Courses: {filtered.length}
+                  </div>
+                </div>
+              </div>
               {paged.length === 0 ? (
                 <div
                   className="text-center py-20"
@@ -373,161 +449,100 @@ export default function Courses() {
                     const uni = universities.find((u: any) => u.id === c.university_id);
                     return (
                       <div
-                        key={`${c.id || idx}-${selectedLevel}-${selectedArea}`}
-                        className="bg-white p-6 md:p-8 flex flex-col md:flex-row items-start md:items-stretch gap-6 border"
-                        style={{
-                          borderColor: "#e8e8e8",
-                          borderRadius: "5px",
-                        }}
+                        key={c.id}
+                        className="bg-white p-5 md:p-6 lg:p-8 border border-gray-200 rounded-[8px]"
                       >
-                        {/* Logo */}
-                        <Link
-                          to={`/courses/${generateSlug(c.title)}`}
-                          className="shrink-0 w-[180px] h-[110px] flex items-center justify-center overflow-hidden self-center md:self-start"
-                        >
-                          {uni && (uni.logo_url || UNIVERSITY_LOGOS[uni.name]) ? (
-                            <img
-                              src={uni.logo_url || UNIVERSITY_LOGOS[uni.name]}
-                              alt={uni.name}
-                              className="max-w-full max-h-full object-contain p-2"
-                            />
-                          ) : (
-                            <GraduationCap className="h-10 w-10" style={{ color: "#cacdd4" }} />
-                          )}
-                        </Link>
-
-                        {/* Info */}
-                        <div className="flex-1 min-w-0 flex flex-col justify-between">
-                          <div>
-                          <Link to={`/courses/${generateSlug(c.title)}`}>
-                            <h3
-                              className="font-bold hover:underline mb-2"
-                              style={{
-                                fontFamily: "Poppins, sans-serif",
-                                fontSize: "20px",
-                                lineHeight: "28px",
-                                color: "#181d29",
-                              }}
-                            >
-                              {c.title}
-                            </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] lg:grid-cols-[180px_1fr_180px] gap-6 lg:gap-8 items-center lg:items-start">
+                          {/* Left: Logo */}
+                          <Link
+                            to={`/courses/${generateSlug(c.title)}`}
+                            className="w-full h-[100px] flex items-center justify-center overflow-hidden border border-gray-100 rounded-md p-2"
+                          >
+                            {uni && (uni.logo_url || UNIVERSITY_LOGOS[uni.name]) ? (
+                              <img
+                                src={uni.logo_url || UNIVERSITY_LOGOS[uni.name]}
+                                alt={uni.name}
+                                className="max-w-full max-h-full object-contain"
+                              />
+                            ) : (
+                              <GraduationCap className="h-10 w-10 text-gray-300" />
+                            )}
                           </Link>
 
-                          <div className="flex items-center gap-2 mb-3">
-                            <Building2 className="h-4 w-4 text-[#ffa300]" />
-                            <span className="text-sm font-medium text-gray-500">{uni?.name || "Malaysian University"} [{uni?.city || "Malaysia"}]</span>
+                          {/* Middle: Info */}
+                          <div className="min-w-0 flex flex-col justify-center space-y-3">
+                            <Link to={`/courses/${generateSlug(c.title)}`}>
+                              <h3 className="font-semibold hover:underline text-[18px] md:text-[20px] text-[#181d29] leading-tight mb-1">
+                                {c.title}
+                              </h3>
+                            </Link>
+
+                            <div className="flex flex-col gap-2.5">
+                              <div className="flex items-center gap-2.5 text-[15px] text-[#515768]">
+                                <Building2 className="h-4 w-4 shrink-0 text-[#515768]" />
+                                <span className="truncate"><span className="font-medium text-[#181d29]">{uni?.name || "Malaysian University"}</span> — {uni?.city || "Malaysia"}</span>
+                              </div>
+
+                              <div className="flex items-center gap-2.5 text-[15px] text-[#515768]">
+                                <DollarSign className="h-4 w-4 shrink-0 text-[#515768]" />
+                                <span>MYR {Number(c.tuition_fee).toLocaleString()} / Year</span>
+                              </div>
+
+                              <div className="flex items-center gap-2.5 text-[15px] text-[#515768]">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mail shrink-0 text-[#515768]"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                                <span>{uni && PAID_OFFER_LETTER_UNIS.includes(uni.name) ? "Offer Letter Fees Applies" : "Free Offer Letter"}</span>
+                              </div>
+
+                              <div className="flex items-center gap-2.5 text-[15px] text-[#515768]">
+                                <Clock className="h-4 w-4 shrink-0 text-[#515768]" />
+                                <span>{c.duration || "N/A"} (Intake: {Array.isArray(c.intake_months) ? getActiveIntake(c.intake_months) : "Various"})</span>
+                              </div>
+                            </div>
+
+                            {/* Compare Button */}
+                            <div className="pt-2">
+                              <Button
+                                size="sm"
+                                className={`rounded-md font-medium text-[13px] h-9 px-4 transition-colors border bg-white ${
+                                  isComparing(c.id) 
+                                    ? "bg-[#ffa300]/10 text-[#e69200] border-[#ffa300]" 
+                                    : "text-gray-500 border-gray-200 hover:bg-[#ffa300] hover:text-[#181d29] hover:border-[#ffa300]"
+                                }`}
+                                onClick={() => {
+                                  if (isComparing(c.id)) {
+                                    removeCourse(c.id);
+                                  } else {
+                                    if (compareList.length >= 3) {
+                                      toast.error("You can only compare up to 3 courses at once.");
+                                      return;
+                                    }
+                                    addCourse(c.id);
+                                    toast.success("Added to comparison.");
+                                  }
+                                }}
+                              >
+                                <Layers className="h-4 w-4 mr-2" />
+                                {isComparing(c.id) ? "Comparing" : "Compare"}
+                              </Button>
+                            </div>
                           </div>
 
-                          {/* Metadata Row - your-uni style */}
-                          <div className="flex flex-wrap items-center gap-y-2 gap-x-3 text-[13px] text-gray-600 mb-4 bg-gray-50/50 p-2.5 rounded-sm border border-gray-100/50">
-                            <div className="flex items-center gap-1.5">
-                              <span className="font-semibold text-[#181d29]">MYR {Number(c.tuition_fee).toLocaleString()} / Year</span>
-                            </div>
-                            
-                            <div className="hidden sm:block text-gray-300">•</div>
-                            
-                            <div className="flex items-center gap-1.5">
-                              <span className={`h-1.5 w-1.5 rounded-sm ${uni && PAID_OFFER_LETTER_UNIS.includes(uni.name) ? "bg-red-400" : "bg-green-400"}`} />
-                              <span>{uni && PAID_OFFER_LETTER_UNIS.includes(uni.name) ? "Offer Letter Fees Applies" : "Free Offer Letter"}</span>
-                            </div>
-
-                            <div className="hidden sm:block text-gray-300">•</div>
-
-                            <div className="flex items-center gap-1.5">
-                              <Clock className="h-3.5 w-3.5 text-gray-400" />
-                              <span>{c.duration || "N/A"}</span>
-                            </div>
-
-                            <div className="hidden sm:block text-gray-300">•</div>
-
-                            <div className="flex items-center gap-1.5">
-                              <BookOpen className="h-3.5 w-3.5 text-gray-400" />
-                              <span>Intake: {Array.isArray(c.intake_months) ? (() => {
-                                const active = getActiveIntake(c.intake_months);
-                                return c.intake_months.map((m: string, i: number) => (
-                                  <span key={m}>
-                                    <span className={m === active ? "font-bold text-[#181d29]" : ""}>{m}</span>
-                                    {i < c.intake_months.length - 1 ? ", " : ""}
-                                  </span>
-                                ));
-                              })() : "Various"}</span>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-600 rounded-sm text-[11px] font-bold uppercase tracking-wider">
-                              <GraduationCap className="h-3 w-3" />
-                              {(() => {
-                                const titleLower = c.title?.toLowerCase() || "";
-                                if (titleLower.includes("advanced diploma")) return "Advanced Diploma";
-                                if (titleLower.includes("diploma")) return "Diploma";
-                                if (titleLower.includes("certificate")) return "Certificate";
-                                if (titleLower.includes("foundation")) return "Foundation";
-                                return c.degree_level;
-                              })()}
-                            </div>
-                          </div>
-                          </div>
-
-                          {/* Compare Button on bottom-left / inside info area */}
-                          <div className="mt-4 pt-4 border-t border-gray-100/60 mt-auto">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className={`rounded-md font-medium text-xs h-8 px-3 transition-colors ${
-                              isComparing(c.id) 
-                                ? "bg-[#ffa300]/10 text-[#e69200] border-[#ffa300]" 
-                                : "text-gray-500 border-gray-200 hover:bg-[#ffa300] hover:text-[#181d29] hover:border-[#ffa300]"
-                            }`}
-                            onClick={() => {
-                              if (isComparing(c.id)) {
-                                removeCourse(c.id);
-                              } else {
-                                if (compareList.length >= 3) {
-                                  toast.error("You can only compare up to 3 courses at once.");
-                                  return;
-                                }
-                                addCourse(c.id);
-                                toast.success("Added to comparison.");
-                              }
-                            }}
-                          >
-                            <Layers className="h-3.5 w-3.5 mr-1.5" />
-                            {isComparing(c.id) ? "Comparing" : "Compare"}
-                          </Button>
-                        </div>
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="flex flex-col gap-2.5 shrink-0 w-full md:w-auto self-center">
-                          <Button
-                            className="h-9 px-6 font-bold text-sm"
-                            style={{
-                              backgroundColor: "#ffa300",
-                              color: "#181d29",
-                              borderRadius: "5px",
-                              fontFamily: "Poppins, sans-serif",
-                              border: "1px solid #ffa300",
-                            }}
-                            onClick={() => navigate(`/apply?courseId=${c.id}`)}
-                          >
-                            Apply Now
-                          </Button>
-                          <Link to={`/courses/${generateSlug(c.title)}`} className="block">
+                          {/* Right: Buttons */}
+                          <div className="w-full md:col-span-2 lg:col-span-1 flex flex-col gap-3 mt-4 lg:mt-2">
                             <Button
-                              variant="outline"
-                              className="h-9 px-6 font-bold text-sm w-full"
-                              style={{
-                                borderColor: "#9273b6",
-                                color: "#9273b6",
-                                borderRadius: "5px",
-                                fontFamily: "Poppins, sans-serif",
-                                backgroundColor: "transparent",
-                              }}
+                              className="w-full h-10 font-bold text-[14px] bg-[#f9c365] text-[#181d29] hover:bg-[#e6a845] rounded-[6px] border border-[#f9c365]"
+                              onClick={() => navigate(`/apply?courseId=${c.id}`)}
                             >
-                              Ask Us
+                              Apply Now
                             </Button>
-                          </Link>
+                            <Link to={`/courses/${generateSlug(c.title)}`} className="block w-full">
+                              <Button
+                                className="w-full h-10 font-bold text-[14px] border border-gray-800 text-[#181d29] hover:bg-gray-50 rounded-[6px] bg-white"
+                              >
+                                Ask Us
+                              </Button>
+                            </Link>
+                          </div>
                         </div>
                       </div>
                     );
@@ -537,7 +552,7 @@ export default function Courses() {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-end gap-1.5 mt-10 mb-4">
+                <div className="flex items-center justify-center gap-1.5 mt-10 mb-4">
                   <button
                     disabled={currentPage === 1}
                     onClick={() => changePage(currentPage - 1)}

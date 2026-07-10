@@ -29,7 +29,7 @@ export default function Blog() {
   const paged = sorted.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f7f8fa]">
+    <div className="min-h-screen flex flex-col bg-white">
       <MegaMenu />
       
       {/* Page Header */}

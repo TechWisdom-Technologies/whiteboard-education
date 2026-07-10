@@ -61,7 +61,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f7f8fa]">
+    <div className="min-h-screen flex flex-col bg-white">
       <MegaMenu />
       <main className="flex-1 py-10 md:py-16">
         <div className="container mx-auto px-4 lg:px-6 max-w-6xl">

@@ -260,7 +260,7 @@ export default function Login() {
 
       {/* ══════════════════════════════ RIGHT PANEL ══════════════════════════════ */}
       <div
-        className="w-full lg:w-1/2 h-full flex flex-col bg-[#f7f8fa] overflow-hidden"
+        className="w-full lg:w-1/2 h-full flex flex-col bg-white overflow-hidden"
         style={{
           opacity: mounted ? 1 : 0,
           transform: mounted ? "none" : "translateX(10px)",

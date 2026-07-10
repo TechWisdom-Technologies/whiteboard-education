@@ -198,8 +198,20 @@ export default function Universities() {
     });
   }, [universities, courses, search, selectedCity, selectedOfferLetter, selectedLevel, selectedField]);
 
-  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-  const paged = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const [sortBy, setSortBy] = useState("best_match");
+
+  const sorted = useMemo(() => {
+    let result = [...filtered];
+    if (sortBy === "name_a_z") {
+      result.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortBy === "name_z_a") {
+      result.sort((a, b) => b.name.localeCompare(a.name));
+    }
+    return result;
+  }, [filtered, sortBy]);
+
+  const totalPages = Math.ceil(sorted.length / ITEMS_PER_PAGE);
+  const paged = sorted.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   const changePage = (page: number) => {
     setCurrentPage(page);
@@ -226,27 +238,17 @@ export default function Universities() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#f7f8fa" }}>
+    <div className="min-h-screen flex flex-col bg-white">
       <MegaMenu />
 
-      {/* Page Header */}
-      <div className="container mx-auto px-4 pt-10 pb-6 flex items-center justify-between">
-        <h1 className="text-[28px] font-extrabold" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>
-          Universities
-        </h1>
-        <div className="text-[15px] font-bold" style={{ color: "#515768", fontFamily: "Poppins, sans-serif" }}>
-          Total universities: <span style={{ color: "#ffa300" }}>{filtered.length}</span>
-        </div>
-      </div>
-
       {/* Main Content */}
-      <div className="container mx-auto px-4 pb-16 flex-1" ref={gridRef}>
+      <div className="container mx-auto px-4 pt-10 pb-16 flex-1 w-full" ref={gridRef}>
         {isLoading ? (
           <LoadingScreen label="Loading universities" sublabel="Finding top institutions" className="py-12" />
         ) : (
-          <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
             {/* ─── SIDEBAR ─── */}
-            <aside className="lg:w-[350px] shrink-0">
+            <aside className="lg:w-[300px] xl:w-[320px] shrink-0">
               <div
                 className="overflow-hidden lg:sticky lg:top-[152px] border"
                 style={{
@@ -407,7 +409,32 @@ export default function Universities() {
 
             {/* ─── CONTENT AREA ─── */}
             <div className="flex-1 min-w-0">
-              {/* Title + Counter */}
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-gray-200 pb-4 mb-6 gap-4">
+                <h1 className="text-[20px] md:text-[22px] font-bold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>
+                  Universities
+                </h1>
+                
+                <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 md:gap-4 text-[14px]">
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="font-semibold text-[#181d29] whitespace-nowrap">Sort By:</span>
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="border border-gray-300 rounded-[4px] px-3 py-1.5 text-gray-600 bg-white focus:outline-none focus:border-[#ffa300]"
+                    >
+                      <option value="best_match">Best Match (Default)</option>
+                      <option value="name_a_z">Name (A to Z)</option>
+                      <option value="name_z_a">Name (Z to A)</option>
+                    </select>
+                  </div>
+                  
+                  <div className="text-gray-500 hidden sm:block">|</div>
+                  
+                  <div className="font-medium text-gray-600 whitespace-nowrap shrink-0">
+                    Total Universities: {filtered.length}
+                  </div>
+                </div>
+              </div>
 
               {/* University List */}
               {paged.length === 0 ? (
@@ -428,17 +455,14 @@ export default function Universities() {
                     return (
                       <div
                         key={u.id}
-                        className="bg-white py-10 md:py-12 px-6 md:px-8 flex flex-col md:flex-row items-start md:items-center gap-6 border"
-                        style={{
-                          borderColor: "#e8e8e8",
-                          borderRadius: "5px",
-                        }}
+                        className="bg-white p-5 md:p-6 lg:p-8 border border-gray-200 rounded-[8px]"
                       >
-                        {/* Logo */}
-                        <Link
-                          to={`/universities/${generateSlug(u.name)}`}
-                          className="shrink-0 w-[180px] h-[110px] flex items-center justify-center overflow-hidden"
-                        >
+                        <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] lg:grid-cols-[180px_1fr_180px] gap-6 lg:gap-8 items-center lg:items-start">
+                          {/* Left: Logo */}
+                          <Link
+                            to={`/universities/${generateSlug(u.name)}`}
+                            className="w-full h-[100px] flex items-center justify-center overflow-hidden border border-gray-100 rounded-md p-2"
+                          >
                           {u.logo_url || UNIVERSITY_LOGOS[u.name] ? (
                             <img
                               src={u.logo_url || UNIVERSITY_LOGOS[u.name]}
@@ -447,7 +471,6 @@ export default function Universities() {
                               onError={(e) => {
                                 e.currentTarget.onerror = null;
                                 e.currentTarget.style.display = 'none';
-                                // Fallback handled by parent visually being empty, or we could insert an SVG
                                 e.currentTarget.insertAdjacentHTML('afterend', '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#cacdd4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-graduation-cap"><path d="M21.42 10.922a2 2 0 0 0-.019-3.838L12.83 4.018a2 2 0 0 0-1.66 0L2.6 7.08a2 2 0 0 0 0 3.832l8.57 3.064a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>');
                               }}
                             />
@@ -456,18 +479,10 @@ export default function Universities() {
                           )}
                         </Link>
 
-                        {/* Info */}
-                        <div className="flex-1 min-w-0">
+                        {/* Middle: Info */}
+                        <div className="min-w-0 flex flex-col justify-center space-y-3 md:col-span-1 lg:col-span-1">
                           <Link to={`/universities/${generateSlug(u.name)}`}>
-                            <h3
-                              className="font-bold hover:underline mb-3"
-                              style={{
-                                fontFamily: "Poppins, sans-serif",
-                                fontSize: "20px",
-                                lineHeight: "28px",
-                                color: "#181d29",
-                              }}
-                            >
+                            <h3 className="font-semibold hover:underline text-[18px] md:text-[20px] text-[#181d29] leading-tight mb-1">
                               {u.name}
                             </h3>
                           </Link>
@@ -518,8 +533,8 @@ export default function Universities() {
                           </div>
                         </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex flex-col gap-2.5 shrink-0 w-full md:w-auto">
+                        {/* Right: Buttons */}
+                        <div className="w-full md:col-span-2 lg:col-span-1 flex flex-col gap-3 mt-4 lg:mt-2">
                           <Button
                             className="h-9 px-6 font-bold text-sm"
                             style={{
@@ -550,6 +565,7 @@ export default function Universities() {
                           </Link>
                         </div>
 
+                        </div>
                       </div>
                     );
                   })}
@@ -558,7 +574,7 @@ export default function Universities() {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-end gap-1.5 mt-10 mb-4">
+                <div className="flex items-center justify-center gap-1.5 mt-10 mb-4">
                   {/* Previous */}
                   <button
                     disabled={currentPage === 1}

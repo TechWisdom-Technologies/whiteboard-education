@@ -652,8 +652,7 @@ export default function UniversityDetail() {
                           Ask Us
                         </Button>
                         <Button
-                          variant="outline"
-                          className={`w-full font-bold h-11 transition-colors ${
+                          className={`w-full font-bold h-11 transition-colors bg-white border ${
                             isComparing(c.id) 
                               ? "bg-[#ffa300]/10 text-[#e69200] border-[#ffa300]" 
                               : "border-gray-200 text-gray-500 hover:bg-[#ffa300] hover:text-[#181d29] hover:border-[#ffa300]"

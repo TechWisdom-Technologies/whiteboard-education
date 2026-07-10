@@ -87,7 +87,7 @@ export default function EligibilityWizard() {
   const showResults = step === 5;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f7f8fa]">
+    <div className="min-h-screen flex flex-col bg-white">
       <MegaMenu />
       
       {/* Page Header */}

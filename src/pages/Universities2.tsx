@@ -156,11 +156,48 @@ export default function Universities() {
     [universities]
   );
 
+
+  const [appliedFilters, setAppliedFilters] = useState({
+    search: searchParams.get("search") || "",
+    selectedCity: "all",
+    selectedOfferLetter: "all",
+    selectedLevel: "All Levels",
+    selectedField: "All Fields",
+  });
+
+  const applyFilters = () => {
+    setAppliedFilters({
+      search,
+      selectedCity,
+      selectedOfferLetter,
+      selectedLevel,
+      selectedField
+    });
+    setCurrentPage(1);
+  };
+
+  const resetFilters = () => {
+    setSearch("");
+    setSelectedCity("all");
+    setSelectedOfferLetter("all");
+    setSelectedLevel("All Levels");
+    setSelectedField("All Fields");
+    setAppliedFilters({
+      search: "",
+      selectedCity: "all",
+      selectedOfferLetter: "all",
+      selectedLevel: "All Levels",
+      selectedField: "All Fields"
+    });
+    setCurrentPage(1);
+  };
+
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, selectedCity, selectedLevel, selectedField, selectedOfferLetter]);
+  }, [appliedFilters]);
 
   const filtered = useMemo(() => {
+    const { search, selectedCity, selectedOfferLetter, selectedLevel, selectedField } = appliedFilters;
     return universities.filter((u: any) => {
       if (search && !u.name.toLowerCase().includes(search.toLowerCase())) return false;
       if (selectedCity !== "all" && u.city !== selectedCity) return false;
@@ -200,10 +237,22 @@ export default function Universities() {
 
       return true;
     });
-  }, [universities, courses, search, selectedCity, selectedOfferLetter, selectedLevel, selectedField]);
+  }, [universities, courses, appliedFilters]);
 
-  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-  const paged = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const [sortBy, setSortBy] = useState("best_match");
+
+  const sorted = useMemo(() => {
+    let result = [...filtered];
+    if (sortBy === "name_a_z") {
+      result.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortBy === "name_z_a") {
+      result.sort((a, b) => b.name.localeCompare(a.name));
+    }
+    return result;
+  }, [filtered, sortBy]);
+
+  const totalPages = Math.ceil(sorted.length / ITEMS_PER_PAGE);
+  const paged = sorted.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   const changePage = (page: number) => {
     setCurrentPage(page);
@@ -238,119 +287,150 @@ export default function Universities() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#f7f8fa" }}>
+    <div className="min-h-screen flex flex-col bg-white">
       <MegaMenu />
-
-      {/* Page Header */}
-      <div className="container mx-auto px-4 pt-10 pb-6 flex items-center justify-between">
-        <h1 className="text-[28px] font-extrabold" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>
-          Universities
-        </h1>
-        <div className="text-[15px] font-bold" style={{ color: "#515768", fontFamily: "Poppins, sans-serif" }}>
-          Total universities: <span style={{ color: "#ffa300" }}>{filtered.length}</span>
-        </div>
-      </div>
-
       {/* Main Content */}
-      <div className="container mx-auto px-4 pb-16 flex-1" ref={gridRef}>
+      <div className="container mx-auto px-4 pt-10 pb-16 flex-1 w-full" ref={gridRef}>
         {isLoading ? (
           <LoadingScreen label="Loading universities" sublabel="Finding top institutions" className="py-12" />
         ) : (
-          <div className="flex flex-col">
-            <div className="mb-6 bg-white border shadow-sm rounded-[5px]" style={{ borderColor: "#e8e8e8" }}>
-              {/* Mobile Filter Toggle Button */}
-              <button 
-                onClick={() => setShowFilters(!showFilters)}
-                className="w-full flex items-center justify-between p-4 lg:hidden text-[#181d29] font-semibold"
-              >
-                <div className="flex items-center gap-2">
-                  <Filter className="h-4 w-4" />
-                  Filter Universities
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* ─── SIDEBAR ─── */}
+            <aside className="lg:w-[260px] shrink-0">
+              <div className="overflow-hidden lg:sticky lg:top-[152px] border bg-white" style={{ borderColor: "#e8e8e8", borderRadius: "5px" }}>
+                {/* Mobile Filter Toggle */}
+                <button 
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="w-full flex items-center justify-between p-4 lg:hidden text-[#181d29] font-semibold border-b" style={{ borderColor: "#e8e8e8" }}
+                >
+                  <div className="flex items-center gap-2">
+                    <Filter className="h-4 w-4" />
+                    Filter Universities
+                  </div>
+                  <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${showFilters ? 'rotate-180' : ''}`} />
+                </button>
+
+                <div className={`${showFilters ? 'block' : 'hidden lg:block'}`}>
+                  {/* Sidebar Header */}
+                  <div className="px-5 py-4 flex items-center justify-between bg-[#fef1da] hidden lg:flex">
+                    <h3 className="font-bold text-[20px] text-[#181d29]">Search by Filter</h3>
+                  </div>
+
+                  {/* Sidebar Body */}
+                  <div className="px-5 py-5 space-y-4">
+                    <div className="relative w-full">
+                      <Input
+                        placeholder="Search by University Name"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="pr-10 h-11 text-[14px]"
+                        style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Poppins, sans-serif", color: "#444444" }}
+                      />
+                      <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "#999999" }} />
+                    </div>
+
+                    <div className="w-full">
+                      <Select value={selectedLevel} onValueChange={setSelectedLevel} modal={false}>
+                        <SelectTrigger className="h-11 text-[14px]" style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Poppins, sans-serif", color: selectedLevel === "All Levels" ? "#999999" : "#444444" }}>
+                          <SelectValue placeholder="Level of Interest" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {DEGREE_LEVELS.map((l) => (
+                            <SelectItem key={l} value={l}>{l}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="w-full">
+                      <Select value={selectedField} onValueChange={setSelectedField} modal={false}>
+                        <SelectTrigger className="h-11 text-[14px]" style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Poppins, sans-serif", color: selectedField === "All Fields" ? "#999999" : "#444444" }}>
+                          <SelectValue placeholder="Field of Study" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {FIELDS_OF_STUDY.map((f) => (
+                            <SelectItem key={f} value={f}>{f}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="w-full">
+                      <Select value={selectedCity} onValueChange={setSelectedCity} modal={false}>
+                        <SelectTrigger className="h-11 text-[14px]" style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Poppins, sans-serif", color: selectedCity === "all" ? "#999999" : "#444444" }}>
+                          <SelectValue placeholder="Locations" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Locations</SelectItem>
+                          {cities.map((city: string) => (
+                            <SelectItem key={city} value={city}>{city}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="w-full">
+                      <Select value={selectedOfferLetter} onValueChange={setSelectedOfferLetter} modal={false}>
+                        <SelectTrigger className="h-11 text-[14px]" style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Poppins, sans-serif", color: selectedOfferLetter === "all" ? "#999999" : "#444444" }}>
+                          <SelectValue placeholder="Offer Letter Fee" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Offer Letters</SelectItem>
+                          <SelectItem value="free">Free Offer Letter</SelectItem>
+                          <SelectItem value="paid">Offer Letter Fees Applies</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  {/* Apply/Reset Buttons */}
+                  <div className="flex items-center gap-3 px-5 pb-5">
+                    <Button 
+                      className="flex-1 font-bold h-11 text-sm bg-[#ffa300] text-[#181d29] hover:bg-[#e69200]"
+                      onClick={applyFilters}
+                    >
+                      Apply Filter
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      className="flex-1 font-bold h-11 text-sm border-gray-200 text-[#181d29] hover:bg-gray-50"
+                      onClick={resetFilters}
+                    >
+                      Reset Filter
+                    </Button>
+                  </div>
                 </div>
-                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${showFilters ? 'rotate-180' : ''}`} />
-              </button>
-
-              {/* Filter Content */}
-              <div className={`p-4 flex-col lg:flex-row items-center gap-4 ${showFilters ? 'flex border-t' : 'hidden lg:flex'} lg:border-t-0`} style={{ borderColor: "#e8e8e8" }}>
-              <div className="relative flex-1 w-full">
-                <Input
-                  placeholder="Search by University Name"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pr-10 h-11 text-[12.5px]"
-                  style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Poppins, sans-serif", color: "#444444" }}
-                />
-                <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "#999999" }} />
               </div>
+            </aside>
 
-              <div className="w-full lg:w-[200px]">
-                <Select value={selectedLevel} onValueChange={setSelectedLevel} modal={false}>
-                  <SelectTrigger className="h-11 text-[12.5px]" style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Poppins, sans-serif", color: selectedLevel === "All Levels" ? "#999999" : "#444444" }}>
-                    <SelectValue placeholder="Level of Interest" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {DEGREE_LEVELS.map((l) => (
-                      <SelectItem key={l} value={l}>{l}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            {/* ─── CONTENT AREA ─── */}
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-gray-200 pb-4 mb-6 gap-4">
+                <h1 className="text-[20px] md:text-[22px] font-bold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>
+                  Universities
+                </h1>
+                
+                <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 md:gap-4 text-[14px]">
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="font-semibold text-[#181d29] whitespace-nowrap">Sort By:</span>
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="border border-gray-300 rounded-[4px] px-3 py-1.5 text-gray-600 bg-white focus:outline-none focus:border-[#ffa300]"
+                    >
+                      <option value="best_match">Best Match (Default)</option>
+                      <option value="name_a_z">Name (A to Z)</option>
+                      <option value="name_z_a">Name (Z to A)</option>
+                    </select>
+                  </div>
+                  
+                  <div className="text-gray-500 hidden sm:block">|</div>
+                  
+                  <div className="font-medium text-gray-600 whitespace-nowrap shrink-0">
+                    Total Universities: {filtered.length}
+                  </div>
+                </div>
               </div>
-
-              <div className="w-full lg:w-[200px]">
-                <Select value={selectedField} onValueChange={setSelectedField} modal={false}>
-                  <SelectTrigger className="h-11 text-[12.5px]" style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Poppins, sans-serif", color: selectedField === "All Fields" ? "#999999" : "#444444" }}>
-                    <SelectValue placeholder="Field of Study" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {FIELDS_OF_STUDY.map((f) => (
-                      <SelectItem key={f} value={f}>{f}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="w-full lg:w-[180px]">
-                <Select value={selectedCity} onValueChange={setSelectedCity} modal={false}>
-                  <SelectTrigger className="h-11 text-[12.5px]" style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Poppins, sans-serif", color: selectedCity === "all" ? "#999999" : "#444444" }}>
-                    <SelectValue placeholder="Locations" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Locations</SelectItem>
-                    {cities.map((city: string) => (
-                      <SelectItem key={city} value={city}>{city}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="w-full lg:w-[220px]">
-                <Select value={selectedOfferLetter} onValueChange={setSelectedOfferLetter} modal={false}>
-                  <SelectTrigger className="h-11 text-[12.5px]" style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Poppins, sans-serif", color: selectedOfferLetter === "all" ? "#999999" : "#444444" }}>
-                    <SelectValue placeholder="Offer Letter Fee" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Offer Letters</SelectItem>
-                    <SelectItem value="free">Free Offer Letter</SelectItem>
-                    <SelectItem value="paid">Offer Letter Fees Applies</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <button
-                onClick={() => {
-                  setSearch("");
-                  setSelectedCity("all");
-                  setSelectedLevel("All Levels");
-                  setSelectedField("All Fields");
-                  setSelectedOfferLetter("all");
-                }}
-                className="p-2 text-[#999999] hover:text-[#181d29] transition-colors shrink-0"
-                title="Reset Filters"
-              >
-                <RotateCcw className="h-5 w-5" />
-              </button>
-            </div>
-            </div>
               {paged.length === 0 ? (
                 <div
                   className="text-center py-20"
@@ -369,124 +449,71 @@ export default function Universities() {
                     return (
                       <div
                         key={u.id}
-                        className="bg-white py-10 md:py-12 px-6 md:px-8 flex flex-col md:flex-row items-start md:items-center gap-6 border"
-                        style={{
-                          borderColor: "#e8e8e8",
-                          borderRadius: "5px",
-                        }}
+                        className="bg-white p-5 md:p-6 lg:p-8 border border-gray-200 rounded-[8px]"
                       >
-                        {/* Logo */}
-                        <Link
-                          to={`/universities/${generateSlug(u.name)}`}
-                          className="shrink-0 w-[240px] h-[150px] flex items-center justify-center overflow-hidden"
-                        >
-                          {u.logo_url || UNIVERSITY_LOGOS[u.name] ? (
-                            <img
-                              src={u.logo_url || UNIVERSITY_LOGOS[u.name]}
-                              alt={u.name}
-                              className="max-w-full max-h-full object-contain p-2"
-                              onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.style.display = 'none';
-                                // Fallback handled by parent visually being empty, or we could insert an SVG
-                                e.currentTarget.insertAdjacentHTML('afterend', '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#cacdd4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-graduation-cap"><path d="M21.42 10.922a2 2 0 0 0-.019-3.838L12.83 4.018a2 2 0 0 0-1.66 0L2.6 7.08a2 2 0 0 0 0 3.832l8.57 3.064a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>');
-                              }}
-                            />
-                          ) : (
-                            <GraduationCap className="h-10 w-10" style={{ color: "#cacdd4" }} />
-                          )}
-                        </Link>
-
-                        {/* Info */}
-                        <div className="flex-1 min-w-0">
-                          <Link to={`/universities/${generateSlug(u.name)}`}>
-                            <h3
-                              className="font-semibold hover:underline mb-3"
-                              style={{
-                                fontFamily: "Poppins, sans-serif",
-                                fontSize: "22px",
-                                lineHeight: "30px",
-                                color: "#181d29",
-                              }}
-                            >
-                              {u.name}
-                            </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] lg:grid-cols-[180px_1fr_180px] gap-6 lg:gap-8 items-center lg:items-start">
+                          {/* Left: Logo */}
+                          <Link
+                            to={`/universities/${generateSlug(u.name)}`}
+                            className="w-full h-[100px] flex items-center justify-center overflow-hidden border border-gray-100 rounded-md p-2"
+                          >
+                            {u.logo_url || UNIVERSITY_LOGOS[u.name] ? (
+                              <img
+                                src={u.logo_url || UNIVERSITY_LOGOS[u.name]}
+                                alt={u.name}
+                                className="max-w-full max-h-full object-contain"
+                                onError={(e) => {
+                                  e.currentTarget.onerror = null;
+                                  e.currentTarget.style.display = 'none';
+                                  e.currentTarget.insertAdjacentHTML('afterend', '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#cacdd4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-graduation-cap"><path d="M21.42 10.922a2 2 0 0 0-.019-3.838L12.83 4.018a2 2 0 0 0-1.66 0L2.6 7.08a2 2 0 0 0 0 3.832l8.57 3.064a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>');
+                                }}
+                              />
+                            ) : (
+                              <GraduationCap className="h-10 w-10 text-gray-300" />
+                            )}
                           </Link>
 
-                          <div className="flex flex-col gap-2">
-                            {/* Location */}
-                            <div className="flex items-center gap-2">
-                              <MapPin className="shrink-0" style={{ width: "15px", height: "15px", color: "#ffa300" }} />
-                              <span
-                                style={{
-                                  fontFamily: "Poppins, sans-serif",
-                                  fontSize: "15px",
-                                  color: "#444444",
-                                }}
-                              >
-                                {u.city || "Malaysia"}, Malaysia
-                              </span>
-                            </div>
+                          {/* Middle: Info */}
+                          <div className="min-w-0 flex flex-col justify-center space-y-3">
+                            <Link to={`/universities/${generateSlug(u.name)}`}>
+                              <h3 className="font-semibold hover:underline text-[18px] md:text-[20px] text-[#181d29] leading-tight mb-1">
+                                {u.name}
+                              </h3>
+                            </Link>
+                            
+                            <div className="flex flex-col gap-2.5">
+                              <div className="flex items-center gap-2.5 text-[15px] text-[#515768]">
+                                <MapPin className="h-4 w-4 shrink-0 text-[#515768]" />
+                                <span>{u.city || "Malaysia"}, Malaysia</span>
+                              </div>
+                              
+                              <div className="flex items-center gap-2.5 text-[15px] text-[#515768]">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mail shrink-0 text-[#515768]"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                                <span>{PAID_OFFER_LETTER_UNIS.includes(u.name) ? "Offer Letter Fees Applies" : "Free Offer Letter"}</span>
+                              </div>
 
-                            {/* Offer Letter */}
-                            <div className="flex items-center gap-2">
-                              <FileText className="shrink-0" style={{ width: "15px", height: "15px", color: "#515768" }} />
-                              <span
-                                style={{
-                                  fontFamily: "Poppins, sans-serif",
-                                  fontSize: "15px",
-                                  color: "#444444",
-                                }}
-                              >
-                                {PAID_OFFER_LETTER_UNIS.includes(u.name) ? "Offer Letter Fees Applies" : "Free Offer Letter"}
-                              </span>
-                            </div>
-
-                            {/* Course count */}
-                            <div className="flex items-center gap-2">
-                              <BookOpen className="shrink-0" style={{ width: "15px", height: "15px", color: "#515768" }} />
-                              <span
-                                className="font-semibold"
-                                style={{
-                                  fontFamily: "Poppins, sans-serif",
-                                  fontSize: "15px",
-                                  color: "#444444",
-                                }}
-                              >
+                              <div className="text-[15px] text-[#515768] mt-1">
                                 {courseCount} courses
-                              </span>
-                            </div>
+                              </div>
                             </div>
                           </div>
-                        {/* Action Buttons */}
-                        <div className="flex flex-col gap-3 shrink-0 w-full md:w-[180px]">
-                          <Button
-                            className="h-11 px-8 font-bold text-base"
-                            style={{
-                              backgroundColor: "#ffa300",
-                              color: "#181d29",
-                              borderRadius: "5px",
-                              fontFamily: "Poppins, sans-serif",
-                              border: "1px solid #ffa300",
-                            }}
-                            onClick={() => navigate(`/apply?universityId=${u.id}`)}
-                          >
-                            Apply Now
-                          </Button>
-                          <Button
-                            variant="outline"
-                            className="h-11 px-8 font-bold text-base w-full"
-                            style={{
-                              borderColor: "#9273b6",
-                              color: "#9273b6",
-                              borderRadius: "5px",
-                              fontFamily: "Poppins, sans-serif",
-                              backgroundColor: "transparent",
-                            }}
-                            onClick={() => navigate("/contact")}
-                          >
-                            Ask Us
-                          </Button>
+
+                          {/* Right: Buttons */}
+                          <div className="w-full md:col-span-2 lg:col-span-1 flex flex-col gap-3 mt-4 lg:mt-2">
+                            <Button
+                              className="w-full h-10 font-bold text-[14px] bg-[#f9c365] text-[#181d29] hover:bg-[#e6a845] rounded-[6px] border border-[#f9c365]"
+                              onClick={() => navigate(`/apply?universityId=${u.id}`)}
+                            >
+                              Apply Now
+                            </Button>
+                            <Link to={`/universities/${generateSlug(u.name)}`} className="block w-full">
+                              <Button
+                                className="w-full h-10 font-bold text-[14px] border border-gray-800 text-[#181d29] hover:bg-gray-50 rounded-[6px] bg-white"
+                              >
+                                Ask Us
+                              </Button>
+                            </Link>
+                          </div>
                         </div>
                       </div>
                     );
@@ -557,6 +584,7 @@ export default function Universities() {
                 </div>
               )}
             </div>
+          </div>
         )}
       </div>
 
