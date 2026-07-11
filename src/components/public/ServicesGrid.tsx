@@ -30,7 +30,7 @@ const services = [
 
 export function ServicesGrid() {
   return (
-    <section className="py-16 bg-white relative overflow-hidden">
+    <section className="py-8 md:py-16 bg-white relative overflow-hidden">
       {/* Organic Background Blob */}
       <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#2F4F97]/5 rounded-full blur-[80px] pointer-events-none" />
 

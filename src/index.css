@@ -412,12 +412,22 @@
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: var(--radius);
-  padding: 1.5rem;
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  width: 420px;
+  width: 75vw;
+  max-width: 300px;
   flex-shrink: 0;
-  margin-right: 2rem;
+  margin-right: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .testimonial-card {
+    padding: 1.5rem;
+    width: 420px;
+    max-width: none;
+    margin-right: 2rem;
+  }
 }
 
 .testimonial-quote {

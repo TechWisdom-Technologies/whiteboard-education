@@ -19,7 +19,7 @@ export function BlogSection() {
   );
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-8 md:py-16 bg-white">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Section header */}
         <div className="text-center mb-12">
