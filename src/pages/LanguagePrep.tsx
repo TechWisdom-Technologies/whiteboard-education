@@ -38,10 +38,10 @@ export default function LanguagePrep() {
         {/* Hero */}
         <section className="intro-surface py-20">
           <div className="container mx-auto px-4 text-center">
-            <BookOpen className="h-12 w-12 mx-auto mb-4 text-[#ffa300]" />
+            <BookOpen className="h-12 w-12 mx-auto mb-4 text-[#2F4F97]" />
             <h1 className="text-4xl font-extrabold mb-3">IELTS & TOEFL Preparation</h1>
             <p className="text-primary-foreground/70 max-w-xl mx-auto mb-8">Get the score you need with expert tutoring and unlimited practice tests.</p>
-            <Button size="lg" className="bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90">
+            <Button size="lg" className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90">
               <Zap className="h-4 w-4 mr-2" /> Take a Free Mock Test
             </Button>
           </div>
@@ -58,7 +58,7 @@ export default function LanguagePrep() {
             ].map((s) => (
               <Card key={s.label}>
                 <CardContent className="p-5 text-center">
-                  <p className="text-2xl font-extrabold text-[#ffa300]">{s.value}</p>
+                  <p className="text-2xl font-extrabold text-[#2F4F97]">{s.value}</p>
                   <p className="text-xs text-muted-foreground">{s.label}</p>
                 </CardContent>
               </Card>
@@ -71,10 +71,10 @@ export default function LanguagePrep() {
           <h2 className="text-2xl font-extrabold text-center mb-10">Choose Your Plan</h2>
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             {packages.map((pkg) => (
-              <Card key={pkg.name} className={`relative ${pkg.popular ? "border-[#ffa300] shadow-lg scale-105" : ""}`}>
+              <Card key={pkg.name} className={`relative ${pkg.popular ? "border-[#2F4F97] shadow-lg scale-105" : ""}`}>
                 {pkg.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <Badge className="bg-secondary text-[#181d29]"><Star className="h-3 w-3 mr-1" />Most Popular</Badge>
+                    <Badge className="bg-secondary text-[#1E293B]"><Star className="h-3 w-3 mr-1" />Most Popular</Badge>
                   </div>
                 )}
                 <CardHeader className="text-center">
@@ -91,7 +91,7 @@ export default function LanguagePrep() {
                       <span>{f}</span>
                     </div>
                   ))}
-                  <Button className={`w-full mt-4 ${pkg.popular ? "bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90" : ""}`} variant={pkg.popular ? "default" : "outline"}>
+                  <Button className={`w-full mt-4 ${pkg.popular ? "bg-[#2F4F97] text-[#1E293B] hover:bg-[#2F4F97]/90" : ""}`} variant={pkg.popular ? "default" : "outline"}>
                     Get Started
                   </Button>
                 </CardContent>
@@ -101,11 +101,11 @@ export default function LanguagePrep() {
         </section>
 
         {/* CTA Banner */}
-        <section className="bg-[#ffa300]/10 py-12">
+        <section className="bg-[#2F4F97]/10 py-12">
           <div className="container mx-auto px-4 text-center">
             <h3 className="text-xl font-bold mb-3">Not sure about your current level?</h3>
             <p className="text-muted-foreground mb-6">Take our free 15-minute diagnostic test and get an estimated IELTS band score.</p>
-            <Button size="lg" className="bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90">Take Free Mock Test</Button>
+            <Button size="lg" className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90">Take Free Mock Test</Button>
           </div>
         </section>
       </main>

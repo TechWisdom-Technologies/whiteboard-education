@@ -40,7 +40,7 @@ export function UniversityPartnersSection() {
         {/* Section header */}
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-semibold mb-2">Our Partner Institutions</h2>
-          <p className="text-sm text-[#515768] max-w-2xl mx-auto">
+          <p className="text-sm text-[#64748B] max-w-2xl mx-auto">
             We work with Malaysia's leading universities to connect you with world-class education opportunities.
           </p>
         </div>
@@ -82,7 +82,7 @@ export function UniversityPartnersSection() {
           {/* View all link */}
           <Link
             to="/universities"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[#ffa300]"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#2F4F97]"
           >
             View All Universities <ArrowRight className="h-4 w-4" />
           </Link>

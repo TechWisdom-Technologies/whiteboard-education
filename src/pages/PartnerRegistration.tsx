@@ -21,14 +21,14 @@ function FileUploadField({ label, accept = ".pdf,.jpg,.jpeg,.png", file, onFileC
     <div className="w-full">
       <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">{label} {required && <span className="text-red-500">*</span>}</Label>
       <div
-        className={`mt-1.5 border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-colors ${file ? 'border-[#ffa300] bg-[#ffa300]/5' : 'border-gray-200 bg-gray-50 hover:bg-white hover:border-[#ffa300]'}`}
+        className={`mt-1.5 border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-colors ${file ? 'border-[#2F4F97] bg-[#2F4F97]/5' : 'border-gray-200 bg-gray-50 hover:bg-white hover:border-[#2F4F97]'}`}
         onClick={() => ref.current?.click()}
       >
         <input ref={ref} type="file" accept={accept} className="hidden" onChange={(e) => onFileChange(e.target.files?.[0] || null)} />
         {file ? (
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm text-[#181d29]">
-              <FileText className="h-4 w-4 text-[#ffa300]" />
+            <div className="flex items-center gap-2 text-sm text-[#1E293B]">
+              <FileText className="h-4 w-4 text-[#2F4F97]" />
               <span className="truncate max-w-[180px] font-medium">{file.name}</span>
               <span className="text-gray-400 text-xs">({(file.size / 1024).toFixed(0)} KB)</span>
             </div>
@@ -156,37 +156,37 @@ export default function PartnerRegistration() {
     }
   };
 
-  const inputCls = "h-11 bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] text-[13px] rounded-xl transition-colors shadow-none";
+  const inputCls = "h-11 bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] text-[13px] rounded-xl transition-colors shadow-none";
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <main className="flex-1 py-10 md:py-12">
         <div className="container mx-auto px-4 max-w-6xl">
-          <Link to="/partner" className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-gray-500 hover:text-[#181d29] transition-colors mb-6">
+          <Link to="/partner" className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-gray-500 hover:text-[#1E293B] transition-colors mb-6">
             <ArrowLeft className="h-4 w-4" /> Back to Partnership Page
           </Link>
           
           <div className="bg-white rounded-xl shadow-xl overflow-hidden flex flex-col lg:flex-row border border-[#e8e8e8]">
             
             {/* Left Panel - Dark */}
-            <div className="w-full lg:w-5/12 bg-[#181d29] text-white p-8 md:p-12 relative overflow-hidden flex flex-col">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#ffa300] to-[#ffa300]/20" />
-              <div className="absolute -top-24 -right-24 w-64 h-64 bg-[#ffa300] rounded-full opacity-10 blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-[#ffa300] rounded-full opacity-10 blur-3xl pointer-events-none" />
+            <div className="w-full lg:w-5/12 bg-[#1E293B] text-white p-8 md:p-12 relative overflow-hidden flex flex-col">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#2F4F97] to-[#2F4F97]/20" />
+              <div className="absolute -top-24 -right-24 w-64 h-64 bg-[#2F4F97] rounded-full opacity-10 blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-[#2F4F97] rounded-full opacity-10 blur-3xl pointer-events-none" />
               
               <div className="relative z-10 flex-1 flex flex-col">
                 <div className="flex items-center gap-3 mb-10">
-                  <img src="/LOGO-ON-DARK-BG.png" alt="Whiteboard Education" className="h-9 w-auto object-contain" />
+                  <img src="/logo.png" alt="Whiteboard Education" className="h-9 w-auto object-contain" />
                 </div>
 
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-6 bg-white/5 border border-white/10 rounded-xl w-fit backdrop-blur-sm">
-                  <Handshake className="h-3.5 w-3.5 text-[#ffa300]" />
+                  <Handshake className="h-3.5 w-3.5 text-[#2F4F97]" />
                   <span className="text-[10px] font-bold text-white tracking-widest uppercase">Partner Network</span>
                 </div>
 
                 <h1 className="text-3xl md:text-4xl font-extrabold mb-5 leading-[1.15] tracking-tight text-white" style={{ fontFamily: "Poppins, sans-serif" }}>
                   Join Our Global <br />
-                  <span className="text-[#ffa300]">Partner Agency Network</span>
+                  <span className="text-[#2F4F97]">Partner Agency Network</span>
                 </h1>
                 
                 <p className="text-gray-400 text-[13.5px] leading-relaxed font-light mb-10">
@@ -203,7 +203,7 @@ export default function PartnerRegistration() {
                     "Transparent commission & high approval rates"
                   ].map((benefit, i) => (
                     <div key={i} className="flex items-start gap-3">
-                      <CheckCircle2 className="h-4 w-4 text-[#ffa300] mt-0.5 shrink-0" />
+                      <CheckCircle2 className="h-4 w-4 text-[#2F4F97] mt-0.5 shrink-0" />
                       <span className="text-[13px] text-gray-300 font-medium">{benefit}</span>
                     </div>
                   ))}
@@ -213,7 +213,7 @@ export default function PartnerRegistration() {
 
             {/* Right Panel - Form */}
             <div className="w-full lg:w-7/12 p-8 md:p-12">
-              <h2 className="text-2xl font-bold text-[#181d29] mb-2 leading-tight" style={{ fontFamily: "Poppins, sans-serif" }}>
+              <h2 className="text-2xl font-bold text-[#1E293B] mb-2 leading-tight" style={{ fontFamily: "Poppins, sans-serif" }}>
                 Agency Registration
               </h2>
               <p className="text-sm text-gray-500 mb-8 font-medium">Please fill in your company details to apply for partnership.</p>
@@ -221,8 +221,8 @@ export default function PartnerRegistration() {
               <div className="space-y-8">
                 {/* Section 1 */}
                 <div>
-                  <h3 className="text-sm font-semibold text-[#181d29] mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
-                    <span className="bg-[#ffa300] text-[#181d29] w-5 h-5 rounded-xl flex items-center justify-center text-[10px] font-black">1</span>
+                  <h3 className="text-sm font-semibold text-[#1E293B] mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
+                    <span className="bg-[#2F4F97] text-white w-5 h-5 rounded-xl flex items-center justify-center text-[10px] font-black">1</span>
                     Company Details
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -243,8 +243,8 @@ export default function PartnerRegistration() {
 
                 {/* Section 2 */}
                 <div>
-                  <h3 className="text-sm font-semibold text-[#181d29] mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
-                    <span className="bg-[#ffa300] text-[#181d29] w-5 h-5 rounded-xl flex items-center justify-center text-[10px] font-black">2</span>
+                  <h3 className="text-sm font-semibold text-[#1E293B] mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
+                    <span className="bg-[#2F4F97] text-white w-5 h-5 rounded-xl flex items-center justify-center text-[10px] font-black">2</span>
                     Account Representative
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -269,8 +269,8 @@ export default function PartnerRegistration() {
 
                 {/* Section 3 */}
                 <div>
-                  <h3 className="text-sm font-semibold text-[#181d29] mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
-                    <span className="bg-[#ffa300] text-[#181d29] w-5 h-5 rounded-xl flex items-center justify-center text-[10px] font-black">3</span>
+                  <h3 className="text-sm font-semibold text-[#1E293B] mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
+                    <span className="bg-[#2F4F97] text-white w-5 h-5 rounded-xl flex items-center justify-center text-[10px] font-black">3</span>
                     Verification Documents
                   </h3>
                   <div className="space-y-4">
@@ -282,8 +282,8 @@ export default function PartnerRegistration() {
                       <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-2 block">Additional Certificates</Label>
                       <div className="space-y-2 mb-2">
                         {certificateFiles.map((f, i) => (
-                          <div key={i} className="flex items-center gap-2 text-sm bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 text-[#181d29]">
-                            <FileText className="h-4 w-4 text-[#ffa300]" />
+                          <div key={i} className="flex items-center gap-2 text-sm bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 text-[#1E293B]">
+                            <FileText className="h-4 w-4 text-[#2F4F97]" />
                             <span className="truncate flex-1 font-medium text-[13px]">{f.name}</span>
                             <Button type="button" variant="ghost" size="icon" className="h-6 w-6 text-gray-400 hover:text-red-500 hover:bg-red-50" onClick={() => removeCertificate(i)}>
                               <X className="h-4 w-4" />
@@ -300,7 +300,7 @@ export default function PartnerRegistration() {
 
                 <div className="pt-6 border-t border-gray-100">
                   <Button 
-                    className="w-full h-12 bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 font-bold text-[14px] rounded-xl transition-all"
+                    className="w-full h-12 bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-bold text-[14px] rounded-xl transition-all"
                     onClick={handleSubmit} 
                     disabled={submitting}
                   >

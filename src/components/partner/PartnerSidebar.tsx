@@ -82,10 +82,10 @@ export function PartnerSidebar() {
       <div className="border-b border-[#2d1b4e] py-4 px-4 bg-[#1a0f2e] flex flex-col gap-1 flex-shrink-0">
         <div className="flex items-center gap-2">
           {!collapsed ? (
-            <img src="/LOGO-ON-DARK-BG.png" alt="Whiteboard Education" className="h-8 w-auto object-contain" />
+            <img src="/logo.png" alt="Whiteboard Education" className="h-8 w-auto object-contain" />
           ) : (
             <div
-              className="h-8 w-8 bg-[#ffa300] flex items-center justify-center flex-shrink-0"
+              className="h-8 w-8 bg-[#2F4F97] flex items-center justify-center flex-shrink-0"
               style={{ clipPath: "polygon(0 0, 100% 0, 100% 75%, 75% 100%, 0 100%)" }}
             >
               <GraduationCap className="h-4 w-4 text-[#1a0f2e]" />
@@ -106,16 +106,16 @@ export function PartnerSidebar() {
                       to={item.url}
                       end={item.url === "/partner-dashboard"}
                       className={`relative hover:bg-[#2d1b4e] transition-colors py-1.5 flex items-center w-full ${collapsed ? "justify-center" : "justify-between"}`}
-                      activeClassName="bg-transparent text-[#ffa300] font-semibold"
+                      activeClassName="bg-transparent text-[#2F4F97] font-semibold"
                     >
                       {({ isActive }) => (
                         <>
                           {isActive && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-3.5 w-[2px] bg-[#ffa300] rounded-r-sm" />
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-3.5 w-[2px] bg-[#2F4F97] rounded-r-sm" />
                           )}
                           {!collapsed && (
                             <div className="flex items-center gap-2">
-                              <span className={`text-[13px] ${isActive ? "text-[#ffa300]" : "text-[#d1bfe8] font-medium"}`}>{item.title}</span>
+                              <span className={`text-[13px] ${isActive ? "text-[#2F4F97]" : "text-[#d1bfe8] font-medium"}`}>{item.title}</span>
                               {item.title === "Notifications" && unreadCount > 0 && (
                                 <span className="h-[16px] min-w-[16px] px-1 rounded-xl bg-destructive text-destructive-foreground text-[9px] font-bold flex items-center justify-center">
                                   {unreadCount > 99 ? "99+" : unreadCount}
@@ -123,7 +123,7 @@ export function PartnerSidebar() {
                               )}
                             </div>
                           )}
-                          <item.icon className={`h-4 w-4 flex-shrink-0 ${isActive ? "text-[#ffa300]" : "text-[#a38cbd]"}`} />
+                          <item.icon className={`h-4 w-4 flex-shrink-0 ${isActive ? "text-[#2F4F97]" : "text-[#a38cbd]"}`} />
                         </>
                       )}
                     </NavLink>

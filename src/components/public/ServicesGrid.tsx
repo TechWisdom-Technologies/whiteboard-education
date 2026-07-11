@@ -32,21 +32,21 @@ export function ServicesGrid() {
   return (
     <section className="py-16 bg-white relative overflow-hidden">
       {/* Organic Background Blob */}
-      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#ffa300]/5 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#2F4F97]/5 rounded-full blur-[80px] pointer-events-none" />
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-12">
-          <h2 className="text-2xl md:text-3xl font-semibold text-[#181d29] mb-2">
+          <h2 className="text-2xl md:text-3xl font-semibold text-[#1E293B] mb-2">
             How we can help you?
           </h2>
-          <p className="text-[#515768] max-w-2xl mx-auto text-sm">
+          <p className="text-[#64748B] max-w-2xl mx-auto text-sm">
             Whiteboard Education provides comprehensive end-to-end support for your journey in Malaysia.
           </p>
         </div>
 
         <div className="relative">
           {/* Connecting Process Line - Aligned to middle of numbers */}
-          <div className="hidden lg:flex absolute top-[176px] left-1/2 -translate-x-1/2 w-[88%] h-3 items-center pointer-events-none z-0 opacity-30 text-[#ffa300]">
+          <div className="hidden lg:flex absolute top-[176px] left-1/2 -translate-x-1/2 w-[88%] h-3 items-center pointer-events-none z-0 opacity-30 text-[#2F4F97]">
             {/* Start Circle */}
             <div className="w-3 h-3 rounded-full bg-current shrink-0" />
             {/* Line */}
@@ -67,22 +67,22 @@ export function ServicesGrid() {
                   {/* Step Number with Shadow/Offset */}
                   <div className="relative inline-block mb-8 lg:mb-12">
                     {/* Offset background */}
-                    <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-[#ffa300] rounded-xl" />
+                    <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-[#2F4F97] rounded-xl" />
                     {/* Number box */}
-                    <div className="relative w-8 h-8 bg-[#181d29] text-white flex items-center justify-center font-bold text-sm rounded-xl z-10 border border-[#181d29]">
+                    <div className="relative w-8 h-8 bg-[#1E293B] text-white flex items-center justify-center font-bold text-sm rounded-xl z-10 border border-[#1E293B]">
                       {i + 1}
                     </div>
                   </div>
 
                   <h3
-                    className="font-semibold text-lg mb-3 group-hover:text-[#ffa300] transition-colors"
-                    style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}
+                    className="font-semibold text-lg mb-3 group-hover:text-[#2F4F97] transition-colors"
+                    style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B" }}
                   >
                     {s.title}
                   </h3>
                   <p
                     className="text-[13px] leading-relaxed"
-                    style={{ color: "#515768", fontFamily: "Poppins, sans-serif" }}
+                    style={{ color: "#64748B", fontFamily: "Poppins, sans-serif" }}
                   >
                     {s.description}
                   </p>

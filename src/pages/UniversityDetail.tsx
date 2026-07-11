@@ -256,7 +256,7 @@ export default function UniversityDetail() {
     }))];
   }, [uniCourses]);
 
-  if (isLoading) return <div className="min-h-screen flex flex-col bg-background"><MegaMenu /><LoadingScreen label="Loading university" className="flex-1" /><PublicFooter /></div>;
+  if (isLoading) return <div className="min-h-screen flex flex-col bg-white"><MegaMenu /><LoadingScreen label="Loading university" className="flex-1" /><PublicFooter /></div>;
   if (!uni) return <div className="min-h-screen flex flex-col bg-background"><MegaMenu /><div className="flex-1 flex items-center justify-center"><div className="text-center space-y-4"><Building className="h-16 w-16 text-muted-foreground mx-auto" /><h1 className="text-2xl font-bold">University Not Found</h1><Link to="/universities"><Button>Browse All</Button></Link></div></div><PublicFooter /></div>;
 
   // removed open function
@@ -274,22 +274,24 @@ export default function UniversityDetail() {
       {/* ═══ HERO: Big Logo + Name + Buttons ═══ */}
       <section className="pb-10">
         <div className="container mx-auto px-4 lg:px-6">
-          <div className="bg-[#fdf0d5] py-16 px-10 flex flex-col md:flex-row items-center md:items-start gap-8 rounded-tl-md rounded-tr-[3rem] rounded-bl-[3rem] rounded-br-md min-h-[220px]">
+          <div className="bg-[#EEF4FF] py-16 px-10 flex flex-col md:flex-row items-center md:items-start gap-8 rounded-tl-md rounded-tr-[3rem] rounded-bl-[3rem] rounded-br-md min-h-[220px]">
             <img src={logo} alt={uni.name} className="h-32 w-32 md:h-40 md:w-40 object-contain rounded-xl bg-white p-4 shadow shrink-0" />
             <div className="flex-1 flex flex-col w-full">
-              <h1 className="text-4xl font-bold text-[#181d29] mb-4 text-center md:text-left" style={{ fontFamily: "Poppins, sans-serif" }}>{uni.name}</h1>
+              <h1 className="text-4xl font-bold text-[#1E293B] mb-4 text-center md:text-left" style={{ fontFamily: "Poppins, sans-serif" }}>{uni.name}</h1>
               
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 {uni.city && (
                   <p className="text-gray-700 flex items-center justify-center md:justify-start gap-2 text-lg">
-                    <MapPin className="h-5 w-5 text-[#ffa300]" />
+                    <MapPin className="h-5 w-5 text-[#2F4F97]" />
                     {uni.city}, Malaysia
                   </p>
                 )}
                 
                 <div className="flex flex-row gap-3 w-full sm:w-auto justify-center md:justify-end">
-                  <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold px-8 h-12 text-[16px] flex-1 sm:flex-none" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>Apply Now</Button>
-                  <Button variant="outline" className="border-[#9273b6] text-[#9273b6] hover:bg-[#9273b6]/10 font-bold px-8 h-12 text-[16px] bg-transparent flex-1 sm:flex-none" onClick={() => navigate("/contact")}>Ask Us</Button>
+                  <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent font-bold px-8 h-12 flex-1 sm:flex-none" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
+Apply Now</Button>
+                  <Button variant="outline" className="bg-white hover:bg-gray-50 font-bold px-8 h-12 flex-1 sm:flex-none" onClick={() => navigate("/contact")}>
+Ask Us</Button>
                 </div>
               </div>
             </div>
@@ -298,7 +300,7 @@ export default function UniversityDetail() {
       </section>
 
       {/* ═══ STICKY TAB NAV (replaces navbar when scrolled) ═══ */}
-      <nav className="sticky top-0 z-40 bg-white border-b shadow-sm transition-all duration-300">
+      <nav className="sticky top-0 z-40 shadow-sm transition-all duration-300 bg-white">
         <div className="container mx-auto px-4 max-w-5xl flex items-center justify-between min-h-[80px] py-2">
           {/* Left: Logo + Tabs */}
           <div className="flex items-center gap-6 min-w-0">
@@ -308,15 +310,17 @@ export default function UniversityDetail() {
             <div className="flex items-center gap-1 shrink-0">
               {(["overview", "courses", "accommodation"] as TabKey[]).map(k => (
                 <button key={k} onClick={() => { setTab(k); setCPage(1); }}
-                  className={`capitalize text-sm md:text-base font-normal px-3 md:px-4 py-2 rounded-xl transition-colors ${tab === k ? "text-[#ffa300] bg-[#ffa300]/10" : "text-gray-500 hover:text-[#181d29] hover:bg-gray-100"}`}
+                  className={`capitalize text-sm md:text-base font-normal px-3 md:px-4 py-2 rounded-xl transition-colors ${tab === k ? "text-[#2F4F97] bg-[#2F4F97]/10" : "text-gray-500 hover:text-[#1E293B] hover:bg-gray-100"}`}
                 >{k}</button>
               ))}
             </div>
           </div>
           {/* Right: CTA Buttons */}
           <div className={`flex items-center gap-2 transition-all duration-300 ${isScrolled ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none hidden md:flex'}`}>
-            <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-normal px-6 h-10 text-sm" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>Apply Now</Button>
-            <Button variant="outline" className="font-normal px-6 h-10 text-sm border-gray-200" onClick={() => navigate("/contact")}>Ask Us</Button>
+            <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent font-normal px-6 h-10" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
+Apply Now</Button>
+            <Button variant="outline" className="bg-white font-normal px-6 h-10 hover:bg-gray-50" onClick={() => navigate("/contact")}>
+Ask Us</Button>
           </div>
         </div>
       </nav>
@@ -325,9 +329,9 @@ export default function UniversityDetail() {
       {tab === "overview" && (
         <>
           {/* About */}
-          <section className="bg-white py-12">
+          <section className="py-12 bg-white">
             <div className="container mx-auto px-4 max-w-5xl">
-              <h2 className="text-2xl md:text-3xl font-extrabold text-[#181d29] mb-8">About {uni.name}</h2>
+              <h2 className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-8">About {uni.name}</h2>
               
               <div className="prose max-w-none text-gray-600 leading-relaxed text-[15px] text-justify space-y-8">
                 {/* Paragraph 1 */}
@@ -371,7 +375,7 @@ export default function UniversityDetail() {
           {groupedCourses.length > 0 && (
             <section className="bg-white py-10">
               <div className="container mx-auto px-4 max-w-5xl">
-                <h2 className="text-xl md:text-2xl font-extrabold text-[#181d29] mb-6">
+                <h2 className="text-xl md:text-2xl font-extrabold text-[#1E293B] mb-6">
                   Courses and Fees for International Students
                 </h2>
                 <Accordion type="multiple" defaultValue={[groupedCourses[0]?.category]} className="space-y-0">
@@ -387,7 +391,7 @@ export default function UniversityDetail() {
                           <div className="overflow-x-auto">
                             <table className="w-full text-[15px]">
                               <thead>
-                                <tr className="bg-[#fdf0d5] text-left border-b border-gray-400">
+                                <tr className="bg-[#EEF4FF] text-left border-b border-gray-400">
                                   <th className="px-6 py-4 font-medium text-gray-800">Program</th>
                                   <th className="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">Tuition Fees per Year</th>
                                   <th className="px-6 py-4 font-medium text-gray-800">Duration</th>
@@ -397,7 +401,7 @@ export default function UniversityDetail() {
                                 {gc.map((c: any, i: number) => (
                                   <tr key={c.id} className="border-b border-gray-200 last:border-0 hover:bg-gray-50/50 transition-colors">
                                     <td className="px-6 py-4">
-                                      <Link to={`/courses/${generateSlug(c.title)}`} className="text-gray-700 hover:text-[#ffa300] transition-colors">
+                                      <Link to={`/courses/${generateSlug(c.title)}`} className="text-gray-700 hover:text-[#2F4F97] transition-colors">
                                         {c.title}
                                       </Link>
                                     </td>
@@ -421,34 +425,34 @@ export default function UniversityDetail() {
           <section className="bg-white py-8 border-b">
             <div className="container mx-auto px-4 max-w-5xl grid sm:grid-cols-3 gap-6">
               <Card className="border shadow-sm"><CardContent className="p-5 flex items-start gap-3">
-                <FileText className="h-6 w-6 text-[#ffa300] mt-0.5 shrink-0" />
-                <div><h4 className="font-bold text-[#181d29] text-sm mb-1">Offer Letter</h4><p className="text-gray-600 text-sm">{isPaid ? "Offer Letter Fees Applies" : "Free Offer Letter"}</p></div>
+                <FileText className="h-6 w-6 text-[#2F4F97] mt-0.5 shrink-0" />
+                <div><h4 className="font-bold text-[#1E293B] text-sm mb-1">Offer Letter</h4><p className="text-gray-600 text-sm">{isPaid ? "Offer Letter Fees Applies" : "Free Offer Letter"}</p></div>
               </CardContent></Card>
               <Card className="border shadow-sm"><CardContent className="p-5 flex items-start gap-3">
-                <CalendarDays className="h-6 w-6 text-[#ffa300] mt-0.5 shrink-0" />
-                <div><h4 className="font-bold text-[#181d29] text-sm mb-1">Intake</h4><p className="text-gray-600 text-sm">Contact us for upcoming intake dates</p></div>
+                <CalendarDays className="h-6 w-6 text-[#2F4F97] mt-0.5 shrink-0" />
+                <div><h4 className="font-bold text-[#1E293B] text-sm mb-1">Intake</h4><p className="text-gray-600 text-sm">Contact us for upcoming intake dates</p></div>
               </CardContent></Card>
               <Card className="border shadow-sm"><CardContent className="p-5 flex items-start gap-3">
-                <MapPin className="h-6 w-6 text-[#ffa300] mt-0.5 shrink-0" />
-                <div><h4 className="font-bold text-[#181d29] text-sm mb-1">Location</h4><p className="text-gray-600 text-sm">{uni.city || "Malaysia"}, Malaysia</p></div>
+                <MapPin className="h-6 w-6 text-[#2F4F97] mt-0.5 shrink-0" />
+                <div><h4 className="font-bold text-[#1E293B] text-sm mb-1">Location</h4><p className="text-gray-600 text-sm">{uni.city || "Malaysia"}, Malaysia</p></div>
               </CardContent></Card>
             </div>
           </section>
 
           {/* Register Now CTA */}
-          <section className="bg-[#fdf0d5] py-12">
+          <section className="bg-[#EEF4FF] py-12">
             <div className="container mx-auto px-4 max-w-5xl text-center">
-              <h2 className="text-xl md:text-2xl font-extrabold text-[#181d29] mb-2">Register Now and Secure Your Spot!</h2>
+              <h2 className="text-xl md:text-2xl font-extrabold text-[#1E293B] mb-2">Register Now and Secure Your Spot!</h2>
               <p className="text-gray-700 text-sm mb-2">Your Future Starts Here: Register Today for the Upcoming Intake</p>
               <p className="text-gray-600 text-sm mb-6">Secure Your Seat Now! Join {uni.name} and Start Your Journey</p>
-              <Button size="lg" className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold px-10 h-12" onClick={() => navigate("/contact")}>Register Now</Button>
+              <Button size="lg" className="bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97] font-bold px-10 h-12" onClick={() => navigate("/contact")}>Register Now</Button>
               {steps.length > 0 && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 mt-10 max-w-4xl mx-auto">
                   {steps.slice(0, 5).map((s: string, i: number) => {
                     const Icon = stepIcons[i % stepIcons.length];
                     return <div key={i} className="flex flex-col items-center gap-2">
-                      <div className="w-8 h-8 rounded bg-gray-200 flex items-center justify-center text-sm font-bold text-[#181d29]">{i + 1}</div>
-                      <Icon className="h-10 w-10 text-[#ffa300]" />
+                      <div className="w-8 h-8 rounded bg-gray-200 flex items-center justify-center text-sm font-bold text-[#1E293B]">{i + 1}</div>
+                      <Icon className="h-10 w-10 text-[#2F4F97]" />
                       <p className="text-xs text-gray-700 text-center leading-tight">{s}</p>
                     </div>;
                   })}
@@ -461,8 +465,8 @@ export default function UniversityDetail() {
           {faqs.length > 0 && (
             <section className="bg-white py-10">
               <div className="container mx-auto px-4 max-w-5xl">
-                <h2 className="text-xl font-extrabold text-[#181d29] mb-6 flex items-center gap-2">
-                  <HelpCircle className="h-5 w-5 text-[#ffa300]" />Frequently Asked Questions About {uni.name}
+                <h2 className="text-xl font-extrabold text-[#1E293B] mb-6 flex items-center gap-2">
+                  <HelpCircle className="h-5 w-5 text-[#2F4F97]" />Frequently Asked Questions About {uni.name}
                 </h2>
                 <Accordion type="single" collapsible className="space-y-2">
                   {faqs.map((f: any, i: number) => (
@@ -480,11 +484,11 @@ export default function UniversityDetail() {
           {similarUnis.length > 0 && (
             <section className="py-10">
               <div className="container mx-auto px-4 max-w-5xl">
-                <h2 className="text-xl font-extrabold text-[#181d29] mb-6">Similar to {uni.name}</h2>
+                <h2 className="text-xl font-extrabold text-[#1E293B] mb-6">Similar to {uni.name}</h2>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {similarUnis.map((su: any) => (
                     <Link key={su.id} to={`/universities/${generateSlug(su.name)}`} className="h-full">
-                      <Card className="h-full border-[#e8e8e8] group hover:border-[#ffa300] transition-colors" style={{ borderRadius: "5px" }}>
+                      <Card className="h-full border-[#e8e8e8] group hover:border-[#2F4F97] transition-colors" style={{ borderRadius: "5px" }}>
                         <CardContent className="p-0 flex flex-col h-full">
                           <div className="h-48 flex items-center justify-center bg-gray-50/50 border-b p-6 shrink-0">
                             <img 
@@ -494,15 +498,15 @@ export default function UniversityDetail() {
                             />
                           </div>
                           <div className="p-5 flex-1 flex flex-col">
-                            <h3 className="font-bold text-base text-[#181d29] mb-2 line-clamp-2 leading-snug h-12" style={{ fontFamily: "Poppins, sans-serif" }}>{su.name}</h3>
+                            <h3 className="font-bold text-base text-[#1E293B] mb-2 line-clamp-2 leading-snug h-12" style={{ fontFamily: "Poppins, sans-serif" }}>{su.name}</h3>
                             
                             <div className="space-y-2 mb-4">
                               <div className="flex items-center gap-2 text-xs text-gray-500">
-                                <MapPin className="h-3.5 w-3.5 text-[#ffa300]" />
+                                <MapPin className="h-3.5 w-3.5 text-[#2F4F97]" />
                                 <span>{su.city || "Malaysia"}</span>
                               </div>
                               <div className="flex items-center gap-2 text-xs text-gray-500">
-                                <BookOpen className="h-3.5 w-3.5 text-[#515768]" />
+                                <BookOpen className="h-3.5 w-3.5 text-[#64748B]" />
                                 <span>{courses.filter((c: any) => String(c.university_id) === String(su.id)).length} Courses Available</span>
                               </div>
                             </div>
@@ -565,7 +569,7 @@ export default function UniversityDetail() {
                   <Button 
                     variant="outline" 
                     size="icon" 
-                    className="h-11 w-11 rounded-xl border-gray-200 text-gray-500 hover:text-[#181d29]"
+                    className="h-11 w-11 rounded-xl border-gray-200 text-gray-500 hover:text-[#1E293B]"
                     onClick={() => { setCSearch(""); setCLevel("all"); setCCategory("all"); setCPage(1); }}
                     title="Reset Filters"
                   >
@@ -575,7 +579,7 @@ export default function UniversityDetail() {
               </div>
             </div>
 
-            <p className="text-sm text-gray-500 mb-4"><span className="font-bold text-[#181d29]">{filtered.length}</span> courses found</p>
+            <p className="text-sm text-gray-500 mb-4"><span className="font-bold text-[#1E293B]">{filtered.length}</span> courses found</p>
             <div className="space-y-5">
               {paged.map((c: any, idx: number) => (
                 <Card key={`${c.id || idx}-${cLevel}-${cCategory}`} className="bg-white hover:shadow-lg transition-all border-gray-200 overflow-hidden group">
@@ -584,11 +588,11 @@ export default function UniversityDetail() {
                       {/* Left: Info Section */}
                       <div className="flex-1 p-10 space-y-6">
                         <div>
-                          <Link to={`/courses/${generateSlug(c.title)}`} className="font-semibold text-md text-[#181d29] hover:text-[#ffa300] transition-colors block mb-1">
+                          <Link to={`/courses/${generateSlug(c.title)}`} className="font-semibold text-md text-[#1E293B] hover:text-[#2F4F97] transition-colors block mb-1">
                             {c.title}
                           </Link>
                           <div className="flex items-center gap-2 text-sm text-gray-500 my-4 font-normal">
-                            <Building className="h-4 w-4 text-[#ffa300]" />
+                            <Building className="h-4 w-4 text-[#2F4F97]" />
                             {uni.name}
                           </div>
                         </div>
@@ -596,7 +600,7 @@ export default function UniversityDetail() {
                         <div className="flex flex-wrap items-center gap-y-3 gap-x-6">
                           <div className="flex flex-col">
                             <span className="text-[12px] uppercase font-normal text-black tracking-wider mb-2">Tuition Fee</span>
-                            <span className="text-sm font-normal text-[#ffa300]">MYR {Number(c.tuition_fee).toLocaleString()}/Year</span>
+                            <span className="text-sm font-normal text-[#2F4F97]">MYR {Number(c.tuition_fee).toLocaleString()}/Year</span>
                           </div>
                           <div className="flex flex-col">
                             <span className="text-[12px] uppercase font-normal text-black tracking-wider mb-2">Perks</span>
@@ -617,7 +621,7 @@ export default function UniversityDetail() {
                                 const active = getActiveIntake(c.intake_months);
                                 return sliced.map((m: string, i: number) => (
                                   <span key={m}>
-                                    <span className={m === active ? "font-bold text-[#181d29]" : ""}>{m}</span>
+                                    <span className={m === active ? "font-bold text-[#1E293B]" : ""}>{m}</span>
                                     {i < sliced.length - 1 ? ", " : ""}
                                   </span>
                                 ));
@@ -645,17 +649,19 @@ export default function UniversityDetail() {
 
                       {/* Right: Actions Section */}
                       <div className="bg-gray-50/50 md:w-56 border-t md:border-t-0 md:border-l border-gray-100 p-10 flex flex-col justify-center gap-3">
-                        <Button className="w-full bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold h-11" onClick={e => { e.preventDefault(); navigate(`/apply?courseId=${c.id}`); }}>
+                        <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent w-full font-bold h-11" onClick={e => { e.preventDefault(); navigate(`/apply?courseId=${c.id}`); }}>
+
                           Apply Now
                         </Button>
-                        <Button variant="outline" className="w-full font-bold h-11 border-gray-200 text-[#181d29] hover:bg-white" onClick={e => { e.preventDefault(); navigate("/contact"); }}>
+                        <Button variant="outline" className="bg-white w-full font-bold h-11 hover:bg-gray-50" onClick={e => { e.preventDefault(); navigate("/contact"); }}>
+
                           Ask Us
                         </Button>
                         <Button
                           className={`w-full font-bold h-11 transition-colors bg-white border ${
                             isComparing(c.id) 
-                              ? "bg-[#ffa300]/10 text-[#e69200] border-[#ffa300]" 
-                              : "border-gray-200 text-gray-500 hover:bg-[#ffa300] hover:text-[#181d29] hover:border-[#ffa300]"
+                              ? "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]" 
+                              : "border-gray-200 text-gray-500 hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97]"
                           }`}
                           onClick={(e) => {
                             e.preventDefault();
@@ -686,7 +692,7 @@ export default function UniversityDetail() {
                 <Button variant="outline" size="sm" disabled={cPage <= 1} onClick={() => setCPage(cPage - 1)}>Previous</Button>
                 {Array.from({ length: totalP }, (_, i) => i + 1).slice(0, 8).map(p => (
                   <Button key={p} variant={p === cPage ? "default" : "outline"} size="sm"
-                    className={p === cPage ? "bg-[#ffa300] text-[#181d29]" : ""} onClick={() => setCPage(p)}>{p}</Button>
+                    className={p === cPage ? "bg-[#2F4F97] text-[#1E293B]" : ""} onClick={() => setCPage(p)}>{p}</Button>
                 ))}
                 <Button variant="outline" size="sm" disabled={cPage >= totalP} onClick={() => setCPage(cPage + 1)}>Next</Button>
               </div>
@@ -700,31 +706,31 @@ export default function UniversityDetail() {
         <section className="py-8">
           <div className="container mx-auto px-4 max-w-5xl">
             <p className="text-sm text-gray-500 mb-6">Accommodation options near {uni.name}. For the most current availability and pricing, contact us directly.</p>
-            <h3 className="font-bold text-lg text-[#181d29] mb-4">{nearbyAccom.length} nearby accommodations found</h3>
+            <h3 className="font-bold text-lg text-[#1E293B] mb-4">{nearbyAccom.length} nearby accommodations found</h3>
             {nearbyAccom.length > 0 ? (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {nearbyAccom.map((a: any) => (
-                  <Card key={a.id} className="bg-white hover:shadow-md hover:border-[#ffa300]/40 transition-all cursor-pointer" onClick={() => setSelected(a)}>
+                  <Card key={a.id} className="bg-white hover:shadow-md hover:border-[#2F4F97]/40 transition-all cursor-pointer" onClick={() => setSelected(a)}>
                     <CardContent className="p-4 space-y-2.5">
-                      <h4 className="font-bold text-sm text-[#181d29]">{a.name}</h4>
+                      <h4 className="font-bold text-sm text-[#1E293B]">{a.name}</h4>
                       <div className="flex items-center gap-1 text-xs text-gray-500"><MapPin className="h-3 w-3" />{a.city}</div>
                       <div className="flex flex-wrap gap-1">
                         <Badge variant="outline" className="text-xs">{a.type}</Badge>
-                        {a.tag && <Badge className="text-[10px] bg-[#ffa300] hover:bg-[#ffa300] text-[#181d29] border-0">{a.tag}</Badge>}
+                        {a.tag && <Badge className="text-[10px] bg-[#2F4F97] hover:bg-[#2F4F97] text-white border-0">{a.tag}</Badge>}
                       </div>
                       {a.travel_distance_time && typeof a.travel_distance_time === 'object' && Object.keys(a.travel_distance_time).length > 0 ? (
                         <div className="flex flex-wrap gap-2 text-[11px] text-muted-foreground">
                           {a.travel_distance_time.walking && (
-                            <span className="flex items-center gap-1"><Clock className="h-3 w-3 text-[#ffa300]" /> {a.travel_distance_time.walking} walk</span>
+                            <span className="flex items-center gap-1"><Clock className="h-3 w-3 text-[#2F4F97]" /> {a.travel_distance_time.walking} walk</span>
                           )}
                           {a.travel_distance_time.car && (
-                            <span className="flex items-center gap-1"><Car className="h-3 w-3 text-[#ffa300]" /> {a.travel_distance_time.car} drive</span>
+                            <span className="flex items-center gap-1"><Car className="h-3 w-3 text-[#2F4F97]" /> {a.travel_distance_time.car} drive</span>
                           )}
                         </div>
                       ) : a.travel_distance && (
-                        <p className="text-[11px] text-gray-500 flex items-center gap-1"><Clock className="h-3 w-3 text-[#ffa300]" /> {a.travel_distance} from campus</p>
+                        <p className="text-[11px] text-gray-500 flex items-center gap-1"><Clock className="h-3 w-3 text-[#2F4F97]" /> {a.travel_distance} from campus</p>
                       )}
-                      <p className="font-bold text-[#ffa300] text-sm">RM {Number(a.price_per_month).toLocaleString()}/month</p>
+                      <p className="font-bold text-[#2F4F97] text-sm">RM {Number(a.price_per_month).toLocaleString()}/month</p>
                     </CardContent>
                   </Card>
                 ))}
@@ -735,11 +741,11 @@ export default function UniversityDetail() {
       )}
 
       {/* Bottom CTA */}
-      <section className="bg-[#ffa300] py-10 mt-auto">
+      <section className="bg-[#2F4F97] py-10 mt-auto">
         <div className="container mx-auto px-4 max-w-5xl text-center">
-          <h2 className="text-xl font-extrabold text-[#181d29] mb-2">Ready to Start Your Journey?</h2>
-          <p className="text-[#181d29]/70 text-sm mb-6">Fill in your details and our counsellors will guide you - completely free.</p>
-          <Button size="lg" className="bg-[#181d29] text-white hover:bg-[#181d29]/90 font-bold px-10 h-12" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>Start Your Application</Button>
+          <h2 className="text-xl font-extrabold text-[#1E293B] mb-2">Ready to Start Your Journey?</h2>
+          <p className="text-[#1E293B]/70 text-sm mb-6">Fill in your details and our counsellors will guide you - completely free.</p>
+          <Button size="lg" className="bg-[#1E293B] text-white hover:bg-[#1E293B]/90 font-bold px-10 h-12" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>Start Your Application</Button>
         </div>
       </section>
 
@@ -767,7 +773,7 @@ export default function UniversityDetail() {
                   }}
                 />
                 {selected.tag && (
-                  <Badge className="absolute top-3 left-3 bg-[#ffa300] hover:bg-[#ffa300]/90 text-[#181d29] font-bold border-0">{selected.tag}</Badge>
+                  <Badge className="absolute top-3 left-3 bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white font-bold border-0">{selected.tag}</Badge>
                 )}
               </div>
 
@@ -779,7 +785,7 @@ export default function UniversityDetail() {
                       key={idx}
                       onClick={() => setActiveImage(img)}
                       className={`h-14 w-20 rounded-xl overflow-hidden border-2 shrink-0 transition-all ${
-                        activeImage === img ? "border-[#ffa300] scale-95" : "border-transparent opacity-70 hover:opacity-100"
+                        activeImage === img ? "border-[#2F4F97] scale-95" : "border-transparent opacity-70 hover:opacity-100"
                       }`}
                     >
                       <img src={img} alt={`thumbnail ${idx}`} className="w-full h-full object-cover" />
@@ -794,7 +800,7 @@ export default function UniversityDetail() {
                   <Badge variant="outline" className="gap-1"><MapPin className="h-3 w-3" /> {selected.city}</Badge>
                   <Badge variant="outline">{selected.type}</Badge>
                   <Badge variant="secondary">{selected.property_type || "Student Housing"}</Badge>
-                  <span className="ml-auto font-extrabold text-lg text-[#ffa300]">RM {Number(selected.price_per_month).toLocaleString()}<span className="text-xs font-normal text-muted-foreground">/mo</span></span>
+                  <span className="ml-auto font-extrabold text-lg text-[#2F4F97]">RM {Number(selected.price_per_month).toLocaleString()}<span className="text-xs font-normal text-muted-foreground">/mo</span></span>
                 </div>
 
                 {selected.description && (
@@ -804,31 +810,31 @@ export default function UniversityDetail() {
                 {/* Travel Distance & Times */}
                 {selected.travel_distance_time && typeof selected.travel_distance_time === 'object' && Object.keys(selected.travel_distance_time).length > 0 ? (
                   <div className="space-y-2">
-                    <h4 className="text-sm font-semibold text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Travel Distance / Time</h4>
-                    <div className="flex flex-wrap gap-4 p-3 rounded-2xl bg-[#ffa300]/10 border border-[#ffa300]/20">
+                    <h4 className="text-sm font-semibold text-[#1E293B]" style={{ fontFamily: "Poppins, sans-serif" }}>Travel Distance / Time</h4>
+                    <div className="flex flex-wrap gap-4 p-3 rounded-2xl bg-[#2F4F97]/10 border border-[#2F4F97]/20">
                       {selected.travel_distance_time.walking && (
                         <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
-                          <Clock className="h-4 w-4 text-[#ffa300]" />
+                          <Clock className="h-4 w-4 text-[#2F4F97]" />
                           <span>{selected.travel_distance_time.walking} walk</span>
                         </div>
                       )}
                       {selected.travel_distance_time.car && (
                         <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
-                          <Car className="h-4 w-4 text-[#ffa300]" />
+                          <Car className="h-4 w-4 text-[#2F4F97]" />
                           <span>{selected.travel_distance_time.car} by car</span>
                         </div>
                       )}
                       {selected.travel_distance_time.bus && (
                         <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
-                          <Building2 className="h-4 w-4 text-[#ffa300]" />
+                          <Building2 className="h-4 w-4 text-[#2F4F97]" />
                           <span>{selected.travel_distance_time.bus} by bus</span>
                         </div>
                       )}
                     </div>
                   </div>
                 ) : selected.travel_distance && (
-                  <div className="flex items-center gap-2 p-3 rounded-xl bg-[#ffa300]/10 border border-[#ffa300]/20">
-                    <Clock className="h-4 w-4 text-[#ffa300]" />
+                  <div className="flex items-center gap-2 p-3 rounded-xl bg-[#2F4F97]/10 border border-[#2F4F97]/20">
+                    <Clock className="h-4 w-4 text-[#2F4F97]" />
                     <span className="text-sm font-medium">{selected.travel_distance}</span>
                     <span className="text-xs text-muted-foreground">from nearest university</span>
                   </div>
@@ -837,7 +843,7 @@ export default function UniversityDetail() {
                 {/* Unit Types */}
                 {parseJsonArray(selected.unit_types).length > 0 && (
                   <div>
-                    <h4 className="text-sm font-semibold mb-2 text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Unit Types</h4>
+                    <h4 className="text-sm font-semibold mb-2 text-[#1E293B]" style={{ fontFamily: "Poppins, sans-serif" }}>Unit Types</h4>
                     <div className="flex flex-wrap gap-2">
                       {parseJsonArray(selected.unit_types).map((u: string, i: number) => (
                         <Badge key={i} variant="outline" className="bg-muted/50">{u}</Badge>
@@ -849,20 +855,20 @@ export default function UniversityDetail() {
                 {/* Room Rents Table */}
                 {selected.room_rents && Array.isArray(selected.room_rents) && selected.room_rents.length > 0 ? (
                   <div>
-                    <h4 className="text-sm font-semibold mb-2 text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Available Room Types & Rents</h4>
+                    <h4 className="text-sm font-semibold mb-2 text-[#1E293B]" style={{ fontFamily: "Poppins, sans-serif" }}>Available Room Types & Rents</h4>
                     <div className="border border-gray-200/80 rounded-2xl overflow-hidden bg-white shadow-sm">
                       <table className="w-full text-sm text-left">
                         <thead className="bg-gray-50 border-b border-gray-200/80">
                           <tr>
-                            <th className="px-4 py-2.5 font-bold text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Room Type</th>
-                            <th className="px-4 py-2.5 font-bold text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Rent / Month</th>
+                            <th className="px-4 py-2.5 font-bold text-[#1E293B]" style={{ fontFamily: "Poppins, sans-serif" }}>Room Type</th>
+                            <th className="px-4 py-2.5 font-bold text-[#1E293B]" style={{ fontFamily: "Poppins, sans-serif" }}>Rent / Month</th>
                           </tr>
                         </thead>
                         <tbody>
                           {selected.room_rents.map((r: any, idx: number) => (
                             <tr key={idx} className="border-b border-gray-100 last:border-0 hover:bg-gray-50/30 transition-colors">
                               <td className="px-4 py-2.5 text-gray-700 font-medium">{r.room_type}</td>
-                              <td className="px-4 py-2.5 text-gray-900 font-bold text-[#ffa300]">{r.rent}</td>
+                              <td className="px-4 py-2.5 text-gray-900 font-bold text-[#2F4F97]">{r.rent}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -871,7 +877,7 @@ export default function UniversityDetail() {
                   </div>
                 ) : parseJsonArray(selected.available_room_types || selected.room_types).length > 0 && (
                   <div>
-                    <h4 className="text-sm font-semibold mb-2 text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Available Room Types</h4>
+                    <h4 className="text-sm font-semibold mb-2 text-[#1E293B]" style={{ fontFamily: "Poppins, sans-serif" }}>Available Room Types</h4>
                     <div className="flex flex-wrap gap-2">
                       {parseJsonArray(selected.available_room_types || selected.room_types).map((r: string, i: number) => (
                         <Badge key={i} variant="outline" className="gap-1 bg-muted/50"><BedDouble className="h-3 w-3" /> {r}</Badge>

@@ -157,11 +157,11 @@ export function SupportFaqWidget({ bannerVisible = false }: SupportFaqWidgetProp
     return (
       <button
         onClick={() => setOpen(true)}
-        className="fixed right-2 xl:right-3 z-[60] h-9 w-9 rounded-xl bg-[#181d29] text-white flex items-center justify-center hover:bg-[#181d29]/90 transition-all duration-200 shadow-md"
+        className="fixed right-2 xl:right-3 z-[100] h-9 w-9 rounded-xl bg-[#2F4F97] text-white flex items-center justify-center hover:bg-[#2F4F97]/90 transition-all duration-200 shadow-md"
         style={{ bottom: `${supportBottomPx}px` }}
         aria-label="Open support FAQs"
       >
-        <Headset className="h-4 w-4 text-[#ffa300]" />
+        <Headset className="h-4 w-4 text-white" />
       </button>
     );
   }
@@ -172,7 +172,7 @@ export function SupportFaqWidget({ bannerVisible = false }: SupportFaqWidgetProp
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between gap-2">
             <CardTitle className="text-sm flex items-center gap-2">
-              <MessageCircleQuestion className="h-4 w-4 text-[#ffa300]" />
+              <MessageCircleQuestion className="h-4 w-4 text-[#2F4F97]" />
               Support FAQs
             </CardTitle>
             <Button

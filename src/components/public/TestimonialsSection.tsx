@@ -67,7 +67,7 @@ export function TestimonialsSection() {
         {/* Section header */}
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-semibold mb-2">What Our Students Say</h2>
-          <p className="text-sm text-[#515768] max-w-2xl mx-auto">
+          <p className="text-sm text-[#64748B] max-w-2xl mx-auto">
             Real experiences from Bangladeshi students who pursued their dreams in Malaysia with our guidance.
           </p>
         </div>
@@ -78,7 +78,7 @@ export function TestimonialsSection() {
             {marqueeItems.map((t, index) => (
               <div key={`${t.id}-${index}`} className="testimonial-card">
                 {/* Quote icon */}
-                <Quote className="h-6 w-6 text-[#ffa300] opacity-30 mb-3 flex-shrink-0" />
+                <Quote className="h-6 w-6 text-[#2F4F97] opacity-30 mb-3 flex-shrink-0" />
 
                 {/* Review text */}
                 <p className="testimonial-quote">{t.quote}</p>
@@ -86,7 +86,7 @@ export function TestimonialsSection() {
                 {/* Rating */}
                 <div className="flex gap-0.5 mb-3">
                   {Array.from({ length: t.rating }).map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-[#ffa300] text-[#ffa300]" />
+                    <Star key={i} className="h-4 w-4 fill-[#2F4F97] text-[#2F4F97]" />
                   ))}
                 </div>
 
@@ -95,12 +95,12 @@ export function TestimonialsSection() {
 
                 {/* Author */}
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-[#f8f9fb] flex items-center justify-center border border-[#e5e7eb] flex-shrink-0 text-[#181d29]">
+                  <div className="h-10 w-10 rounded-full bg-[#f8f9fb] flex items-center justify-center border border-[#e5e7eb] flex-shrink-0 text-[#1E293B]">
                     <User className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-[#181d29]">{t.name}</p>
-                    <p className="text-xs text-[#515768]">
+                    <p className="text-sm font-semibold text-[#1E293B]">{t.name}</p>
+                    <p className="text-xs text-[#64748B]">
                       {t.program} • {t.university}
                     </p>
                   </div>

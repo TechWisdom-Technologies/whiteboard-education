@@ -167,7 +167,7 @@ export default function CityHub() {
         <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--primary))]/95 via-[hsl(var(--primary))]/50 to-transparent" />
         <div className="absolute inset-0 flex items-end">
           <div className="container mx-auto px-4 pb-12">
-            <Badge className="bg-[#ffa300]/20 text-[#181d29] mb-3">
+            <Badge className="bg-[#2F4F97]/20 text-[#1E293B] mb-3">
               <MapPin className="h-3 w-3 mr-1" /> Malaysia
             </Badge>
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-primary-foreground mb-2">
@@ -198,14 +198,14 @@ export default function CityHub() {
               <p className="text-muted-foreground leading-relaxed">{city.description}</p>
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <div className="flex items-center gap-2 text-sm">
-                  <div className="h-8 w-8 rounded-xl bg-[#ffa300]/10 flex items-center justify-center shrink-0">
-                    <Sun className="h-4 w-4 text-[#ffa300]" />
+                  <div className="h-8 w-8 rounded-xl bg-[#2F4F97]/10 flex items-center justify-center shrink-0">
+                    <Sun className="h-4 w-4 text-[#2F4F97]" />
                   </div>
                   <span className="text-muted-foreground">{city.averageTemp}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <div className="h-8 w-8 rounded-xl bg-[#ffa300]/10 flex items-center justify-center shrink-0">
-                    <MapPin className="h-4 w-4 text-[#ffa300]" />
+                  <div className="h-8 w-8 rounded-xl bg-[#2F4F97]/10 flex items-center justify-center shrink-0">
+                    <MapPin className="h-4 w-4 text-[#2F4F97]" />
                   </div>
                   <span className="text-muted-foreground">{city.safetyRating.split("-")[0].trim()}</span>
                 </div>
@@ -215,8 +215,8 @@ export default function CityHub() {
               {city.highlights.map((h, i) => (
                 <Card key={i} className="hover:shadow-md transition-shadow animate-fade-in" style={{ animationDelay: `${i * 80}ms` }}>
                   <CardContent className="p-5">
-                    <div className="h-9 w-9 rounded-xl bg-[#ffa300]/15 flex items-center justify-center mb-3">
-                      <h.icon className="h-4 w-4 text-[#ffa300]" />
+                    <div className="h-9 w-9 rounded-xl bg-[#2F4F97]/15 flex items-center justify-center mb-3">
+                      <h.icon className="h-4 w-4 text-[#2F4F97]" />
                     </div>
                     <h3 className="text-sm font-bold text-foreground mb-1">{h.title}</h3>
                     <p className="text-xs text-muted-foreground leading-relaxed">{h.text}</p>
@@ -238,11 +238,11 @@ export default function CityHub() {
               <Card>
                 <CardContent className="p-6 space-y-5">
                   {[
-                    { label: "Rent (shared/studio)", value: costs.rent, icon: Home, color: "bg-[#ffa300]" },
+                    { label: "Rent (shared/studio)", value: costs.rent, icon: Home, color: "bg-[#2F4F97]" },
                     { label: "Food & Groceries", value: costs.food, icon: UtensilsCrossed, color: "bg-primary" },
                     { label: "Transport", value: costs.transport, icon: Bus, color: "bg-accent" },
                     { label: "Utilities & Internet", value: costs.utilities, icon: Wifi, color: "bg-muted-foreground" },
-                    { label: "Entertainment", value: costs.entertainment || 0, icon: Coffee, color: "bg-[#ffa300]/70" },
+                    { label: "Entertainment", value: costs.entertainment || 0, icon: Coffee, color: "bg-[#2F4F97]/70" },
                   ].map((item) => (
                     <div key={item.label} className="space-y-1.5">
                       <div className="flex items-center justify-between text-sm">
@@ -256,7 +256,7 @@ export default function CityHub() {
                   ))}
                   <div className="pt-3 border-t flex justify-between items-center">
                     <span className="font-bold text-foreground">Estimated Total</span>
-                    <span className="text-xl font-extrabold text-[#ffa300]">${totalCost}/mo</span>
+                    <span className="text-xl font-extrabold text-[#2F4F97]">${totalCost}/mo</span>
                   </div>
                 </CardContent>
               </Card>
@@ -265,7 +265,7 @@ export default function CityHub() {
                 <Card>
                   <CardContent className="p-5">
                     <h3 className="font-bold text-foreground mb-2 flex items-center gap-2">
-                      <Utensils className="h-4 w-4 text-[#ffa300]" /> Food Scene
+                      <Utensils className="h-4 w-4 text-[#2F4F97]" /> Food Scene
                     </h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">{city.foodScene}</p>
                   </CardContent>
@@ -273,7 +273,7 @@ export default function CityHub() {
                 <Card>
                   <CardContent className="p-5">
                     <h3 className="font-bold text-foreground mb-2 flex items-center gap-2">
-                      <Train className="h-4 w-4 text-[#ffa300]" /> Getting Around
+                      <Train className="h-4 w-4 text-[#2F4F97]" /> Getting Around
                     </h3>
                     <ul className="space-y-1.5">
                       {city.transport.map((t) => (
@@ -309,7 +309,7 @@ export default function CityHub() {
           {/* Popular fields */}
           <div className="flex flex-wrap gap-2 mb-6">
             {city.topCourseFields.map((f) => (
-              <Badge key={f} variant="outline" className="border-[#ffa300]/30 text-[#ffa300] text-xs py-1 px-3">
+              <Badge key={f} variant="outline" className="border-[#2F4F97]/30 text-[#2F4F97] text-xs py-1 px-3">
                 {f}
               </Badge>
             ))}
@@ -332,13 +332,13 @@ export default function CityHub() {
                     <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full">
                       <CardContent className="p-5 space-y-3">
                         <Badge variant="secondary" className="text-xs">{course.degree_level}</Badge>
-                        <h3 className="font-bold text-sm leading-tight group-hover:text-[#ffa300] transition-colors">
+                        <h3 className="font-bold text-sm leading-tight group-hover:text-[#2F4F97] transition-colors">
                           {course.title}
                         </h3>
                         <p className="text-xs text-muted-foreground">{uni?.name}</p>
                         <div className="flex items-center justify-between pt-2 border-t text-xs">
                           <span className="text-muted-foreground">{course.duration}</span>
-                          <span className="font-bold text-[#ffa300]">${course.tuition_fee.toLocaleString()}/yr</span>
+                          <span className="font-bold text-[#2F4F97]">${course.tuition_fee.toLocaleString()}/yr</span>
                         </div>
                       </CardContent>
                     </Card>
@@ -382,13 +382,13 @@ export default function CityHub() {
                       <img src={uni.heroImage || uni.logo_url} alt={uni.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     </div>
                     <CardContent className="p-5 space-y-2">
-                      <h3 className="font-bold text-sm leading-tight group-hover:text-[#ffa300] transition-colors">{uni.name}</h3>
+                      <h3 className="font-bold text-sm leading-tight group-hover:text-[#2F4F97] transition-colors">{uni.name}</h3>
                       <p className="text-xs text-muted-foreground line-clamp-2">{uni.description}</p>
                       <div className="flex items-center justify-between pt-1">
-                        <Badge variant="outline" className="text-xs border-[#ffa300]/30 text-[#ffa300]">
+                        <Badge variant="outline" className="text-xs border-[#2F4F97]/30 text-[#2F4F97]">
                           <Trophy className="h-3 w-3 mr-1" /> #{uni.ranking}
                         </Badge>
-                        <span className="text-xs font-semibold text-[#ffa300] flex items-center gap-1 group-hover:gap-2 transition-all">
+                        <span className="text-xs font-semibold text-[#2F4F97] flex items-center gap-1 group-hover:gap-2 transition-all">
                           Explore <ArrowRight className="h-3 w-3" />
                         </span>
                       </div>
@@ -412,7 +412,7 @@ export default function CityHub() {
             <Card className="md:col-span-1">
               <CardContent className="p-5">
                 <h3 className="font-bold text-foreground mb-3 flex items-center gap-2">
-                  <Home className="h-4 w-4 text-[#ffa300]" /> Accommodation
+                  <Home className="h-4 w-4 text-[#2F4F97]" /> Accommodation
                 </h3>
                 {cityAccom.length > 0 ? (
                   <div className="space-y-3">
@@ -422,10 +422,10 @@ export default function CityHub() {
                           <p className="font-medium text-foreground text-xs">{a.name}</p>
                           <p className="text-xs text-muted-foreground">{a.type}</p>
                         </div>
-                        <span className="font-bold text-[#ffa300] text-xs">${a.price_per_month}/mo</span>
+                        <span className="font-bold text-[#2F4F97] text-xs">${a.price_per_month}/mo</span>
                       </div>
                     ))}
-                    <Link to="/housing" className="text-xs font-semibold text-[#ffa300] hover:underline flex items-center gap-1 pt-1">
+                    <Link to="/housing" className="text-xs font-semibold text-[#2F4F97] hover:underline flex items-center gap-1 pt-1">
                       View all housing <ArrowRight className="h-3 w-3" />
                     </Link>
                   </div>
@@ -440,19 +440,19 @@ export default function CityHub() {
               <CardContent className="p-5 space-y-4">
                 <div>
                   <h3 className="font-bold text-foreground mb-1 flex items-center gap-2 text-sm">
-                    <MapPin className="h-4 w-4 text-[#ffa300]" /> Safety
+                    <MapPin className="h-4 w-4 text-[#2F4F97]" /> Safety
                   </h3>
                   <p className="text-xs text-muted-foreground">{city.safetyRating}</p>
                 </div>
                 <div>
                   <h3 className="font-bold text-foreground mb-1 flex items-center gap-2 text-sm">
-                    <Sun className="h-4 w-4 text-[#ffa300]" /> Climate
+                    <Sun className="h-4 w-4 text-[#2F4F97]" /> Climate
                   </h3>
                   <p className="text-xs text-muted-foreground">Tropical - {city.averageTemp}. Pack light clothes, an umbrella, and sunscreen.</p>
                 </div>
                 <div>
                   <h3 className="font-bold text-foreground mb-1 flex items-center gap-2 text-sm">
-                    <Users className="h-4 w-4 text-[#ffa300]" /> Student Community
+                    <Users className="h-4 w-4 text-[#2F4F97]" /> Student Community
                   </h3>
                   <p className="text-xs text-muted-foreground">
                     {cityUnis.reduce((sum, u) => sum + (u.totalStudents || 0), 0).toLocaleString()} students across {cityUnis.length} universities
@@ -462,7 +462,7 @@ export default function CityHub() {
             </Card>
 
             {/* Quick stats */}
-            <Card className="md:col-span-1 bg-[#ffa300]/5 border-[#ffa300]/20">
+            <Card className="md:col-span-1 bg-[#2F4F97]/5 border-[#2F4F97]/20">
               <CardContent className="p-5 space-y-4">
                 <h3 className="font-bold text-foreground mb-1 text-sm">{city.name} at a Glance</h3>
                 {[
@@ -477,7 +477,7 @@ export default function CityHub() {
                   </div>
                 ))}
                 <Link to="/eligibility">
-                  <Button size="sm" className="w-full bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 mt-2 gap-1">
+                  <Button size="sm" className="w-full bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 mt-2 gap-1">
                     Check Eligibility <ArrowRight className="h-3.5 w-3.5" />
                   </Button>
                 </Link>
@@ -488,12 +488,12 @@ export default function CityHub() {
       </section>
 
       {/* ── BOTTOM CTA ── */}
-      <section className="bg-[#ffa300] py-16">
+      <section className="bg-[#2F4F97] py-16">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-2xl md:text-3xl font-extrabold text-[#181d29] mb-3">
+          <h2 className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-3">
             Ready to start your journey in {city.name}?
           </h2>
-          <p className="text-[#181d29]/80 max-w-md mx-auto mb-8">
+          <p className="text-[#1E293B]/80 max-w-md mx-auto mb-8">
             Our expert counselors will guide you from application to arrival - completely free.
           </p>
           <div className="flex items-center justify-center gap-3 flex-wrap">
@@ -501,7 +501,7 @@ export default function CityHub() {
               <Phone className="h-4 w-4 mr-2" /> Free Consultation
             </Button>
             <Link to="/universities">
-              <Button size="lg" variant="outline" className="border-[#181d29]/30 text-[#181d29] hover:bg-[#181d29]/10 font-bold h-13 px-8">
+              <Button size="lg" variant="outline" className="border-[#1E293B]/30 text-[#1E293B] hover:bg-[#1E293B]/10 font-bold h-13 px-8">
                 <Building className="h-4 w-4 mr-2" /> Explore Universities
               </Button>
             </Link>

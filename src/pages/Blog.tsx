@@ -35,10 +35,10 @@ export default function Blog() {
       {/* Page Header */}
       <div className="bg-white border-b border-gray-200/60">
         <div className="container mx-auto px-4 py-12 md:py-16 text-center max-w-3xl">
-          <h1 className="text-3xl md:text-[40px] font-extrabold mb-4" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29", lineHeight: 1.2 }}>
-            Study Abroad <span className="text-[#ffa300]">Insights & Guides</span>
+          <h1 className="text-3xl md:text-[40px] font-extrabold mb-4" style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B", lineHeight: 1.2 }}>
+            Study Abroad <span className="text-[#2F4F97]">Insights & Guides</span>
           </h1>
-          <p className="text-[#515768] text-base md:text-lg">
+          <p className="text-[#64748B] text-base md:text-lg">
             Discover the latest articles, student stories, and expert tips to help you navigate your journey to studying in Malaysia.
           </p>
         </div>
@@ -48,7 +48,7 @@ export default function Blog() {
         {isLoading ? (
           <LoadingScreen label="Loading articles" sublabel="Preparing stories and guides" className="py-16" />
         ) : sorted.length === 0 ? (
-          <div className="text-center py-20 text-[#515768] flex flex-col items-center">
+          <div className="text-center py-20 text-[#64748B] flex flex-col items-center">
             <BookOpen className="h-12 w-12 opacity-40 mb-4" />
             <p className="font-semibold text-lg">No articles published yet.</p>
             <p className="text-sm">Check back soon for updates!</p>
@@ -66,12 +66,12 @@ export default function Blog() {
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110"
                     />
                     {/* Overlay Gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#181d29]/95 via-[#181d29]/40 to-[#181d29]/20 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#1E293B]/95 via-[#1E293B]/40 to-[#1E293B]/20 transition-opacity duration-300" />
 
                     {/* Top Meta (Category & Date) */}
                     <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-10">
                       {post.category ? (
-                        <span className="bg-[#ffa300] text-[#181d29] text-[10px] font-bold px-2 py-1 rounded-xl uppercase tracking-wider shadow-sm">
+                        <span className="bg-[#2F4F97] text-white text-[10px] font-bold px-2 py-1 rounded-xl uppercase tracking-wider shadow-sm">
                           {post.category}
                         </span>
                       ) : (
@@ -89,11 +89,11 @@ export default function Blog() {
 
                     {/* Bottom Title & Read More */}
                     <div className="absolute bottom-5 left-5 right-5 z-10 flex flex-col gap-3">
-                      <h3 className="text-white font-bold text-[15px] md:text-base leading-snug group-hover/card:text-[#ffa300] transition-colors shadow-sm line-clamp-3" style={{ fontFamily: "Poppins, sans-serif" }}>
+                      <h3 className="text-white font-bold text-[15px] md:text-base leading-snug group-hover/card:text-[#2F4F97] transition-colors shadow-sm line-clamp-3" style={{ fontFamily: "Poppins, sans-serif" }}>
                         {post.title}
                       </h3>
                       
-                      <div className="flex items-center gap-2 text-[#ffa300] text-xs font-bold uppercase tracking-wider opacity-0 translate-y-4 group-hover/card:opacity-100 group-hover/card:translate-y-0 transition-all duration-300">
+                      <div className="flex items-center gap-2 text-[#2F4F97] text-xs font-bold uppercase tracking-wider opacity-0 translate-y-4 group-hover/card:opacity-100 group-hover/card:translate-y-0 transition-all duration-300">
                         Read Article <ArrowRight className="h-3.5 w-3.5" />
                       </div>
                     </div>
@@ -107,7 +107,7 @@ export default function Blog() {
               <div className="flex items-center justify-center gap-2 mt-16">
                 <Button 
                   variant="outline" 
-                  className="h-10 border-gray-200 text-[#515768] hover:text-[#181d29] rounded-xl bg-white"
+                  className="h-10 border-gray-200 text-[#64748B] hover:text-[#1E293B] rounded-xl bg-white"
                   disabled={currentPage === 1} 
                   onClick={() => {
                     setCurrentPage(currentPage - 1);
@@ -127,8 +127,8 @@ export default function Blog() {
                       }}
                       className={`h-10 w-10 flex items-center justify-center text-sm font-bold rounded-xl border transition-colors ${
                         currentPage === i + 1 
-                          ? "bg-[#ffa300] border-[#ffa300] text-[#181d29]" 
-                          : "bg-white border-gray-200 text-[#515768] hover:bg-gray-50"
+                          ? "bg-[#2F4F97] border-[#2F4F97] text-[#1E293B]" 
+                          : "bg-white border-gray-200 text-[#64748B] hover:bg-gray-50"
                       }`}
                       style={{ fontFamily: "Poppins, sans-serif" }}
                     >
@@ -139,7 +139,7 @@ export default function Blog() {
 
                 <Button 
                   variant="outline" 
-                  className="h-10 border-gray-200 text-[#515768] hover:text-[#181d29] rounded-xl bg-white"
+                  className="h-10 border-gray-200 text-[#64748B] hover:text-[#1E293B] rounded-xl bg-white"
                   disabled={currentPage === totalPages} 
                   onClick={() => {
                     setCurrentPage(currentPage + 1);

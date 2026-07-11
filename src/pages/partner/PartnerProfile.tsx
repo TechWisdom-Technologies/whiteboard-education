@@ -91,8 +91,8 @@ export default function PartnerProfile() {
         const el = document.getElementById("admin-notes-section");
         if (el) {
           el.scrollIntoView({ behavior: "smooth", block: "center" });
-          el.classList.add("ring-2", "ring-[#ffa300]", "ring-offset-2", "transition-all", "duration-1000");
-          setTimeout(() => el.classList.remove("ring-2", "ring-[#ffa300]", "ring-offset-2"), 3000);
+          el.classList.add("ring-2", "ring-[#2F4F97]", "ring-offset-2", "transition-all", "duration-1000");
+          setTimeout(() => el.classList.remove("ring-2", "ring-[#2F4F97]", "ring-offset-2"), 3000);
         }
       }, 300);
     }
@@ -242,7 +242,7 @@ export default function PartnerProfile() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-[#ffa300]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#2F4F97]" />
       </div>
     );
   }
@@ -250,7 +250,7 @@ export default function PartnerProfile() {
   const initials = (profile.display_name || user?.email || "P")
     .split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
 
-  const inputCls = "h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] transition-colors shadow-none";
+  const inputCls = "h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] transition-colors shadow-none";
 
   const mainDocs = [
     { field: "nid_document_url", label: "National ID / Passport" },
@@ -260,7 +260,7 @@ export default function PartnerProfile() {
   return (
     <div className="space-y-6 max-w-5xl animate-fade-in pb-10">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-[#181d29]">My Profile</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-[#1E293B]">My Profile</h1>
         <p className="text-muted-foreground text-sm mt-1">Manage your account, agency details, and security settings.</p>
       </div>
 
@@ -270,7 +270,7 @@ export default function PartnerProfile() {
           <Card className="shadow-sm">
             <CardHeader className="pb-4 border-b border-gray-100">
               <CardTitle className="flex items-center gap-2 text-lg">
-                <User className="h-5 w-5 text-[#ffa300]" />
+                <User className="h-5 w-5 text-[#2F4F97]" />
                 Account Settings
               </CardTitle>
               <CardDescription>Manage your personal profile and security.</CardDescription>
@@ -280,7 +280,7 @@ export default function PartnerProfile() {
                 <div className="relative group mb-4">
                   <Avatar className="h-24 w-24 border-4 border-background shadow-md">
                     <AvatarImage src={profile.avatar_url} />
-                    <AvatarFallback className="text-3xl font-bold bg-[#ffa300]/10 text-[#ffa300]">{initials}</AvatarFallback>
+                    <AvatarFallback className="text-3xl font-bold bg-[#2F4F97]/10 text-[#2F4F97]">{initials}</AvatarFallback>
                   </Avatar>
                   <button
                     onClick={() => fileInputRef.current?.click()}
@@ -307,7 +307,7 @@ export default function PartnerProfile() {
                   <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Login Email</Label>
                   <Input value={user?.email || ""} disabled className="h-10 text-[13px] bg-gray-100 border-gray-200 cursor-not-allowed text-gray-500" />
                 </div>
-                <Button onClick={handleSaveProfile} disabled={savingProfile} className="w-full bg-[#181d29] hover:bg-[#181d29]/90 text-white gap-2 font-semibold text-[13px] h-10 mt-2">
+                <Button onClick={handleSaveProfile} disabled={savingProfile} className="w-full bg-[#1E293B] hover:bg-[#1E293B]/90 text-white gap-2 font-semibold text-[13px] h-10 mt-2">
                   {savingProfile ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                   Save Profile
                 </Button>
@@ -315,12 +315,12 @@ export default function PartnerProfile() {
 
               <div className="pt-6 border-t border-gray-100 space-y-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <Lock className="h-4 w-4 text-[#ffa300]" />
+                  <Lock className="h-4 w-4 text-[#2F4F97]" />
                   <span className="text-[13px] font-bold text-gray-500 uppercase tracking-widest">Security</span>
                 </div>
 
                 {pwStep === "idle" && (
-                  <Button onClick={handleSendCode} variant="outline" className="w-full text-[#181d29] border-gray-200 hover:bg-gray-50 gap-2 font-semibold text-[13px] h-10">
+                  <Button onClick={handleSendCode} variant="outline" className="w-full text-[#1E293B] border-gray-200 hover:bg-gray-50 gap-2 font-semibold text-[13px] h-10">
                     <KeyRound className="h-4 w-4" />
                     Change Password
                   </Button>
@@ -328,7 +328,7 @@ export default function PartnerProfile() {
 
                 {pwStep === "sending" && (
                   <div className="flex items-center gap-3 text-sm text-gray-500 justify-center py-2">
-                    <Loader2 className="h-4 w-4 animate-spin text-[#ffa300]" />
+                    <Loader2 className="h-4 w-4 animate-spin text-[#2F4F97]" />
                     Sending code...
                   </div>
                 )}
@@ -344,7 +344,7 @@ export default function PartnerProfile() {
                       maxLength={6}
                     />
                     <div className="flex gap-2">
-                      <Button onClick={handleVerifyCode} disabled={otpCode.length < 6} className="flex-1 bg-[#181d29] hover:bg-[#181d29]/90 text-white text-[12px] h-9">
+                      <Button onClick={handleVerifyCode} disabled={otpCode.length < 6} className="flex-1 bg-[#1E293B] hover:bg-[#1E293B]/90 text-white text-[12px] h-9">
                         Verify
                       </Button>
                       <Button variant="ghost" onClick={resetPwFlow} className="text-gray-500 text-[12px] h-9">Cancel</Button>
@@ -354,7 +354,7 @@ export default function PartnerProfile() {
 
                 {pwStep === "verifying" && (
                   <div className="flex items-center gap-3 text-sm text-gray-500 justify-center py-2">
-                    <Loader2 className="h-4 w-4 animate-spin text-[#ffa300]" />
+                    <Loader2 className="h-4 w-4 animate-spin text-[#2F4F97]" />
                     Verifying...
                   </div>
                 )}
@@ -377,7 +377,7 @@ export default function PartnerProfile() {
                       className={inputCls}
                     />
                     <div className="flex gap-2">
-                      <Button onClick={handleUpdatePassword} disabled={newPassword.length < 6} className="flex-1 bg-[#181d29] hover:bg-[#181d29]/90 text-white text-[12px] h-9">
+                      <Button onClick={handleUpdatePassword} disabled={newPassword.length < 6} className="flex-1 bg-[#1E293B] hover:bg-[#1E293B]/90 text-white text-[12px] h-9">
                         Update
                       </Button>
                       <Button variant="ghost" onClick={resetPwFlow} className="text-gray-500 text-[12px] h-9">Cancel</Button>
@@ -386,7 +386,7 @@ export default function PartnerProfile() {
                 )}
                 {pwStep === "updating" && (
                   <div className="flex items-center gap-3 text-sm text-gray-500 justify-center py-2">
-                    <Loader2 className="h-4 w-4 animate-spin text-[#ffa300]" />
+                    <Loader2 className="h-4 w-4 animate-spin text-[#2F4F97]" />
                     Updating...
                   </div>
                 )}
@@ -403,7 +403,7 @@ export default function PartnerProfile() {
               <div className="flex justify-between items-start">
                 <div>
                   <CardTitle className="flex items-center gap-2 text-lg">
-                    <Building2 className="h-5 w-5 text-[#ffa300]" />
+                    <Building2 className="h-5 w-5 text-[#2F4F97]" />
                     Agency Details
                   </CardTitle>
                   <CardDescription>Your registered agency information.</CardDescription>
@@ -414,7 +414,7 @@ export default function PartnerProfile() {
                       <X className="h-4 w-4 mr-1.5" />
                       Cancel
                     </Button>
-                    <Button size="sm" onClick={handleSaveAgency} disabled={savingAgency} className="bg-[#ffa300] hover:bg-[#ffa300]/90 text-[#181d29] font-semibold">
+                    <Button size="sm" onClick={handleSaveAgency} disabled={savingAgency} className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white font-semibold">
                       {savingAgency ? <Loader2 className="h-4 w-4 animate-spin mr-1.5" /> : <Save className="h-4 w-4 mr-1.5" />}
                       Save
                     </Button>
@@ -477,7 +477,7 @@ export default function PartnerProfile() {
                   {partner.admin_notes && partner.status !== "approved" && (
                     <div id="admin-notes-section" className="sm:col-span-2 pt-4 border-t border-gray-100 mt-2 rounded-2xl transition-all">
                       <p className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                        <ClipboardList className="h-3.5 w-3.5 text-[#ffa300]" />
+                        <ClipboardList className="h-3.5 w-3.5 text-[#2F4F97]" />
                         Notes from Admin
                       </p>
                       <div className="bg-amber-50 border border-amber-200/50 rounded-2xl p-4 text-[13px] text-gray-700 whitespace-pre-wrap shadow-sm">
@@ -496,7 +496,7 @@ export default function PartnerProfile() {
         <Card className="shadow-sm">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-lg">
-              <FileCheck className="h-5 w-5 text-[#ffa300]" />
+              <FileCheck className="h-5 w-5 text-[#2F4F97]" />
               Agency Documents
             </CardTitle>
             <CardDescription>Manage your compliance and registration documents.</CardDescription>
@@ -532,7 +532,7 @@ export default function PartnerProfile() {
                           target="_blank"
                           rel="noopener noreferrer"
                           title="Preview Document"
-                          className="h-7 w-7 rounded-full bg-white border border-border flex items-center justify-center text-[#ffa300] hover:bg-muted transition-colors shadow-sm"
+                          className="h-7 w-7 rounded-full bg-white border border-border flex items-center justify-center text-[#2F4F97] hover:bg-muted transition-colors shadow-sm"
                         >
                           <ExternalLink className="h-3.5 w-3.5" />
                         </a>
@@ -581,7 +581,7 @@ function InfoRow({ icon: Icon, label, value }: { icon: any; label: string; value
       <p className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1 flex items-center gap-1">
         <Icon className="h-3 w-3" /> {label}
       </p>
-      <p className="text-sm font-medium text-[#181d29]">{value}</p>
+      <p className="text-sm font-medium text-[#1E293B]">{value}</p>
     </div>
   );
 }

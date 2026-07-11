@@ -51,7 +51,7 @@ export function HeroSection() {
           {[...Array(6)].map((_, i) => (
             <div key={i} className="flex gap-32 whitespace-nowrap text-8xl font-black tracking-widest uppercase">
               {[...Array(4)].map((_, j) => (
-                <span key={j} className={j % 2 === 0 ? "text-[#181d29]/[0.04]" : "text-[#ffa300]/[0.08]"}>
+                <span key={j} className={j % 2 === 0 ? "text-[#1E293B]/[0.04]" : "text-[#2F4F97]/[0.08]"}>
                   WHITEBOARD EDUCATION
                 </span>
               ))}
@@ -73,12 +73,12 @@ export function HeroSection() {
                 alt="Malaysia Flag"
                 className="w-5 h-auto shadow-sm rounded-xl"
               />
-              <span className="text-xs md:text-sm font-bold text-[#181d29] tracking-tight">The Most Trusted Platform for Study in Malaysia</span>
+              <span className="text-xs md:text-sm font-bold text-[#1E293B] tracking-tight">The Most Trusted Platform for Study in Malaysia</span>
             </div>
 
-            <h1 className={`text-3xl md:text-5xl lg:text-5xl font-extrabold mb-4 leading-[1.2] text-[#181d29] tracking-tighter transition-all duration-700 delay-150 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`} style={{ fontFamily: "Poppins, sans-serif" }}>
+            <h1 className={`text-3xl md:text-5xl lg:text-5xl font-semibold mb-4 leading-[1.2] text-[#1E293B] tracking-tighter transition-all duration-700 delay-150 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`} style={{ fontFamily: "Poppins, sans-serif" }}>
               <span className="block mb-2">Expert Guidance</span>
-              <span className="inline-block bg-[#ffa300] text-[#181d29] px-4 py-1 rounded-xl mb-2 shadow-sm">For International</span>
+              <span className="inline-block bg-[#2F4F97] text-white px-4 py-1 rounded-xl mb-2 shadow-sm">For International</span>
               <span className="block">students In Malaysia</span>
             </h1>
 
@@ -88,22 +88,22 @@ export function HeroSection() {
 
             {/* Integrated Search Bar - Pulled UP */}
             <div className={`max-w-3xl -mt-4 transition-all duration-700 delay-500 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
-              <div className="bg-white rounded-none border border-[#ffa300] flex flex-row items-stretch p-0.5 gap-0">
+              <div className="bg-white rounded-[20px] overflow-hidden border border-[#2F4F97] flex flex-row items-stretch gap-0">
                 {/* Category Dropdown - Auto on mobile, 25% desktop */}
                 <div className="w-[120px] md:w-1/4 shrink-0">
                   <Select value={activeTab} onValueChange={setActiveTab}>
-                    <SelectTrigger className="h-12 border-none bg-transparent focus:ring-0 focus:ring-offset-0 font-bold text-[#181d29] shadow-none rounded-none px-2 md:px-3 text-xs md:text-sm">
+                    <SelectTrigger className="h-12 border-none bg-transparent focus:ring-0 focus:ring-offset-0 font-bold text-[#1E293B] shadow-none rounded-none pl-4 pr-2 md:pl-6 md:pr-3 text-xs md:text-sm">
                       <SelectValue placeholder="University" />
                     </SelectTrigger>
-                    <SelectContent className="rounded-none border-[#ffa300] shadow-xl">
-                      <SelectItem value="University">University</SelectItem>
-                      <SelectItem value="Course">Course</SelectItem>
+                    <SelectContent className="rounded-tl-[20px] rounded-tr-md rounded-b-md border-[#2F4F97] shadow-xl">
+                      <SelectItem value="University" className="!rounded-tl-[16px] !rounded-tr-sm !rounded-b-sm focus:bg-[#2F4F97] focus:text-white">University</SelectItem>
+                      <SelectItem value="Course" className="!rounded-sm focus:bg-[#2F4F97] focus:text-white">Course</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 {/* Vertical Divider */}
-                <div className="block w-px bg-[#ffa300]/30 my-2 shrink-0" />
+                <div className="block w-px bg-[#2F4F97]/30 my-2 shrink-0" />
 
                 {/* Search Input - Flex 1 */}
                 <div className="flex-1 relative min-w-0">
@@ -118,11 +118,11 @@ export function HeroSection() {
                 </div>
 
                 {/* Vertical Divider */}
-                <div className="block w-px bg-[#ffa300]/30 my-2 shrink-0" />
+                <div className="block w-px bg-[#2F4F97]/30 my-2 shrink-0" />
 
                 {/* Search Button */}
                 <Button
-                  className="h-12 w-12 md:w-1/4 bg-[#181d29] text-white hover:bg-[#181d29]/90 font-bold text-sm rounded-none transition-all active:scale-95 shrink-0 px-0 md:px-4 flex items-center justify-center"
+                  className="h-12 w-12 md:w-1/4 bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] border-l border-transparent hover:border-[#2F4F97] font-bold text-sm rounded-none transition-all active:scale-95 shrink-0 px-0 md:px-4 flex items-center justify-center"
                   onClick={handleSearch}
                 >
                   <Search className="h-4 w-4 md:hidden block" />
@@ -146,17 +146,17 @@ export function HeroSection() {
             {/* Organic Rotating Blobs behind student */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] w-[120%] h-[120%] z-0 pointer-events-none flex items-center justify-center">
               {/* Glow */}
-              <div className="absolute w-[500px] h-[500px] bg-gradient-to-br from-[#ffa300]/30 to-transparent rounded-full blur-3xl" />
+              <div className="absolute w-[500px] h-[500px] bg-gradient-to-br from-[#2F4F97]/30 to-transparent rounded-full blur-3xl" />
 
               {/* Blob 1 */}
-              <div className="absolute w-[550px] h-[550px] text-[#ffa300]/20" style={{ animation: 'spin 25s linear infinite' }}>
+              <div className="absolute w-[550px] h-[550px] text-[#2F4F97]/20" style={{ animation: 'spin 25s linear infinite' }}>
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full fill-current">
                   <path d="M47.7,-57.2C59.4,-45.5,65.8,-28.9,67.3,-12.3C68.7,4.3,65.3,21,56.7,35.2C48.1,49.4,34.4,61.1,18.5,66.8C2.6,72.4,-15.5,72.1,-31.6,65.8C-47.7,59.4,-61.8,47.1,-70.7,31.4C-79.6,15.7,-83.4,-3.3,-78.3,-20.3C-73.3,-37.2,-59.5,-52.1,-43.8,-63.4C-28.1,-74.6,-10.5,-82.1,3.4,-86.2C17.3,-90.2,36,-68.8,47.7,-57.2Z" transform="translate(100 100)" />
                 </svg>
               </div>
 
               {/* Blob 2 */}
-              <div className="absolute w-[600px] h-[600px] text-[#181d29]/5" style={{ animation: 'spin 35s linear infinite reverse' }}>
+              <div className="absolute w-[600px] h-[600px] text-[#1E293B]/5" style={{ animation: 'spin 35s linear infinite reverse' }}>
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full fill-current">
                   <path d="M41.7,-55.8C55.6,-46.8,69.5,-37.2,76.5,-23.5C83.5,-9.8,83.7,8.2,77.3,24.3C70.9,40.4,58,54.7,42.5,63.1C27,71.5,8.9,74.1,-8.5,72.2C-25.9,70.3,-42.6,63.9,-54.9,52.3C-67.2,40.7,-75.1,23.9,-77.4,6.4C-79.7,-11.1,-76.3,-29.4,-65.8,-42.9C-55.3,-56.4,-37.8,-65.2,-21.8,-67.2C-5.8,-69.2,8.6,-64.5,22.2,-61.1C35.8,-57.7,48.6,-55.4,41.7,-55.8Z" transform="translate(100 100)" />
                 </svg>

@@ -43,7 +43,7 @@ export default function CourseComparison() {
   };
 
   if (loadingCourses || loadingUnis) {
-    return <div className="min-h-screen flex items-center justify-center">Loading comparison...</div>;
+    return <div className="min-h-screen flex items-center justify-center bg-white">Loading comparison...</div>;
   }
 
   return (
@@ -57,7 +57,7 @@ export default function CourseComparison() {
           <div className="text-center py-20">
             <h2 className="text-2xl font-bold mb-4" style={{ fontFamily: "Poppins, sans-serif" }}>No Courses Selected</h2>
             <p className="text-gray-600 mb-8">You haven't selected any courses to compare yet.</p>
-            <Button onClick={() => navigate("/courses")} style={{ backgroundColor: "#ffa300", color: "#181d29", borderRadius: "5px" }}>
+            <Button onClick={() => navigate("/courses")} style={{ backgroundColor: "#2F4F97", color: "#1E293B", borderRadius: "5px" }}>
               Browse Courses
             </Button>
           </div>
@@ -88,7 +88,7 @@ export default function CourseComparison() {
                               </div>
                             )}
                           </div>
-                          <h3 className="text-[15px] font-bold text-[#181d29] mb-2 leading-snug" style={{ fontFamily: "Poppins, sans-serif" }}>
+                          <h3 className="text-[15px] font-bold text-[#1E293B] mb-2 leading-snug" style={{ fontFamily: "Poppins, sans-serif" }}>
                             {course.title}
                           </h3>
                           <p className="text-[13px] text-gray-500 font-normal">
@@ -158,7 +158,7 @@ export default function CourseComparison() {
                       <td key={course.id} className="p-5 border-b border-gray-100 align-top">
                          <div className="flex flex-wrap gap-1.5">
                             {intakes.length > 0 ? intakes.map((intake: string, i: number) => (
-                              <Badge key={i} className={`border-0 font-medium ${intake === activeIntake ? "bg-[#ffa300]/20 text-[#e69200] hover:bg-[#ffa300]/30" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+                              <Badge key={i} className={`border-0 font-medium ${intake === activeIntake ? "bg-[#2F4F97]/20 text-[#2F4F97] hover:bg-[#2F4F97]/30" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
                                 {intake}
                               </Badge>
                             )) : (
@@ -243,31 +243,33 @@ export default function CourseComparison() {
                     <td key={course.id} className="p-5 align-top">
                       <div className="flex flex-col gap-3">
                         <Button
-                          className="w-full"
+                          className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent w-full"
                           style={{
-                            backgroundColor: "#ffa300",
-                            color: "#181d29",
-                            borderRadius: "5px",
+                            
+                            
+                            
                             fontFamily: "Poppins, sans-serif",
                             fontWeight: "bold",
-                            border: "1px solid #ffa300",
+                            
                           }}
                           onClick={() => navigate(`/apply?courseId=${course.id}`)}
                         >
+
                           Apply Now
                         </Button>
                         <Button
                           variant="outline"
-                          className="w-full bg-white"
+                          className="bg-white w-full"
                           style={{
-                            borderColor: "#181d29",
-                            color: "#181d29",
-                            borderRadius: "5px",
+                            
+                            
+                            
                             fontFamily: "Poppins, sans-serif",
                             fontWeight: "600",
                           }}
                           onClick={() => navigate(`/courses/${course.id}`)}
                         >
+
                           Ask Us
                         </Button>
                       </div>

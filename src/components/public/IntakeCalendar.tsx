@@ -19,7 +19,7 @@ function getUrgencyClass(days: number): string {
 }
 
 const semesterColors: Record<string, string> = {
-  Fall: "bg-[#ffa300]/10 text-[#ffa300]",
+  Fall: "bg-[#2F4F97]/10 text-[#2F4F97]",
   Spring: "bg-success/10 text-success",
   Summer: "bg-warning/10 text-warning",
 };
@@ -52,7 +52,7 @@ export function IntakeCalendar() {
     <section className="py-16 bg-muted/30">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
-          <Badge className="bg-[#ffa300]/10 text-[#ffa300] mb-3"><Calendar className="h-3 w-3 mr-1" /> Upcoming Deadlines</Badge>
+          <Badge className="bg-[#2F4F97]/10 text-[#2F4F97] mb-3"><Calendar className="h-3 w-3 mr-1" /> Upcoming Deadlines</Badge>
           <h2 className="text-3xl font-extrabold mb-2">Intake & Application Deadlines</h2>
           <p className="text-muted-foreground max-w-lg mx-auto">Don't miss your chance - apply before these deadlines close</p>
         </div>
@@ -76,7 +76,7 @@ export function IntakeCalendar() {
                   <p className="text-xs text-muted-foreground mb-4">
                     Deadline: {new Date(d.deadline).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
                   </p>
-                  <Button variant="outline" size="sm" className="w-full gap-1.5 hover:bg-[#ffa300]/10 hover:text-[#ffa300] hover:border-[#ffa300]/30 transition-colors" onClick={() => handleReminder(d)}>
+                  <Button variant="outline" size="sm" className="w-full gap-1.5 hover:bg-[#2F4F97]/10 hover:text-[#2F4F97] hover:border-[#2F4F97]/30 transition-colors" onClick={() => handleReminder(d)}>
                     <Bell className="h-3.5 w-3.5" /> Set Reminder
                   </Button>
                 </CardContent>

@@ -183,7 +183,7 @@ export default function AdminSettings() {
   return (
     <div className="space-y-8 max-w-5xl animate-fade-in pb-10">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-[#181d29]">Settings</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-[#1E293B]">Settings</h1>
         <p className="text-muted-foreground text-sm mt-1">Manage your administrator profile and global platform preferences.</p>
       </div>
 
@@ -192,7 +192,7 @@ export default function AdminSettings() {
         <Card className="border-sidebar-border shadow-sm">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-lg">
-              <User className="h-5 w-5 text-[#ffa300]" />
+              <User className="h-5 w-5 text-[#2F4F97]" />
               Admin Profile
             </CardTitle>
             <CardDescription>Update your personal information and avatar.</CardDescription>
@@ -202,7 +202,7 @@ export default function AdminSettings() {
               <div className="relative group shrink-0">
                 <Avatar className="h-24 w-24 border-4 border-background shadow-md">
                   <AvatarImage src={profile.avatar_url} />
-                  <AvatarFallback className="text-2xl font-bold bg-[#ffa300]/10 text-[#ffa300]">{initials}</AvatarFallback>
+                  <AvatarFallback className="text-2xl font-bold bg-[#2F4F97]/10 text-[#2F4F97]">{initials}</AvatarFallback>
                 </Avatar>
                 <button
                   onClick={() => fileInputRef.current?.click()}
@@ -231,7 +231,7 @@ export default function AdminSettings() {
                     value={profile.display_name}
                     onChange={e => setProfile(prev => ({ ...prev, display_name: e.target.value }))}
                     placeholder="E.g. John Doe"
-                    className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] transition-colors shadow-none"
+                    className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] transition-colors shadow-none"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -242,7 +242,7 @@ export default function AdminSettings() {
               </div>
             </div>
             <div className="pt-2 border-t border-gray-100 mt-6">
-              <Button onClick={handleSaveProfile} disabled={savingProfile} className="w-full sm:w-auto bg-[#181d29] hover:bg-[#181d29]/90 text-white gap-2 font-semibold text-[13px] h-10 mt-4">
+              <Button onClick={handleSaveProfile} disabled={savingProfile} className="w-full sm:w-auto bg-[#1E293B] hover:bg-[#1E293B]/90 text-white gap-2 font-semibold text-[13px] h-10 mt-4">
                 {savingProfile ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 Save Profile
               </Button>
@@ -254,7 +254,7 @@ export default function AdminSettings() {
         <Card className="border-sidebar-border shadow-sm">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Globe className="h-5 w-5 text-[#ffa300]" />
+              <Globe className="h-5 w-5 text-[#2F4F97]" />
               Platform Settings
             </CardTitle>
             <CardDescription>Manage global contact information shown on the site.</CardDescription>
@@ -267,7 +267,7 @@ export default function AdminSettings() {
               <Input 
                 value={systemSettings.companyName} 
                 onChange={(e) => setSystemSettings(p => ({ ...p, companyName: e.target.value }))}
-                className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] transition-colors shadow-none"
+                className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] transition-colors shadow-none"
               />
             </div>
             <div className="space-y-1.5">
@@ -277,7 +277,7 @@ export default function AdminSettings() {
               <Input 
                 value={systemSettings.contactEmail} 
                 onChange={(e) => setSystemSettings(p => ({ ...p, contactEmail: e.target.value }))}
-                className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] transition-colors shadow-none"
+                className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] transition-colors shadow-none"
               />
             </div>
             <div className="space-y-1.5">
@@ -287,12 +287,12 @@ export default function AdminSettings() {
               <Input 
                 value={systemSettings.phoneNumber} 
                 onChange={(e) => setSystemSettings(p => ({ ...p, phoneNumber: e.target.value }))}
-                className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] transition-colors shadow-none"
+                className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] transition-colors shadow-none"
               />
             </div>
             <div className="pt-2 border-t border-gray-100 mt-6">
-              <Button onClick={handleSaveSystem} disabled={savingSystem} className="w-full sm:w-auto bg-white border border-[#e8e8e8] text-[#181d29] hover:bg-gray-50 hover:border-[#ffa300] gap-2 shadow-sm font-semibold text-[13px] h-10 mt-4">
-                {savingSystem ? <Loader2 className="h-4 w-4 animate-spin text-[#ffa300]" /> : <Save className="h-4 w-4 text-[#ffa300]" />}
+              <Button onClick={handleSaveSystem} disabled={savingSystem} className="w-full sm:w-auto bg-white border border-[#e8e8e8] text-[#1E293B] hover:bg-gray-50 hover:border-[#2F4F97] gap-2 shadow-sm font-semibold text-[13px] h-10 mt-4">
+                {savingSystem ? <Loader2 className="h-4 w-4 animate-spin text-[#2F4F97]" /> : <Save className="h-4 w-4 text-[#2F4F97]" />}
                 Update Settings
               </Button>
             </div>
@@ -304,7 +304,7 @@ export default function AdminSettings() {
       <Card className="border-sidebar-border shadow-sm max-w-5xl">
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-lg">
-            <Lock className="h-5 w-5 text-[#ffa300]" />
+            <Lock className="h-5 w-5 text-[#2F4F97]" />
             Security
           </CardTitle>
           <CardDescription>Update your account password using email verification.</CardDescription>
@@ -313,9 +313,9 @@ export default function AdminSettings() {
           {pwStep === "idle" && (
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div className="flex-1">
-                <p className="text-sm text-gray-600">To change your password, we'll send a 6-digit verification code to <span className="font-semibold text-[#181d29]">{user?.email}</span>.</p>
+                <p className="text-sm text-gray-600">To change your password, we'll send a 6-digit verification code to <span className="font-semibold text-[#1E293B]">{user?.email}</span>.</p>
               </div>
-              <Button onClick={handleSendCode} className="bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 gap-2 font-semibold text-[13px] h-10 shrink-0">
+              <Button onClick={handleSendCode} className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 gap-2 font-semibold text-[13px] h-10 shrink-0">
                 <KeyRound className="h-4 w-4" />
                 Change Password
               </Button>
@@ -324,7 +324,7 @@ export default function AdminSettings() {
 
           {pwStep === "sending" && (
             <div className="flex items-center gap-3 text-sm text-gray-500">
-              <Loader2 className="h-5 w-5 animate-spin text-[#ffa300]" />
+              <Loader2 className="h-5 w-5 animate-spin text-[#2F4F97]" />
               Sending verification code to your email...
             </div>
           )}
@@ -341,12 +341,12 @@ export default function AdminSettings() {
                   value={otpCode}
                   onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                   placeholder="Enter 6-digit code"
-                  className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] transition-colors shadow-none tracking-[0.3em] text-center font-bold text-lg"
+                  className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] transition-colors shadow-none tracking-[0.3em] text-center font-bold text-lg"
                   maxLength={6}
                 />
               </div>
               <div className="flex gap-3">
-                <Button onClick={handleVerifyCode} disabled={otpCode.length < 6} className="bg-[#181d29] hover:bg-[#181d29]/90 text-white gap-2 font-semibold text-[13px] h-10">
+                <Button onClick={handleVerifyCode} disabled={otpCode.length < 6} className="bg-[#1E293B] hover:bg-[#1E293B]/90 text-white gap-2 font-semibold text-[13px] h-10">
                   <ArrowRight className="h-4 w-4" /> Verify Code
                 </Button>
                 <Button variant="ghost" onClick={resetPwFlow} className="text-gray-500 text-[13px] h-10">Cancel</Button>
@@ -356,7 +356,7 @@ export default function AdminSettings() {
 
           {pwStep === "verifying" && (
             <div className="flex items-center gap-3 text-sm text-gray-500">
-              <Loader2 className="h-5 w-5 animate-spin text-[#ffa300]" />
+              <Loader2 className="h-5 w-5 animate-spin text-[#2F4F97]" />
               Verifying code...
             </div>
           )}
@@ -369,14 +369,14 @@ export default function AdminSettings() {
               </div>
               <div className="space-y-1.5">
                 <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">New Password</Label>
-                <Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Min. 6 characters" className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] transition-colors shadow-none" />
+                <Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Min. 6 characters" className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] transition-colors shadow-none" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Confirm Password</Label>
-                <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat new password" className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] transition-colors shadow-none" />
+                <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat new password" className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] transition-colors shadow-none" />
               </div>
               <div className="flex gap-3">
-                <Button onClick={handleUpdatePw} className="bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 gap-2 font-semibold text-[13px] h-10">
+                <Button onClick={handleUpdatePw} className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 gap-2 font-semibold text-[13px] h-10">
                   <Save className="h-4 w-4" /> Update Password
                 </Button>
                 <Button variant="ghost" onClick={resetPwFlow} className="text-gray-500 text-[13px] h-10">Cancel</Button>
@@ -386,7 +386,7 @@ export default function AdminSettings() {
 
           {pwStep === "updating" && (
             <div className="flex items-center gap-3 text-sm text-gray-500">
-              <Loader2 className="h-5 w-5 animate-spin text-[#ffa300]" />
+              <Loader2 className="h-5 w-5 animate-spin text-[#2F4F97]" />
               Updating your password...
             </div>
           )}

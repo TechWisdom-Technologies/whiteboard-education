@@ -69,7 +69,7 @@ export default function CourseDetail() {
 
   if (loadingC) {
     return (
-      <div className="min-h-screen flex flex-col bg-background">
+      <div className="min-h-screen flex flex-col bg-white">
         <MegaMenu />
         <LoadingScreen label="Loading course details" sublabel="Getting program information" className="flex-1" />
         <PublicFooter />
@@ -181,7 +181,7 @@ ${window.location.href}`;
         {/* Top Hero Section */}
         <div className="w-full pb-16">
           <div className="container mx-auto px-4 lg:px-6">
-            <div className="w-full bg-[#ffecd8] py-20 px-10 border border-[#ffb870]/20 rounded-tl-md rounded-tr-[3rem] rounded-bl-[3rem] rounded-br-md min-h-[220px]">
+            <div className="w-full bg-[#EEF4FF] py-20 px-10 border border-[#2F4F97]/20 rounded-tl-md rounded-tr-[3rem] rounded-bl-[3rem] rounded-br-md min-h-[220px]">
               <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
                 {uni?.logo_url && (
                   <div className="w-32 h-32 md:w-40 md:h-40 bg-white rounded-xl border border-gray-200 p-4 shrink-0 flex items-center justify-center overflow-hidden shadow-sm">
@@ -193,13 +193,15 @@ ${window.location.href}`;
                   
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex items-center justify-center md:justify-start gap-2 text-gray-700">
-                      <Building2 className="w-5 h-5 shrink-0 text-[#ffa300]" />
+                      <Building2 className="w-5 h-5 shrink-0 text-[#2F4F97]" />
                       <p className="text-lg font-medium">{uni?.name}</p>
                     </div>
                     
                     <div className="flex flex-row gap-3 w-full sm:w-auto justify-center md:justify-end">
-                      <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold px-8 h-12 text-[16px] rounded-xl shadow-none flex-1 sm:flex-none" onClick={() => navigate(`/apply?courseId=${course.id}`)}>Apply Now</Button>
-                      <Button variant="outline" className="border-[#9273b6] text-[#9273b6] hover:bg-[#9273b6]/10 font-bold px-8 h-12 text-[16px] bg-transparent rounded-xl shadow-none flex-1 sm:flex-none" onClick={() => navigate("/contact")}>Ask Us</Button>
+                      <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent font-bold px-8 h-12 shadow-none flex-1 sm:flex-none" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
+Apply Now</Button>
+                      <Button variant="outline" className="bg-white hover:bg-gray-50 font-bold px-8 h-12 flex-1 sm:flex-none" onClick={() => navigate("/contact")}>
+Ask Us</Button>
                     </div>
                   </div>
                 </div>
@@ -209,7 +211,7 @@ ${window.location.href}`;
         </div>
 
         {/* Sticky Tab Bar */}
-        <div className="sticky top-0 z-40 bg-white border-y border-gray-200 shadow-sm transition-all duration-200">
+        <div className="sticky top-0 z-40 shadow-sm transition-all duration-200 bg-white border-b border-gray-100">
           <div className="container mx-auto px-4 min-h-[64px] py-1.5 flex items-center max-w-5xl">
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-6">
@@ -228,8 +230,10 @@ ${window.location.href}`;
               {/* Actions in sticky nav (visible mostly on desktop) */}
               {isScrolledPastHero && (
                 <div className="hidden md:flex items-center gap-3 shrink-0 ml-6">
-                  <Button className="bg-[#f1a51c] hover:bg-[#e09819] text-black font-normal rounded-xl px-6 h-10 shadow-none text-lg" onClick={() => navigate(`/apply?courseId=${course.id}`)}>Apply Now</Button>
-                  <Button variant="outline" className="rounded-xl px-6 border-gray-300 text-gray-700 hover:bg-gray-50 font-normal h-10 text-lg shadow-none bg-white" onClick={() => navigate("/contact")}>Ask Us</Button>
+                  <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent font-normal px-6 h-10 shadow-none" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
+Apply Now</Button>
+                  <Button variant="outline" className="bg-white px-6 font-normal h-10 hover:bg-gray-50" onClick={() => navigate("/contact")}>
+Ask Us</Button>
                 </div>
               )}
             </div>
@@ -291,7 +295,7 @@ ${window.location.href}`;
                               key={m} 
                               className={`px-2.5 py-0.5 rounded-xl text-sm ${
                                 isActive 
-                                  ? 'bg-[#181d29] text-white border border-[#181d29] font-medium' 
+                                  ? 'bg-[#1E293B] text-white border border-[#1E293B] font-medium' 
                                   : 'font-normal bg-[#fcecc9] text-gray-900 border border-[#f5d9a0]'
                               }`}
                             >
@@ -347,7 +351,7 @@ ${window.location.href}`;
                 <h3 className="text-xl font-semibold text-gray-800 mb-5">Course Fee for International Students</h3>
                 <div className="grid md:grid-cols-2 gap-12 w-full lg:w-[75%]">
                   <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
-                    <div className="bg-[#ffa300]/20 px-4 py-3 border-b border-[#ffa300]/30">
+                    <div className="bg-[#2F4F97]/20 px-4 py-3 border-b border-[#2F4F97]/30">
                       <h4 className="font-semibold text-gray-900 text-[16px]">Yearly Tuition fees</h4>
                     </div>
                     <div className="p-4">
@@ -382,7 +386,7 @@ ${window.location.href}`;
                   </div>
 
                   <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
-                    <div className="bg-[#ffa300]/20 px-4 py-3 border-b border-[#ffa300]/30">
+                    <div className="bg-[#2F4F97]/20 px-4 py-3 border-b border-[#2F4F97]/30">
                       <h4 className="font-semibold text-gray-900 text-[16px]">Other Fees</h4>
                     </div>
                     <div className="p-4">

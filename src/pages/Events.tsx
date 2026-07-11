@@ -45,7 +45,7 @@ export default function Events() {
                 <Card key={ev.id} className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6 space-y-3">
                     <div className="flex items-center gap-2">
-                      <Icon className="h-5 w-5 text-[#ffa300]" />
+                      <Icon className="h-5 w-5 text-[#2F4F97]" />
                       <Badge variant="outline">{ev.type}</Badge>
                     </div>
                     <h3 className="font-bold">{ev.title}</h3>
@@ -54,8 +54,8 @@ export default function Events() {
                       <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{ev.date}</span>
                       <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{ev.time}</span>
                     </div>
-                    {ev.spots_left > 0 && <p className="text-xs text-[#ffa300] font-semibold">{ev.spots_left} spots left</p>}
-                    <Button size="sm" className="w-full bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90" onClick={() => navigate("/contact")}>Register</Button>
+                    {ev.spots_left > 0 && <p className="text-xs text-[#2F4F97] font-semibold">{ev.spots_left} spots left</p>}
+                    <Button size="sm" className="w-full bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90" onClick={() => navigate("/contact")}>Register</Button>
                   </CardContent>
                 </Card>
               );

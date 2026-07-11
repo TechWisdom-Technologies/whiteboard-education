@@ -19,10 +19,10 @@ export function PublicHeader() {
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
-          <GraduationCap className="h-8 w-8 text-[#ffa300]" />
+          <GraduationCap className="h-8 w-8 text-[#2F4F97]" />
           <span className="text-xl font-extrabold tracking-tight">
             <span className="text-primary">Your</span>
-            <span className="text-[#ffa300]">Uni</span>
+            <span className="text-[#2F4F97]">Uni</span>
           </span>
         </Link>
 
@@ -50,7 +50,7 @@ export function PublicHeader() {
             <Button variant="outline" size="sm" className="hidden lg:inline-flex">Admin</Button>
           </Link>
           <Link to="/partner-dashboard">
-            <Button size="sm" className="hidden lg:inline-flex bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90">Partner Portal</Button>
+            <Button size="sm" className="hidden lg:inline-flex bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90">Partner Portal</Button>
           </Link>
           <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -74,7 +74,7 @@ export function PublicHeader() {
           <div className="flex flex-col gap-2 pt-2">
             <Link to="/login" onClick={() => setMobileOpen(false)}><Button variant="ghost" size="sm" className="w-full justify-start gap-1.5"><LogIn className="h-4 w-4" />Sign In</Button></Link>
             <Link to="/admin" onClick={() => setMobileOpen(false)}><Button variant="outline" size="sm" className="w-full">Admin</Button></Link>
-            <Link to="/partner-dashboard" onClick={() => setMobileOpen(false)}><Button size="sm" className="w-full bg-[#ffa300] text-[#181d29]">Partner Portal</Button></Link>
+            <Link to="/partner-dashboard" onClick={() => setMobileOpen(false)}><Button size="sm" className="w-full bg-[#2F4F97] text-white">Partner Portal</Button></Link>
           </div>
         </div>
       )}

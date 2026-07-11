@@ -97,15 +97,15 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
 
   return (
     <>
-      <header className={`${disableSticky ? 'relative' : 'sticky top-0'} z-50 w-full shadow-sm`}>
+      <header className={`${disableSticky ? 'relative' : 'sticky top-0'} z-50 w-full bg-white border-b-[0.5px] border-gray-200`}>
         {/* Top Utility Bar */}
-      <div className="bg-[#181d29] text-white py-2 border-b border-white/5">
+      <div className="bg-[#1E293B] text-white py-2 border-b border-white/5">
         <div className="container mx-auto flex justify-end gap-6 px-4 lg:px-6">
           <Link 
             to="/partner" 
             className={cn(
-              "text-[12px] font-semibold hover:text-[#ffa300] transition-colors flex items-center gap-1.5 tracking-wide",
-              isRouteActive("/partner") && "text-[#ffa300]"
+              "text-[12px] font-semibold hover:text-[#2F4F97] transition-colors flex items-center gap-1.5 tracking-wide",
+              isRouteActive("/partner") && "text-[#2F4F97]"
             )}
           >
             <Handshake className="h-3 w-3" /> APPLY FOR PARTNERSHIP
@@ -114,8 +114,8 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
             <Link 
               to="/login" 
               className={cn(
-                "text-[12px] font-semibold hover:text-[#ffa300] transition-colors flex items-center gap-1.5 tracking-wide",
-                isRouteActive("/login") && "text-[#ffa300]"
+                "text-[12px] font-semibold hover:text-[#2F4F97] transition-colors flex items-center gap-1.5 tracking-wide",
+                isRouteActive("/login") && "text-[#2F4F97]"
               )}
             >
               <LogIn className="h-3 w-3" /> PARTNER LOGIN
@@ -132,13 +132,12 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
         <div className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-6">
           {/* Brand - Left */}
           <Link to="/" className="flex items-center gap-3 shrink-0 group">
-            <img src="/LOGO-ON-LIGHT-BG.png" alt="Whiteboard Education" className="h-10 w-auto object-contain" />
+            <img src="/logo.png" alt="Whiteboard Education" className="h-6 md:h-8 w-auto object-contain" />
           </Link>
 
           {/* Desktop Nav - Right Aligned */}
           <div className="hidden lg:flex items-center gap-1">
             <nav className="flex items-center gap-1 mr-2">
-              <NavItem to="/" icon={Home}>Home</NavItem>
               <NavItem to="/universities" icon={GraduationCap}>Universities</NavItem>
               <NavItem to="/courses" icon={BookOpen}>Courses</NavItem>
               <NavItem to="/language-centers" icon={Languages}>Language</NavItem>
@@ -150,15 +149,15 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
                     variant="ghost"
                     size="sm"
                     className={cn(
-                      "h-10 text-sm font-medium text-[#515768] hover:text-[#ffa300] hover:bg-transparent gap-1.5 px-3 transition-colors",
-                      toolsActive && "text-[#ffa300]",
+                      "h-10 text-sm font-medium text-[#64748B] hover:text-[#2F4F97] hover:bg-transparent gap-1.5 px-3 transition-colors",
+                      toolsActive && "text-[#2F4F97]",
                     )}
                   >
                     <BookOpen className="h-3.5 w-3.5" /> Resources
                     <ChevronDown className="h-3 w-3 opacity-50" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" sideOffset={20} className="w-[520px] p-5 shadow-xl border-[#e8e8e8] border-t-[3px] border-t-[#ffa300] rounded-t-none">
+                <DropdownMenuContent align="end" sideOffset={20} className="w-[520px] p-5 shadow-xl border-[#e8e8e8] border-t-[3px] border-t-[#2F4F97] rounded-t-none">
                   <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest px-3 pb-3 mb-2 text-center">
                     Resources
                   </p>
@@ -174,9 +173,9 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
                           alt={item.label} 
                           className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#181d29]/95 via-[#181d29]/60 to-[#181d29]/20" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#1E293B]/95 via-[#1E293B]/60 to-[#1E293B]/20" />
                         <div className="absolute inset-0 p-2 flex flex-col items-center justify-center text-center">
-                          <item.icon className="h-6 w-6 text-[#ffa300] mb-1.5" />
+                          <item.icon className="h-6 w-6 text-[#2F4F97] mb-1.5" />
                           <span className="text-[11px] font-bold text-white leading-tight">{item.label}</span>
                         </div>
                       </Link>
@@ -191,8 +190,8 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
             {user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-xl p-0 hover:ring-2 hover:ring-[#ffa300]/30 transition-all">
-                    <Avatar className="h-10 w-10 border-2 border-[#ffa300]/30">
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-xl p-0 hover:ring-2 hover:ring-[#2F4F97]/30 transition-all">
+                    <Avatar className="h-10 w-10 border-2 border-[#2F4F97]/30">
                       <AvatarImage src={avatarUrl} alt={user?.email || "User avatar"} />
                       <AvatarFallback className="bg-primary text-primary-foreground text-sm font-bold">
                         {userInitial}
@@ -238,107 +237,44 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-              <SheetContent side="right" className="w-[320px] p-0 border-l border-border">
-                <div className="flex flex-col h-full">
+              <SheetContent side="top" className="w-screen h-screen p-0 border-none">
+                <div className="flex flex-col h-full bg-white">
                   {/* Mobile Header */}
                   <div className="p-5 border-b border-[#cacdd4] flex items-center justify-between">
                     <Link to="/" className="flex items-center gap-2.5">
-                      <img src="/LOGO-ON-LIGHT-BG.png" alt="Whiteboard Education" className="h-8 w-auto object-contain" />
+                      <img src="/logo.png" alt="Whiteboard Education" className="h-6 w-auto object-contain" />
                     </Link>
                   </div>
 
-                  {/* Mobile User Card */}
-                  {user && (
-                    <div className="px-5 py-4 bg-[#fef1da]/30 border-b border-[#cacdd4]">
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10 border-2 border-[#ffa300]/30">
-                          <AvatarImage src={avatarUrl} alt={user?.email || "User avatar"} />
-                          <AvatarFallback className="bg-[#181d29] text-white font-bold">{userInitial}</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold truncate">{user.email}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {hasRole("admin") ? "Administrator" : hasRole("partner") ? "Partner" : "Student"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
                   {/* Mobile Nav */}
-                  <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
-                    <MobileNavLink to="/" icon={Home}>Home</MobileNavLink>
+                  <nav className="flex-1 overflow-y-auto px-6 py-4 space-y-2 mt-2">
                     <MobileNavLink to="/universities" icon={GraduationCap}>Universities</MobileNavLink>
                     <MobileNavLink to="/courses" icon={BookOpen}>Courses</MobileNavLink>
                     <MobileNavLink to="/language-centers" icon={Languages}>Language Centers</MobileNavLink>
 
                     <Collapsible>
-                      <CollapsibleTrigger className="flex w-full items-center justify-between px-3 py-2.5 text-sm font-medium text-foreground hover:bg-[#fef1da]/50 rounded-xl transition-colors">
-                        <span className="flex items-center gap-2.5">
-                          <Sparkles className="h-4 w-4 text-muted-foreground" /> Resources & Tools
+                      <CollapsibleTrigger className="flex w-full items-center justify-between px-3 py-3.5 text-base font-medium text-foreground hover:bg-[#F8FAFC]/50 rounded-xl transition-colors">
+                        <span className="flex items-center gap-3">
+                          <Sparkles className="h-5 w-5 text-muted-foreground" /> Resources & Tools
                         </span>
-                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                        <ChevronDown className="h-5 w-5 text-muted-foreground" />
                       </CollapsibleTrigger>
-                      <CollapsibleContent className="pl-4 space-y-0.5 mt-0.5">
+                      <CollapsibleContent className="pl-6 space-y-2 mt-2">
                         {resourceToolsLinks.map((item) => (
                           <MobileNavLink key={item.to} to={item.to} icon={item.icon}>{item.label}</MobileNavLink>
                         ))}
                       </CollapsibleContent>
                     </Collapsible>
 
-                    <div className="h-px bg-border my-2" />
                     <MobileNavLink to="/contact" icon={Phone}>Contact Us</MobileNavLink>
-                    <MobileNavLink to="/partner">Partnership</MobileNavLink>
                   </nav>
-
-                  {/* Mobile Auth Footer */}
-                  <div className="p-4 border-t border-border bg-muted/20 space-y-2">
-                    {!user && (
-                      <>
-                        <SheetClose asChild>
-                          <Link to="/login" className="block">
-                            <Button variant="outline" className="w-full font-medium rounded-xl border-[#181d29] text-[#181d29]">Log In</Button>
-                          </Link>
-                        </SheetClose>
-                        <SheetClose asChild>
-                          <Button
-                            className="w-full bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 font-semibold rounded-xl border border-[#ffa300]"
-                            onClick={() => navigate("/contact")}
-                          >
-                            <Phone className="h-4 w-4 mr-1.5" /> Free Consultation
-                          </Button>
-                        </SheetClose>
-                      </>
-                    )}
-                    {hasRole("admin") && (
-                      <SheetClose asChild>
-                        <Link to="/admin" className="block">
-                          <Button variant="outline" className="w-full gap-1.5 font-medium"><ShieldCheck className="h-4 w-4" /> Admin Panel</Button>
-                        </Link>
-                      </SheetClose>
-                    )}
-                    {hasRole("partner") && (
-                      <SheetClose asChild>
-                        <Link to="/partner-dashboard" className="block">
-                          <Button variant="outline" className="w-full gap-1.5 font-medium"><LayoutDashboard className="h-4 w-4" /> Dashboard</Button>
-                        </Link>
-                      </SheetClose>
-                    )}
-                    {user && (
-                      <SheetClose asChild>
-                        <Button variant="ghost" className="w-full gap-1.5 text-destructive hover:text-destructive font-medium" onClick={handleLogout}>
-                          <LogOut className="h-4 w-4" /> Sign Out
-                        </Button>
-                      </SheetClose>
-                    )}
-                  </div>
                 </div>
               </SheetContent>
             </Sheet>
           </div>
         </div>
 
-      <div className="h-[2px] w-full bg-[#ffa300]" />
+      <div className="h-[2px] w-full bg-[#2F4F97]" />
 
     </header>
     <GlobalBreadcrumbs />
@@ -357,12 +293,18 @@ function NavItem({ to, children, icon: Icon }: { to: string; children: React.Rea
         variant="ghost"
         size="sm"
         className={cn(
-          "h-10 text-sm font-medium text-[#515768] hover:text-[#ffa300] hover:bg-transparent gap-1.5 px-3 transition-colors",
-          isActive && "text-[#ffa300]",
+          "h-10 text-sm font-medium text-[#64748B] hover:text-[#2F4F97] hover:bg-transparent gap-1.5 px-3 transition-colors",
+          isActive && "text-[#2F4F97]",
         )}
       >
         {Icon && <Icon className="h-3.5 w-3.5" />}
-        {children}
+        <span className="relative flex flex-col items-center justify-center">
+          {children}
+          <div className={cn(
+            "absolute -bottom-2 w-1.5 h-1.5 rounded-full bg-[#2F4F97] transition-all duration-300",
+            isActive ? "opacity-100 scale-100" : "opacity-0 scale-0"
+          )} />
+        </span>
       </Button>
     </Link>
   );
@@ -378,12 +320,16 @@ function MobileNavLink({ to, children, icon: Icon }: { to: string; children: Rea
       <Link
         to={to}
         className={cn(
-          "flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium text-foreground hover:bg-[#fef1da]/50 rounded-xl transition-colors",
-          isActive && "text-[#ffa300] bg-[#fef1da]/50 border-l-2 border-[#ffa300]",
+          "flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium text-foreground hover:bg-[#F8FAFC]/50 rounded-xl transition-colors",
+          isActive && "text-[#2F4F97]"
         )}
       >
-        {Icon && <Icon className={cn("h-4 w-4 text-muted-foreground", isActive && "text-[#ffa300]")} />}
+        {Icon && <Icon className={cn("h-4 w-4 text-muted-foreground", isActive && "text-[#2F4F97]")} />}
         {children}
+        <div className={cn(
+          "w-1.5 h-1.5 rounded-full bg-[#2F4F97] transition-all duration-300 ml-1",
+          isActive ? "opacity-100 scale-100" : "opacity-0 scale-0 w-0 ml-0"
+        )} />
       </Link>
     </SheetClose>
   );

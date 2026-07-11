@@ -21,7 +21,8 @@ import {
   Clock,
   DollarSign,
   Building2,
-  Layers
+  Layers,
+  Info
 } from "lucide-react";
 import {
   Select,
@@ -252,23 +253,23 @@ export default function Courses() {
         ) : (
           <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
             {/* ─── SIDEBAR ─── */}
-            <aside className="lg:w-[300px] xl:w-[320px] shrink-0">
+            <aside className="lg:w-[320px] xl:w-[340px] shrink-0">
               <div
                 className="overflow-hidden lg:sticky lg:top-[152px] border"
                 style={{
                   borderColor: "#e8e8e8",
-                  borderRadius: "5px",
+                  borderRadius: "12px",
                 }}
               >
                 {/* Sidebar Header */}
-                <div className="px-5 py-4 flex items-center justify-between" style={{ backgroundColor: "#fef1da" }}>
+                <div className="px-5 py-4 flex items-center justify-between" style={{ backgroundColor: "#F8FAFC" }}>
                   <h3
                     className="font-bold"
                     style={{
                       fontFamily: "Poppins, sans-serif",
                       fontSize: "20px",
                       lineHeight: "24px",
-                      color: "#181d29",
+                      color: "#1E293B",
                     }}
                   >
                     Search by Filter
@@ -280,7 +281,7 @@ export default function Courses() {
                       setSelectedArea("All Areas");
                       setSelectedUniId("all");
                     }}
-                    className="text-[#999999] hover:text-[#181d29] transition-colors"
+                    className="text-[#999999] hover:text-[#1E293B] transition-colors"
                     title="Reset Filters"
                   >
                     <RotateCcw className="h-5 w-5" />
@@ -299,7 +300,7 @@ export default function Courses() {
                         className="pr-10 h-11"
                         style={{
                           borderColor: "#cacdd4",
-                          borderRadius: "5px",
+                          borderRadius: "12px",
                           fontFamily: "Poppins, sans-serif",
                           fontSize: "14px",
                           color: "#444444",
@@ -319,7 +320,7 @@ export default function Courses() {
                         className="h-11"
                         style={{
                           borderColor: "#cacdd4",
-                          borderRadius: "5px",
+                          borderRadius: "12px",
                           fontFamily: "Poppins, sans-serif",
                           fontSize: "14px",
                           color: selectedLevel === "All Levels" ? "#999999" : "#444444",
@@ -342,7 +343,7 @@ export default function Courses() {
                         className="h-11"
                         style={{
                           borderColor: "#cacdd4",
-                          borderRadius: "5px",
+                          borderRadius: "12px",
                           fontFamily: "Poppins, sans-serif",
                           fontSize: "14px",
                           color: selectedArea === "All Areas" ? "#999999" : "#444444",
@@ -365,7 +366,7 @@ export default function Courses() {
                         className="h-11"
                         style={{
                           borderColor: "#cacdd4",
-                          borderRadius: "5px",
+                          borderRadius: "12px",
                           fontFamily: "Poppins, sans-serif",
                           fontSize: "14px",
                           color: selectedUniId === "all" ? "#999999" : "#444444",
@@ -388,14 +389,14 @@ export default function Courses() {
                 {/* Apply/Reset Buttons */}
                 <div className="flex items-center gap-3 px-5 pb-5 bg-white">
                   <Button 
-                    className="flex-1 font-bold h-11 text-sm bg-[#ffa300] text-[#181d29] hover:bg-[#e69200]"
+                    className="flex-1 font-bold h-11 text-sm bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97]"
                     onClick={applyFilters}
                   >
                     Apply Filter
                   </Button>
                   <Button 
                     variant="outline"
-                    className="flex-1 font-bold h-11 text-sm border-gray-200 text-[#181d29] hover:bg-gray-50"
+                    className="flex-1 font-bold h-11 text-sm border-gray-200 text-[#1E293B] hover:bg-gray-50"
                     onClick={resetFilters}
                   >
                     Reset Filter
@@ -407,25 +408,26 @@ export default function Courses() {
             {/* ─── CONTENT AREA ─── */}
             <div className="flex-1 min-w-0">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-gray-200 pb-4 mb-6 gap-4">
-                <h1 className="text-[20px] md:text-[22px] font-bold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>
+                <h1 className="text-[20px] md:text-[22px] font-bold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B" }}>
                   Courses
                 </h1>
                 
                 <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 md:gap-4 text-[14px]">
                   <div className="flex items-center gap-2 shrink-0">
-                    <span className="font-semibold text-[#181d29] whitespace-nowrap">Sort By:</span>
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className="border border-gray-300 rounded-xl px-3 py-1.5 text-gray-600 bg-white focus:outline-none focus:border-[#ffa300]"
-                    >
-                      <option value="best_match">Best Match (Default)</option>
-                      <option value="tuition_low_high">Tuition cost (Low to high)</option>
-                      <option value="tuition_high_low">Tuition cost (High to Low)</option>
-                    </select>
+                    <span className="font-semibold text-[#1E293B] whitespace-nowrap">Sort By:</span>
+                    <Select value={sortBy} onValueChange={setSortBy}>
+                      <SelectTrigger className="w-[200px] h-[34px] border border-gray-300 rounded-xl px-3 text-gray-600 bg-white focus:ring-0 focus:ring-offset-0 focus:border-[#2F4F97]">
+                        <SelectValue placeholder="Sort By" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl">
+                        <SelectItem value="best_match">Best Match (Default)</SelectItem>
+                        <SelectItem value="tuition_low_high">Tuition cost (Low to high)</SelectItem>
+                        <SelectItem value="tuition_high_low">Tuition cost (High to Low)</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   
-                  <div className="text-gray-500 hidden sm:block">|</div>
+                  
                   
                   <div className="font-medium text-gray-600 whitespace-nowrap shrink-0">
                     Total Courses: {filtered.length}
@@ -438,7 +440,7 @@ export default function Courses() {
                   style={{ color: "#999999", fontFamily: "Poppins, sans-serif" }}
                 >
                   <BookOpen className="h-12 w-12 mx-auto mb-4 opacity-40" />
-                  <p className="font-semibold text-lg mb-1" style={{ color: "#515768" }}>
+                  <p className="font-semibold text-lg mb-1" style={{ color: "#64748B" }}>
                     No courses found
                   </p>
                   <p className="text-sm">Try adjusting your search or filters.</p>
@@ -452,11 +454,11 @@ export default function Courses() {
                         key={c.id}
                         className="bg-white p-5 md:p-6 lg:p-8 border border-gray-200 rounded-3xl"
                       >
-                        <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] lg:grid-cols-[180px_1fr_180px] gap-6 lg:gap-8 items-center lg:items-start">
+                        <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] lg:grid-cols-[180px_1fr_140px] gap-6 lg:gap-8 items-center lg:items-start">
                           {/* Left: Logo */}
                           <Link
                             to={`/courses/${generateSlug(c.title)}`}
-                            className="w-full h-[100px] flex items-center justify-center overflow-hidden border border-gray-100 rounded-2xl p-2"
+                            className="w-full h-[100px] flex items-center justify-center overflow-hidden"
                           >
                             {uni && (uni.logo_url || UNIVERSITY_LOGOS[uni.name]) ? (
                               <img
@@ -472,30 +474,38 @@ export default function Courses() {
                           {/* Middle: Info */}
                           <div className="min-w-0 flex flex-col justify-center space-y-3">
                             <Link to={`/courses/${generateSlug(c.title)}`}>
-                              <h3 className="font-semibold hover:underline text-[18px] md:text-[20px] text-[#181d29] leading-tight mb-1">
+                              <h3 className="font-medium hover:underline text-[18px] md:text-[20px] text-[#1E293B] leading-tight mb-1">
                                 {c.title}
                               </h3>
                             </Link>
 
-                            <div className="flex flex-col gap-2.5">
-                              <div className="flex items-center gap-2.5 text-[15px] text-[#515768]">
-                                <Building2 className="h-4 w-4 shrink-0 text-[#515768]" />
-                                <span className="truncate"><span className="font-medium text-[#181d29]">{uni?.name || "Malaysian University"}</span> — {uni?.city || "Malaysia"}</span>
+                            <div className="flex flex-col gap-3 mt-1">
+                              <div className="flex items-center gap-2.5 text-[14px] text-[#64748B]">
+                                <Building2 className="h-[18px] w-[18px] shrink-0 text-[#64748B]" />
+                                <span className="truncate">{uni?.name || "Malaysian University"}</span>
                               </div>
 
-                              <div className="flex items-center gap-2.5 text-[15px] text-[#515768]">
-                                <DollarSign className="h-4 w-4 shrink-0 text-[#515768]" />
-                                <span>MYR {Number(c.tuition_fee).toLocaleString()} / Year</span>
-                              </div>
-
-                              <div className="flex items-center gap-2.5 text-[15px] text-[#515768]">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mail shrink-0 text-[#515768]"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                                <span>{uni && PAID_OFFER_LETTER_UNIS.includes(uni.name) ? "Offer Letter Fees Applies" : "Free Offer Letter"}</span>
-                              </div>
-
-                              <div className="flex items-center gap-2.5 text-[15px] text-[#515768]">
-                                <Clock className="h-4 w-4 shrink-0 text-[#515768]" />
-                                <span>{c.duration || "N/A"} (Intake: {Array.isArray(c.intake_months) ? getActiveIntake(c.intake_months) : "Various"})</span>
+                              <div className="flex items-start gap-2.5 text-[13px] md:text-[14px] text-[#64748B] leading-loose">
+                                <Info className="h-[18px] w-[18px] shrink-0 text-[#64748B] mt-1 md:mt-[5px]" />
+                                <span>
+                                  MYR {Number(c.tuition_fee).toLocaleString()}/Year &bull; {uni && PAID_OFFER_LETTER_UNIS.includes(uni.name) ? "Offer Letter Fees Applies" : "Free Offer Letter"} &bull; {c.duration || "N/A"} &bull;{" "}
+                                  {Array.isArray(c.intake_months) && c.intake_months.length > 0 ? (
+                                    <>
+                                      {c.intake_months.map((intake: string, idx: number) => {
+                                        const isActive = intake === getActiveIntake(c.intake_months);
+                                        return (
+                                          <span key={idx}>
+                                            <span className={isActive ? "bg-[#EEF4FF] text-[#2F4F97] px-1.5 py-0.5 rounded font-medium" : ""}>
+                                              {intake.substring(0, 3)}
+                                            </span>
+                                            {idx < c.intake_months.length - 1 ? " & " : ""}
+                                          </span>
+                                        );
+                                      })}
+                                      {" Intake"}
+                                    </>
+                                  ) : "Various Intake"}
+                                </span>
                               </div>
                             </div>
 
@@ -505,8 +515,8 @@ export default function Courses() {
                                 size="sm"
                                 className={`rounded-2xl font-medium text-[13px] h-9 px-4 transition-colors border bg-white ${
                                   isComparing(c.id) 
-                                    ? "bg-[#ffa300]/10 text-[#e69200] border-[#ffa300]" 
-                                    : "text-gray-500 border-gray-200 hover:bg-[#ffa300] hover:text-[#181d29] hover:border-[#ffa300]"
+                                    ? "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]" 
+                                    : "text-gray-500 border-gray-200 hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97]"
                                 }`}
                                 onClick={() => {
                                   if (isComparing(c.id)) {
@@ -530,14 +540,15 @@ export default function Courses() {
                           {/* Right: Buttons */}
                           <div className="w-full md:col-span-2 lg:col-span-1 flex flex-col gap-3 mt-4 lg:mt-2">
                             <Button
-                              className="w-full h-10 font-bold text-[14px] bg-[#f9c365] text-[#181d29] hover:bg-[#e6a845] rounded-full border border-[#f9c365]"
+                              className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent h-9 px-3 font-bold"
                               onClick={() => navigate(`/apply?courseId=${c.id}`)}
                             >
                               Apply Now
                             </Button>
                             <Link to={`/courses/${generateSlug(c.title)}`} className="block w-full">
                               <Button
-                                className="w-full h-10 font-bold text-[14px] border border-gray-800 text-[#181d29] hover:bg-gray-50 rounded-full bg-white"
+                                variant="outline"
+                                className="bg-[#EEF4FF] text-[#2F4F97] border-[#2F4F97]/20 h-9 px-3 font-bold w-full hover:bg-[#EEF4FF]/80"
                               >
                                 Ask Us
                               </Button>
@@ -560,7 +571,7 @@ export default function Courses() {
                     style={{
                       borderColor: "#cacdd4",
                       borderRadius: "4px",
-                      color: "#515768",
+                      color: "#64748B",
                       backgroundColor: "#ffffff",
                     }}
                   >
@@ -578,9 +589,9 @@ export default function Courses() {
                         style={{
                           borderRadius: "4px",
                           fontFamily: "Poppins, sans-serif",
-                          backgroundColor: currentPage === page ? "#ffa300" : "#ffffff",
-                          color: currentPage === page ? "#181d29" : "#515768",
-                          borderColor: currentPage === page ? "#ffa300" : "#cacdd4",
+                          backgroundColor: currentPage === page ? "#2F4F97" : "#ffffff",
+                          color: currentPage === page ? "#1E293B" : "#64748B",
+                          borderColor: currentPage === page ? "#2F4F97" : "#cacdd4",
                         }}
                       >
                         {page}
@@ -595,7 +606,7 @@ export default function Courses() {
                     style={{
                       borderColor: "#cacdd4",
                       borderRadius: "4px",
-                      color: "#515768",
+                      color: "#64748B",
                       backgroundColor: "#ffffff",
                     }}
                   >

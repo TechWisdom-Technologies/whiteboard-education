@@ -134,12 +134,12 @@ export default function LanguageCentersPage() {
         ) : (
           <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
             {/* ─── SIDEBAR ─── */}
-            <aside className="lg:w-[300px] xl:w-[320px] shrink-0">
-              <div className="overflow-hidden lg:sticky lg:top-[152px] border bg-white" style={{ borderColor: "#e8e8e8", borderRadius: "5px" }}>
+            <aside className="lg:w-[320px] xl:w-[340px] shrink-0">
+              <div className="overflow-hidden lg:sticky lg:top-[152px] border bg-white" style={{ borderColor: "#e8e8e8", borderRadius: "12px" }}>
                 {/* Mobile Filter Toggle */}
                 <button 
                   onClick={() => setShowFilters(!showFilters)}
-                  className="w-full flex items-center justify-between p-4 lg:hidden text-[#181d29] font-semibold border-b" style={{ borderColor: "#e8e8e8" }}
+                  className="w-full flex items-center justify-between p-4 lg:hidden text-[#1E293B] font-semibold border-b" style={{ borderColor: "#e8e8e8" }}
                 >
                   <div className="flex items-center gap-2">
                     <Filter className="h-4 w-4" />
@@ -150,8 +150,8 @@ export default function LanguageCentersPage() {
 
                 <div className={`${showFilters ? 'block' : 'hidden lg:block'}`}>
                   {/* Sidebar Header */}
-                  <div className="px-5 py-4 flex items-center justify-between bg-[#fef1da] hidden lg:flex">
-                    <h3 className="font-bold text-[20px] text-[#181d29]">Search by Filter</h3>
+                  <div className="px-5 py-4 flex items-center justify-between bg-[#F8FAFC] hidden lg:flex">
+                    <h3 className="font-bold text-[20px] text-[#1E293B]">Search by Filter</h3>
                   </div>
 
                   {/* Sidebar Body */}
@@ -162,14 +162,14 @@ export default function LanguageCentersPage() {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="pr-10 h-11 text-[14px]"
-                        style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Poppins, sans-serif", color: "#444444" }}
+                        style={{ borderColor: "#cacdd4", borderRadius: "12px", fontFamily: "Poppins, sans-serif", color: "#444444" }}
                       />
                       <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "#999999" }} />
                     </div>
 
                     <div className="w-full">
                       <Select value={selectedCity} onValueChange={setSelectedCity} modal={false}>
-                        <SelectTrigger className="h-11 text-[14px]" style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Poppins, sans-serif", color: selectedCity === "all" ? "#999999" : "#444444" }}>
+                        <SelectTrigger className="h-11 text-[14px]" style={{ borderColor: "#cacdd4", borderRadius: "12px", fontFamily: "Poppins, sans-serif", color: selectedCity === "all" ? "#999999" : "#444444" }}>
                           <SelectValue placeholder="Locations" />
                         </SelectTrigger>
                         <SelectContent>
@@ -185,14 +185,14 @@ export default function LanguageCentersPage() {
                   {/* Apply/Reset Buttons */}
                   <div className="flex items-center gap-3 px-5 pb-5">
                     <Button 
-                      className="flex-1 font-bold h-11 text-sm bg-[#ffa300] text-[#181d29] hover:bg-[#e69200]"
+                      className="flex-1 font-bold h-11 text-sm bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97]"
                       onClick={applyFilters}
                     >
                       Apply Filter
                     </Button>
                     <Button 
                       variant="outline"
-                      className="flex-1 font-bold h-11 text-sm border-gray-200 text-[#181d29] hover:bg-gray-50"
+                      className="flex-1 font-bold h-11 text-sm border-gray-200 text-[#1E293B] hover:bg-gray-50"
                       onClick={resetFilters}
                     >
                       Reset Filter
@@ -204,25 +204,26 @@ export default function LanguageCentersPage() {
 
             <div className="flex-1 min-w-0">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-gray-200 pb-4 mb-6 gap-4">
-                <h1 className="text-[20px] md:text-[22px] font-bold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>
+                <h1 className="text-[20px] md:text-[22px] font-bold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B" }}>
                   Language Centers
                 </h1>
                 
                 <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 md:gap-4 text-[14px]">
                   <div className="flex items-center gap-2 shrink-0">
-                    <span className="font-semibold text-[#181d29] whitespace-nowrap">Sort By:</span>
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className="border border-gray-300 rounded-xl px-3 py-1.5 text-gray-600 bg-white focus:outline-none focus:border-[#ffa300]"
-                    >
-                      <option value="best_match">Best Match (Default)</option>
-                      <option value="name_a_z">Name (A to Z)</option>
-                      <option value="name_z_a">Name (Z to A)</option>
-                    </select>
+                    <span className="font-semibold text-[#1E293B] whitespace-nowrap">Sort By:</span>
+                    <Select value={sortBy} onValueChange={setSortBy}>
+                      <SelectTrigger className="w-[200px] h-[34px] border border-gray-300 rounded-xl px-3 text-gray-600 bg-white focus:ring-0 focus:ring-offset-0 focus:border-[#2F4F97]">
+                        <SelectValue placeholder="Sort By" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl">
+                        <SelectItem value="best_match">Best Match (Default)</SelectItem>
+                        <SelectItem value="name_a_z">Name (A to Z)</SelectItem>
+                        <SelectItem value="name_z_a">Name (Z to A)</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   
-                  <div className="text-gray-500 hidden sm:block">|</div>
+                  
                   
                   <div className="font-medium text-gray-600 whitespace-nowrap shrink-0">
                     Total Centers: {filtered.length}
@@ -235,7 +236,7 @@ export default function LanguageCentersPage() {
                 style={{ color: "#999999", fontFamily: "Poppins, sans-serif" }}
               >
                 <Languages className="h-12 w-12 mx-auto mb-4 opacity-40" />
-                <p className="font-semibold text-lg mb-1" style={{ color: "#515768" }}>
+                <p className="font-semibold text-lg mb-1" style={{ color: "#64748B" }}>
                   No programs found
                 </p>
                 <p className="text-sm">Try adjusting your search or filters.</p>
@@ -248,11 +249,11 @@ export default function LanguageCentersPage() {
                       key={lc.id}
                       className="bg-white p-5 md:p-6 lg:p-8 border border-gray-200 rounded-3xl animate-fade-in"
                     >
-                      <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] lg:grid-cols-[180px_1fr_180px] gap-6 lg:gap-8 items-center lg:items-start">
+                      <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] lg:grid-cols-[180px_1fr_140px] gap-6 lg:gap-8 items-center lg:items-start">
                         {/* Elegant Icon Representation or Image */}
                         <Link
                           to={`/language-centers/${generateSlug(lc.name)}`}
-                          className="w-full h-[100px] bg-white flex items-center justify-center overflow-hidden border border-gray-100 rounded-2xl p-2"
+                          className="w-full h-[100px] flex items-center justify-center overflow-hidden"
                         >
                           {lc.logo_url ? (
                             <img
@@ -265,29 +266,29 @@ export default function LanguageCentersPage() {
                               }}
                             />
                           ) : (
-                            <Languages className="h-10 w-10 text-[#ffa300]" />
+                            <Languages className="h-10 w-10 text-[#2F4F97]" />
                           )}
                         </Link>
 
                         {/* Info block */}
                         <div className="min-w-0 flex flex-col justify-center space-y-3 md:col-span-1 lg:col-span-1">
                           <Link to={`/language-centers/${generateSlug(lc.name)}`}>
-                            <h3 className="font-semibold hover:underline text-[18px] md:text-[20px] text-[#181d29] leading-tight mb-1">
+                            <h3 className="font-medium hover:underline text-[18px] md:text-[20px] text-[#1E293B] leading-tight mb-1">
                               {lc.name}
                             </h3>
                           </Link>
 
                           <div className="flex flex-col gap-2.5">
                             {/* Location */}
-                            <div className="flex items-center gap-2.5 text-[15px] text-[#515768]">
-                              <MapPin className="shrink-0 h-4 w-4 text-[#515768]" />
+                            <div className="flex items-center gap-2.5 text-[15px] text-[#64748B]">
+                              <MapPin className="shrink-0 h-4 w-4 text-[#64748B]" />
                               <span>{lc.city || "Malaysia"}, Malaysia</span>
                             </div>
 
                             {/* About text summary */}
                             {lc.about_text && (
-                              <div className="flex items-start gap-2.5 text-[15px] text-[#515768]">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-info shrink-0 mt-0.5 text-[#515768]"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                              <div className="flex items-start gap-2.5 text-[15px] text-[#64748B]">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-info shrink-0 mt-0.5 text-[#64748B]"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                                 <span className="line-clamp-2">
                                   {lc.about_text}
                                 </span>
@@ -296,8 +297,8 @@ export default function LanguageCentersPage() {
 
                             {/* Courses list tags */}
                             {lc.more_info && Array.isArray(lc.more_info) && lc.more_info.length > 0 && (
-                              <div className="flex items-start gap-2.5 text-[15px] text-[#515768] mt-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-book-open shrink-0 mt-0.5 text-[#515768]"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                              <div className="flex items-start gap-2.5 text-[15px] text-[#64748B] mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-book-open shrink-0 mt-0.5 text-[#64748B]"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                                 <div className="flex flex-wrap gap-1.5">
                                   {lc.more_info.slice(0, 3).map((c: any, idx: number) => (
                                     <span
@@ -321,14 +322,15 @@ export default function LanguageCentersPage() {
                         {/* Right: Actions */}
                         <div className="flex flex-col gap-3 w-full md:col-span-2 lg:col-span-1 mt-4 lg:mt-2">
                           <Button
-                            className="w-full h-10 font-bold text-[14px] bg-[#f9c365] text-[#181d29] hover:bg-[#e6a845] rounded-full border border-[#f9c365]"
+                            className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent h-9 px-3 font-bold"
                             onClick={() => navigate(`/apply?centerId=${lc.id}`)}
                           >
                             Apply Now
                           </Button>
                           <Link to={`/language-centers/${generateSlug(lc.name)}`} className="block w-full">
                             <Button
-                              className="w-full h-10 font-bold text-[14px] border border-gray-800 text-[#181d29] hover:bg-gray-50 rounded-full bg-white"
+                              variant="outline"
+                              className="bg-[#EEF4FF] text-[#2F4F97] border-[#2F4F97]/20 h-9 px-3 font-bold w-full hover:bg-[#EEF4FF]/80"
                             >
                               View Details
                             </Button>
@@ -352,7 +354,7 @@ export default function LanguageCentersPage() {
                   style={{
                     borderColor: "#cacdd4",
                     borderRadius: "4px",
-                    color: "#515768",
+                    color: "#64748B",
                     backgroundColor: "#ffffff",
                   }}
                 >
@@ -377,9 +379,9 @@ export default function LanguageCentersPage() {
                       style={{
                         borderRadius: "4px",
                         fontFamily: "Poppins, sans-serif",
-                        backgroundColor: currentPage === page ? "#ffa300" : "#ffffff",
-                        color: currentPage === page ? "#181d29" : "#515768",
-                        borderColor: currentPage === page ? "#ffa300" : "#cacdd4",
+                        backgroundColor: currentPage === page ? "#2F4F97" : "#ffffff",
+                        color: currentPage === page ? "#1E293B" : "#64748B",
+                        borderColor: currentPage === page ? "#2F4F97" : "#cacdd4",
                       }}
                     >
                       {page}
@@ -395,7 +397,7 @@ export default function LanguageCentersPage() {
                   style={{
                     borderColor: "#cacdd4",
                     borderRadius: "4px",
-                    color: "#515768",
+                    color: "#64748B",
                     backgroundColor: "#ffffff",
                   }}
                 >

@@ -55,13 +55,13 @@ export default function Compare() {
       {/* Page Header */}
       <div className="bg-white border-b border-gray-200/60">
         <div className="container mx-auto px-4 py-12 md:py-16 text-center max-w-3xl">
-          <div className="h-16 w-16 bg-[#ffa300]/15 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Trophy className="h-8 w-8 text-[#ffa300]" />
+          <div className="h-16 w-16 bg-[#2F4F97]/15 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Trophy className="h-8 w-8 text-[#2F4F97]" />
           </div>
-          <h1 className="text-3xl md:text-[40px] font-extrabold mb-4" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29", lineHeight: 1.2 }}>
-            Compare <span className="text-[#ffa300]">Universities</span>
+          <h1 className="text-3xl md:text-[40px] font-extrabold mb-4" style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B", lineHeight: 1.2 }}>
+            Compare <span className="text-[#2F4F97]">Universities</span>
           </h1>
-          <p className="text-[#515768] text-base md:text-lg">
+          <p className="text-[#64748B] text-base md:text-lg">
             Select up to 3 universities to compare them side-by-side across rankings, affordability, and campus life.
           </p>
         </div>
@@ -99,8 +99,8 @@ export default function Compare() {
                 <div className="h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Trophy className="h-8 w-8 text-gray-400" />
                 </div>
-                <p className="text-lg font-semibold text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>No Universities Selected</p>
-                <p className="text-[#515768] mt-1">Select universities from the dropdowns above to start comparing.</p>
+                <p className="text-lg font-semibold text-[#1E293B]" style={{ fontFamily: "Poppins, sans-serif" }}>No Universities Selected</p>
+                <p className="text-[#64748B] mt-1">Select universities from the dropdowns above to start comparing.</p>
               </CardContent>
             </Card>
           )}
@@ -130,7 +130,7 @@ export default function Compare() {
 
               {/* Radar Chart */}
               <Card className="shadow-sm border-gray-200/60 rounded-2xl">
-                <CardHeader><CardTitle className="text-xl" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>Performance Comparison</CardTitle></CardHeader>
+                <CardHeader><CardTitle className="text-xl" style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B" }}>Performance Comparison</CardTitle></CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={350}>
                     <RadarChart data={radarData}>
@@ -164,7 +164,7 @@ export default function Compare() {
                 <Card key={row.label} className="shadow-sm border-gray-200/60 rounded-2xl">
                   <CardContent className="p-5">
                     <div className="flex items-center gap-2 mb-4">
-                      <row.icon className="h-4 w-4 text-[#ffa300]" />
+                      <row.icon className="h-4 w-4 text-[#2F4F97]" />
                       <h3 className="font-semibold text-sm">{row.label}</h3>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -191,7 +191,7 @@ export default function Compare() {
               <Card className="shadow-sm border-gray-200/60 rounded-2xl">
                 <CardContent className="p-5">
                   <div className="flex items-center gap-2 mb-4">
-                    <GraduationCap className="h-4 w-4 text-[#ffa300]" />
+                    <GraduationCap className="h-4 w-4 text-[#2F4F97]" />
                     <h3 className="font-semibold text-sm">Top Courses</h3>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

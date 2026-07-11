@@ -48,7 +48,7 @@ const statusColors: Record<string, string> = {
   documents_verified: "bg-blue-500/10 text-blue-600 border-blue-500/30",
   university_applied: "bg-indigo-500/10 text-indigo-600 border-indigo-500/30",
   offer_letter: "bg-purple-500/10 text-purple-600 border-purple-500/30",
-  emgs_processing: "bg-[#ffa300]/10 text-[#ffa300] border-[#ffa300]/20",
+  emgs_processing: "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]/20",
   visa_approved: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
   travel_ready: "bg-teal-500/10 text-teal-600 border-teal-500/30",
   enrolled: "bg-green-600/10 text-green-700 border-green-600/30",
@@ -136,7 +136,7 @@ function InfoRow({ label, value }: { label: string; value: string | number | nul
       <span className="text-[11px] font-medium text-muted-foreground/70 uppercase tracking-wider">
         {label}
       </span>
-      <span className={`text-[13px] font-medium leading-snug ${isEmpty ? "text-amber-600/80 italic text-xs flex items-center gap-1 bg-amber-50/50 dark:bg-amber-950/10 px-2.5 py-1 rounded-2xl border border-amber-200/30 w-fit" : "text-[#181d29]"}`}>
+      <span className={`text-[13px] font-medium leading-snug ${isEmpty ? "text-amber-600/80 italic text-xs flex items-center gap-1 bg-amber-50/50 dark:bg-amber-950/10 px-2.5 py-1 rounded-2xl border border-amber-200/30 w-fit" : "text-[#1E293B]"}`}>
         {isEmpty ? "Not provided" : value}
       </span>
     </div>
@@ -515,7 +515,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     return (
       <div className="flex items-center justify-center h-[60vh]">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-8 w-8 animate-spin text-[#ffa300]" />
+          <Loader2 className="h-8 w-8 animate-spin text-[#2F4F97]" />
           <p className="text-sm text-muted-foreground">Loading student profile…</p>
         </div>
       </div>
@@ -558,7 +558,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
             variant="ghost"
             size="sm"
             onClick={handleBack}
-            className="w-fit -ml-2 text-muted-foreground hover:text-[#181d29]"
+            className="w-fit -ml-2 text-muted-foreground hover:text-[#1E293B]"
           >
             <ArrowLeft className="h-4 w-4 mr-1.5" />
             Back to Students
@@ -572,7 +572,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
               <img
                 src={student.passport_photo_url}
                 alt={student.full_name}
-                className="w-[148px] h-[177px] rounded-2xl object-cover border border-[#ffa300]/25 shadow-sm shrink-0 animate-fade-in"
+                className="w-[148px] h-[177px] rounded-2xl object-cover border border-[#2F4F97]/25 shadow-sm shrink-0 animate-fade-in"
                 style={{ aspectRatio: "591/709" }}
               />
             ) : (
@@ -586,7 +586,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
             )}
             
             <div className="flex flex-col gap-1.5 pt-1">
-              <h1 className="text-3xl font-extrabold text-[#181d29] leading-tight">
+              <h1 className="text-3xl font-extrabold text-[#1E293B] leading-tight">
                 {student.full_name}
               </h1>
               <p className="text-[13px] text-muted-foreground font-medium mb-1">
@@ -594,7 +594,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
               </p>
               
               <div className="flex items-center gap-2 mt-0.5">
-                <span className={`text-sm font-bold ${statusColors[student.status]?.replace(/bg-[^\s]+/, '').replace(/border-[^\s]+/, '').trim() || 'text-[#181d29]'}`}>
+                <span className={`text-sm font-bold ${statusColors[student.status]?.replace(/bg-[^\s]+/, '').replace(/border-[^\s]+/, '').trim() || 'text-[#1E293B]'}`}>
                   {statusLabels[student.status] || student.status}
                 </span>
                 
@@ -623,7 +623,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                   </Select>
                   <Button
                     size="sm"
-                    className="h-8 px-3 bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 text-xs font-semibold"
+                    className="h-8 px-3 bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 text-xs font-semibold"
                     onClick={handleSaveStatus}
                     disabled={savingStatus || newStatus === student.status}
                   >
@@ -670,8 +670,8 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
         <Card className="no-print">
           <CardContent className="p-5 sm:p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="flex items-center gap-2 text-sm font-semibold text-[#181d29]">
-                <FileCheck className="h-4 w-4 text-[#ffa300]" />
+              <h3 className="flex items-center gap-2 text-sm font-semibold text-[#1E293B]">
+                <FileCheck className="h-4 w-4 text-[#2F4F97]" />
                 Required Documents
               </h3>
               <Badge variant="secondary" className="text-xs">
@@ -709,7 +709,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                           target="_blank"
                           rel="noopener noreferrer"
                           title="Preview Document"
-                          className="h-7 w-7 rounded-full bg-white border border-border flex items-center justify-center text-[#ffa300] hover:bg-muted transition-colors shadow-sm"
+                          className="h-7 w-7 rounded-full bg-white border border-border flex items-center justify-center text-[#2F4F97] hover:bg-muted transition-colors shadow-sm"
                         >
                           <ExternalLink className="h-3.5 w-3.5" />
                         </a>
@@ -751,8 +751,8 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
           <CardContent className="p-6 sm:p-7 print:p-0">
                 {/* ── Section 1: Personal Information ──────────────── */}
                 <div className="flex items-center justify-between pb-4">
-                  <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#181d29] uppercase tracking-wide">
-                    <User className="h-4 w-4 text-[#ffa300]" />
+                  <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
+                    <User className="h-4 w-4 text-[#2F4F97]" />
                     Personal Information
                   </h3>
                   <div className="no-print">
@@ -769,7 +769,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                         </Button>
                         <Button
                           size="sm"
-                          className="h-8 text-xs bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 font-semibold"
+                          className="h-8 text-xs bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-semibold"
                           onClick={() => handleSaveSection("personal")}
                         >
                           <Save className="h-3.5 w-3.5 mr-1" />
@@ -780,7 +780,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-8 text-xs text-muted-foreground hover:text-[#181d29]"
+                        className="h-8 text-xs text-muted-foreground hover:text-[#1E293B]"
                         onClick={startEditingPersonal}
                       >
                         <Pencil className="h-3.5 w-3.5 mr-1" />
@@ -892,8 +892,8 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                 {/* ── Section 2: Academic Background ──────────────── */}
                 <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
                   <div className="flex items-center justify-between pb-4">
-                    <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#181d29] uppercase tracking-wide">
-                      <GraduationCap className="h-4 w-4 text-[#ffa300]" />
+                    <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
+                      <GraduationCap className="h-4 w-4 text-[#2F4F97]" />
                       Academic Background
                     </h3>
                     <div className="no-print">
@@ -910,7 +910,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                           </Button>
                           <Button
                             size="sm"
-                            className="h-8 text-xs bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 font-semibold"
+                            className="h-8 text-xs bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-semibold"
                             onClick={() => handleSaveSection("academic")}
                           >
                             <Save className="h-3.5 w-3.5 mr-1" />
@@ -921,7 +921,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 text-xs text-muted-foreground hover:text-[#181d29]"
+                          className="h-8 text-xs text-muted-foreground hover:text-[#1E293B]"
                           onClick={startEditingAcademic}
                         >
                           <Pencil className="h-3.5 w-3.5 mr-1" />
@@ -980,8 +980,8 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                 {/* ── Section 3: Language Proficiency ──────────────── */}
                 <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
                   <div className="flex items-center justify-between pb-4">
-                    <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#181d29] uppercase tracking-wide">
-                      <Languages className="h-4 w-4 text-[#ffa300]" />
+                    <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
+                      <Languages className="h-4 w-4 text-[#2F4F97]" />
                       Language Proficiency
                     </h3>
                     <div className="no-print">
@@ -998,7 +998,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                           </Button>
                           <Button
                             size="sm"
-                            className="h-8 text-xs bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 font-semibold"
+                            className="h-8 text-xs bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-semibold"
                             onClick={() => handleSaveSection("language")}
                           >
                             <Save className="h-3.5 w-3.5 mr-1" />
@@ -1009,7 +1009,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 text-xs text-muted-foreground hover:text-[#181d29]"
+                          className="h-8 text-xs text-muted-foreground hover:text-[#1E293B]"
                           onClick={startEditingLanguage}
                         >
                           <Pencil className="h-3.5 w-3.5 mr-1" />
@@ -1050,8 +1050,8 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                 {/* ── Section 4: Target Program ───────────────────── */}
                 <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
                   <div className="flex items-center justify-between pb-4">
-                    <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#181d29] uppercase tracking-wide">
-                      <Target className="h-4 w-4 text-[#ffa300]" />
+                    <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
+                      <Target className="h-4 w-4 text-[#2F4F97]" />
                       Target Program
                     </h3>
                     <div className="no-print">
@@ -1068,7 +1068,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                           </Button>
                           <Button
                             size="sm"
-                            className="h-8 text-xs bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 font-semibold"
+                            className="h-8 text-xs bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-semibold"
                             onClick={() => handleSaveSection("target")}
                           >
                             <Save className="h-3.5 w-3.5 mr-1" />
@@ -1079,7 +1079,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 text-xs text-muted-foreground hover:text-[#181d29]"
+                          className="h-8 text-xs text-muted-foreground hover:text-[#1E293B]"
                           onClick={startEditingTarget}
                         >
                           <Pencil className="h-3.5 w-3.5 mr-1" />
@@ -1147,8 +1147,8 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                 {/* ── Section 5: Submitted By ─────────────────────── */}
                 <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
                   <div className="flex items-center justify-between pb-4">
-                    <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#181d29] uppercase tracking-wide">
-                      <Building2 className="h-4 w-4 text-[#ffa300]" />
+                    <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
+                      <Building2 className="h-4 w-4 text-[#2F4F97]" />
                       Submitted By
                     </h3>
                   </div>
@@ -1171,8 +1171,8 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
           <Card className="no-print border-dashed border-amber-200/50 bg-amber-50/20">
             <CardContent className="p-6 space-y-4">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm font-semibold text-[#181d29]">
-                  <ClipboardList className="h-4 w-4 text-[#ffa300]" />
+                <div className="flex items-center gap-2 text-sm font-semibold text-[#1E293B]">
+                  <ClipboardList className="h-4 w-4 text-[#2F4F97]" />
                   Admin Internal Notes
                 </div>
                 <Button
@@ -1199,8 +1199,8 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
 
         {/* ── Print-Only Documents Checklist ──────────────────────────── */}
         <div className="hidden print:block pt-8 mt-8">
-          <h3 className="text-[13px] font-bold text-[#181d29] uppercase tracking-wide mb-5 flex items-center gap-2.5">
-            <FileCheck className="h-4 w-4 text-[#ffa300]" />
+          <h3 className="text-[13px] font-bold text-[#1E293B] uppercase tracking-wide mb-5 flex items-center gap-2.5">
+            <FileCheck className="h-4 w-4 text-[#2F4F97]" />
             Uploaded Documents Checklist
           </h3>
           <div className="grid grid-cols-2 gap-y-4 gap-x-8">
@@ -1213,7 +1213,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                   ) : (
                     <div className="h-4 w-4 rounded-xl border border-muted-foreground/40" />
                   )}
-                  <span className={url ? "text-[#181d29] font-medium" : "text-muted-foreground italic"}>
+                  <span className={url ? "text-[#1E293B] font-medium" : "text-muted-foreground italic"}>
                     {doc.label}
                   </span>
                 </div>

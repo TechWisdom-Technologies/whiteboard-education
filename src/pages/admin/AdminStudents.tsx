@@ -33,7 +33,7 @@ const statusColors: Record<string, string> = {
   documents_verified: "bg-blue-500/10 text-blue-600 border-blue-500/30",
   university_applied: "bg-indigo-500/10 text-indigo-600 border-indigo-500/30",
   offer_letter: "bg-purple-500/10 text-purple-600 border-purple-500/30",
-  emgs_processing: "bg-[#ffa300]/10 text-[#ffa300] border-[#ffa300]/20",
+  emgs_processing: "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]/20",
   visa_approved: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
   travel_ready: "bg-teal-500/10 text-teal-600 border-teal-500/30",
   enrolled: "bg-green-600/10 text-green-700 border-green-600/30",

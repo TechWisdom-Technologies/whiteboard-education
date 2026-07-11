@@ -39,10 +39,10 @@ export function AdminSidebar() {
       <div className="border-b border-sidebar-border/50 py-4 px-4 bg-sidebar-background flex flex-col gap-1 flex-shrink-0">
         <div className="flex items-center gap-2">
           {!collapsed ? (
-            <img src="/LOGO-ON-DARK-BG.png" alt="Whiteboard Education" className="h-8 w-auto object-contain" />
+            <img src="/logo.png" alt="Whiteboard Education" className="h-8 w-auto object-contain" />
           ) : (
             <div
-              className="h-8 w-8 bg-[#ffa300] flex items-center justify-center flex-shrink-0"
+              className="h-8 w-8 bg-[#2F4F97] flex items-center justify-center flex-shrink-0"
               style={{ clipPath: "polygon(0 0, 100% 0, 100% 75%, 75% 100%, 0 100%)" }}
             >
               <GraduationCap className="h-4 w-4 text-[#0c0f16]" />

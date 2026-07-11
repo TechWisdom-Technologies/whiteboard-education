@@ -48,7 +48,7 @@ export default function LanguageCenterDetail() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col bg-background">
+      <div className="min-h-screen flex flex-col bg-white">
         <MegaMenu />
         <LoadingScreen
           label="Loading program details"
@@ -91,7 +91,7 @@ export default function LanguageCenterDetail() {
       {/* ═══ HERO: Logo + Name + Location + Buttons ═══ */}
       <section className="pb-10">
         <div className="container mx-auto px-4 lg:px-6">
-          <div className="bg-[#fdf0d5] py-16 px-10 flex flex-col md:flex-row items-center md:items-start gap-8 rounded-tl-md rounded-tr-[3rem] rounded-bl-[3rem] rounded-br-md min-h-[220px]">
+          <div className="bg-[#EEF4FF] py-16 px-10 flex flex-col md:flex-row items-center md:items-start gap-8 rounded-tl-md rounded-tr-[3rem] rounded-bl-[3rem] rounded-br-md min-h-[220px]">
             {/* Logo / Icon */}
             <div className="h-32 w-32 md:h-40 md:w-40 bg-white rounded-xl shadow flex items-center justify-center shrink-0 p-4">
               {lc.logo_url ? (
@@ -104,36 +104,38 @@ export default function LanguageCenterDetail() {
                   }}
                 />
               ) : (
-                <Languages className="h-20 w-20 text-[#ffa300]" />
+                <Languages className="h-20 w-20 text-[#2F4F97]" />
               )}
             </div>
             
             {/* Title + Location */}
             <div className="flex-1 flex flex-col w-full">
-              <h1 className="text-4xl font-bold text-[#181d29] mb-4 text-center md:text-left" style={{ fontFamily: "Poppins, sans-serif" }}>
+              <h1 className="text-4xl font-bold text-[#1E293B] mb-4 text-center md:text-left" style={{ fontFamily: "Poppins, sans-serif" }}>
                 {lc.name}
               </h1>
               
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 {lc.city && (
                   <p className="text-gray-700 flex items-center justify-center md:justify-start gap-2 text-lg">
-                    <MapPin className="h-5 w-5 text-[#ffa300]" />
+                    <MapPin className="h-5 w-5 text-[#2F4F97]" />
                     {lc.city}, Malaysia
                   </p>
                 )}
                 
                 <div className="flex flex-row gap-3 w-full sm:w-auto justify-center md:justify-end">
                   <Button
-                    className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold px-8 h-12 text-[16px] flex-1 sm:flex-none"
+                    className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent font-bold px-8 h-12 flex-1 sm:flex-none"
                     onClick={() => navigate(`/apply?centerId=${lc.id}`)}
                   >
+
                     Apply Now
                   </Button>
                   <Button
                     variant="outline"
-                    className="border-[#9273b6] text-[#9273b6] hover:bg-[#9273b6]/10 font-bold px-8 h-12 text-[16px] bg-transparent flex-1 sm:flex-none"
+                    className="bg-white hover:bg-gray-50 font-bold px-8 h-12 flex-1 sm:flex-none"
                     onClick={() => navigate("/contact")}
                   >
+
                     Ask Us
                   </Button>
                 </div>
@@ -144,7 +146,7 @@ export default function LanguageCenterDetail() {
       </section>
 
       {/* ═══ STICKY NAV BAR (appears on scroll) ═══ */}
-      <nav className="sticky top-0 z-40 bg-white border-b shadow-sm transition-all duration-300">
+      <nav className="sticky top-0 z-40 shadow-sm transition-all duration-300 bg-white">
         <div className="container mx-auto px-4 max-w-5xl flex items-center justify-between min-h-[60px] py-2">
           {/* Left: Logo + Center Name */}
           <div className="flex items-center gap-4 min-w-0 flex-1 mr-4">
@@ -162,11 +164,11 @@ export default function LanguageCenterDetail() {
                     }}
                   />
                 ) : (
-                  <Languages className="h-5 w-5 text-[#ffa300]" />
+                  <Languages className="h-5 w-5 text-[#2F4F97]" />
                 )}
               </div>
               <span
-                className="ml-3 font-semibold text-[#181d29] text-sm truncate flex-1"
+                className="ml-3 font-semibold text-[#1E293B] text-sm truncate flex-1"
                 style={{ fontFamily: "Poppins, sans-serif" }}
                 title={lc.name}
               >
@@ -179,16 +181,18 @@ export default function LanguageCenterDetail() {
             className={`flex items-center gap-2 transition-all duration-300 ${isScrolled ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none hidden md:flex"}`}
           >
             <Button
-              className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-normal px-6 h-10 text-sm"
+              className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent font-normal px-6 h-10"
               onClick={() => navigate(`/apply?centerId=${lc.id}`)}
             >
+
               Apply Now
             </Button>
             <Button
               variant="outline"
-              className="font-normal px-6 h-10 text-sm border-gray-200"
+              className="bg-white font-normal px-6 h-10 hover:bg-gray-50"
               onClick={() => navigate("/contact")}
             >
+
               Ask Us
             </Button>
           </div>
@@ -199,7 +203,7 @@ export default function LanguageCenterDetail() {
       <section className="bg-white py-12">
         <div className="container mx-auto px-4 max-w-5xl">
           <h2
-            className="text-2xl md:text-3xl font-extrabold text-[#181d29] mb-8"
+            className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-8"
             style={{ fontFamily: "Poppins, sans-serif" }}
           >
             About {lc.name}
@@ -241,11 +245,11 @@ export default function LanguageCenterDetail() {
               <Card key={idx} className="border shadow-sm bg-white hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="p-3 bg-[#ffa300]/10 rounded-xl shrink-0">
-                      <BookOpen className="h-6 w-6 text-[#ffa300]" />
+                    <div className="p-3 bg-[#2F4F97]/10 rounded-xl shrink-0">
+                      <BookOpen className="h-6 w-6 text-[#2F4F97]" />
                     </div>
                     <div className="flex-1">
-                      <h2 className="text-xl md:text-2xl font-bold text-[#181d29] mb-3" style={{ fontFamily: "Poppins, sans-serif" }}>
+                      <h2 className="text-xl md:text-2xl font-bold text-[#1E293B] mb-3" style={{ fontFamily: "Poppins, sans-serif" }}>
                         {info.title}
                       </h2>
                       <p className="text-gray-600 leading-relaxed text-sm text-justify whitespace-pre-line">
@@ -265,7 +269,7 @@ export default function LanguageCenterDetail() {
         <section className="bg-white py-12">
           <div className="container mx-auto px-4 max-w-5xl">
             <h2
-              className="text-2xl md:text-3xl font-extrabold text-[#181d29] mb-8"
+              className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-8"
               style={{ fontFamily: "Poppins, sans-serif" }}
             >
               {lc.name} tuition fees for International students
@@ -274,7 +278,7 @@ export default function LanguageCenterDetail() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-[#fdf0d5] text-center border-b border-gray-400">
+                    <tr className="bg-[#EEF4FF] text-center border-b border-gray-400">
                       <th className="px-4 py-2.5 font-medium text-gray-800">
                         Duration
                       </th>
@@ -313,9 +317,9 @@ export default function LanguageCenterDetail() {
         <div className="container mx-auto px-4 max-w-5xl grid sm:grid-cols-3 gap-6">
           <Card className="border shadow-sm">
             <CardContent className="p-5 flex items-start gap-3">
-              <CalendarDays className="h-6 w-6 text-[#ffa300] mt-0.5 shrink-0" />
+              <CalendarDays className="h-6 w-6 text-[#2F4F97] mt-0.5 shrink-0" />
               <div>
-                <h4 className="font-bold text-[#181d29] text-sm mb-1">
+                <h4 className="font-bold text-[#1E293B] text-sm mb-1">
                   Intake Period
                 </h4>
                 <p className="text-gray-600 text-sm">Monthly Intake</p>
@@ -324,9 +328,9 @@ export default function LanguageCenterDetail() {
           </Card>
           <Card className="border shadow-sm">
             <CardContent className="p-5 flex items-start gap-3">
-              <Clock className="h-6 w-6 text-[#ffa300] mt-0.5 shrink-0" />
+              <Clock className="h-6 w-6 text-[#2F4F97] mt-0.5 shrink-0" />
               <div>
-                <h4 className="font-bold text-[#181d29] text-sm mb-1">
+                <h4 className="font-bold text-[#1E293B] text-sm mb-1">
                   Flexible Duration
                 </h4>
                 <p className="text-gray-600 text-sm">1 to 12 Month(s)</p>
@@ -335,9 +339,9 @@ export default function LanguageCenterDetail() {
           </Card>
           <Card className="border shadow-sm">
             <CardContent className="p-5 flex items-start gap-3">
-              <MapPin className="h-6 w-6 text-[#ffa300] mt-0.5 shrink-0" />
+              <MapPin className="h-6 w-6 text-[#2F4F97] mt-0.5 shrink-0" />
               <div>
-                <h4 className="font-bold text-[#181d29] text-sm mb-1">
+                <h4 className="font-bold text-[#1E293B] text-sm mb-1">
                   Location
                 </h4>
                 <p className="text-gray-600 text-sm">
@@ -354,7 +358,7 @@ export default function LanguageCenterDetail() {
         <section className="bg-[#f7f9fb] py-12 border-t border-b">
           <div className="container mx-auto px-4 max-w-5xl">
             <h2
-              className="text-2xl md:text-3xl font-extrabold text-[#181d29] mb-8"
+              className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-8"
               style={{ fontFamily: "Poppins, sans-serif" }}
             >
               Frequently Asked Questions
@@ -366,18 +370,18 @@ export default function LanguageCenterDetail() {
                   <div
                     key={idx}
                     className="bg-white border rounded-xl shadow-sm overflow-hidden transition-all"
-                    style={{ borderColor: isOpen ? "#ffa300" : "#e8e8e8" }}
+                    style={{ borderColor: isOpen ? "#2F4F97" : "#e8e8e8" }}
                   >
                     <button
                       className="w-full px-6 py-4 flex items-center justify-between text-left font-bold text-gray-800 hover:bg-gray-50/50 transition-colors"
                       onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
                     >
                       <span className="flex items-center gap-3">
-                        <HelpCircle className="h-5 w-5 text-[#ffa300] shrink-0" />
+                        <HelpCircle className="h-5 w-5 text-[#2F4F97] shrink-0" />
                         {faq.question}
                       </span>
                       {isOpen ? (
-                        <ChevronUp className="h-5 w-5 text-[#ffa300]" />
+                        <ChevronUp className="h-5 w-5 text-[#2F4F97]" />
                       ) : (
                         <ChevronDown className="h-5 w-5 text-gray-400" />
                       )}
@@ -396,10 +400,10 @@ export default function LanguageCenterDetail() {
       )}
 
       {/* ═══ REGISTER NOW CTA ═══ */}
-      <section className="bg-[#fdf0d5] py-12">
+      <section className="bg-[#EEF4FF] py-12">
         <div className="container mx-auto px-4 max-w-5xl text-center">
           <h2
-            className="text-xl md:text-2xl font-extrabold text-[#181d29] mb-2"
+            className="text-xl md:text-2xl font-extrabold text-[#1E293B] mb-2"
             style={{ fontFamily: "Poppins, sans-serif" }}
           >
             Register Now and Secure Your Spot!
@@ -412,7 +416,7 @@ export default function LanguageCenterDetail() {
           </p>
           <Button
             size="lg"
-            className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold px-10 h-12"
+            className="bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97] font-bold px-10 h-12"
             onClick={() => navigate(`/apply?centerId=${lc.id}`)}
           >
             Register Now
@@ -425,7 +429,7 @@ export default function LanguageCenterDetail() {
         <section className="py-12">
           <div className="container mx-auto px-4 max-w-5xl">
             <h2
-              className="text-2xl font-extrabold text-[#181d29] mb-6"
+              className="text-2xl font-extrabold text-[#1E293B] mb-6"
               style={{ fontFamily: "Poppins, sans-serif" }}
             >
               Similar Language Centers
@@ -437,7 +441,7 @@ export default function LanguageCenterDetail() {
                   to={`/language-centers/${generateSlug(sc.name)}`}
                   className="h-full"
                 >
-                  <Card className="bg-white hover:shadow-lg transition-all hover:-translate-y-1 h-full flex flex-col rounded-xl border border-[#e8e8e8] group hover:border-[#ffa300]">
+                  <Card className="bg-white hover:shadow-lg transition-all hover:-translate-y-1 h-full flex flex-col rounded-xl border border-[#e8e8e8] group hover:border-[#2F4F97]">
                     <CardContent className="p-0 flex flex-col h-full">
                       {/* Logo Container */}
                       <div className="h-48 flex items-center justify-center bg-white border-b p-6 shrink-0">
@@ -448,13 +452,13 @@ export default function LanguageCenterDetail() {
                             className="w-full h-full object-contain"
                           />
                         ) : (
-                          <Languages className="h-16 w-16 text-[#ffa300]" />
+                          <Languages className="h-16 w-16 text-[#2F4F97]" />
                         )}
                       </div>
                       {/* Card Info */}
                       <div className="p-5 flex-1 flex flex-col">
                         <h3
-                          className="font-bold text-base text-[#181d29] mb-2 line-clamp-2 leading-snug h-12"
+                          className="font-bold text-base text-[#1E293B] mb-2 line-clamp-2 leading-snug h-12"
                           style={{ fontFamily: "Poppins, sans-serif" }}
                         >
                           {sc.name}
@@ -462,15 +466,15 @@ export default function LanguageCenterDetail() {
 
                         <div className="space-y-2 mb-4">
                           <div className="flex items-center gap-2 text-xs text-gray-500">
-                            <MapPin className="h-3.5 w-3.5 text-[#ffa300]" />
+                            <MapPin className="h-3.5 w-3.5 text-[#2F4F97]" />
                             <span>{sc.city || "Malaysia"}</span>
                           </div>
                           <div className="flex items-center gap-2 text-xs text-gray-500">
-                            <GraduationCap className="h-3.5 w-3.5 text-[#515768]" />
+                            <GraduationCap className="h-3.5 w-3.5 text-[#64748B]" />
                             <span>{sc.level || "General"} Level</span>
                           </div>
                           <div className="flex items-center gap-2 text-xs text-gray-500">
-                            <DollarSign className="h-3.5 w-3.5 text-[#515768]" />
+                            <DollarSign className="h-3.5 w-3.5 text-[#64748B]" />
                             <span>
                               MYR {Number(sc.tuition_fee).toLocaleString()}
                             </span>

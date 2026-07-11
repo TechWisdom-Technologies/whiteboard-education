@@ -48,14 +48,14 @@ export function VideoExpertWidget({ bannerVisible = false }: VideoExpertWidgetPr
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed right-2 xl:right-3 z-40 h-9 w-9 rounded-xl bg-[#181d29] text-white flex items-center justify-center hover:bg-[#181d29]/90 transition-all duration-200 shadow-md group"
+          className="fixed right-2 xl:right-3 z-[100] h-9 w-9 rounded-xl bg-[#2F4F97] text-white flex items-center justify-center hover:bg-[#2F4F97]/90 transition-all duration-200 shadow-md group"
           style={{ bottom: `${videoBottomPx}px` }}
           aria-label="Book a video call"
         >
           <div className="relative">
-            <Video className="h-4 w-4 text-[#ffa300]" />
-            <div className="absolute -top-1 -right-1 h-1.5 w-1.5 bg-[#ffa300] rounded-full animate-pulse" />
-            <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 whitespace-nowrap bg-[#181d29] text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border border-white/10">
+            <Video className="h-4 w-4 text-white" />
+            <div className="absolute -top-1 -right-1 h-1.5 w-1.5 bg-white rounded-full animate-pulse" />
+            <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 whitespace-nowrap bg-[#2F4F97] text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border border-white/10">
               Book Video Call
             </div>
           </div>
@@ -68,7 +68,7 @@ export function VideoExpertWidget({ bannerVisible = false }: VideoExpertWidgetPr
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base flex items-center gap-2">
-                  <Video className="h-4 w-4 text-[#ffa300]" />
+                  <Video className="h-4 w-4 text-[#2F4F97]" />
                   Book a 1-on-1 Call
                 </CardTitle>
                 <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setOpen(false)}>
@@ -83,7 +83,7 @@ export function VideoExpertWidget({ bannerVisible = false }: VideoExpertWidgetPr
                 <Input type="email" placeholder="Email address" required value={formData.email} onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))} />
                 <Input type="tel" placeholder="Phone (optional)" value={formData.phone} onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))} />
                 <Textarea placeholder="What would you like to discuss?" className="min-h-[60px]" value={formData.message} onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))} />
-                <Button type="submit" className="w-full font-bold" style={{ backgroundColor: "#ffa300", color: "#181d29", borderRadius: "5px" }} disabled={loading}>
+                <Button type="submit" className="w-full font-bold" style={{ backgroundColor: "#2F4F97", color: "#1E293B", borderRadius: "5px" }} disabled={loading}>
                   <Calendar className="h-4 w-4 mr-2" /> {loading ? "Submitting..." : "Request a Call"}
                 </Button>
               </form>

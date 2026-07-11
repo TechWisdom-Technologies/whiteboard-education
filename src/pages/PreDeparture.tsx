@@ -78,7 +78,7 @@ export default function PreDeparture() {
       <main className="flex-1">
         <section className="intro-surface py-16">
           <div className="container mx-auto px-4 text-center">
-            <Plane className="h-12 w-12 mx-auto mb-4 text-[#ffa300]" />
+            <Plane className="h-12 w-12 mx-auto mb-4 text-[#2F4F97]" />
             <h1 className="text-4xl font-extrabold mb-3">Pre-Departure Checklist</h1>
             <p className="text-primary-foreground/70 max-w-xl mx-auto">Track everything you need before your flight. Complete all items to be 100% ready!</p>
           </div>
@@ -90,7 +90,7 @@ export default function PreDeparture() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-sm font-semibold">Your Progress</span>
-                <span className="text-2xl font-extrabold text-[#ffa300]">{progress}%</span>
+                <span className="text-2xl font-extrabold text-[#2F4F97]">{progress}%</span>
               </div>
               <Progress value={progress} className="h-3" />
               <p className="text-xs text-muted-foreground mt-2">{checked.size} of {totalItems} items completed</p>
@@ -101,7 +101,7 @@ export default function PreDeparture() {
           {showConfetti && (
             <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
               <div className="text-center animate-scale-in">
-                <PartyPopper className="h-20 w-20 text-[#ffa300] mx-auto mb-4" />
+                <PartyPopper className="h-20 w-20 text-[#2F4F97] mx-auto mb-4" />
                 <h2 className="text-3xl font-extrabold text-primary">You're All Set! 🎉</h2>
                 <p className="text-muted-foreground mt-2">Have a safe and exciting journey!</p>
               </div>
@@ -114,7 +114,7 @@ export default function PreDeparture() {
               <Card key={section.title}>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-base">
-                    <section.icon className="h-5 w-5 text-[#ffa300]" />
+                    <section.icon className="h-5 w-5 text-[#2F4F97]" />
                     {section.title}
                     <span className="text-xs text-muted-foreground ml-auto">
                       {section.items.filter((i) => checked.has(i)).length}/{section.items.length}

@@ -9,82 +9,82 @@ interface PublicFooterProps {
 export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
   return (
     <>
-      <footer style={{ backgroundColor: "#181d29" }} className="text-white border-t border-gray-800">
+      <footer className="bg-white text-[#1E293B] border-t border-gray-200">
         <div className="container mx-auto px-4 lg:px-6 pt-12 pb-5">
           {/* Upper portion: 5-column grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-x-5 gap-y-8 pb-10 border-b border-gray-800/80">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-x-4 gap-y-8 pb-10 border-b border-gray-200">
             {/* 1st Column: Logo, Subheadline, Social Icons */}
-            <div className="md:col-span-1 space-y-4">
+            <div className="md:col-span-3 space-y-4 pr-0 md:pr-4">
               <div className="flex items-center gap-2.5">
-                <img src="/LOGO-ON-DARK-BG.png" alt="Whiteboard Education" className="h-10 w-auto object-contain" />
+                <img src="/logo.png" alt="Whiteboard Education" className="h-8 w-auto object-contain" />
               </div>
-              <p className="text-[13.5px] font-light leading-relaxed text-gray-400">
+              <p className="text-[13.5px] font-light leading-relaxed text-[#64748B]">
                 Expert guidance for international students seeking quality education in Malaysia.
               </p>
               <div className="flex gap-2.5 pt-1">
-                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="h-8 w-8 rounded-xl border border-gray-700 flex items-center justify-center text-gray-400 hover:bg-[#ffa300] hover:border-[#ffa300] hover:text-[#181d29] transition-colors"><Facebook className="h-3.5 w-3.5" /></a>
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="h-8 w-8 rounded-xl border border-gray-700 flex items-center justify-center text-gray-400 hover:bg-[#ffa300] hover:border-[#ffa300] hover:text-[#181d29] transition-colors"><Twitter className="h-3.5 w-3.5" /></a>
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="h-8 w-8 rounded-xl border border-gray-700 flex items-center justify-center text-gray-400 hover:bg-[#ffa300] hover:border-[#ffa300] hover:text-[#181d29] transition-colors"><Instagram className="h-3.5 w-3.5" /></a>
-                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="h-8 w-8 rounded-xl border border-gray-700 flex items-center justify-center text-gray-400 hover:bg-[#ffa300] hover:border-[#ffa300] hover:text-[#181d29] transition-colors"><Linkedin className="h-3.5 w-3.5" /></a>
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="h-8 w-8 rounded-xl border border-[#2F4F97] flex items-center justify-center text-[#2F4F97] hover:bg-[#2F4F97] hover:border-[#2F4F97] hover:text-white transition-colors"><Facebook className="h-3.5 w-3.5" /></a>
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="h-8 w-8 rounded-xl border border-[#2F4F97] flex items-center justify-center text-[#2F4F97] hover:bg-[#2F4F97] hover:border-[#2F4F97] hover:text-white transition-colors"><Twitter className="h-3.5 w-3.5" /></a>
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="h-8 w-8 rounded-xl border border-[#2F4F97] flex items-center justify-center text-[#2F4F97] hover:bg-[#2F4F97] hover:border-[#2F4F97] hover:text-white transition-colors"><Instagram className="h-3.5 w-3.5" /></a>
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="h-8 w-8 rounded-xl border border-[#2F4F97] flex items-center justify-center text-[#2F4F97] hover:bg-[#2F4F97] hover:border-[#2F4F97] hover:text-white transition-colors"><Linkedin className="h-3.5 w-3.5" /></a>
               </div>
             </div>
 
             {/* 2nd Column: Explore */}
-            <div>
-              <h4 className="text-sm font-semibold text-white tracking-widest uppercase mb-4" style={{ fontFamily: "Poppins, sans-serif" }}>
+            <div className="md:col-span-2">
+              <h4 className="text-sm font-semibold text-[#1E293B] tracking-widest uppercase mb-4" style={{ fontFamily: "Poppins, sans-serif" }}>
                 Explore
               </h4>
-              <ul className="space-y-2.5 text-[13px] text-gray-400">
-                <li><Link to="/universities" className="hover:text-[#ffa300] transition-colors font-normal">Universities</Link></li>
-                <li><Link to="/courses" className="hover:text-[#ffa300] transition-colors font-normal">Courses</Link></li>
-                <li><Link to="/language-centers" className="hover:text-[#ffa300] transition-colors font-normal">Language Centers</Link></li>
-                <li><Link to="/housing" className="hover:text-[#ffa300] transition-colors font-normal">Housing</Link></li>
+              <ul className="space-y-2.5 text-[13px] text-[#64748B]">
+                <li><Link to="/universities" className="hover:text-[#2F4F97] transition-colors font-normal">Universities</Link></li>
+                <li><Link to="/courses" className="hover:text-[#2F4F97] transition-colors font-normal">Courses</Link></li>
+                <li><Link to="/language-centers" className="hover:text-[#2F4F97] transition-colors font-normal">Language Centers</Link></li>
+                <li><Link to="/housing" className="hover:text-[#2F4F97] transition-colors font-normal">Housing</Link></li>
               </ul>
             </div>
 
             {/* 3rd Column: Other Resources */}
-            <div>
-              <h4 className="text-sm font-semibold text-white tracking-widest uppercase mb-4" style={{ fontFamily: "Poppins, sans-serif" }}>
+            <div className="md:col-span-2">
+              <h4 className="text-sm font-semibold text-[#1E293B] tracking-widest uppercase mb-4" style={{ fontFamily: "Poppins, sans-serif" }}>
                 Other Resources
               </h4>
-              <ul className="space-y-2.5 text-[13px] text-gray-400">
-                <li><Link to="/blog" className="hover:text-[#ffa300] transition-colors font-normal">Blog</Link></li>
-                <li><Link to="/eligibility" className="hover:text-[#ffa300] transition-colors font-normal">Eligibility Test</Link></li>
-                <li><Link to="/compare" className="hover:text-[#ffa300] transition-colors font-normal">Compare Universities</Link></li>
+              <ul className="space-y-2.5 text-[13px] text-[#64748B]">
+                <li><Link to="/blog" className="hover:text-[#2F4F97] transition-colors font-normal">Blog</Link></li>
+                <li><Link to="/eligibility" className="hover:text-[#2F4F97] transition-colors font-normal">Eligibility Test</Link></li>
+                <li><Link to="/compare" className="hover:text-[#2F4F97] transition-colors font-normal">Compare Universities</Link></li>
               </ul>
             </div>
 
             {/* 4th Column: Legal */}
-            <div>
-              <h4 className="text-sm font-semibold text-white tracking-widest uppercase mb-4" style={{ fontFamily: "Poppins, sans-serif" }}>
+            <div className="md:col-span-2">
+              <h4 className="text-sm font-semibold text-[#1E293B] tracking-widest uppercase mb-4" style={{ fontFamily: "Poppins, sans-serif" }}>
                 Legal
               </h4>
-              <ul className="space-y-2.5 text-[13px] text-gray-400">
-                <li><Link to="/help" className="hover:text-[#ffa300] transition-colors font-normal">Privacy Policy</Link></li>
-                <li><Link to="/help" className="hover:text-[#ffa300] transition-colors font-normal">Terms & Conditions</Link></li>
+              <ul className="space-y-2.5 text-[13px] text-[#64748B]">
+                <li><Link to="/help" className="hover:text-[#2F4F97] transition-colors font-normal">Privacy Policy</Link></li>
+                <li><Link to="/help" className="hover:text-[#2F4F97] transition-colors font-normal">Terms & Conditions</Link></li>
               </ul>
             </div>
 
             {/* 5th Column: Connect with Us */}
-            <div className="space-y-3">
-              <h4 className="text-sm font-semibold text-white tracking-widest uppercase mb-4" style={{ fontFamily: "Poppins, sans-serif" }}>
+            <div className="md:col-span-3 space-y-3">
+              <h4 className="text-sm font-semibold text-[#1E293B] tracking-widest uppercase mb-4" style={{ fontFamily: "Poppins, sans-serif" }}>
                 Connect with Us
               </h4>
-              <div className="space-y-2.5 text-[13px] text-gray-400">
+              <div className="space-y-2.5 text-[13px] text-[#64748B]">
                 <div className="flex items-start gap-2">
-                  <MapPin className="h-4 w-4 text-[#ffa300] shrink-0 mt-0.5" />
+                  <MapPin className="h-4 w-4 text-[#2F4F97] shrink-0 mt-0.5" />
                   <span>Kuala Lumpur, Malaysia</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-[#ffa300] shrink-0" />
+                  <Phone className="h-4 w-4 text-[#2F4F97] shrink-0" />
                   <span>+60 12-345 6789</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 text-[#ffa300] shrink-0" />
+                  <Mail className="h-4 w-4 text-[#2F4F97] shrink-0" />
                   <span className="break-all">info@whiteboardeducation.com</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <Clock className="h-4 w-4 text-[#ffa300] shrink-0 mt-0.5" />
+                  <Clock className="h-4 w-4 text-[#2F4F97] shrink-0 mt-0.5" />
                   <span>Mon - Fri: 9:00 AM - 6:00 PM</span>
                 </div>
               </div>
@@ -92,7 +92,7 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
           </div>
 
           {/* Lower portion: Copyright left, developed by right */}
-          <div className="flex flex-col sm:flex-row items-center justify-between pt-4 text-xs text-gray-500 font-light gap-2">
+          <div className="flex flex-col sm:flex-row items-center justify-between pt-4 text-xs text-gray-400 font-light gap-2">
             <span>© 2026 Whiteboard Education. All rights reserved.</span>
             <span>Developed by TechWisdom Technologies</span>
           </div>
@@ -106,7 +106,7 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
         href="https://wa.me/60123456789"
         target="_blank"
         rel="noopener noreferrer"
-        className={`fixed ${bannerVisible ? 'bottom-[76px]' : 'bottom-[20px]'} right-2 xl:right-3 z-40 h-9 w-9 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-md`}
+        className={`fixed ${bannerVisible ? 'bottom-[76px]' : 'bottom-[20px]'} right-2 xl:right-3 z-[100] h-9 w-9 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-md`}
         style={{ backgroundColor: "#25d366", color: "#ffffff" }}
       >
         <MessageCircle className="h-4 w-4" />

@@ -12,14 +12,14 @@ export function CourseCompareFAB() {
     <div className="fixed bottom-6 left-6 z-50">
       <button
         onClick={() => navigate("/course-comparison")}
-        className="relative bg-[#181d29] text-white rounded-2xl flex items-center gap-2 px-5 py-3 font-semibold shadow-lg hover:bg-[#181d29]/90 transition-colors"
+        className="relative bg-[#1E293B] text-white rounded-2xl flex items-center gap-2 px-5 py-3 font-semibold shadow-lg hover:bg-[#1E293B]/90 transition-colors"
         style={{ fontFamily: "Poppins, sans-serif" }}
       >
         <Layers className="h-5 w-5" />
         Course Comparison
         
         {/* Badge */}
-        <div className="absolute -top-2 -right-2 bg-[#ffa300] text-[#181d29] w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold shadow-md ring-2 ring-white">
+        <div className="absolute -top-2 -right-2 bg-[#2F4F97] text-white w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold shadow-md ring-2 ring-white">
           {compareList.length}
         </div>
 

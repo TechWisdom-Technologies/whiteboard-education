@@ -33,12 +33,12 @@ export function UniversitiesSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {universities.slice(0, 6).map((uni: any) => (
             <Link key={uni.id} to={`/universities/${generateSlug(uni.name)}`}>
-              <Card className="group overflow-hidden hover:border-[#ffa300] transition-all duration-300" style={{ borderRadius: "5px" }}>
+              <Card className="group overflow-hidden hover:border-[#2F4F97] transition-all duration-300" style={{ borderRadius: "5px" }}>
                 <div className="h-44 overflow-hidden">
                   <img src={uni.hero_image || uni.logo_url || "/placeholder.svg"} alt={uni.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 </div>
                 <CardContent className="p-5">
-                  <h3 className="font-bold text-lg mb-1 group-hover:text-[#ffa300] transition-colors">{uni.name}</h3>
+                  <h3 className="font-bold text-lg mb-1 group-hover:text-[#2F4F97] transition-colors">{uni.name}</h3>
                   <div className="flex items-center gap-3 text-sm text-muted-foreground mb-3">
                     <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{uni.city}</span>
                     {uni.ranking && (

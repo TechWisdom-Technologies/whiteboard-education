@@ -19,8 +19,8 @@ export function VirtualTourSection({ universityName }: VirtualTourSectionProps) 
 
             {/* Play Button */}
             <div className="relative z-10 flex flex-col items-center gap-4">
-              <div className="h-20 w-20 rounded-xl bg-[#ffa300]/20 backdrop-blur-sm flex items-center justify-center border-2 border-[#ffa300]/40 group-hover:scale-110 transition-transform">
-                <Play className="h-8 w-8 text-[#ffa300] ml-1" />
+              <div className="h-20 w-20 rounded-xl bg-[#2F4F97]/20 backdrop-blur-sm flex items-center justify-center border-2 border-[#2F4F97]/40 group-hover:scale-110 transition-transform">
+                <Play className="h-8 w-8 text-[#2F4F97] ml-1" />
               </div>
               <span className="text-sm font-medium text-background/80">Play 360° Tour</span>
             </div>

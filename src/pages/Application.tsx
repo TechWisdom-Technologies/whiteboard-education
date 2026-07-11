@@ -217,12 +217,12 @@ export default function Application() {
       <MegaMenu disableSticky />
 
       {uni && (
-        <section className="bg-[#fdf0d5] py-16">
+        <section className="bg-[#EEF4FF] py-16">
           <div className="container mx-auto px-4 max-w-5xl flex flex-col md:flex-row items-center gap-6">
             <img src={logo || "https://placehold.co/150"} alt={uni.name} className="h-28 w-28 md:h-36 md:w-36 object-contain rounded-xl bg-white p-3 shadow" />
             <div className="flex-1 text-center md:text-left">
-              <h1 className="text-3xl font-semibold text-[#181d29] mb-1" style={{ fontFamily: "Poppins, sans-serif" }}>{uni.name}</h1>
-              {uni.city && <p className="text-gray-600 flex items-center gap-1 justify-center md:justify-start"><MapPin className="h-4 w-4 text-[#ffa300]" />{uni.city}, Malaysia</p>}
+              <h1 className="text-3xl font-semibold text-[#1E293B] mb-1" style={{ fontFamily: "Poppins, sans-serif" }}>{uni.name}</h1>
+              {uni.city && <p className="text-gray-600 flex items-center gap-1 justify-center md:justify-start"><MapPin className="h-4 w-4 text-[#2F4F97]" />{uni.city}, Malaysia</p>}
             </div>
             {/* Note: No Apply Now or Ask Us buttons here as per user request */}
           </div>
@@ -256,12 +256,12 @@ export default function Application() {
           ) : (
             <>
               <div className="mb-8">
-                <h1 className="text-2xl font-bold text-[#181d29] mb-2">Student Application</h1>
+                <h1 className="text-2xl font-bold text-[#1E293B] mb-2">Student Application</h1>
                 <p className="text-muted-foreground text-sm">Step {step} of 3</p>
                 
                 <div className="flex gap-2 mt-4">
                   {[1, 2, 3].map(i => (
-                    <div key={i} className={`h-2 flex-1 rounded-full ${step >= i ? "bg-[#ffa300]" : "bg-gray-100"}`} />
+                    <div key={i} className={`h-2 flex-1 rounded-full ${step >= i ? "bg-[#2F4F97]" : "bg-gray-100"}`} />
                   ))}
                 </div>
               </div>
@@ -325,7 +325,7 @@ export default function Application() {
                   </div>
 
                   <div className="flex justify-end pt-6">
-                    <Button onClick={() => validateStep1() && setStep(2)} className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200]">
+                    <Button onClick={() => validateStep1() && setStep(2)} className="bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97]">
                       Next <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
@@ -359,7 +359,7 @@ export default function Application() {
                     <Button variant="outline" onClick={() => setStep(1)}>
                       <ArrowLeft className="mr-2 h-4 w-4" /> Back
                     </Button>
-                    <Button onClick={() => validateStep2() && setStep(3)} className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200]">
+                    <Button onClick={() => validateStep2() && setStep(3)} className="bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97]">
                       Next <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
@@ -421,7 +421,7 @@ export default function Application() {
                       <Button variant="outline" onClick={() => setStep(2)} disabled={submitting}>
                         <ArrowLeft className="mr-2 h-4 w-4" /> Back
                       </Button>
-                      <Button onClick={handleSubmit} disabled={submitting} className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold px-8">
+                      <Button onClick={handleSubmit} disabled={submitting} className="bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97] font-bold px-8">
                         {uploading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                         {uploading ? "Uploading Docs..." : submitting ? "Submitting..." : "Submit Application"}
                       </Button>

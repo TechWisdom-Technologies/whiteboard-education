@@ -7,67 +7,67 @@
 @layer base {
   :root {
     /* ── en.your-uni.com design system ──
-       #ffa300  →  primary amber (Apply Now, highlights)
-       #181d29  →  dark navy (headings, dark surfaces)
-       #515768  →  muted body text / nav
+       #2F4F97  →  primary amber (Apply Now, highlights)
+       #1E293B  →  dark navy (headings, dark surfaces)
+       #64748B  →  muted body text / nav
        #a2a6b0  →  light muted text
        #cacdd4  →  borders
-       #fef1da  →  warm cream surface
-       #f0f2f5  →  page background
+       #F8FAFC  →  warm cream surface
+       #F8FAFC  →  page background
        #dddddd  →  dividers
        #999999  →  placeholder text
        #444444  →  body text
-       #9273b6  →  secondary purple
+       #2E7FBC  →  secondary purple
     */
 
-    --background: 220 14% 95%;          /* #f0f2f5 — page bg */
-    --foreground: 225 24% 13%;          /* #181d29 — dark navy text */
+    --background: 210 40% 98%;          /* #F8FAFC — page bg */
+    --foreground: 217 33% 17%;          /* #1E293B — dark navy text */
 
     --card: 0 0% 100%;                  /* #ffffff */
-    --card-foreground: 225 24% 13%;     /* #181d29 */
+    --card-foreground: 217 33% 17%;     /* #1E293B */
 
     --popover: 0 0% 100%;
-    --popover-foreground: 225 24% 13%;
+    --popover-foreground: 217 33% 17%;
 
-    --primary: 39 100% 50%;             /* #ffa300 — amber */
-    --primary-foreground: 225 24% 13%;  /* #181d29 — dark on amber */
+    --primary: 222 53% 39%;             /* #2F4F97 — amber */
+    --primary-foreground: 217 33% 17%;  /* #1E293B — dark on amber */
 
-    --secondary: 270 30% 58%;           /* #9273b6 — purple */
+    --secondary: 206 61% 46%;           /* #2E7FBC — purple */
     --secondary-foreground: 0 0% 100%;
 
     --muted: 220 14% 93%;              /* slightly off-white */
     --muted-foreground: 222 7% 66%;    /* #a2a6b0 */
 
-    --accent: 39 100% 50%;             /* amber */
-    --accent-foreground: 225 24% 13%;
+    --accent: 222 53% 39%;             /* amber */
+    --accent-foreground: 0 0% 100%;    /* white text on accent background */
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 216 10% 82%;             /* #cacdd4 */
     --input: 216 10% 82%;
-    --ring: 39 100% 50%;
+    --ring: 222 53% 39%;
     --radius: 1rem;                  /* Increased per request for a softer, nicer look */
 
-    --sidebar-background: 225 24% 13%;
+    --sidebar-background: 217 33% 17%;
     --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 39 100% 50%;
-    --sidebar-primary-foreground: 225 24% 13%;
+    --sidebar-primary: 222 53% 39%;
+    --sidebar-primary-foreground: 217 33% 17%;
     --sidebar-accent: 225 15% 37%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 225 15% 22%;
-    --sidebar-ring: 39 100% 50%;
+    --sidebar-ring: 222 53% 39%;
 
     --success: 145 64% 49%;            /* #25d366 */
     --success-foreground: 0 0% 100%;
     --warning: 39 93% 69%;             /* #f9c569 */
     --warning-foreground: 0 0% 8%;
-    --gold: 39 100% 50%;
-    --gold-foreground: 225 24% 13%;
+    --gold: 222 53% 39%;
+    --gold-foreground: 217 33% 17%;
   }
 
   .dark {
-    --background: 225 24% 13%;
+    --background: 217 33% 17%;
     --foreground: 0 0% 100%;
 
     --card: 225 20% 16%;
@@ -76,36 +76,36 @@
     --popover: 225 20% 16%;
     --popover-foreground: 0 0% 100%;
 
-    --primary: 39 100% 50%;
-    --primary-foreground: 225 24% 13%;
+    --primary: 222 53% 39%;
+    --primary-foreground: 217 33% 17%;
 
-    --secondary: 270 30% 58%;
+    --secondary: 206 61% 46%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 225 18% 20%;
     --muted-foreground: 222 7% 66%;
 
-    --accent: 39 100% 50%;
-    --accent-foreground: 225 24% 13%;
+    --accent: 222 53% 39%;
+    --accent-foreground: 217 33% 17%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 225 15% 24%;
     --input: 225 15% 24%;
-    --ring: 39 100% 50%;
+    --ring: 222 53% 39%;
 
     --sidebar-background: 225 28% 9%;
     --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 39 100% 50%;
-    --sidebar-primary-foreground: 225 24% 13%;
+    --sidebar-primary: 222 53% 39%;
+    --sidebar-primary-foreground: 217 33% 17%;
     --sidebar-accent: 225 15% 37%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 225 15% 18%;
-    --sidebar-ring: 39 100% 50%;
+    --sidebar-ring: 222 53% 39%;
 
-    --gold: 39 100% 50%;
-    --gold-foreground: 225 24% 13%;
+    --gold: 222 53% 39%;
+    --gold-foreground: 217 33% 17%;
   }
 }
 
@@ -136,7 +136,7 @@
     font-weight: 800;
     line-height: 1.2;
     letter-spacing: -0.02em;
-    color: #181d29;
+    color: #1E293B;
   }
 
   @media (min-width: 768px) {
@@ -148,7 +148,7 @@
     font-weight: 700;
     line-height: 1.25;
     letter-spacing: -0.01em;
-    color: #181d29;
+    color: #1E293B;
   }
 
   @media (min-width: 768px) {
@@ -159,7 +159,7 @@
     font-size: 1.5rem; /* 24px */
     font-weight: 700;
     line-height: 1.3;
-    color: #181d29;
+    color: #1E293B;
   }
 
   @media (min-width: 768px) {
@@ -170,21 +170,21 @@
     font-size: 1.25rem; /* 20px */
     font-weight: 600;
     line-height: 1.4;
-    color: #181d29;
+    color: #1E293B;
   }
 
   p, .body-text {
     font-size: 1rem; /* 16px */
     font-weight: 400;
     line-height: 1.6;
-    color: #515768;
+    color: #64748B;
   }
 
   .subheadline {
     font-size: 1.125rem; /* 18px */
     font-weight: 500;
     line-height: 1.5;
-    color: #515768;
+    color: #64748B;
   }
 
   @media (min-width: 1280px) {
@@ -199,14 +199,14 @@
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
-    background-image: linear-gradient(to right, #181d29, #515768);
+    background-image: linear-gradient(to right, #1E293B, #64748B);
   }
 
   .intro-surface {
     position: relative;
     overflow: hidden;
     color: white;
-    background: #181d29;
+    background: #1E293B;
   }
 
   .route-fade-in {
@@ -241,7 +241,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: #ffa300;
+  color: #2F4F97;
   margin-bottom: 0.75rem;
 }
 
@@ -251,19 +251,19 @@
   display: inline-block;
   width: 2rem;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #ffa300);
+  background: linear-gradient(90deg, transparent, #2F4F97);
   vertical-align: middle;
   margin: 0 0.75rem;
 }
 
 .stats-banner-eyebrow::after {
-  background: linear-gradient(90deg, #ffa300, transparent);
+  background: linear-gradient(90deg, #2F4F97, transparent);
 }
 
 .stats-banner-heading {
   font-size: 1.875rem;
   font-weight: 700;
-  color: #181d29;
+  color: #1E293B;
   line-height: 1.25;
 }
 
@@ -274,10 +274,7 @@
 }
 
 .stats-banner-heading-accent {
-  background: linear-gradient(90deg, #ffa300, #e08e00);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #2F4F97;
 }
 
 /* ── Card ────────────────────────────────────────────────── */
@@ -318,7 +315,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 2.75rem;
   font-weight: 600;
-  color: #181d29;
+  color: #1E293B;
   line-height: 1;
   margin-bottom: 0.25rem;
   letter-spacing: -0.02em;
@@ -335,13 +332,13 @@
   font-family: 'Poppins', sans-serif;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #181d29;
+  color: #1E293B;
   margin-bottom: 0.25rem;
 }
 
 .stats-card-sublabel {
   font-size: 0.8rem;
-  color: #515768;
+  color: #64748B;
   line-height: 1.4;
 }
 
@@ -426,7 +423,7 @@
 .testimonial-quote {
   font-size: 0.8rem;
   line-height: 1.6;
-  color: #515768;
+  color: #64748B;
   margin-bottom: 0.75rem;
   flex: 1;
 }
@@ -475,7 +472,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #ffa300;
+  color: #2F4F97;
   background: rgba(255, 163, 0, 0.08);
   padding: 0.2rem 0.6rem;
   border-radius: var(--radius);
@@ -487,7 +484,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 1rem;
   font-weight: 600;
-  color: #181d29;
+  color: #1E293B;
   line-height: 1.4;
   margin-bottom: 0.5rem;
   display: -webkit-box;
@@ -499,7 +496,7 @@
 
 .blog-card-excerpt {
   font-size: 0.85rem;
-  color: #515768;
+  color: #64748B;
   line-height: 1.6;
   margin-bottom: 1rem;
   display: -webkit-box;
@@ -532,7 +529,7 @@
   gap: 0.3rem;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #ffa300;
+  color: #2F4F97;
 }
 
 /* ── Partner Logo Cards ──────────────────────────────────── */
@@ -559,7 +556,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 0.75rem;
   font-weight: 500;
-  color: #515768;
+  color: #64748B;
   text-align: center;
   line-height: 1.3;
 }
@@ -571,7 +568,7 @@
 }
 
 .rich-text-content h1, .rich-text-content h2, .rich-text-content h3, .rich-text-content h4 {
-  color: #181d29;
+  color: #1E293B;
   font-family: 'Poppins', sans-serif;
   margin-top: 2rem;
   margin-bottom: 1rem;
@@ -598,15 +595,15 @@
 }
 
 .rich-text-content a {
-  color: #ffa300;
+  color: #2F4F97;
   text-decoration: underline;
 }
 
 .rich-text-content blockquote {
-  border-left: 4px solid #ffa300;
+  border-left: 4px solid #2F4F97;
   padding-left: 1rem;
   font-style: italic;
-  color: #515768;
+  color: #64748B;
   margin-bottom: 1.5rem;
 }
 

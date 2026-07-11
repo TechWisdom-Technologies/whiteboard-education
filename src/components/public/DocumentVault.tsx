@@ -20,7 +20,7 @@ export function DocumentVault() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2"><FileText className="h-5 w-5 text-[#ffa300]" /> Document Vault</CardTitle>
+        <CardTitle className="flex items-center gap-2"><FileText className="h-5 w-5 text-[#2F4F97]" /> Document Vault</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid sm:grid-cols-2 gap-4">
@@ -28,7 +28,7 @@ export function DocumentVault() {
             const config = statusConfig[doc.status as keyof typeof statusConfig];
             const Icon = config.icon;
             return (
-              <div key={doc.name} className="border border-dashed rounded-xl p-4 hover:border-[#ffa300]/50 transition-colors group cursor-pointer">
+              <div key={doc.name} className="border border-dashed rounded-xl p-4 hover:border-[#2F4F97]/50 transition-colors group cursor-pointer">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <FileText className="h-4 w-4 text-muted-foreground" />
@@ -39,7 +39,7 @@ export function DocumentVault() {
                   </Badge>
                 </div>
                 {doc.status === "pending" ? (
-                  <div className="flex items-center justify-center py-4 text-muted-foreground/50 group-hover:text-[#ffa300] transition-colors">
+                  <div className="flex items-center justify-center py-4 text-muted-foreground/50 group-hover:text-[#2F4F97] transition-colors">
                     <Upload className="h-5 w-5 mr-2" />
                     <span className="text-sm">Drag & drop or click to upload</span>
                   </div>

@@ -83,7 +83,7 @@ export function AmbassadorChat() {
                 <button
                   key={amb.id}
                   onClick={() => selectAmbassador(amb)}
-                  className="w-full text-left p-4 rounded-xl border hover:border-[#ffa300]/50 hover:shadow-md transition-all duration-200 animate-fade-in flex items-start gap-3"
+                  className="w-full text-left p-4 rounded-xl border hover:border-[#2F4F97]/50 hover:shadow-md transition-all duration-200 animate-fade-in flex items-start gap-3"
                   style={{ animationDelay: `${i * 80}ms` }}
                 >
                   <img src={amb.avatar} alt={amb.name} className="w-12 h-12 rounded-xl object-cover flex-shrink-0" />
@@ -110,7 +110,7 @@ export function AmbassadorChat() {
                   <div key={i} className={`flex ${msg.from === "user" ? "justify-end" : "justify-start"} animate-fade-in`}>
                     <div className={`max-w-[80%] rounded-xl px-4 py-2.5 text-sm ${
                       msg.from === "user"
-                        ? "bg-[#ffa300] text-[#181d29] rounded-br-sm"
+                        ? "bg-[#2F4F97] text-[#1E293B] rounded-br-sm"
                         : "bg-muted rounded-bl-sm"
                     }`}>
                       {msg.text}
@@ -123,7 +123,7 @@ export function AmbassadorChat() {
               <div className="px-4 pb-2">
                 <div className="flex gap-2 overflow-x-auto pb-2">
                   {selectedAmbassador.icebreakers.map((q) => (
-                    <Button key={q} variant="outline" size="sm" className="flex-shrink-0 text-xs hover:bg-[#ffa300]/10 hover:text-[#ffa300] hover:border-[#ffa300]/30 transition-colors" onClick={() => sendMessage(q)}>
+                    <Button key={q} variant="outline" size="sm" className="flex-shrink-0 text-xs hover:bg-[#2F4F97]/10 hover:text-[#2F4F97] hover:border-[#2F4F97]/30 transition-colors" onClick={() => sendMessage(q)}>
                       {q}
                     </Button>
                   ))}
@@ -139,7 +139,7 @@ export function AmbassadorChat() {
                   onKeyDown={(e) => e.key === "Enter" && sendMessage(input)}
                   className="flex-1"
                 />
-                <Button size="icon" className="bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90" onClick={() => sendMessage(input)} disabled={!input.trim()}>
+                <Button size="icon" className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90" onClick={() => sendMessage(input)} disabled={!input.trim()}>
                   <Send className="h-4 w-4" />
                 </Button>
               </div>

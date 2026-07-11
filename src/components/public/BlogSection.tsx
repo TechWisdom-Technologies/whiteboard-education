@@ -24,7 +24,7 @@ export function BlogSection() {
         {/* Section header */}
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-semibold mb-2">Latest Articles</h2>
-          <p className="text-sm text-[#515768] max-w-2xl mx-auto">
+          <p className="text-sm text-[#64748B] max-w-2xl mx-auto">
             Tips, guides, and insights to help you navigate your study abroad journey.
           </p>
         </div>
@@ -47,12 +47,12 @@ export function BlogSection() {
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110"
                   />
                   {/* Overlay Gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#181d29]/90 via-[#181d29]/20 to-[#181d29]/40 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#1E293B]/90 via-[#1E293B]/20 to-[#1E293B]/40 transition-opacity duration-300" />
 
                   {/* Top Meta (Category & Date) */}
                   <div className="absolute top-3 left-3 right-3 flex justify-between items-start z-10">
                     {post.category ? (
-                      <span className="bg-[#ffa300] text-white text-[9px] font-normal px-1.5 py-0.5 rounded-xl uppercase tracking-wider shadow-sm">
+                      <span className="bg-[#2F4F97] text-white text-[9px] font-normal px-1.5 py-0.5 rounded-xl uppercase tracking-wider shadow-sm">
                         {post.category}
                       </span>
                     ) : (
@@ -70,7 +70,7 @@ export function BlogSection() {
 
                   {/* Bottom Title */}
                   <div className="absolute bottom-4 left-4 right-4 z-10">
-                    <h3 className="text-white font-medium uppercase text-[13px] md:text-sm leading-snug group-hover/card:text-[#ffa300] transition-colors shadow-sm">
+                    <h3 className="text-white font-medium uppercase text-[13px] md:text-sm leading-snug group-hover/card:text-[#2F4F97] transition-colors shadow-sm">
                       {post.title}
                       <ArrowRight className="inline-block w-4 h-4 ml-1.5 opacity-0 -translate-x-2 transition-all duration-300 group-hover/card:opacity-100 group-hover/card:translate-x-0" />
                     </h3>
@@ -85,7 +85,7 @@ export function BlogSection() {
         <div className="text-center mt-12">
           <Link
             to="/blog"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[#ffa300]"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#2F4F97]"
           >
             View All Articles <ArrowRight className="h-4 w-4" />
           </Link>

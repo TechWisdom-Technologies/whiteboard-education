@@ -14,12 +14,12 @@ export function CounselorTeamSection() {
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
           <div className="max-w-2xl">
-            <h2 className="text-3xl md:text-5xl font-bold text-[#181d29] mb-4 tracking-tight">Meet Our Experts</h2>
+            <h2 className="text-3xl md:text-5xl font-bold text-[#1E293B] mb-4 tracking-tight">Meet Our Experts</h2>
             <p className="text-lg text-gray-600">
               Our dedicated team of professionals is here to guide you through every step of your international education journey.
             </p>
           </div>
-          <Button variant="outline" className="rounded-xl border-[#181d29] text-[#181d29] hover:bg-[#181d29] hover:text-white group">
+          <Button variant="outline" className="rounded-xl border-[#1E293B] text-[#1E293B] hover:bg-[#1E293B] hover:text-white group">
             View All Team <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
           </Button>
         </div>
@@ -29,18 +29,18 @@ export function CounselorTeamSection() {
             <div key={m.name} className="group">
               <div className="relative mb-6 overflow-hidden rounded-xl aspect-[4/5] grayscale hover:grayscale-0 transition-all duration-500">
                 <img src={m.image} alt={m.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#181d29]/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1E293B]/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
                   <div className="flex gap-3">
-                    <button className="h-10 w-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-[#ffa300] transition-colors">
+                    <button className="h-10 w-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-[#2F4F97] transition-colors">
                       <Mail className="h-4 w-4" />
                     </button>
-                    <button className="h-10 w-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-[#ffa300] transition-colors">
+                    <button className="h-10 w-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-[#2F4F97] transition-colors">
                       <MessageCircle className="h-4 w-4" />
                     </button>
                   </div>
                 </div>
               </div>
-              <h3 className="text-xl font-bold text-[#181d29] group-hover:text-[#ffa300] transition-colors">{m.name}</h3>
+              <h3 className="text-xl font-bold text-[#1E293B] group-hover:text-[#2F4F97] transition-colors">{m.name}</h3>
               <p className="text-sm text-gray-500 font-medium">{m.role}</p>
             </div>
           ))}

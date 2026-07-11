@@ -45,9 +45,9 @@ export default function BlogPost() {
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center space-y-4">
             <BookOpen className="h-16 w-16 text-[#999999] mx-auto" />
-            <h1 className="text-2xl font-semibold text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Article Not Found</h1>
+            <h1 className="text-2xl font-semibold text-[#1E293B]" style={{ fontFamily: "Poppins, sans-serif" }}>Article Not Found</h1>
             <Link to="/blog">
-              <Button style={{ backgroundColor: "#ffa300", color: "#181d29" }} className="font-semibold border border-[#ffa300]">Browse All Articles</Button>
+              <Button style={{ backgroundColor: "#2F4F97", color: "#1E293B" }} className="font-semibold border border-[#2F4F97]">Browse All Articles</Button>
             </Link>
           </div>
         </div>
@@ -63,22 +63,22 @@ export default function BlogPost() {
       <MegaMenu />
       
       {/* Article Header & Hero Image Overlay */}
-      <div className="relative w-full min-h-[500px] md:h-[65vh] flex flex-col justify-end bg-[#181d29]">
+      <div className="relative w-full min-h-[500px] md:h-[65vh] flex flex-col justify-end bg-[#1E293B]">
         {post.cover_image && (
           <div className="absolute inset-0">
             <img src={post.cover_image} alt={post.title} className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#181d29]/95 via-[#181d29]/60 to-[#181d29]/30" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#1E293B]/95 via-[#1E293B]/60 to-[#1E293B]/30" />
           </div>
         )}
         
         <div className="relative z-10 container mx-auto px-4 pb-12 md:pb-16 max-w-4xl">
-          <Link to="/blog" className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#ffa300] hover:text-[#e59200] transition-colors mb-6 uppercase tracking-wider">
+          <Link to="/blog" className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#2F4F97] hover:text-[#e59200] transition-colors mb-6 uppercase tracking-wider">
             <ArrowLeft className="h-4 w-4" /> Back to Insights
           </Link>
           
           <div className="flex flex-wrap items-center gap-3 mb-6">
             {post.category && (
-              <span className="bg-[#ffa300] text-[#181d29] text-[11px] font-semibold px-3 py-1.5 rounded-xl uppercase tracking-wider">
+              <span className="bg-[#2F4F97] text-white text-[11px] font-semibold px-3 py-1.5 rounded-xl uppercase tracking-wider">
                 {post.category}
               </span>
             )}
@@ -138,7 +138,7 @@ export default function BlogPost() {
       {related.length > 0 && (
         <section className="bg-[#f7f8fa] py-20 border-t border-gray-200/60">
           <div className="container mx-auto px-4 max-w-6xl">
-            <h2 className="text-2xl md:text-3xl font-semibold text-[#181d29] mb-10 text-center" style={{ fontFamily: "Poppins, sans-serif" }}>
+            <h2 className="text-2xl md:text-3xl font-semibold text-[#1E293B] mb-10 text-center" style={{ fontFamily: "Poppins, sans-serif" }}>
               Keep Reading
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
@@ -150,11 +150,11 @@ export default function BlogPost() {
                       alt={r.title}
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#181d29]/95 via-[#181d29]/40 to-[#181d29]/20 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#1E293B]/95 via-[#1E293B]/40 to-[#1E293B]/20 transition-opacity duration-300" />
 
                     <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-10">
                       {r.category ? (
-                        <span className="bg-[#ffa300] text-[#181d29] text-[10px] font-semibold px-2 py-1 rounded-xl uppercase tracking-wider shadow-sm">
+                        <span className="bg-[#2F4F97] text-white text-[10px] font-semibold px-2 py-1 rounded-xl uppercase tracking-wider shadow-sm">
                           {r.category}
                         </span>
                       ) : (
@@ -167,10 +167,10 @@ export default function BlogPost() {
                     </div>
 
                     <div className="absolute bottom-5 left-5 right-5 z-10 flex flex-col gap-3">
-                      <h3 className="text-white font-semibold text-[15px] md:text-base leading-snug group-hover/card:text-[#ffa300] transition-colors shadow-sm line-clamp-3" style={{ fontFamily: "Poppins, sans-serif" }}>
+                      <h3 className="text-white font-semibold text-[15px] md:text-base leading-snug group-hover/card:text-[#2F4F97] transition-colors shadow-sm line-clamp-3" style={{ fontFamily: "Poppins, sans-serif" }}>
                         {r.title}
                       </h3>
-                      <div className="flex items-center gap-2 text-[#ffa300] text-xs font-semibold uppercase tracking-wider opacity-0 translate-y-4 group-hover/card:opacity-100 group-hover/card:translate-y-0 transition-all duration-300">
+                      <div className="flex items-center gap-2 text-[#2F4F97] text-xs font-semibold uppercase tracking-wider opacity-0 translate-y-4 group-hover/card:opacity-100 group-hover/card:translate-y-0 transition-all duration-300">
                         Read Article <ArrowRight className="h-3.5 w-3.5" />
                       </div>
                     </div>

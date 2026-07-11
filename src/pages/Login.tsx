@@ -96,7 +96,7 @@ export default function Login() {
 
 
   const inputCls =
-    "w-full h-11 px-4 text-sm border border-gray-200 bg-white text-gray-900 placeholder:text-gray-400 outline-none focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] transition-colors";
+    "w-full h-11 px-4 text-sm border border-gray-200 bg-white text-gray-900 placeholder:text-gray-400 outline-none focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] transition-colors";
 
   // ─── Forgot Password Handlers ───
   const handleFpSendCode = async () => {
@@ -153,7 +153,7 @@ export default function Login() {
           className="absolute inset-0 opacity-[0.05]"
           style={{
             backgroundImage:
-              "linear-gradient(#ffa300 1px, transparent 1px), linear-gradient(90deg, #ffa300 1px, transparent 1px)",
+              "linear-gradient(#2F4F97 1px, transparent 1px), linear-gradient(90deg, #2F4F97 1px, transparent 1px)",
             backgroundSize: "44px 44px",
           }}
         />
@@ -168,10 +168,10 @@ export default function Login() {
         />
 
         {/* Top amber accent line */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#ffa300] to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#2F4F97] to-transparent" />
 
         {/* Right divider */}
-        <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#ffa300]/25 to-transparent" />
+        <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#2F4F97]/25 to-transparent" />
 
         {/* Content - full height flex column spread */}
         <div
@@ -184,14 +184,14 @@ export default function Login() {
         >
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <img src="/LOGO-ON-DARK-BG.png" alt="Whiteboard Education" className="h-10 w-auto object-contain" />
+            <img src="/logo.png" alt="Whiteboard Education" className="h-10 w-auto object-contain" />
           </div>
 
           {/* Middle hero */}
           <div>
             <div className="flex items-center gap-3 mb-5">
               <div className="h-px flex-1 bg-white/10" />
-              <span className="text-[#ffa300] text-[10px] font-bold tracking-[0.3em] uppercase">Access Portal</span>
+              <span className="text-[#2F4F97] text-[10px] font-bold tracking-[0.3em] uppercase">Access Portal</span>
               <div className="h-px flex-1 bg-white/10" />
             </div>
 
@@ -211,7 +211,7 @@ export default function Login() {
                 fontFamily: "Poppins, sans-serif",
                 fontSize: "clamp(44px, 5vw, 64px)",
                 letterSpacing: "-2px",
-                WebkitTextStroke: "1.5px #ffa300",
+                WebkitTextStroke: "1.5px #2F4F97",
                 color: "transparent",
               }}
             >
@@ -230,8 +230,8 @@ export default function Login() {
                 { icon: Award, label: "B2B Partners", desc: "Agency portal access" },
               ].map(({ icon: Icon, label, desc }) => (
                 <div key={label} className="flex items-center gap-3 group">
-                  <div className="h-8 w-8 border border-white/10 bg-white/[0.04] flex items-center justify-center flex-shrink-0 group-hover:border-[#ffa300]/30 transition-colors">
-                    <Icon className="h-3.5 w-3.5 text-[#ffa300]" />
+                  <div className="h-8 w-8 border border-white/10 bg-white/[0.04] flex items-center justify-center flex-shrink-0 group-hover:border-[#2F4F97]/30 transition-colors">
+                    <Icon className="h-3.5 w-3.5 text-[#2F4F97]" />
                   </div>
                   <div>
                     <div className="text-white/60 text-xs font-semibold">{label}</div>
@@ -249,7 +249,7 @@ export default function Login() {
               {[...Array(3)].map((_, i) => (
                 <div
                   key={i}
-                  className="h-1 bg-[#ffa300]"
+                  className="h-1 bg-[#2F4F97]"
                   style={{ width: i === 0 ? 20 : i === 1 ? 10 : 5, opacity: 1 - i * 0.3 }}
                 />
               ))}
@@ -268,13 +268,13 @@ export default function Login() {
         }}
       >
         {/* Top accent line (right panel) */}
-        <div className="h-[2px] w-full bg-gradient-to-r from-[#ffa300]/40 via-[#ffa300] to-[#ffa300]/40 flex-shrink-0" />
+        <div className="h-[2px] w-full bg-gradient-to-r from-[#2F4F97]/40 via-[#2F4F97] to-[#2F4F97]/40 flex-shrink-0" />
 
         {/* Header bar */}
         <div className="flex items-center justify-between px-10 py-3 border-b border-gray-200 flex-shrink-0 bg-white">
           {/* Mobile logo */}
           <div className="flex items-center gap-2 lg:hidden">
-            <img src="/LOGO-ON-LIGHT-BG.png" alt="Whiteboard Education" className="h-8 w-auto object-contain" />
+            <img src="/logo.png" alt="Whiteboard Education" className="h-8 w-auto object-contain" />
           </div>
           {/* Desktop label */}
           <span className="hidden lg:block text-xs font-bold text-gray-300 tracking-widest uppercase">
@@ -358,7 +358,7 @@ export default function Login() {
                     type="submit"
                     disabled={loading}
                     className="w-full h-10 text-sm font-bold flex items-center justify-center gap-2 transition-all duration-150 hover:brightness-110 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
-                    style={{ background: "#ffa300", color: "#0c0f16" }}
+                    style={{ background: "#2F4F97", color: "#0c0f16" }}
                   >
                     {loading ? (
                       <>
@@ -379,7 +379,7 @@ export default function Login() {
                   <button
                     type="button"
                     onClick={() => { setFpStep("enter_email"); setFpEmail(email); }}
-                    className="text-[11px] font-semibold text-[#ffa300] hover:underline"
+                    className="text-[11px] font-semibold text-[#2F4F97] hover:underline"
                   >
                     Forgot password?
                   </button>
@@ -405,7 +405,7 @@ export default function Login() {
                   <button
                     onClick={handleFpSendCode}
                     className="flex-1 h-10 text-sm font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
-                    style={{ background: "#ffa300", color: "#0c0f16" }}
+                    style={{ background: "#2F4F97", color: "#0c0f16" }}
                   >
                     <KeyRound className="h-4 w-4" /> Send Code
                   </button>
@@ -418,7 +418,7 @@ export default function Login() {
 
             {fpStep === "sending" && (
               <div className="flex items-center gap-3 py-8 justify-center text-sm text-gray-500">
-                <Loader2 className="h-5 w-5 animate-spin text-[#ffa300]" /> Sending code...
+                <Loader2 className="h-5 w-5 animate-spin text-[#2F4F97]" /> Sending code...
               </div>
             )}
 
@@ -453,7 +453,7 @@ export default function Login() {
 
             {fpStep === "verifying" && (
               <div className="flex items-center gap-3 py-8 justify-center text-sm text-gray-500">
-                <Loader2 className="h-5 w-5 animate-spin text-[#ffa300]" /> Verifying...
+                <Loader2 className="h-5 w-5 animate-spin text-[#2F4F97]" /> Verifying...
               </div>
             )}
 
@@ -481,7 +481,7 @@ export default function Login() {
                   <button
                     onClick={handleFpUpdatePw}
                     className="flex-1 h-10 text-sm font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
-                    style={{ background: "#ffa300", color: "#0c0f16" }}
+                    style={{ background: "#2F4F97", color: "#0c0f16" }}
                   >
                     Update Password
                   </button>
@@ -494,7 +494,7 @@ export default function Login() {
 
             {fpStep === "updating" && (
               <div className="flex items-center gap-3 py-8 justify-center text-sm text-gray-500">
-                <Loader2 className="h-5 w-5 animate-spin text-[#ffa300]" /> Updating password...
+                <Loader2 className="h-5 w-5 animate-spin text-[#2F4F97]" /> Updating password...
               </div>
             )}
 
@@ -507,7 +507,7 @@ export default function Login() {
                 <button
                   onClick={resetFpFlow}
                   className="w-full h-10 text-sm font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
-                  style={{ background: "#ffa300", color: "#0c0f16" }}
+                  style={{ background: "#2F4F97", color: "#0c0f16" }}
                 >
                   <LogIn className="h-4 w-4" /> Back to Sign In
                 </button>
@@ -518,7 +518,7 @@ export default function Login() {
             {fpStep === "idle" && (
             <div className="mt-4 pt-3 border-t border-gray-200 flex items-center justify-between">
               <span className="text-[11px] text-gray-400">Joining as a partner agency?</span>
-              <Link to="/partner" className="text-[11px] font-semibold text-[#ffa300] hover:underline">
+              <Link to="/partner" className="text-[11px] font-semibold text-[#2F4F97] hover:underline">
                 Apply here →
               </Link>
             </div>

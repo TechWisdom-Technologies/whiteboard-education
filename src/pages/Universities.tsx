@@ -248,7 +248,7 @@ export default function Universities() {
         ) : (
           <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
             {/* ─── SIDEBAR ─── */}
-            <aside className="lg:w-[300px] xl:w-[320px] shrink-0">
+            <aside className="lg:w-[320px] xl:w-[340px] shrink-0">
               <div
                 className="overflow-hidden lg:sticky lg:top-[152px] border"
                 style={{
@@ -257,14 +257,14 @@ export default function Universities() {
                 }}
               >
                 {/* Sidebar Header */}
-                <div className="px-5 py-4 flex items-center justify-between" style={{ backgroundColor: "#fef1da" }}>
+                <div className="px-5 py-4 flex items-center justify-between" style={{ backgroundColor: "#F8FAFC" }}>
                   <h3
                     className="font-bold"
                     style={{
                       fontFamily: "Poppins, sans-serif",
                       fontSize: "20px",
                       lineHeight: "24px",
-                      color: "#181d29",
+                      color: "#1E293B",
                     }}
                   >
                     Search by Filter
@@ -277,7 +277,7 @@ export default function Universities() {
                       setSelectedField("All Fields");
                       setSelectedOfferLetter("all");
                     }}
-                    className="text-[#999999] hover:text-[#181d29] transition-colors"
+                    className="text-[#999999] hover:text-[#1E293B] transition-colors"
                     title="Reset Filters"
                   >
                     <RotateCcw className="h-5 w-5" />
@@ -410,17 +410,17 @@ export default function Universities() {
             {/* ─── CONTENT AREA ─── */}
             <div className="flex-1 min-w-0">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-gray-200 pb-4 mb-6 gap-4">
-                <h1 className="text-[20px] md:text-[22px] font-bold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>
+                <h1 className="text-[20px] md:text-[22px] font-bold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B" }}>
                   Universities
                 </h1>
                 
                 <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 md:gap-4 text-[14px]">
                   <div className="flex items-center gap-2 shrink-0">
-                    <span className="font-semibold text-[#181d29] whitespace-nowrap">Sort By:</span>
+                    <span className="font-semibold text-[#1E293B] whitespace-nowrap">Sort By:</span>
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
-                      className="border border-gray-300 rounded-xl px-3 py-1.5 text-gray-600 bg-white focus:outline-none focus:border-[#ffa300]"
+                      className="border border-gray-300 rounded-xl px-3 py-1.5 text-gray-600 bg-white focus:outline-none focus:border-[#2F4F97]"
                     >
                       <option value="best_match">Best Match (Default)</option>
                       <option value="name_a_z">Name (A to Z)</option>
@@ -443,7 +443,7 @@ export default function Universities() {
                   style={{ color: "#999999", fontFamily: "Poppins, sans-serif" }}
                 >
                   <GraduationCap className="h-12 w-12 mx-auto mb-4 opacity-40" />
-                  <p className="font-semibold text-lg mb-1" style={{ color: "#515768" }}>
+                  <p className="font-semibold text-lg mb-1" style={{ color: "#64748B" }}>
                     No universities found
                   </p>
                   <p className="text-sm">Try adjusting your search or filters.</p>
@@ -457,7 +457,7 @@ export default function Universities() {
                         key={u.id}
                         className="bg-white p-5 md:p-6 lg:p-8 border border-gray-200 rounded-3xl"
                       >
-                        <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] lg:grid-cols-[180px_1fr_180px] gap-6 lg:gap-8 items-center lg:items-start">
+                        <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] lg:grid-cols-[180px_1fr_140px] gap-6 lg:gap-8 items-center lg:items-start">
                           {/* Left: Logo */}
                           <Link
                             to={`/universities/${generateSlug(u.name)}`}
@@ -482,7 +482,7 @@ export default function Universities() {
                         {/* Middle: Info */}
                         <div className="min-w-0 flex flex-col justify-center space-y-3 md:col-span-1 lg:col-span-1">
                           <Link to={`/universities/${generateSlug(u.name)}`}>
-                            <h3 className="font-semibold hover:underline text-[18px] md:text-[20px] text-[#181d29] leading-tight mb-1">
+                            <h3 className="font-semibold hover:underline text-[18px] md:text-[20px] text-[#1E293B] leading-tight mb-1">
                               {u.name}
                             </h3>
                           </Link>
@@ -490,7 +490,7 @@ export default function Universities() {
                           <div className="flex flex-col gap-1.5">
                             {/* Location */}
                             <div className="flex items-center gap-2">
-                              <MapPin className="h-4 w-4 shrink-0" style={{ color: "#ffa300" }} />
+                              <MapPin className="h-4 w-4 shrink-0" style={{ color: "#2F4F97" }} />
                               <span
                                 style={{
                                   fontFamily: "Poppins, sans-serif",
@@ -504,7 +504,7 @@ export default function Universities() {
 
                             {/* Offer Letter */}
                             <div className="flex items-center gap-2">
-                              <FileText className="h-4 w-4 shrink-0" style={{ color: "#515768" }} />
+                              <FileText className="h-4 w-4 shrink-0" style={{ color: "#64748B" }} />
                               <span
                                 style={{
                                   fontFamily: "Poppins, sans-serif",
@@ -518,7 +518,7 @@ export default function Universities() {
 
                             {/* Course count */}
                             <div className="flex items-center gap-2">
-                              <BookOpen className="h-4 w-4 shrink-0" style={{ color: "#515768" }} />
+                              <BookOpen className="h-4 w-4 shrink-0" style={{ color: "#64748B" }} />
                               <span
                                 className="font-bold"
                                 style={{
@@ -536,13 +536,9 @@ export default function Universities() {
                         {/* Right: Buttons */}
                         <div className="w-full md:col-span-2 lg:col-span-1 flex flex-col gap-3 mt-4 lg:mt-2">
                           <Button
-                            className="h-9 px-6 font-bold text-sm"
+                            className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent h-9 px-3 font-bold"
                             style={{
-                              backgroundColor: "#ffa300",
-                              color: "#181d29",
-                              borderRadius: "5px",
                               fontFamily: "Poppins, sans-serif",
-                              border: "1px solid #ffa300",
                             }}
                             onClick={() => navigate(`/apply?universityId=${u.id}`)}
                           >
@@ -551,13 +547,9 @@ export default function Universities() {
                           <Link to={`/universities/${generateSlug(u.name)}`} className="block">
                             <Button
                               variant="outline"
-                              className="h-9 px-6 font-bold text-sm w-full"
+                              className="bg-[#EEF4FF] text-[#2F4F97] border-[#2F4F97]/20 h-9 px-3 font-bold w-full hover:bg-[#EEF4FF]/80"
                               style={{
-                                borderColor: "#9273b6",
-                                color: "#9273b6",
-                                borderRadius: "5px",
                                 fontFamily: "Poppins, sans-serif",
-                                backgroundColor: "transparent",
                               }}
                             >
                               Ask Us
@@ -583,7 +575,7 @@ export default function Universities() {
                     style={{
                       borderColor: "#cacdd4",
                       borderRadius: "4px",
-                      color: "#515768",
+                      color: "#64748B",
                       backgroundColor: "#ffffff",
                     }}
                   >
@@ -608,9 +600,9 @@ export default function Universities() {
                         style={{
                           borderRadius: "4px",
                           fontFamily: "Poppins, sans-serif",
-                          backgroundColor: currentPage === page ? "#ffa300" : "#ffffff",
-                          color: currentPage === page ? "#181d29" : "#515768",
-                          borderColor: currentPage === page ? "#ffa300" : "#cacdd4",
+                          backgroundColor: currentPage === page ? "#2F4F97" : "#ffffff",
+                          color: currentPage === page ? "#1E293B" : "#64748B",
+                          borderColor: currentPage === page ? "#2F4F97" : "#cacdd4",
                         }}
                       >
                         {page}
@@ -626,7 +618,7 @@ export default function Universities() {
                     style={{
                       borderColor: "#cacdd4",
                       borderRadius: "4px",
-                      color: "#515768",
+                      color: "#64748B",
                       backgroundColor: "#ffffff",
                     }}
                   >

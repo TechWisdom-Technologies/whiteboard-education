@@ -33,7 +33,7 @@ export default function PartnerLayout() {
             <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto justify-end">
               <span className="text-[11px] text-muted-foreground truncate max-w-[200px] hidden sm:inline" title={user?.email || ""}>
                 {user?.email}
-                <span className="text-[#ffa300] font-semibold ml-1">(Partner)</span>
+                <span className="text-[#2F4F97] font-semibold ml-1">(Partner)</span>
               </span>
               <NotificationCenter />
             </div>

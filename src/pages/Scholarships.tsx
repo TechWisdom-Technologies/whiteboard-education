@@ -34,7 +34,7 @@ export default function Scholarships() {
                 <Card key={s.id} className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6 space-y-3">
                     <div className="flex items-center gap-2">
-                      <Award className="h-5 w-5 text-[#ffa300]" />
+                      <Award className="h-5 w-5 text-[#2F4F97]" />
                       <h3 className="font-bold">{s.name}</h3>
                     </div>
                     {uni && <p className="text-sm text-muted-foreground">{uni.name}</p>}

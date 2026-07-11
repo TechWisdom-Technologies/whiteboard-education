@@ -53,9 +53,9 @@ export function StatsBanner() {
       sublabel: "Top-ranked institutions across Malaysia",
       href: "/universities",
       cta: "View All Universities",
-      accentColor: "#ffa300",
-      accentBg: "rgba(255, 163, 0, 0.10)",
-      iconBg: "linear-gradient(135deg, #ffa300, #e08e00)",
+      accentColor: "#2F4F97",
+      accentBg: "rgba(47, 79, 151, 0.10)",
+      iconBg: "linear-gradient(135deg, #243E79, #2F4F97)",
     },
     {
       icon: BookOpen,
@@ -88,10 +88,10 @@ export function StatsBanner() {
       <div className="container mx-auto px-4 max-w-6xl relative">
         {/* Section header */}
         <div className="text-center mb-12">
-          <h2 className="text-2xl md:text-3xl font-semibold text-[#181d29] mb-2">
+          <h2 className="text-2xl md:text-3xl font-semibold text-[#1E293B] mb-2">
             Numbers That Speak <span className="stats-banner-heading-accent">For Themselves</span>
           </h2>
-          <p className="text-[#515768] max-w-2xl mx-auto text-sm">
+          <p className="text-[#64748B] max-w-2xl mx-auto text-sm">
             A snapshot of our growing network and the extensive opportunities we provide for students across the globe.
           </p>
         </div>
@@ -128,17 +128,6 @@ function StatCard({
 
   return (
     <div ref={ref} className="stats-card group">
-      {/* Top-left angle accent */}
-      <div 
-        className="absolute top-0 left-0 w-10 h-10 rounded-tl pointer-events-none" 
-        style={{ borderTop: `3px solid ${stat.accentColor}`, borderLeft: `3px solid ${stat.accentColor}` }} 
-      />
-      
-      {/* Bottom-right angle accent */}
-      <div 
-        className="absolute bottom-0 right-0 w-10 h-10 rounded-br pointer-events-none" 
-        style={{ borderBottom: `3px solid ${stat.accentColor}`, borderRight: `3px solid ${stat.accentColor}` }} 
-      />
 
       {/* Icon */}
       <div className="stats-card-icon-wrap">

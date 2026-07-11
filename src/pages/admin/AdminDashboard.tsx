@@ -44,7 +44,7 @@ const studentStatusLabels: Record<string, { label: string; color: string }> = {
   documents_verified: { label: "Docs Verified", color: "bg-blue-500/10 text-blue-600" },
   university_applied: { label: "Applied", color: "bg-indigo-500/10 text-indigo-600" },
   offer_letter: { label: "Offer Letter", color: "bg-purple-500/10 text-purple-600" },
-  emgs_processing: { label: "EMGS", color: "bg-[#ffa300]/10 text-[#ffa300]" },
+  emgs_processing: { label: "EMGS", color: "bg-[#2F4F97]/10 text-[#2F4F97]" },
   visa_approved: { label: "Visa ✓", color: "bg-emerald-500/10 text-emerald-600" },
   travel_ready: { label: "Travel Ready", color: "bg-teal-500/10 text-teal-600" },
   enrolled: { label: "Enrolled", color: "bg-green-600/10 text-green-700" },
@@ -163,7 +163,7 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Users className="h-4 w-4 text-[#ffa300]" />
+              <Users className="h-4 w-4 text-[#2F4F97]" />
               Recent Partner Agents
             </CardTitle>
           </CardHeader>
@@ -176,7 +176,7 @@ export default function AdminDashboard() {
                   {pagedPartners.map(p => (
                     <div key={p.id} className="flex items-center justify-between gap-3 py-2.5 px-2 border-b last:border-0 hover:bg-muted/30 transition-colors rounded-xl">
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-[#181d29] truncate">{p.agency_name}</p>
+                        <p className="text-sm font-semibold text-[#1E293B] truncate">{p.agency_name}</p>
                         <p className="text-[11px] text-muted-foreground truncate">{p.contact_person}</p>
                       </div>
                       <Badge variant="outline" className={`shrink-0 text-[10px] font-bold uppercase tracking-wider ${partnerStatusColor(p.status)}`}>
@@ -209,7 +209,7 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <UserCheck className="h-4 w-4 text-[#ffa300]" />
+              <UserCheck className="h-4 w-4 text-[#2F4F97]" />
               Recent Students
             </CardTitle>
           </CardHeader>
@@ -222,7 +222,7 @@ export default function AdminDashboard() {
                   {pagedStudents.map(s => (
                     <div key={s.id} className="flex items-center justify-between gap-3 py-2.5 px-2 border-b last:border-0 hover:bg-muted/30 transition-colors rounded-xl">
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-[#181d29] truncate">{s.full_name}</p>
+                        <p className="text-sm font-semibold text-[#1E293B] truncate">{s.full_name}</p>
                         <p className="text-[11px] text-muted-foreground truncate">Added by {getPartnerName(s.partner_id)}</p>
                       </div>
                       <Badge variant="outline" className={`shrink-0 text-[10px] font-bold uppercase tracking-wider ${studentStatusLabels[s.status]?.color || "bg-muted text-muted-foreground"}`}>

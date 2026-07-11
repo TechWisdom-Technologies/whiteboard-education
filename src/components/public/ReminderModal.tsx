@@ -60,8 +60,8 @@ export function ReminderModal({ open, onOpenChange, universityName, intakeLabel,
       <DialogContent className="sm:max-w-sm">
         {success ? (
           <div className="py-8 text-center space-y-4">
-            <div className="mx-auto h-16 w-16 rounded-xl bg-[#ffa300]/15 flex items-center justify-center">
-              <CheckCircle className="h-8 w-8 text-[#ffa300]" />
+            <div className="mx-auto h-16 w-16 rounded-xl bg-[#2F4F97]/15 flex items-center justify-center">
+              <CheckCircle className="h-8 w-8 text-[#2F4F97]" />
             </div>
             <DialogTitle className="text-xl">Reminder Requested!</DialogTitle>
             <p className="text-muted-foreground text-sm">Thanks! We captured your lead and our team will follow up for the <strong>{universityName}</strong> {intakeLabel} deadline.</p>
@@ -70,7 +70,7 @@ export function ReminderModal({ open, onOpenChange, universityName, intakeLabel,
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2"><Bell className="h-5 w-5 text-[#ffa300]" /> Set Deadline Reminder</DialogTitle>
+              <DialogTitle className="flex items-center gap-2"><Bell className="h-5 w-5 text-[#2F4F97]" /> Set Deadline Reminder</DialogTitle>
               <DialogDescription>Share your name and email for {universityName} - {intakeLabel} intake (deadline: {deadlineDate}).</DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4 mt-2">
@@ -82,7 +82,7 @@ export function ReminderModal({ open, onOpenChange, universityName, intakeLabel,
                 <Label htmlFor="rem-email">Email *</Label>
                 <Input id="rem-email" type="email" placeholder="you@example.com" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} required maxLength={255} />
               </div>
-              <Button type="submit" disabled={loading} className="w-full bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 h-11 font-bold">
+              <Button type="submit" disabled={loading} className="w-full bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 h-11 font-bold">
                 {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Bell className="h-4 w-4 mr-2" />}
                 Submit Reminder Request
               </Button>

@@ -68,7 +68,7 @@ export default function HelpCenter() {
       <main className="flex-1">
         <section className="intro-surface py-16">
           <div className="container mx-auto px-4 text-center">
-            <HelpCircle className="h-12 w-12 mx-auto mb-4 text-[#ffa300]" />
+            <HelpCircle className="h-12 w-12 mx-auto mb-4 text-[#2F4F97]" />
             <h1 className="text-4xl font-extrabold mb-3">Help Center</h1>
             <p className="text-primary-foreground/70 max-w-xl mx-auto mb-8">Find answers to common questions about admissions, visas, payments, and student life.</p>
             <div className="max-w-md mx-auto relative">
@@ -84,7 +84,7 @@ export default function HelpCenter() {
               <Card key={cat.title}>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <cat.icon className="h-5 w-5 text-[#ffa300]" />
+                    <cat.icon className="h-5 w-5 text-[#2F4F97]" />
                     {cat.title}
                   </CardTitle>
                 </CardHeader>
@@ -111,7 +111,7 @@ export default function HelpCenter() {
       <div className="sticky bottom-0 bg-background border-t py-4 z-40">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <p className="text-sm text-muted-foreground">Can't find your answer?</p>
-          <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90" onClick={() => navigate("/contact")}>
+          <Button className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90" onClick={() => navigate("/contact")}>
             <MessageCircle className="h-4 w-4 mr-2" /> Contact Support
           </Button>
         </div>

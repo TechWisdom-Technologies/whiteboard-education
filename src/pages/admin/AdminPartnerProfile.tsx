@@ -61,7 +61,7 @@ function InfoRow({ label, value }: { label: string; value: string | number | nul
       <span className="text-[11px] font-medium text-muted-foreground/70 uppercase tracking-wider">
         {label}
       </span>
-      <span className={`text-[13px] font-medium leading-snug ${isEmpty ? "text-amber-600/80 italic text-xs flex items-center gap-1 bg-amber-50/50 dark:bg-amber-950/10 px-2.5 py-1 rounded-2xl border border-amber-200/30 w-fit" : "text-[#181d29]"}`}>
+      <span className={`text-[13px] font-medium leading-snug ${isEmpty ? "text-amber-600/80 italic text-xs flex items-center gap-1 bg-amber-50/50 dark:bg-amber-950/10 px-2.5 py-1 rounded-2xl border border-amber-200/30 w-fit" : "text-[#1E293B]"}`}>
         {isEmpty ? "Not provided" : value}
       </span>
     </div>
@@ -186,7 +186,7 @@ export default function AdminPartnerProfile() {
     return (
       <div className="flex items-center justify-center h-[60vh]">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-8 w-8 animate-spin text-[#ffa300]" />
+          <Loader2 className="h-8 w-8 animate-spin text-[#2F4F97]" />
           <p className="text-sm text-muted-foreground">Loading partner profile…</p>
         </div>
       </div>
@@ -250,11 +250,11 @@ export default function AdminPartnerProfile() {
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 relative">
           <div className="flex gap-5 items-start">
             <div className="h-20 w-20 rounded-lg bg-muted border border-border flex items-center justify-center overflow-hidden shrink-0 shadow-sm print:h-24 print:w-24">
-              <Building2 className="h-10 w-10 text-[#ffa300]" />
+              <Building2 className="h-10 w-10 text-[#2F4F97]" />
             </div>
             
             <div className="pt-1">
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#181d29] tracking-tight mb-1">
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#1E293B] tracking-tight mb-1">
                 {partner.agency_name}
               </h1>
               <p className="text-sm font-medium text-muted-foreground mb-4">
@@ -282,7 +282,7 @@ export default function AdminPartnerProfile() {
                   </Select>
                   <Button
                     size="sm"
-                    className="h-8 bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 font-semibold"
+                    className="h-8 bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-semibold"
                     onClick={handleSaveStatusAndNotes}
                     disabled={savingStatus || (currentStatus === partner.status && adminNotes === partner.admin_notes)}
                   >
@@ -320,8 +320,8 @@ export default function AdminPartnerProfile() {
         <Card className="no-print">
           <CardContent className="p-5 sm:p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="flex items-center gap-2 text-sm font-semibold text-[#181d29]">
-                <FileCheck className="h-4 w-4 text-[#ffa300]" />
+              <h3 className="flex items-center gap-2 text-sm font-semibold text-[#1E293B]">
+                <FileCheck className="h-4 w-4 text-[#2F4F97]" />
                 Agency Documents
               </h3>
             </div>
@@ -353,7 +353,7 @@ export default function AdminPartnerProfile() {
                         target="_blank"
                         rel="noopener noreferrer"
                         title="Preview Document"
-                        className="h-7 w-7 rounded-full bg-white border border-border flex items-center justify-center text-[#ffa300] hover:bg-muted transition-colors shadow-sm"
+                        className="h-7 w-7 rounded-full bg-white border border-border flex items-center justify-center text-[#2F4F97] hover:bg-muted transition-colors shadow-sm"
                       >
                         <ExternalLink className="h-3.5 w-3.5" />
                       </a>
@@ -372,8 +372,8 @@ export default function AdminPartnerProfile() {
           <CardContent className="p-6 sm:p-7 print:p-0">
                 {/* ── Section 1: Agency Information ──────────────── */}
                 <div className="flex items-center justify-between pb-4">
-                  <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#181d29] uppercase tracking-wide">
-                    <Building2 className="h-4 w-4 text-[#ffa300]" />
+                  <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
+                    <Building2 className="h-4 w-4 text-[#2F4F97]" />
                     Agency Information
                   </h3>
                 </div>
@@ -387,8 +387,8 @@ export default function AdminPartnerProfile() {
                 {/* ── Section 2: Contact Details ──────────────── */}
                 <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
                   <div className="flex items-center justify-between pb-4">
-                    <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#181d29] uppercase tracking-wide">
-                      <User className="h-4 w-4 text-[#ffa300]" />
+                    <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
+                      <User className="h-4 w-4 text-[#2F4F97]" />
                       Contact Person
                     </h3>
                   </div>
@@ -405,8 +405,8 @@ export default function AdminPartnerProfile() {
         <Card className="no-print border-dashed border-amber-200/50 bg-amber-50/20">
           <CardContent className="p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm font-semibold text-[#181d29]">
-                <ClipboardList className="h-4 w-4 text-[#ffa300]" />
+              <div className="flex items-center gap-2 text-sm font-semibold text-[#1E293B]">
+                <ClipboardList className="h-4 w-4 text-[#2F4F97]" />
                 Admin Notes (Visible to Partner)
               </div>
             </div>
@@ -423,8 +423,8 @@ export default function AdminPartnerProfile() {
 
         {/* ── Print-Only Documents Checklist ──────────────────────────── */}
         <div className="hidden print:block pt-8 mt-8">
-          <h3 className="text-[13px] font-bold text-[#181d29] uppercase tracking-wide mb-5 flex items-center gap-2.5">
-            <FileCheck className="h-4 w-4 text-[#ffa300]" />
+          <h3 className="text-[13px] font-bold text-[#1E293B] uppercase tracking-wide mb-5 flex items-center gap-2.5">
+            <FileCheck className="h-4 w-4 text-[#2F4F97]" />
             Uploaded Documents Checklist
           </h3>
           <div className="grid grid-cols-2 gap-y-4 gap-x-8">
@@ -435,7 +435,7 @@ export default function AdminPartnerProfile() {
                 ) : (
                   <div className="h-4 w-4 rounded-xl border border-muted-foreground/40" />
                 )}
-                <span className={doc.url ? "text-[#181d29] font-medium" : "text-muted-foreground italic"}>
+                <span className={doc.url ? "text-[#1E293B] font-medium" : "text-muted-foreground italic"}>
                   {doc.label}
                 </span>
               </div>

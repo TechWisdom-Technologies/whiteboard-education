@@ -18,8 +18,8 @@ export function AccommodationsSection() {
               <Card key={acc.id} className="hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-3">
-                    <div className="h-11 w-11 rounded-xl bg-[#ffa300]/10 flex items-center justify-center">
-                      <Home className="h-5 w-5 text-[#ffa300]" />
+                    <div className="h-11 w-11 rounded-xl bg-[#2F4F97]/10 flex items-center justify-center">
+                      <Home className="h-5 w-5 text-[#2F4F97]" />
                     </div>
                     <Badge variant="outline" className="text-xs">{acc.type}</Badge>
                   </div>
@@ -27,7 +27,7 @@ export function AccommodationsSection() {
                   <p className="text-sm text-muted-foreground flex items-center gap-1 mb-3">
                     <MapPin className="h-3.5 w-3.5" />{acc.city}
                   </p>
-                  <div className="text-2xl font-extrabold text-[#ffa300] mb-3">
+                  <div className="text-2xl font-extrabold text-[#2F4F97] mb-3">
                     RM {acc.price_per_month}<span className="text-sm font-normal text-muted-foreground">/month</span>
                   </div>
                   <div className="space-y-1">

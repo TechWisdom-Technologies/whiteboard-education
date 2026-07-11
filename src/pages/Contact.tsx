@@ -70,15 +70,15 @@ export default function Contact() {
           <div className="bg-white rounded-xl shadow-xl overflow-hidden flex flex-col lg:flex-row border border-[#e8e8e8]">
             
             {/* Left Panel - Dark */}
-            <div className="w-full lg:w-5/12 bg-[#181d29] text-white p-8 md:p-12 relative overflow-hidden flex flex-col justify-between">
+            <div className="w-full lg:w-5/12 bg-[#1E293B] text-white p-8 md:p-12 relative overflow-hidden flex flex-col justify-between">
               {/* Background Accents */}
-              <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-[#ffa300] rounded-full opacity-10 blur-3xl pointer-events-none" />
-              <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 bg-[#ffa300] rounded-full opacity-10 blur-2xl pointer-events-none" />
+              <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-[#2F4F97] rounded-full opacity-10 blur-3xl pointer-events-none" />
+              <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 bg-[#2F4F97] rounded-full opacity-10 blur-2xl pointer-events-none" />
               
               <div className="relative z-10">
                 <h1 className="text-3xl font-bold mb-4 leading-tight tracking-tight text-white" style={{ fontFamily: "Poppins, sans-serif" }}>
                   Not sure where to start? <br />
-                  <span className="text-[#ffa300]">Let's Start Your Journey</span>
+                  <span className="text-[#2F4F97]">Let's Start Your Journey</span>
                 </h1>
                 <p className="text-gray-300 text-[13.5px] leading-relaxed mb-10 max-w-md font-light">
                   Have questions about studying abroad, visa requirements, or university admissions? 
@@ -87,7 +87,7 @@ export default function Contact() {
 
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
-                    <div className="mt-1 bg-white/5 border border-white/10 p-2 rounded-xl text-[#ffa300]">
+                    <div className="mt-1 bg-white/5 border border-white/10 p-2 rounded-xl text-[#2F4F97]">
                       <MapPin className="h-4 w-4" />
                     </div>
                     <div>
@@ -100,7 +100,7 @@ export default function Contact() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <div className="mt-1 bg-white/5 border border-white/10 p-2 rounded-xl text-[#ffa300]">
+                    <div className="mt-1 bg-white/5 border border-white/10 p-2 rounded-xl text-[#2F4F97]">
                       <Phone className="h-4 w-4" />
                     </div>
                     <div>
@@ -110,7 +110,7 @@ export default function Contact() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <div className="mt-1 bg-white/5 border border-white/10 p-2 rounded-xl text-[#ffa300]">
+                    <div className="mt-1 bg-white/5 border border-white/10 p-2 rounded-xl text-[#2F4F97]">
                       <Mail className="h-4 w-4" />
                     </div>
                     <div>
@@ -120,13 +120,13 @@ export default function Contact() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <div className="mt-1 bg-white/5 border border-white/10 p-2 rounded-xl text-[#ffa300]">
+                    <div className="mt-1 bg-white/5 border border-white/10 p-2 rounded-xl text-[#2F4F97]">
                       <Clock className="h-4 w-4" />
                     </div>
                     <div>
                       <p className="text-xs font-bold text-white mb-1 tracking-widest uppercase">Office Hours</p>
                       <p className="text-gray-400 text-[13px] font-light">Sat - Thu: 10:00 AM - 7:00 PM</p>
-                      <p className="text-[#ffa300] text-[11px] mt-0.5 font-semibold tracking-wider uppercase">Closed on Fridays</p>
+                      <p className="text-[#2F4F97] text-[11px] mt-0.5 font-semibold tracking-wider uppercase">Closed on Fridays</p>
                     </div>
                   </div>
                 </div>
@@ -145,8 +145,8 @@ export default function Contact() {
 
             {/* Right Panel - Form */}
             <div className="w-full lg:w-7/12 p-8 md:p-12">
-              <h2 className="text-2xl font-bold text-[#181d29] mb-8 flex items-center gap-2.5" style={{ fontFamily: "Poppins, sans-serif" }}>
-                <MessageSquare className="h-5 w-5 text-[#ffa300]" />
+              <h2 className="text-2xl font-bold text-[#1E293B] mb-8 flex items-center gap-2.5" style={{ fontFamily: "Poppins, sans-serif" }}>
+                <MessageSquare className="h-5 w-5 text-[#2F4F97]" />
                 Send us a Message
               </h2>
               
@@ -154,22 +154,22 @@ export default function Contact() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-1.5">
                     <Label htmlFor="name" className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Full Name</Label>
-                    <Input name="name" id="name" placeholder="John Doe" required className="h-11 bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] text-[13px] rounded-xl transition-colors shadow-none" />
+                    <Input name="name" id="name" placeholder="John Doe" required className="h-11 bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] text-[13px] rounded-xl transition-colors shadow-none" />
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="email" className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Email Address</Label>
-                    <Input name="email" id="email" type="email" placeholder="john@example.com" required className="h-11 bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] text-[13px] rounded-xl transition-colors shadow-none" />
+                    <Input name="email" id="email" type="email" placeholder="john@example.com" required className="h-11 bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] text-[13px] rounded-xl transition-colors shadow-none" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-1.5">
                     <Label htmlFor="phone" className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Contact Number</Label>
-                    <Input name="phone" id="phone" placeholder="+880 1XXX-XXXXXX" required className="h-11 bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] text-[13px] rounded-xl transition-colors shadow-none" />
+                    <Input name="phone" id="phone" placeholder="+880 1XXX-XXXXXX" required className="h-11 bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] text-[13px] rounded-xl transition-colors shadow-none" />
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="subject" className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Subject</Label>
-                    <Input name="subject" id="subject" placeholder="How can we help?" required className="h-11 bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] text-[13px] rounded-xl transition-colors shadow-none" />
+                    <Input name="subject" id="subject" placeholder="How can we help?" required className="h-11 bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] text-[13px] rounded-xl transition-colors shadow-none" />
                   </div>
                 </div>
 
@@ -179,18 +179,18 @@ export default function Contact() {
                     name="message"
                     id="message" 
                     placeholder="Tell us more about your study goals..." 
-                    className="min-h-[140px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] text-[13px] leading-relaxed rounded-xl transition-colors resize-y shadow-none"
+                    className="min-h-[140px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] text-[13px] leading-relaxed rounded-xl transition-colors resize-y shadow-none"
                     required 
                   />
                 </div>
 
                 <Button 
                   type="submit" 
-                  className="w-full h-12 bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 font-bold text-[14px] rounded-xl transition-all flex items-center justify-center gap-2 mt-2"
+                  className="w-full h-12 bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-bold text-[14px] rounded-xl transition-all flex items-center justify-center gap-2 mt-2"
                   disabled={loading}
                 >
                   {loading ? (
-                    <div className="h-4 w-4 border-2 border-[#181d29]/30 border-t-[#181d29] animate-spin rounded-full" />
+                    <div className="h-4 w-4 border-2 border-[#1E293B]/30 border-t-[#1E293B] animate-spin rounded-full" />
                   ) : (
                     <>
                       <Send className="h-4 w-4" />
@@ -223,7 +223,7 @@ function SocialIcon({ icon: Icon, href }: { icon: any; href: string }) {
       href={href} 
       target="_blank" 
       rel="noopener noreferrer"
-      className="h-9 w-9 bg-white/5 rounded-xl flex items-center justify-center text-gray-300 hover:bg-[#ffa300] hover:text-[#181d29] transition-all border border-white/10 hover:border-[#ffa300]"
+      className="h-9 w-9 bg-white/5 rounded-xl flex items-center justify-center text-white hover:bg-[#2F4F97] hover:text-white transition-all border border-white/10 hover:border-[#2F4F97]"
     >
       <Icon className="h-4 w-4" />
     </a>
@@ -232,9 +232,9 @@ function SocialIcon({ icon: Icon, href }: { icon: any; href: string }) {
 
 function TrustBadge({ icon: Icon, label }: { icon: any; label: string }) {
   return (
-    <div className="bg-white py-3 px-3 border border-[#e8e8e8] flex items-center gap-2.5 shadow-sm rounded-xl justify-center text-center hover:border-[#ffa300]/50 transition-colors cursor-default">
-      <Icon className="h-4 w-4 text-[#ffa300] shrink-0" />
-      <span className="text-[11.5px] font-bold text-[#181d29] tracking-tight leading-tight">{label}</span>
+    <div className="bg-white py-3 px-3 border border-[#e8e8e8] flex items-center gap-2.5 shadow-sm rounded-xl justify-center text-center hover:border-[#2F4F97]/50 transition-colors cursor-default">
+      <Icon className="h-4 w-4 text-[#2F4F97] shrink-0" />
+      <span className="text-[11.5px] font-bold text-[#1E293B] tracking-tight leading-tight">{label}</span>
     </div>
   );
 }

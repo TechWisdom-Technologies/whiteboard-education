@@ -17,7 +17,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: any; bg
   documents_verified: { label: "Docs Verified",      color: "bg-blue-500/10 text-blue-600",        icon: FileCheck,   bgCard: "border-blue-200" },
   university_applied: { label: "University Applied",  color: "bg-indigo-500/10 text-indigo-600",    icon: Send,        bgCard: "border-indigo-200" },
   offer_letter:       { label: "Offer Letter",       color: "bg-purple-500/10 text-purple-600",    icon: Mail,        bgCard: "border-purple-200" },
-  emgs_processing:    { label: "EMGS Processing",    color: "bg-[#ffa300]/10 text-[#ffa300]",      icon: Clock,       bgCard: "border-[#ffa300]/30" },
+  emgs_processing:    { label: "EMGS Processing",    color: "bg-[#2F4F97]/10 text-[#2F4F97]",      icon: Clock,       bgCard: "border-[#2F4F97]/30" },
   visa_approved:      { label: "Visa Approved",      color: "bg-emerald-500/10 text-emerald-600",  icon: CheckCircle, bgCard: "border-emerald-200" },
   travel_ready:       { label: "Travel Ready",       color: "bg-teal-500/10 text-teal-600",        icon: Plane,       bgCard: "border-teal-200" },
   enrolled:           { label: "Enrolled",           color: "bg-green-600/10 text-green-700",      icon: GraduationCap, bgCard: "border-green-200" },
@@ -61,7 +61,7 @@ export default function PartnerOverview() {
     })();
   }, [session]);
 
-  if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="h-8 w-8 animate-spin text-[#ffa300]" /></div>;
+  if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="h-8 w-8 animate-spin text-[#2F4F97]" /></div>;
 
   const total = students.length;
   const inReview = students.filter(s => s.status === "document_review").length;
@@ -70,7 +70,7 @@ export default function PartnerOverview() {
   const rejected = students.filter(s => s.status === "rejected").length;
 
   const kpis = [
-    { label: "Total Students",  value: total,      icon: Users,         accent: "text-[#ffa300]", bg: "bg-[#ffa300]/10" },
+    { label: "Total Students",  value: total,      icon: Users,         accent: "text-[#2F4F97]", bg: "bg-[#2F4F97]/10" },
     { label: "In Review",       value: inReview,    icon: FileSearch,    accent: "text-blue-600",  bg: "bg-blue-500/10" },
     { label: "In Progress",     value: inProgress,  icon: Clock,         accent: "text-indigo-600", bg: "bg-indigo-500/10" },
     { label: "Enrolled",        value: enrolled,    icon: GraduationCap, accent: "text-green-600", bg: "bg-green-500/10" },
@@ -90,7 +90,7 @@ export default function PartnerOverview() {
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-[#181d29]">Dashboard Overview</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-[#1E293B]">Dashboard Overview</h1>
         <p className="text-muted-foreground text-sm mt-0.5">Track your students' application progress through the Malaysian visa journey</p>
       </div>
 
@@ -104,7 +104,7 @@ export default function PartnerOverview() {
               </div>
               <div>
                 <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">{m.label}</p>
-                <p className="text-xl font-extrabold text-[#181d29]">{m.value}</p>
+                <p className="text-xl font-extrabold text-[#1E293B]">{m.value}</p>
               </div>
             </CardContent>
           </Card>
@@ -115,7 +115,7 @@ export default function PartnerOverview() {
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base flex items-center gap-2">
-            <ArrowRight className="h-4 w-4 text-[#ffa300]" />
+            <ArrowRight className="h-4 w-4 text-[#2F4F97]" />
             Application Pipeline
           </CardTitle>
         </CardHeader>
@@ -139,7 +139,7 @@ export default function PartnerOverview() {
                       <Icon className="h-4 w-4" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-lg font-extrabold text-[#181d29] leading-none">{p.count}</p>
+                      <p className="text-lg font-extrabold text-[#1E293B] leading-none">{p.count}</p>
                       <p className="text-[10px] text-muted-foreground font-semibold leading-tight truncate">{p.label}</p>
                     </div>
                   </div>
@@ -170,7 +170,7 @@ export default function PartnerOverview() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2">
-              <BookOpen className="h-4 w-4 text-[#ffa300]" />
+              <BookOpen className="h-4 w-4 text-[#2F4F97]" />
               Recent Students
             </CardTitle>
           </CardHeader>
@@ -181,7 +181,7 @@ export default function PartnerOverview() {
                 return (
                   <div key={s.id} className="flex items-center justify-between gap-3 py-2.5 px-2 border-b last:border-0 hover:bg-muted/30 transition-colors rounded-xl">
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-[#181d29] truncate">{s.full_name}</p>
+                      <p className="text-sm font-semibold text-[#1E293B] truncate">{s.full_name}</p>
                       <p className="text-[11px] text-muted-foreground truncate">{s.target_university || "No university"} · {s.target_course || "No course"} · {s.degree_level}</p>
                     </div>
                     <Badge variant="outline" className={`shrink-0 text-[10px] font-bold uppercase tracking-wider ${st.color}`}>

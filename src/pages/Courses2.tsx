@@ -270,7 +270,7 @@ export default function Courses2() {
                 {/* Mobile Filter Toggle */}
                 <button 
                   onClick={() => setShowFilters(!showFilters)}
-                  className="w-full flex items-center justify-between p-4 lg:hidden text-[#181d29] font-semibold border-b" style={{ borderColor: "#e8e8e8" }}
+                  className="w-full flex items-center justify-between p-4 lg:hidden text-[#1E293B] font-semibold border-b" style={{ borderColor: "#e8e8e8" }}
                 >
                   <div className="flex items-center gap-2">
                     <Filter className="h-4 w-4" />
@@ -281,8 +281,8 @@ export default function Courses2() {
 
                 <div className={`${showFilters ? 'block' : 'hidden lg:block'}`}>
                   {/* Sidebar Header */}
-                  <div className="px-5 py-4 flex items-center justify-between bg-[#fef1da] hidden lg:flex">
-                    <h3 className="font-bold text-[20px] text-[#181d29]">Search by Filter</h3>
+                  <div className="px-5 py-4 flex items-center justify-between bg-[#F8FAFC] hidden lg:flex">
+                    <h3 className="font-bold text-[20px] text-[#1E293B]">Search by Filter</h3>
                   </div>
 
                   {/* Sidebar Body */}
@@ -342,14 +342,14 @@ export default function Courses2() {
                   {/* Apply/Reset Buttons */}
                   <div className="flex items-center gap-3 px-5 pb-5 bg-white">
                     <Button 
-                      className="flex-1 font-bold h-11 text-sm bg-[#ffa300] text-[#181d29] hover:bg-[#e69200]"
+                      className="flex-1 font-bold h-11 text-sm bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97]"
                       onClick={applyFilters}
                     >
                       Apply Filter
                     </Button>
                     <Button 
                       variant="outline"
-                      className="flex-1 font-bold h-11 text-sm border-gray-200 text-[#181d29] hover:bg-gray-50"
+                      className="flex-1 font-bold h-11 text-sm border-gray-200 text-[#1E293B] hover:bg-gray-50"
                       onClick={resetFilters}
                     >
                       Reset Filter
@@ -362,17 +362,17 @@ export default function Courses2() {
             {/* ─── CONTENT AREA ─── */}
             <div className="flex-1 min-w-0">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-gray-200 pb-4 mb-6 gap-4">
-                <h1 className="text-[20px] md:text-[22px] font-bold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>
+                <h1 className="text-[20px] md:text-[22px] font-bold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B" }}>
                   Courses
                 </h1>
                 
                 <div className="flex flex-wrap items-center gap-3 md:gap-4 text-[14px]">
                   <div className="flex items-center gap-2 shrink-0">
-                    <span className="font-semibold text-[#181d29] whitespace-nowrap">Sort By:</span>
+                    <span className="font-semibold text-[#1E293B] whitespace-nowrap">Sort By:</span>
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
-                      className="border border-gray-300 rounded-xl px-3 py-1.5 text-gray-600 bg-white focus:outline-none focus:border-[#ffa300]"
+                      className="border border-gray-300 rounded-xl px-3 py-1.5 text-gray-600 bg-white focus:outline-none focus:border-[#2F4F97]"
                     >
                       <option value="best_match">Best Match (Default)</option>
                       <option value="tuition_low_high">Tuition cost (Low to high)</option>
@@ -390,7 +390,7 @@ export default function Courses2() {
               {paged.length === 0 ? (
                 <div className="text-center py-20" style={{ color: "#999999", fontFamily: "Poppins, sans-serif" }}>
                   <BookOpen className="h-12 w-12 mx-auto mb-4 opacity-40" />
-                  <p className="font-semibold text-lg mb-1" style={{ color: "#515768" }}>No courses found</p>
+                  <p className="font-semibold text-lg mb-1" style={{ color: "#64748B" }}>No courses found</p>
                   <p className="text-sm">Try adjusting your search or filters.</p>
                 </div>
               ) : (
@@ -422,29 +422,29 @@ export default function Courses2() {
                           {/* Middle: Info */}
                           <div className="min-w-0 flex flex-col justify-center space-y-3 md:col-span-1 lg:col-span-1">
                             <Link to={`/courses/${generateSlug(c.title)}`}>
-                              <h3 className="font-semibold hover:underline text-[18px] md:text-[20px] text-[#181d29] leading-tight mb-1">
+                              <h3 className="font-semibold hover:underline text-[18px] md:text-[20px] text-[#1E293B] leading-tight mb-1">
                                 {c.title}
                               </h3>
                             </Link>
 
                             <div className="flex flex-col gap-2.5">
-                              <div className="flex items-center gap-2.5 text-[15px] text-[#515768]">
-                                <Building2 className="h-4 w-4 shrink-0 text-[#515768]" />
-                                <span><span className="font-medium text-[#181d29]">{uni?.name || "Malaysian University"}</span> — {uni?.city || "Malaysia"}</span>
+                              <div className="flex items-center gap-2.5 text-[15px] text-[#64748B]">
+                                <Building2 className="h-4 w-4 shrink-0 text-[#64748B]" />
+                                <span><span className="font-medium text-[#1E293B]">{uni?.name || "Malaysian University"}</span> — {uni?.city || "Malaysia"}</span>
                               </div>
 
-                              <div className="flex items-center gap-2.5 text-[15px] text-[#515768]">
-                                <DollarSign className="h-4 w-4 shrink-0 text-[#515768]" />
+                              <div className="flex items-center gap-2.5 text-[15px] text-[#64748B]">
+                                <DollarSign className="h-4 w-4 shrink-0 text-[#64748B]" />
                                 <span>MYR {Number(c.tuition_fee).toLocaleString()} / Year</span>
                               </div>
 
-                              <div className="flex items-center gap-2.5 text-[15px] text-[#515768]">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mail shrink-0 text-[#515768]"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                              <div className="flex items-center gap-2.5 text-[15px] text-[#64748B]">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mail shrink-0 text-[#64748B]"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                                 <span>{uni && PAID_OFFER_LETTER_UNIS.includes(uni.name) ? "Offer Letter Fees Applies" : "Free Offer Letter"}</span>
                               </div>
 
-                              <div className="flex items-center gap-2.5 text-[15px] text-[#515768]">
-                                <Clock className="h-4 w-4 shrink-0 text-[#515768]" />
+                              <div className="flex items-center gap-2.5 text-[15px] text-[#64748B]">
+                                <Clock className="h-4 w-4 shrink-0 text-[#64748B]" />
                                 <span>{c.duration || "N/A"} (Intake: {Array.isArray(c.intake_months) ? getActiveIntake(c.intake_months) : "Various"})</span>
                               </div>
                             </div>
@@ -455,8 +455,8 @@ export default function Courses2() {
                                 size="sm"
                                 className={`rounded-2xl font-medium text-[13px] h-9 px-4 transition-colors border bg-white ${
                                   isComparing(c.id) 
-                                    ? "bg-[#ffa300]/10 text-[#e69200] border-[#ffa300]" 
-                                    : "text-gray-500 border-gray-200 hover:bg-[#ffa300] hover:text-[#181d29] hover:border-[#ffa300]"
+                                    ? "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]" 
+                                    : "text-gray-500 border-gray-200 hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97]"
                                 }`}
                                 onClick={() => {
                                   if (isComparing(c.id)) {
@@ -480,15 +480,18 @@ export default function Courses2() {
                           {/* Right: Buttons */}
                           <div className="w-full md:col-span-2 lg:col-span-1 flex flex-col gap-3 mt-4 lg:mt-2">
                             <Button
-                              className="w-full h-10 font-bold text-[14px] bg-[#f9c365] text-[#181d29] hover:bg-[#e6a845] rounded-full border border-[#f9c365]"
+                              className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent w-full h-10 font-bold hover: border"
                               onClick={() => navigate(`/apply?courseId=${c.id}`)}
                             >
+
                               Apply Now
                             </Button>
                             <Link to={`/courses/${generateSlug(c.title)}`} className="block w-full">
                               <Button
-                                className="w-full h-10 font-bold text-[14px] border border-gray-800 text-[#181d29] hover:bg-gray-50 rounded-full bg-white"
+                                className="bg-white w-full h-10 font-bold hover:bg-gray-50"
                               >
+
+
                                 Ask Us
                               </Button>
                             </Link>
@@ -502,13 +505,13 @@ export default function Courses2() {
 
             {totalPages > 1 && (
               <div className="flex items-center justify-center gap-1.5 mt-10 mb-4">
-                <button disabled={currentPage === 1} onClick={() => changePage(currentPage - 1)} className="h-9 w-9 flex items-center justify-center border transition-colors disabled:opacity-30" style={{ borderColor: "#cacdd4", borderRadius: "2px", color: "#515768", backgroundColor: "#ffffff" }}><ChevronLeft className="h-4 w-4" /></button>
+                <button disabled={currentPage === 1} onClick={() => changePage(currentPage - 1)} className="h-9 w-9 flex items-center justify-center border transition-colors disabled:opacity-30" style={{ borderColor: "#cacdd4", borderRadius: "2px", color: "#64748B", backgroundColor: "#ffffff" }}><ChevronLeft className="h-4 w-4" /></button>
                 {getPageNumbers().map((page, i) => page === "ellipsis" ? (
-                  <span key={`ellipsis-${i}`} className="h-9 w-9 flex items-center justify-center text-sm font-medium tracking-[0.2em]" style={{ color: "#515768" }}>...</span>
+                  <span key={`ellipsis-${i}`} className="h-9 w-9 flex items-center justify-center text-sm font-medium tracking-[0.2em]" style={{ color: "#64748B" }}>...</span>
                 ) : (
-                  <button key={page} onClick={() => changePage(page)} className="h-9 w-9 flex items-center justify-center border text-sm font-medium transition-colors" style={{ borderRadius: "2px", fontFamily: "Poppins, sans-serif", backgroundColor: currentPage === page ? "#ffa300" : "#ffffff", color: currentPage === page ? "#181d29" : "#515768", borderColor: currentPage === page ? "#ffa300" : "#cacdd4" }}>{page}</button>
+                  <button key={page} onClick={() => changePage(page)} className="h-9 w-9 flex items-center justify-center border text-sm font-medium transition-colors" style={{ borderRadius: "2px", fontFamily: "Poppins, sans-serif", backgroundColor: currentPage === page ? "#2F4F97" : "#ffffff", color: currentPage === page ? "#1E293B" : "#64748B", borderColor: currentPage === page ? "#2F4F97" : "#cacdd4" }}>{page}</button>
                 ))}
-                <button disabled={currentPage === totalPages} onClick={() => changePage(currentPage + 1)} className="h-9 w-9 flex items-center justify-center border transition-colors disabled:opacity-30" style={{ borderColor: "#cacdd4", borderRadius: "2px", color: "#515768", backgroundColor: "#ffffff" }}><ChevronRight className="h-4 w-4" /></button>
+                <button disabled={currentPage === totalPages} onClick={() => changePage(currentPage + 1)} className="h-9 w-9 flex items-center justify-center border transition-colors disabled:opacity-30" style={{ borderColor: "#cacdd4", borderRadius: "2px", color: "#64748B", backgroundColor: "#ffffff" }}><ChevronRight className="h-4 w-4" /></button>
               </div>
             )}
             </div>

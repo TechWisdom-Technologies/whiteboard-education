@@ -54,7 +54,7 @@ const statusMap: Record<string, { label: string; class: string }> = {
   documents_verified: { label: "Documents Verified", class: "bg-blue-500/10 text-blue-600 border-blue-500/30" },
   university_applied: { label: "University Applied", class: "bg-indigo-500/10 text-indigo-600 border-indigo-500/30" },
   offer_letter: { label: "Offer Letter", class: "bg-purple-500/10 text-purple-600 border-purple-500/30" },
-  emgs_processing: { label: "EMGS Processing", class: "bg-[#ffa300]/10 text-[#ffa300] border-[#ffa300]/20" },
+  emgs_processing: { label: "EMGS Processing", class: "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]/20" },
   visa_approved: { label: "Visa Approved", class: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30" },
   travel_ready: { label: "Travel Ready", class: "bg-teal-500/10 text-teal-600 border-teal-500/30" },
   enrolled: { label: "Enrolled", class: "bg-green-600/10 text-green-700 border-green-600/30" },
@@ -249,7 +249,7 @@ export default function PartnerStudents() {
           )}
           <Dialog open={addOpen} onOpenChange={setAddOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 w-full sm:w-auto">
+              <Button className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 w-full sm:w-auto">
                 <UserPlus className="h-4 w-4 mr-2" />Add Student
               </Button>
             </DialogTrigger>
@@ -313,7 +313,7 @@ export default function PartnerStudents() {
                 <div><Label>Preferred Intake</Label><Input value={form.intake_month} onChange={e => setForm(f => ({ ...f, intake_month: e.target.value }))} placeholder="e.g. September 2026" /></div>
               </div>
 
-              <Button className="w-full bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90" onClick={handleAdd} disabled={submitting}>
+              <Button className="w-full bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90" onClick={handleAdd} disabled={submitting}>
                 {submitting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UserPlus className="h-4 w-4 mr-2" />}
                 Add Student
               </Button>
@@ -369,7 +369,7 @@ export default function PartnerStudents() {
                       ref={(row) => {
                         studentRowRefs.current[s.id] = row;
                       }}
-                      className={highlightedStudentId === s.id ? "bg-[#ffa300]/10 ring-1 ring-[#ffa300]/40" : undefined}
+                      className={highlightedStudentId === s.id ? "bg-[#2F4F97]/10 ring-1 ring-[#2F4F97]/40" : undefined}
                     >
                       <TableCell className="text-center px-0">
                         <Checkbox 

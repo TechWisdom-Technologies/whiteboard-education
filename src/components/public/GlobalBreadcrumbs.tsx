@@ -28,7 +28,7 @@ export function GlobalBreadcrumbs() {
     <div className="bg-white w-full z-40 relative">
       <div className="container mx-auto px-4 lg:px-6 py-5">
         <nav className="flex flex-wrap items-center text-[12px] text-gray-500 font-medium">
-          <Link to="/" className="hover:text-[#ffa300] transition-colors flex items-center shrink-0">
+          <Link to="/" className="hover:text-[#2F4F97] transition-colors flex items-center shrink-0">
             <Home className="h-3.5 w-3.5 mr-1" />
             Home
           </Link>
@@ -41,9 +41,9 @@ export function GlobalBreadcrumbs() {
               <div key={to} className="flex items-center shrink-0">
                 <ChevronRight className="h-3.5 w-3.5 mx-1.5 text-gray-400" />
                 {last ? (
-                  <span className="text-[#181d29] font-semibold truncate max-w-[200px] sm:max-w-xs">{formatSegment(value)}</span>
+                  <span className="text-[#1E293B] font-semibold truncate max-w-[200px] sm:max-w-xs">{formatSegment(value)}</span>
                 ) : (
-                  <Link to={to} className="hover:text-[#ffa300] transition-colors">
+                  <Link to={to} className="hover:text-[#2F4F97] transition-colors">
                     {formatSegment(value)}
                   </Link>
                 )}
