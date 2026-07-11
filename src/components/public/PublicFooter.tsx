@@ -18,7 +18,7 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
               <div className="flex items-center gap-2.5">
                 <img src="/logo.png" alt="Whiteboard Education" className="h-8 w-auto object-contain" />
               </div>
-              <p className="text-[13.5px] font-light leading-relaxed text-[#64748B]">
+              <p className="text-[13.5px] font-light leading-relaxed text-[#334155]">
                 Expert guidance for international students seeking quality education in Malaysia.
               </p>
               <div className="flex gap-2.5 pt-1">
@@ -34,7 +34,7 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
               <h4 className="text-sm font-semibold text-[#1E293B] tracking-widest uppercase mb-4" style={{ fontFamily: "Poppins, sans-serif" }}>
                 Explore
               </h4>
-              <ul className="space-y-2.5 text-[13px] text-[#64748B]">
+              <ul className="space-y-2.5 text-[13px] text-[#334155]">
                 <li><Link to="/universities" className="hover:text-[#2F4F97] transition-colors font-normal">Universities</Link></li>
                 <li><Link to="/courses" className="hover:text-[#2F4F97] transition-colors font-normal">Courses</Link></li>
                 <li><Link to="/language-centers" className="hover:text-[#2F4F97] transition-colors font-normal">Language Centers</Link></li>
@@ -47,7 +47,7 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
               <h4 className="text-sm font-semibold text-[#1E293B] tracking-widest uppercase mb-4" style={{ fontFamily: "Poppins, sans-serif" }}>
                 Other Resources
               </h4>
-              <ul className="space-y-2.5 text-[13px] text-[#64748B]">
+              <ul className="space-y-2.5 text-[13px] text-[#334155]">
                 <li><Link to="/blog" className="hover:text-[#2F4F97] transition-colors font-normal">Blog</Link></li>
                 <li><Link to="/eligibility" className="hover:text-[#2F4F97] transition-colors font-normal">Eligibility Test</Link></li>
                 <li><Link to="/compare" className="hover:text-[#2F4F97] transition-colors font-normal">Compare Universities</Link></li>
@@ -59,7 +59,7 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
               <h4 className="text-sm font-semibold text-[#1E293B] tracking-widest uppercase mb-4" style={{ fontFamily: "Poppins, sans-serif" }}>
                 Legal
               </h4>
-              <ul className="space-y-2.5 text-[13px] text-[#64748B]">
+              <ul className="space-y-2.5 text-[13px] text-[#334155]">
                 <li><Link to="/help" className="hover:text-[#2F4F97] transition-colors font-normal">Privacy Policy</Link></li>
                 <li><Link to="/help" className="hover:text-[#2F4F97] transition-colors font-normal">Terms & Conditions</Link></li>
               </ul>
@@ -70,7 +70,7 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
               <h4 className="text-sm font-semibold text-[#1E293B] tracking-widest uppercase mb-4" style={{ fontFamily: "Poppins, sans-serif" }}>
                 Connect with Us
               </h4>
-              <div className="space-y-2.5 text-[13px] text-[#64748B]">
+              <div className="space-y-2.5 text-[13px] text-[#334155]">
                 <div className="flex items-start gap-2">
                   <MapPin className="h-4 w-4 text-[#2F4F97] shrink-0 mt-0.5" />
                   <span>Kuala Lumpur, Malaysia</span>
