@@ -34,7 +34,7 @@ export default function Blog() {
       
       {/* Page Header */}
       <div className="bg-white border-b border-gray-200/60">
-        <div className="container mx-auto px-4 py-12 md:py-16 text-center max-w-3xl">
+        <div className="w-full max-w-[1640px] mx-auto px-4 py-12 md:py-16 text-center max-w-3xl">
           <h1 className="text-3xl md:text-[40px] font-extrabold mb-4" style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B", lineHeight: 1.2 }}>
             Study Abroad <span className="text-[#2F4F97]">Insights & Guides</span>
           </h1>
@@ -44,7 +44,7 @@ export default function Blog() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12 md:py-16 flex-1">
+      <div className="w-full max-w-[1640px] mx-auto px-4 py-12 md:py-16 flex-1">
         {isLoading ? (
           <LoadingScreen label="Loading articles" sublabel="Preparing stories and guides" className="py-16" />
         ) : sorted.length === 0 ? (

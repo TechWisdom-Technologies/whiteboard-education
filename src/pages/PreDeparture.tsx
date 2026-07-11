@@ -77,14 +77,14 @@ export default function PreDeparture() {
       <MegaMenu />
       <main className="flex-1">
         <section className="intro-surface py-16">
-          <div className="container mx-auto px-4 text-center">
+          <div className="w-full max-w-[1640px] mx-auto px-4 text-center">
             <Plane className="h-12 w-12 mx-auto mb-4 text-[#2F4F97]" />
             <h1 className="text-4xl font-extrabold mb-3">Pre-Departure Checklist</h1>
             <p className="text-primary-foreground/70 max-w-xl mx-auto">Track everything you need before your flight. Complete all items to be 100% ready!</p>
           </div>
         </section>
 
-        <div className="container mx-auto px-4 py-10 max-w-3xl">
+        <div className="w-full max-w-[1640px] mx-auto px-4 py-10 max-w-3xl">
           {/* Progress */}
           <Card className="mb-8">
             <CardContent className="p-6">

@@ -8,7 +8,7 @@ interface VirtualTourSectionProps {
 export function VirtualTourSection({ universityName }: VirtualTourSectionProps) {
   return (
     <section className="bg-foreground text-background py-16 mt-8 rounded-xl overflow-hidden mx-4 lg:mx-0">
-      <div className="container mx-auto px-6">
+      <div className="w-full max-w-[1640px] mx-auto px-6">
         <h2 className="text-2xl font-extrabold mb-2 text-center">360° Virtual Campus Tour</h2>
         <p className="text-background/60 text-center mb-8 text-sm">Explore {universityName} from anywhere in the world</p>
 

@@ -97,39 +97,33 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
 
   return (
     <>
-      <header className={`${disableSticky ? 'relative' : 'sticky top-0'} z-50 w-full bg-white border-b-[0.5px] border-gray-200`}>
-        {/* Top Utility Bar */}
-      <div className="bg-[#1E293B] text-white py-2 border-b border-white/5">
-        <div className="container mx-auto flex justify-end gap-6 px-4 lg:px-6">
+      {/* Top Utility Bar - Not Sticky */}
+      <div className="bg-[#1E293B] text-white py-2">
+        <div className="w-full max-w-[1640px] mx-auto flex justify-end gap-6 px-4 lg:px-8">
           <Link 
             to="/partner" 
-            className={cn(
-              "text-[12px] font-semibold hover:text-[#2F4F97] transition-colors flex items-center gap-1.5 tracking-wide",
-              isRouteActive("/partner") && "text-[#2F4F97]"
-            )}
+            className="text-[12px] font-semibold hover:text-gray-300 transition-colors flex items-center gap-1.5 tracking-wide pr-3"
           >
             <Handshake className="h-3 w-3" /> APPLY FOR PARTNERSHIP
           </Link>
           {!user ? (
             <Link 
               to="/login" 
-              className={cn(
-                "text-[12px] font-semibold hover:text-[#2F4F97] transition-colors flex items-center gap-1.5 tracking-wide",
-                isRouteActive("/login") && "text-[#2F4F97]"
-              )}
+              className="text-[12px] font-semibold hover:text-gray-300 transition-colors flex items-center gap-1.5 tracking-wide pr-3"
             >
               <LogIn className="h-3 w-3" /> PARTNER LOGIN
             </Link>
           ) : (
             <div className="flex items-center gap-3">
-              <span className="text-[11px] font-medium text-gray-400 uppercase tracking-tight">Logged in as {user.email}</span>
+              <span className="text-[11px] font-medium text-gray-400 uppercase tracking-tight pr-3">Logged in as {user.email}</span>
             </div>
           )}
         </div>
       </div>
 
-      <div className="bg-white">
-        <div className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-6">
+      <header className={`${disableSticky ? 'relative' : 'sticky top-0'} z-50 w-full bg-[#F8FAFC]`}>
+        <div className="bg-[#F8FAFC]">
+        <div className="w-full max-w-[1640px] mx-auto flex h-20 items-center justify-between px-4 lg:px-8">
           {/* Brand - Left */}
           <Link to="/" className="flex items-center gap-3 shrink-0 group">
             <img src="/logo.png" alt="Whiteboard Education" className="h-6 md:h-8 w-auto object-contain" />
@@ -137,7 +131,7 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
 
           {/* Desktop Nav - Right Aligned */}
           <div className="hidden lg:flex items-center gap-1">
-            <nav className="flex items-center gap-1 mr-2">
+            <nav className="flex items-center gap-1">
               <NavItem to="/universities" icon={GraduationCap}>Universities</NavItem>
               <NavItem to="/courses" icon={BookOpen}>Courses</NavItem>
               <NavItem to="/language-centers" icon={Languages}>Language</NavItem>
@@ -274,7 +268,6 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
           </div>
         </div>
 
-      <div className="h-[2px] w-full bg-[#2F4F97]" />
 
     </header>
     <GlobalBreadcrumbs />

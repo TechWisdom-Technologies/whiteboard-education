@@ -71,7 +71,7 @@ export default function BlogPost() {
           </div>
         )}
         
-        <div className="relative z-10 container mx-auto px-4 pb-12 md:pb-16 max-w-4xl">
+        <div className="relative z-10 w-full max-w-[1640px] mx-auto px-4 pb-12 md:pb-16 max-w-4xl">
           <Link to="/blog" className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#2F4F97] hover:text-[#e59200] transition-colors mb-6 uppercase tracking-wider">
             <ArrowLeft className="h-4 w-4" /> Back to Insights
           </Link>
@@ -117,7 +117,7 @@ export default function BlogPost() {
       </div>
 
       <div className="bg-white">
-        <div className="container mx-auto px-4 max-w-4xl">
+        <div className="w-full max-w-[1640px] mx-auto px-4 max-w-4xl">
           {/* Article Content */}
           <article className="py-12 md:py-16">
             <div className="prose-like max-w-none">
@@ -137,7 +137,7 @@ export default function BlogPost() {
       {/* Related Articles */}
       {related.length > 0 && (
         <section className="bg-[#f7f8fa] py-20 border-t border-gray-200/60">
-          <div className="container mx-auto px-4 max-w-6xl">
+          <div className="w-full max-w-[1640px] mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-semibold text-[#1E293B] mb-10 text-center" style={{ fontFamily: "Poppins, sans-serif" }}>
               Keep Reading
             </h2>

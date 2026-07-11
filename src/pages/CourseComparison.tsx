@@ -52,7 +52,7 @@ export default function CourseComparison() {
         <MegaMenu />
       </div>
 
-      <main className="flex-1 container mx-auto px-4 pb-16 max-w-6xl">
+      <main className="flex-1 w-full max-w-[1640px] mx-auto px-4 pb-16">
         {selectedCourses.length === 0 ? (
           <div className="text-center py-20">
             <h2 className="text-2xl font-bold mb-4" style={{ fontFamily: "Poppins, sans-serif" }}>No Courses Selected</h2>

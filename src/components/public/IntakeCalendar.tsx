@@ -50,7 +50,7 @@ export function IntakeCalendar() {
 
   return (
     <section className="py-16 bg-muted/30">
-      <div className="container mx-auto px-4">
+      <div className="w-full max-w-[1640px] mx-auto px-4">
         <div className="text-center mb-10">
           <Badge className="bg-[#2F4F97]/10 text-[#2F4F97] mb-3"><Calendar className="h-3 w-3 mr-1" /> Upcoming Deadlines</Badge>
           <h2 className="text-3xl font-extrabold mb-2">Intake & Application Deadlines</h2>

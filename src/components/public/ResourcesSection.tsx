@@ -27,7 +27,7 @@ export function ResourcesSection() {
 
   return (
     <section className="py-16">
-      <div className="container mx-auto px-4">
+      <div className="w-full max-w-[1640px] mx-auto px-4">
         <div className="text-center mb-10">
           <Badge className="bg-[#2F4F97]/10 text-[#2F4F97] mb-3"><FileText className="h-3 w-3 mr-1" /> Free Resources</Badge>
           <h2 className="text-3xl font-bold mb-2" style={{ fontFamily: "'Poppins', sans-serif", color: "#1E293B" }}>Downloadable Guides & Checklists</h2>

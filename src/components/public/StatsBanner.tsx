@@ -85,7 +85,7 @@ export function StatsBanner() {
 
   return (
     <section className="stats-banner-section !py-16">
-      <div className="container mx-auto px-4 max-w-6xl relative">
+      <div className="w-full max-w-[1640px] mx-auto px-4 relative">
         {/* Section header */}
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-semibold text-[#1E293B] mb-2">

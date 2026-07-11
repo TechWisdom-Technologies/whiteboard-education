@@ -258,7 +258,7 @@ export default function PartnerProfile() {
   ] as const;
 
   return (
-    <div className="space-y-6 max-w-5xl animate-fade-in pb-10">
+    <div className="space-y-6 animate-fade-in pb-10">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-[#1E293B]">My Profile</h1>
         <p className="text-muted-foreground text-sm mt-1">Manage your account, agency details, and security settings.</p>

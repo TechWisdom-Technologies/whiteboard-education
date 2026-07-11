@@ -36,7 +36,7 @@ export function WhyMalaysiaSection() {
 
   return (
     <section className="py-8 md:py-16 bg-gray-50">
-      <div className="container mx-auto px-4 max-w-6xl">
+      <div className="w-full max-w-[1640px] mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-semibold mb-2">Why Study in Malaysia?</h2>
           <p className="text-sm text-[#64748B] max-w-2xl mx-auto">

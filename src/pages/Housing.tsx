@@ -101,7 +101,7 @@ export default function Housing() {
       
       {/* Page Header */}
       <div className="bg-white border-b border-gray-200/60">
-        <div className="container mx-auto px-4 py-12 md:py-16 text-center max-w-3xl">
+        <div className="w-full max-w-[1640px] mx-auto px-4 py-12 md:py-16 text-center max-w-3xl">
           <div className="h-16 w-16 bg-[#2F4F97]/15 rounded-full flex items-center justify-center mx-auto mb-6">
             <Home className="h-8 w-8 text-[#2F4F97]" />
           </div>
@@ -115,7 +115,7 @@ export default function Housing() {
       </div>
 
       <main className="flex-1">
-        <div className="container mx-auto px-4 py-8 md:py-12">
+        <div className="w-full max-w-[1640px] mx-auto px-4 py-8 md:py-12">
           {/* Top Filters Row */}
           <div className="bg-white p-5 border border-gray-200/60 rounded-2xl flex flex-col lg:flex-row items-stretch lg:items-center gap-6 shadow-sm mb-8">
             <div className="w-full lg:w-[240px]">

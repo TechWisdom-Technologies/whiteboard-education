@@ -26,7 +26,7 @@ export function GlobalBreadcrumbs() {
 
   return (
     <div className="bg-white w-full z-40 relative">
-      <div className="container mx-auto px-4 lg:px-6 py-5">
+      <div className="w-full max-w-[1640px] mx-auto px-4 lg:px-8 py-5">
         <nav className="flex flex-wrap items-center text-[12px] text-gray-500 font-medium">
           <Link to="/" className="hover:text-[#2F4F97] transition-colors flex items-center shrink-0">
             <Home className="h-3.5 w-3.5 mr-1" />

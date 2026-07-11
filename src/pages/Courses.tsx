@@ -123,7 +123,9 @@ export default function Courses() {
 
   const [selectedLevel, setSelectedLevel] = useState<string>("All Levels");
   const [selectedArea, setSelectedArea] = useState<string>("All Areas");
-  const [selectedUniId, setSelectedUniId] = useState<string>("all");
+  const [selectedLocation, setSelectedLocation] = useState<string>("All States");
+  const [selectedIntake, setSelectedIntake] = useState<string>("All Intakes");
+  const [selectedFee, setSelectedFee] = useState<string>("All Fees");
   const [currentPage, setCurrentPage] = useState(1);
   
   const gridRef = useRef<HTMLDivElement>(null);
@@ -132,7 +134,9 @@ export default function Courses() {
     search: searchParams.get("search") || "",
     selectedLevel: "All Levels",
     selectedArea: "All Areas",
-    selectedUniId: "all"
+    selectedLocation: "All States",
+    selectedIntake: "All Intakes",
+    selectedFee: "All Fees"
   });
 
   const applyFilters = () => {
@@ -149,12 +153,16 @@ export default function Courses() {
     setSearch("");
     setSelectedLevel("All Levels");
     setSelectedArea("All Areas");
-    setSelectedUniId("all");
+    setSelectedLocation("All States");
+    setSelectedIntake("All Intakes");
+    setSelectedFee("All Fees");
     setAppliedFilters({
       search: "",
       selectedLevel: "All Levels",
       selectedArea: "All Areas",
-      selectedUniId: "all"
+      selectedLocation: "All States",
+    selectedIntake: "All Intakes",
+    selectedFee: "All Fees"
     });
     setCurrentPage(1);
   };
@@ -175,7 +183,7 @@ export default function Courses() {
   };
 
   const filtered = useMemo(() => {
-    const { search, selectedLevel, selectedArea, selectedUniId } = appliedFilters;
+    const { search, selectedLevel, selectedArea, selectedLocation, selectedIntake, selectedFee } = appliedFilters;
     return courses.filter((c: any) => {
       const titleLower = c.title?.toLowerCase() || "";
       let effLevel = c.degree_level || "";
@@ -186,7 +194,7 @@ export default function Courses() {
 
       if (search && !titleLower.includes(search.toLowerCase())) return false;
       if (selectedLevel !== "All Levels" && !effLevel.toLowerCase().includes(selectedLevel.toLowerCase())) return false;
-      if (selectedUniId !== "all" && String(c.university_id) !== selectedUniId) return false;
+      // Location, Intake, and Fee filtering can be added here once data model supports it
       
       if (selectedArea !== "All Areas") {
         const keywords = AREA_KEYWORDS[selectedArea];
@@ -247,7 +255,7 @@ export default function Courses() {
       <MegaMenu />
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 pt-10 pb-16 flex-1 w-full" ref={gridRef}>
+      <div className="w-full max-w-[1640px] mx-auto px-4 lg:px-8 pt-10 pb-16 flex-1" ref={gridRef}>
         {isLoading ? (
           <LoadingScreen label="Loading courses" sublabel="Finding top programs" className="py-12" />
         ) : (
@@ -255,21 +263,21 @@ export default function Courses() {
             {/* ─── SIDEBAR ─── */}
             <aside className="lg:w-[320px] xl:w-[340px] shrink-0">
               <div
-                className="overflow-hidden lg:sticky lg:top-[152px] border"
+                className="overflow-hidden border"
                 style={{
                   borderColor: "#e8e8e8",
                   borderRadius: "12px",
                 }}
               >
                 {/* Sidebar Header */}
-                <div className="px-5 py-4 flex items-center justify-between" style={{ backgroundColor: "#F8FAFC" }}>
+                <div className="px-5 py-[22px] flex items-center justify-between" style={{ backgroundColor: "#2F4F97" }}>
                   <h3
-                    className="font-bold"
+                    className="font-semibold"
                     style={{
                       fontFamily: "Poppins, sans-serif",
                       fontSize: "20px",
                       lineHeight: "24px",
-                      color: "#1E293B",
+                      color: "#ffffff",
                     }}
                   >
                     Search by Filter
@@ -279,9 +287,11 @@ export default function Courses() {
                       setSearch("");
                       setSelectedLevel("All Levels");
                       setSelectedArea("All Areas");
-                      setSelectedUniId("all");
+                      setSelectedLocation("All States");
+    setSelectedIntake("All Intakes");
+    setSelectedFee("All Fees");
                     }}
-                    className="text-[#999999] hover:text-[#1E293B] transition-colors"
+                    className="text-white/70 hover:text-white transition-colors"
                     title="Reset Filters"
                   >
                     <RotateCcw className="h-5 w-5" />
@@ -292,9 +302,10 @@ export default function Courses() {
                 <div className="bg-white px-5 py-5 space-y-4">
                   {/* Search Input */}
                   <div>
-                    <div className="relative">
+                      <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Search by Program Title</label>
+                      <div className="relative">
                       <Input
-                        placeholder="Search by Course Title"
+                        placeholder="Enter Program Title"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="pr-10 h-11"
@@ -315,7 +326,8 @@ export default function Courses() {
 
                   {/* Degree Level */}
                   <div>
-                    <Select value={selectedLevel} onValueChange={setSelectedLevel} modal={false}>
+                      <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Level of Interest</label>
+                      <Select value={selectedLevel} onValueChange={setSelectedLevel} modal={false}>
                       <SelectTrigger
                         className="h-11"
                         style={{
@@ -326,7 +338,7 @@ export default function Courses() {
                           color: selectedLevel === "All Levels" ? "#999999" : "#444444",
                         }}
                       >
-                        <SelectValue placeholder="Degree Level" />
+                        <SelectValue placeholder="Select level of interest" />
                       </SelectTrigger>
                       <SelectContent>
                         {DEGREE_LEVELS.map((l) => (
@@ -338,7 +350,8 @@ export default function Courses() {
 
                   {/* Study Area */}
                   <div>
-                    <Select value={selectedArea} onValueChange={setSelectedArea} modal={false}>
+                      <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Field of Study</label>
+                      <Select value={selectedArea} onValueChange={setSelectedArea} modal={false}>
                       <SelectTrigger
                         className="h-11"
                         style={{
@@ -349,7 +362,7 @@ export default function Courses() {
                           color: selectedArea === "All Areas" ? "#999999" : "#444444",
                         }}
                       >
-                        <SelectValue placeholder="Study Area" />
+                        <SelectValue placeholder="Select field of study" />
                       </SelectTrigger>
                       <SelectContent>
                         {STUDY_AREAS.map((a) => (
@@ -359,9 +372,10 @@ export default function Courses() {
                     </Select>
                   </div>
 
-                  {/* University Filter */}
+                  {/* Locations Filter */}
                   <div>
-                    <Select value={selectedUniId} onValueChange={setSelectedUniId} modal={false}>
+                    <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Locations</label>
+                    <Select value={selectedLocation} onValueChange={setSelectedLocation} modal={false}>
                       <SelectTrigger
                         className="h-11"
                         style={{
@@ -369,18 +383,87 @@ export default function Courses() {
                           borderRadius: "12px",
                           fontFamily: "Poppins, sans-serif",
                           fontSize: "14px",
-                          color: selectedUniId === "all" ? "#999999" : "#444444",
+                          color: selectedLocation === "All States" ? "#999999" : "#444444",
                         }}
                       >
-                        <SelectValue placeholder="Select University" />
+                        <SelectValue placeholder="Select a state" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">All Universities</SelectItem>
-                        {universities.map((u: any) => (
-                          <SelectItem key={u.id} value={String(u.id)}>
-                            {u.name}
-                          </SelectItem>
-                        ))}
+                        <SelectItem value="All States">All States</SelectItem>
+                        <SelectItem value="Johor">Johor</SelectItem>
+                        <SelectItem value="Kedah">Kedah</SelectItem>
+                        <SelectItem value="Kelantan">Kelantan</SelectItem>
+                        <SelectItem value="Kuala Lumpur">Kuala Lumpur</SelectItem>
+                        <SelectItem value="Labuan">Labuan</SelectItem>
+                        <SelectItem value="Malacca">Malacca</SelectItem>
+                        <SelectItem value="Negeri Sembilan">Negeri Sembilan</SelectItem>
+                        <SelectItem value="Pahang">Pahang</SelectItem>
+                        <SelectItem value="Penang">Penang</SelectItem>
+                        <SelectItem value="Perak">Perak</SelectItem>
+                        <SelectItem value="Perlis">Perlis</SelectItem>
+                        <SelectItem value="Putrajaya">Putrajaya</SelectItem>
+                        <SelectItem value="Sabah">Sabah</SelectItem>
+                        <SelectItem value="Sarawak">Sarawak</SelectItem>
+                        <SelectItem value="Selangor">Selangor</SelectItem>
+                        <SelectItem value="Terengganu">Terengganu</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Intake Filter */}
+                  <div>
+                    <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Intake</label>
+                    <Select value={selectedIntake} onValueChange={setSelectedIntake} modal={false}>
+                      <SelectTrigger
+                        className="h-11"
+                        style={{
+                          borderColor: "#cacdd4",
+                          borderRadius: "12px",
+                          fontFamily: "Poppins, sans-serif",
+                          fontSize: "14px",
+                          color: selectedIntake === "All Intakes" ? "#999999" : "#444444",
+                        }}
+                      >
+                        <SelectValue placeholder="April" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="All Intakes">All Intakes</SelectItem>
+                        <SelectItem value="January">January</SelectItem>
+                        <SelectItem value="February">February</SelectItem>
+                        <SelectItem value="March">March</SelectItem>
+                        <SelectItem value="April">April</SelectItem>
+                        <SelectItem value="May">May</SelectItem>
+                        <SelectItem value="June">June</SelectItem>
+                        <SelectItem value="July">July</SelectItem>
+                        <SelectItem value="August">August</SelectItem>
+                        <SelectItem value="September">September</SelectItem>
+                        <SelectItem value="October">October</SelectItem>
+                        <SelectItem value="November">November</SelectItem>
+                        <SelectItem value="December">December</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Offer Letter Fee Filter */}
+                  <div>
+                    <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Offer Letter Fee</label>
+                    <Select value={selectedFee} onValueChange={setSelectedFee} modal={false}>
+                      <SelectTrigger
+                        className="h-11"
+                        style={{
+                          borderColor: "#cacdd4",
+                          borderRadius: "12px",
+                          fontFamily: "Poppins, sans-serif",
+                          fontSize: "14px",
+                          color: selectedFee === "All Fees" ? "#999999" : "#444444",
+                        }}
+                      >
+                        <SelectValue placeholder="Select offer letter fee type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="All Fees">All Fees</SelectItem>
+                        <SelectItem value="Free">Free</SelectItem>
+                        <SelectItem value="Paid">Paid</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -396,7 +479,7 @@ export default function Courses() {
                   </Button>
                   <Button 
                     variant="outline"
-                    className="flex-1 font-bold h-11 text-sm border-gray-200 text-[#1E293B] hover:bg-gray-50"
+                    className="flex-1 font-bold h-11 text-sm border-gray-200 text-[#1E293B] hover:bg-[#2F4F97] hover:text-white transition-colors"
                     onClick={resetFilters}
                   >
                     Reset Filter
@@ -408,7 +491,7 @@ export default function Courses() {
             {/* ─── CONTENT AREA ─── */}
             <div className="flex-1 min-w-0">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-gray-200 pb-4 mb-6 gap-4">
-                <h1 className="text-[20px] md:text-[22px] font-bold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B" }}>
+                <h1 className="text-[20px] md:text-[22px] font-semibold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B" }}>
                   Courses
                 </h1>
                 
@@ -454,7 +537,7 @@ export default function Courses() {
                         key={c.id}
                         className="bg-white p-5 md:p-6 lg:p-8 border border-gray-200 rounded-3xl"
                       >
-                        <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] lg:grid-cols-[180px_1fr_140px] gap-6 lg:gap-8 items-center lg:items-start">
+                        <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] lg:grid-cols-[180px_1fr_140px] gap-6 lg:gap-8 items-center">
                           {/* Left: Logo */}
                           <Link
                             to={`/courses/${generateSlug(c.title)}`}
@@ -538,9 +621,9 @@ export default function Courses() {
                           </div>
 
                           {/* Right: Buttons */}
-                          <div className="w-full md:col-span-2 lg:col-span-1 flex flex-col gap-3 mt-4 lg:mt-2">
+                          <div className="w-full md:col-span-2 lg:col-span-1 flex flex-col gap-3 mt-4 lg:mt-0">
                             <Button
-                              className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent h-9 px-3 font-bold"
+                              className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-xl border-2 border-[#1E293B] h-10 px-2.5 font-medium"
                               onClick={() => navigate(`/apply?courseId=${c.id}`)}
                             >
                               Apply Now
@@ -548,7 +631,7 @@ export default function Courses() {
                             <Link to={`/courses/${generateSlug(c.title)}`} className="block w-full">
                               <Button
                                 variant="outline"
-                                className="bg-[#EEF4FF] text-[#2F4F97] border-[#2F4F97]/20 h-9 px-3 font-bold w-full hover:bg-[#EEF4FF]/80"
+                                className="bg-white text-[#2F4F97] hover:text-[#2F4F97] border-2 border-[#1E293B] rounded-xl h-10 px-2.5 font-medium w-full hover:bg-gray-50"
                               >
                                 Ask Us
                               </Button>

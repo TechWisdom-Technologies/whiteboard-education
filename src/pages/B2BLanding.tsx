@@ -106,7 +106,7 @@ export default function B2BLanding() {
         {/* Why Partner - 4 boxes in a single row with watermark background images only */}
         <section className="py-16 bg-white relative overflow-hidden">
           <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#2F4F97]/5 rounded-full blur-[80px] pointer-events-none" />
-          <div className="container mx-auto px-4 max-w-6xl relative z-10">
+          <div className="w-full max-w-[1640px] mx-auto px-4 relative z-10">
             <div className="text-center mb-12">
               <h2 className="text-2xl md:text-3xl font-semibold text-[#1E293B] mb-2">Why Partner With Whiteboard?</h2>
               <p className="text-[#64748B] max-w-2xl mx-auto text-sm">We are Malaysia's on-the-ground education experts. You handle your market - we handle Malaysia.</p>
@@ -128,7 +128,7 @@ export default function B2BLanding() {
 
         {/* How The Partnership Works - cards with vector images */}
         <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4 max-w-6xl">
+          <div className="w-full max-w-[1640px] mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-2xl md:text-3xl font-semibold mb-2">How The Partnership Works</h2>
               <p className="text-sm text-[#64748B] max-w-2xl mx-auto">A simple, transparent process from registration to successful student placement.</p>
@@ -168,7 +168,7 @@ export default function B2BLanding() {
           <div className="absolute inset-0 z-0 bg-[#1E293B]/90 mix-blend-multiply" />
           <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#1E293B]/95 via-[#1E293B]/80 to-transparent" />
           <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-[#2F4F97]/20 to-transparent mix-blend-overlay z-0 pointer-events-none" />
-          <div className="container relative z-10 mx-auto px-4 max-w-6xl">
+          <div className="container relative z-10 mx-auto px-4">
             <div className="text-center mb-12">
               <div className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl bg-[#2F4F97]/20 border border-[#2F4F97]/30 text-[#2F4F97] mb-6 backdrop-blur-sm">
                 <HeadphonesIcon className="h-4 w-4" />
@@ -193,7 +193,7 @@ export default function B2BLanding() {
 
         {/* FAQ - Accordion */}
         <section className="py-16 bg-white">
-          <div className="container mx-auto px-4 max-w-3xl">
+          <div className="w-full max-w-[1640px] mx-auto px-4 max-w-3xl">
             <div className="text-center mb-12">
               <h2 className="text-2xl md:text-3xl font-semibold text-[#1E293B] mb-2">Frequently Asked Questions</h2>
               <p className="text-sm text-[#64748B] max-w-2xl mx-auto">Everything you need to know about partnering with Whiteboard Education.</p>

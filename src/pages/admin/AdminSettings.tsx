@@ -181,7 +181,7 @@ export default function AdminSettings() {
     .slice(0, 2);
 
   return (
-    <div className="space-y-8 max-w-5xl animate-fade-in pb-10">
+    <div className="space-y-8 animate-fade-in pb-10">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-[#1E293B]">Settings</h1>
         <p className="text-muted-foreground text-sm mt-1">Manage your administrator profile and global platform preferences.</p>
@@ -301,7 +301,7 @@ export default function AdminSettings() {
       </div>
 
       {/* ────────── Security / Change Password Card ────────── */}
-      <Card className="border-sidebar-border shadow-sm max-w-5xl">
+      <Card className="border-sidebar-border shadow-sm">
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-lg">
             <Lock className="h-5 w-5 text-[#2F4F97]" />

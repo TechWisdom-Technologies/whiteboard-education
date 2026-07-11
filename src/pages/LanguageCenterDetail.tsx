@@ -90,7 +90,7 @@ export default function LanguageCenterDetail() {
 
       {/* ═══ HERO: Logo + Name + Location + Buttons ═══ */}
       <section className="pb-10">
-        <div className="container mx-auto px-4 lg:px-6">
+        <div className="w-full max-w-[1640px] mx-auto px-4 lg:px-6">
           <div className="bg-[#EEF4FF] py-16 px-10 flex flex-col md:flex-row items-center md:items-start gap-8 rounded-tl-md rounded-tr-[3rem] rounded-bl-[3rem] rounded-br-md min-h-[220px]">
             {/* Logo / Icon */}
             <div className="h-32 w-32 md:h-40 md:w-40 bg-white rounded-xl shadow flex items-center justify-center shrink-0 p-4">
@@ -147,7 +147,7 @@ export default function LanguageCenterDetail() {
 
       {/* ═══ STICKY NAV BAR (appears on scroll) ═══ */}
       <nav className="sticky top-0 z-40 shadow-sm transition-all duration-300 bg-white">
-        <div className="container mx-auto px-4 max-w-5xl flex items-center justify-between min-h-[60px] py-2">
+        <div className="w-full max-w-[1640px] mx-auto px-4 flex items-center justify-between min-h-[60px] py-2">
           {/* Left: Logo + Center Name */}
           <div className="flex items-center gap-4 min-w-0 flex-1 mr-4">
             <div
@@ -201,7 +201,7 @@ export default function LanguageCenterDetail() {
 
       {/* ═══ ABOUT SECTION ═══ */}
       <section className="bg-white py-12">
-        <div className="container mx-auto px-4 max-w-5xl">
+        <div className="w-full max-w-[1640px] mx-auto px-4">
           <h2
             className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-8"
             style={{ fontFamily: "Poppins, sans-serif" }}
@@ -240,7 +240,7 @@ export default function LanguageCenterDetail() {
       {/* ═══ MORE INFO SECTION (Courses Offered replaced with More Info Blocks) ═══ */}
       {moreInfo.length > 0 && (
         <section className="bg-[#f7f9fb] py-12 border-t border-b">
-          <div className="container mx-auto px-4 max-w-5xl space-y-8">
+          <div className="w-full max-w-[1640px] mx-auto px-4 space-y-8">
             {moreInfo.map((info: any, idx: number) => (
               <Card key={idx} className="border shadow-sm bg-white hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
@@ -267,7 +267,7 @@ export default function LanguageCenterDetail() {
       {/* ═══ TUITION FEES TABLE ═══ */}
       {tuitionFees.length > 0 && (
         <section className="bg-white py-12">
-          <div className="container mx-auto px-4 max-w-5xl">
+          <div className="w-full max-w-[1640px] mx-auto px-4">
             <h2
               className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-8"
               style={{ fontFamily: "Poppins, sans-serif" }}
@@ -314,7 +314,7 @@ export default function LanguageCenterDetail() {
 
       {/* ═══ KEY INFO CARDS ROW ═══ */}
       <section className="bg-white py-8 border-t">
-        <div className="container mx-auto px-4 max-w-5xl grid sm:grid-cols-3 gap-6">
+        <div className="w-full max-w-[1640px] mx-auto px-4 grid sm:grid-cols-3 gap-6">
           <Card className="border shadow-sm">
             <CardContent className="p-5 flex items-start gap-3">
               <CalendarDays className="h-6 w-6 text-[#2F4F97] mt-0.5 shrink-0" />
@@ -356,7 +356,7 @@ export default function LanguageCenterDetail() {
       {/* ═══ INTERACTIVE FAQS SECTION ═══ */}
       {faqs.length > 0 && (
         <section className="bg-[#f7f9fb] py-12 border-t border-b">
-          <div className="container mx-auto px-4 max-w-5xl">
+          <div className="w-full max-w-[1640px] mx-auto px-4">
             <h2
               className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-8"
               style={{ fontFamily: "Poppins, sans-serif" }}
@@ -401,7 +401,7 @@ export default function LanguageCenterDetail() {
 
       {/* ═══ REGISTER NOW CTA ═══ */}
       <section className="bg-[#EEF4FF] py-12">
-        <div className="container mx-auto px-4 max-w-5xl text-center">
+        <div className="w-full max-w-[1640px] mx-auto px-4 text-center">
           <h2
             className="text-xl md:text-2xl font-extrabold text-[#1E293B] mb-2"
             style={{ fontFamily: "Poppins, sans-serif" }}
@@ -427,7 +427,7 @@ export default function LanguageCenterDetail() {
       {/* ═══ SIMILAR LANGUAGE CENTERS ═══ */}
       {similarCenters.length > 0 && (
         <section className="py-12">
-          <div className="container mx-auto px-4 max-w-5xl">
+          <div className="w-full max-w-[1640px] mx-auto px-4">
             <h2
               className="text-2xl font-extrabold text-[#1E293B] mb-6"
               style={{ fontFamily: "Poppins, sans-serif" }}

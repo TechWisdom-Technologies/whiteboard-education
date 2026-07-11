@@ -11,7 +11,7 @@ const team = [
 export function CounselorTeamSection() {
   return (
     <section className="py-24 bg-white">
-      <div className="container mx-auto px-4 max-w-6xl">
+      <div className="w-full max-w-[1640px] mx-auto px-4">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
           <div className="max-w-2xl">
             <h2 className="text-3xl md:text-5xl font-bold text-[#1E293B] mb-4 tracking-tight">Meet Our Experts</h2>

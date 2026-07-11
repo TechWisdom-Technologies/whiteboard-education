@@ -273,7 +273,7 @@ export default function UniversityDetail() {
 
       {/* ═══ HERO: Big Logo + Name + Buttons ═══ */}
       <section className="pb-10">
-        <div className="container mx-auto px-4 lg:px-6">
+        <div className="w-full max-w-[1640px] mx-auto px-4 lg:px-6">
           <div className="bg-[#EEF4FF] py-16 px-10 flex flex-col md:flex-row items-center md:items-start gap-8 rounded-tl-md rounded-tr-[3rem] rounded-bl-[3rem] rounded-br-md min-h-[220px]">
             <img src={logo} alt={uni.name} className="h-32 w-32 md:h-40 md:w-40 object-contain rounded-xl bg-white p-4 shadow shrink-0" />
             <div className="flex-1 flex flex-col w-full">
@@ -301,7 +301,7 @@ Ask Us</Button>
 
       {/* ═══ STICKY TAB NAV (replaces navbar when scrolled) ═══ */}
       <nav className="sticky top-0 z-40 shadow-sm transition-all duration-300 bg-white">
-        <div className="container mx-auto px-4 max-w-5xl flex items-center justify-between min-h-[80px] py-2">
+        <div className="w-full max-w-[1640px] mx-auto px-4 flex items-center justify-between min-h-[80px] py-2">
           {/* Left: Logo + Tabs */}
           <div className="flex items-center gap-6 min-w-0">
             <div className={`flex items-center transition-all duration-300 ${isScrolled ? 'opacity-100 translate-x-0 w-auto mr-4' : 'opacity-0 -translate-x-4 w-0 overflow-hidden m-0'}`}>
@@ -330,7 +330,7 @@ Ask Us</Button>
         <>
           {/* About */}
           <section className="py-12 bg-white">
-            <div className="container mx-auto px-4 max-w-5xl">
+            <div className="w-full max-w-[1640px] mx-auto px-4">
               <h2 className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-8">About {uni.name}</h2>
               
               <div className="prose max-w-none text-gray-600 leading-relaxed text-[15px] text-justify space-y-8">
@@ -374,7 +374,7 @@ Ask Us</Button>
           {/* Courses & Fees by Category (MOST IMPORTANT) */}
           {groupedCourses.length > 0 && (
             <section className="bg-white py-10">
-              <div className="container mx-auto px-4 max-w-5xl">
+              <div className="w-full max-w-[1640px] mx-auto px-4">
                 <h2 className="text-xl md:text-2xl font-extrabold text-[#1E293B] mb-6">
                   Courses and Fees for International Students
                 </h2>
@@ -423,7 +423,7 @@ Ask Us</Button>
 
           {/* Offer Letter / Intake / Location row */}
           <section className="bg-white py-8 border-b">
-            <div className="container mx-auto px-4 max-w-5xl grid sm:grid-cols-3 gap-6">
+            <div className="w-full max-w-[1640px] mx-auto px-4 grid sm:grid-cols-3 gap-6">
               <Card className="border shadow-sm"><CardContent className="p-5 flex items-start gap-3">
                 <FileText className="h-6 w-6 text-[#2F4F97] mt-0.5 shrink-0" />
                 <div><h4 className="font-bold text-[#1E293B] text-sm mb-1">Offer Letter</h4><p className="text-gray-600 text-sm">{isPaid ? "Offer Letter Fees Applies" : "Free Offer Letter"}</p></div>
@@ -441,7 +441,7 @@ Ask Us</Button>
 
           {/* Register Now CTA */}
           <section className="bg-[#EEF4FF] py-12">
-            <div className="container mx-auto px-4 max-w-5xl text-center">
+            <div className="w-full max-w-[1640px] mx-auto px-4 text-center">
               <h2 className="text-xl md:text-2xl font-extrabold text-[#1E293B] mb-2">Register Now and Secure Your Spot!</h2>
               <p className="text-gray-700 text-sm mb-2">Your Future Starts Here: Register Today for the Upcoming Intake</p>
               <p className="text-gray-600 text-sm mb-6">Secure Your Seat Now! Join {uni.name} and Start Your Journey</p>
@@ -464,7 +464,7 @@ Ask Us</Button>
           {/* FAQ */}
           {faqs.length > 0 && (
             <section className="bg-white py-10">
-              <div className="container mx-auto px-4 max-w-5xl">
+              <div className="w-full max-w-[1640px] mx-auto px-4">
                 <h2 className="text-xl font-extrabold text-[#1E293B] mb-6 flex items-center gap-2">
                   <HelpCircle className="h-5 w-5 text-[#2F4F97]" />Frequently Asked Questions About {uni.name}
                 </h2>
@@ -483,7 +483,7 @@ Ask Us</Button>
           {/* Similar Universities */}
           {similarUnis.length > 0 && (
             <section className="py-10">
-              <div className="container mx-auto px-4 max-w-5xl">
+              <div className="w-full max-w-[1640px] mx-auto px-4">
                 <h2 className="text-xl font-extrabold text-[#1E293B] mb-6">Similar to {uni.name}</h2>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {similarUnis.map((su: any) => (
@@ -529,7 +529,7 @@ Ask Us</Button>
       {/* ══════════ COURSES TAB ══════════ */}
       {tab === "courses" && (
         <section className="py-8">
-          <div className="container mx-auto px-4 max-w-5xl">
+          <div className="w-full max-w-[1640px] mx-auto px-4">
             {/* Opaque Sticky Filter Bar */}
             <div className="sticky top-[80px] z-30 bg-[#f0f4f8] py-4 -mx-4 px-4 mb-4">
               <div className="bg-white p-4 rounded-xl border shadow-md flex flex-col md:flex-row gap-4 items-center">
@@ -704,7 +704,7 @@ Ask Us</Button>
       {/* ══════════ ACCOMMODATION TAB ══════════ */}
       {tab === "accommodation" && (
         <section className="py-8">
-          <div className="container mx-auto px-4 max-w-5xl">
+          <div className="w-full max-w-[1640px] mx-auto px-4">
             <p className="text-sm text-gray-500 mb-6">Accommodation options near {uni.name}. For the most current availability and pricing, contact us directly.</p>
             <h3 className="font-bold text-lg text-[#1E293B] mb-4">{nearbyAccom.length} nearby accommodations found</h3>
             {nearbyAccom.length > 0 ? (
@@ -742,7 +742,7 @@ Ask Us</Button>
 
       {/* Bottom CTA */}
       <section className="bg-[#2F4F97] py-10 mt-auto">
-        <div className="container mx-auto px-4 max-w-5xl text-center">
+        <div className="w-full max-w-[1640px] mx-auto px-4 text-center">
           <h2 className="text-xl font-extrabold text-[#1E293B] mb-2">Ready to Start Your Journey?</h2>
           <p className="text-[#1E293B]/70 text-sm mb-6">Fill in your details and our counsellors will guide you - completely free.</p>
           <Button size="lg" className="bg-[#1E293B] text-white hover:bg-[#1E293B]/90 font-bold px-10 h-12" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>Start Your Application</Button>

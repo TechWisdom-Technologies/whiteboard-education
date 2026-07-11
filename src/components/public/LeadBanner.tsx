@@ -46,7 +46,7 @@ export function LeadBanner({ onVisibilityChange }: LeadBannerProps) {
     <>
       <div className="fixed bottom-0 left-0 right-0 z-50 animate-slide-up">
         <div className="bg-[#1E293B] text-white border-t border-[#64748B]/30">
-          <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
+          <div className="w-full max-w-[1640px] mx-auto px-4 py-3 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 min-w-0">
               <span className="text-2xl flex-shrink-0">📘</span>
               <p className="text-sm font-medium">

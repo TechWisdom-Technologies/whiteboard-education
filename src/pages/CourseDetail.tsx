@@ -180,7 +180,7 @@ ${window.location.href}`;
       <div className="w-full flex-1 flex flex-col">
         {/* Top Hero Section */}
         <div className="w-full pb-16">
-          <div className="container mx-auto px-4 lg:px-6">
+          <div className="w-full max-w-[1640px] mx-auto px-4 lg:px-6">
             <div className="w-full bg-[#EEF4FF] py-20 px-10 border border-[#2F4F97]/20 rounded-tl-md rounded-tr-[3rem] rounded-bl-[3rem] rounded-br-md min-h-[220px]">
               <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
                 {uni?.logo_url && (
@@ -212,7 +212,7 @@ Ask Us</Button>
 
         {/* Sticky Tab Bar */}
         <div className="sticky top-0 z-40 shadow-sm transition-all duration-200 bg-white border-b border-gray-100">
-          <div className="container mx-auto px-4 min-h-[64px] py-1.5 flex items-center max-w-5xl">
+          <div className="w-full max-w-[1640px] mx-auto px-4 min-h-[64px] py-1.5 flex items-center">
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-6">
                 {isScrolledPastHero && uni?.logo_url && (
@@ -242,7 +242,7 @@ Ask Us</Button>
 
         {/* Main Content Area */}
         <div className="flex-1 pb-24">
-          <div className="container mx-auto px-4 pt-10 max-w-5xl space-y-12">
+          <div className="w-full max-w-[1640px] mx-auto px-4 pt-10 space-y-12">
             
             {/* Key Information Section */}
             <div id="key-info" className="space-y-10 scroll-m-20 pt-8 pb-24">

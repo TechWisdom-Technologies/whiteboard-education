@@ -34,7 +34,7 @@ export function ServicesGrid() {
       {/* Organic Background Blob */}
       <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#2F4F97]/5 rounded-full blur-[80px] pointer-events-none" />
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="w-full max-w-[1640px] mx-auto px-4 relative z-10">
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-semibold text-[#1E293B] mb-2">
             How we can help you?

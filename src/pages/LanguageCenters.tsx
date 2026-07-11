@@ -128,14 +128,14 @@ export default function LanguageCentersPage() {
       <MegaMenu />
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 pt-10 pb-16 flex-1 w-full" ref={gridRef}>
+      <div className="w-full max-w-[1640px] mx-auto px-4 lg:px-8 pt-10 pb-16 flex-1" ref={gridRef}>
         {isLoading ? (
           <LoadingScreen label="Loading language centers" sublabel="Gathering available schools" className="py-12" />
         ) : (
           <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
             {/* ─── SIDEBAR ─── */}
             <aside className="lg:w-[320px] xl:w-[340px] shrink-0">
-              <div className="overflow-hidden lg:sticky lg:top-[152px] border bg-white" style={{ borderColor: "#e8e8e8", borderRadius: "12px" }}>
+              <div className="overflow-hidden border bg-white" style={{ borderColor: "#e8e8e8", borderRadius: "12px" }}>
                 {/* Mobile Filter Toggle */}
                 <button 
                   onClick={() => setShowFilters(!showFilters)}
@@ -151,7 +151,7 @@ export default function LanguageCentersPage() {
                 <div className={`${showFilters ? 'block' : 'hidden lg:block'}`}>
                   {/* Sidebar Header */}
                   <div className="px-5 py-4 flex items-center justify-between bg-[#F8FAFC] hidden lg:flex">
-                    <h3 className="font-bold text-[20px] text-[#1E293B]">Search by Filter</h3>
+                    <h3 className="font-semibold text-[20px] text-[#1E293B]">Search by Filter</h3>
                   </div>
 
                   {/* Sidebar Body */}
@@ -204,7 +204,7 @@ export default function LanguageCentersPage() {
 
             <div className="flex-1 min-w-0">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-gray-200 pb-4 mb-6 gap-4">
-                <h1 className="text-[20px] md:text-[22px] font-bold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B" }}>
+                <h1 className="text-[20px] md:text-[22px] font-semibold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B" }}>
                   Language Centers
                 </h1>
                 
@@ -249,7 +249,7 @@ export default function LanguageCentersPage() {
                       key={lc.id}
                       className="bg-white p-5 md:p-6 lg:p-8 border border-gray-200 rounded-3xl animate-fade-in"
                     >
-                      <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] lg:grid-cols-[180px_1fr_140px] gap-6 lg:gap-8 items-center lg:items-start">
+                      <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] lg:grid-cols-[180px_1fr_140px] gap-6 lg:gap-8 items-center">
                         {/* Elegant Icon Representation or Image */}
                         <Link
                           to={`/language-centers/${generateSlug(lc.name)}`}
@@ -320,9 +320,9 @@ export default function LanguageCentersPage() {
                         </div>
 
                         {/* Right: Actions */}
-                        <div className="flex flex-col gap-3 w-full md:col-span-2 lg:col-span-1 mt-4 lg:mt-2">
+                        <div className="flex flex-col gap-3 w-full md:col-span-2 lg:col-span-1 mt-4 lg:mt-0">
                           <Button
-                            className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent h-9 px-3 font-bold"
+                            className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-xl border-2 border-[#1E293B] h-10 px-2.5 font-medium"
                             onClick={() => navigate(`/apply?centerId=${lc.id}`)}
                           >
                             Apply Now
@@ -330,7 +330,7 @@ export default function LanguageCentersPage() {
                           <Link to={`/language-centers/${generateSlug(lc.name)}`} className="block w-full">
                             <Button
                               variant="outline"
-                              className="bg-[#EEF4FF] text-[#2F4F97] border-[#2F4F97]/20 h-9 px-3 font-bold w-full hover:bg-[#EEF4FF]/80"
+                              className="bg-white text-[#2F4F97] hover:text-[#2F4F97] border-2 border-[#1E293B] rounded-xl h-10 px-2.5 font-medium w-full hover:bg-gray-50"
                             >
                               View Details
                             </Button>

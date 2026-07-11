@@ -290,14 +290,14 @@ export default function Universities() {
     <div className="min-h-screen flex flex-col bg-white">
       <MegaMenu />
       {/* Main Content */}
-      <div className="container mx-auto px-4 pt-10 pb-16 flex-1 w-full" ref={gridRef}>
+      <div className="w-full max-w-[1640px] mx-auto px-4 lg:px-8 pt-10 pb-16 flex-1" ref={gridRef}>
         {isLoading ? (
           <LoadingScreen label="Loading universities" sublabel="Finding top institutions" className="py-12" />
         ) : (
           <div className="flex flex-col lg:flex-row gap-6">
             {/* ─── SIDEBAR ─── */}
             <aside className="lg:w-[320px] xl:w-[340px] shrink-0">
-              <div className="overflow-hidden lg:sticky lg:top-[152px] border bg-white" style={{ borderColor: "#e8e8e8", borderRadius: "12px" }}>
+              <div className="overflow-hidden border bg-white" style={{ borderColor: "#e8e8e8", borderRadius: "12px" }}>
                 {/* Mobile Filter Toggle */}
                 <button 
                   onClick={() => setShowFilters(!showFilters)}
@@ -312,27 +312,31 @@ export default function Universities() {
 
                 <div className={`${showFilters ? 'block' : 'hidden lg:block'}`}>
                   {/* Sidebar Header */}
-                  <div className="px-5 py-4 flex items-center justify-between bg-[#F8FAFC] hidden lg:flex">
-                    <h3 className="font-bold text-[20px] text-[#1E293B]">Search by Filter</h3>
+                  <div className="px-5 py-[22px] flex items-center justify-between bg-[#2F4F97] hidden lg:flex">
+                    <h3 className="font-semibold text-[20px] text-white">Search by Filter</h3>
                   </div>
 
                   {/* Sidebar Body */}
                   <div className="px-5 py-5 space-y-4">
-                    <div className="relative w-full">
+                    <div className="w-full">
+                      <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Search by University Name</label>
+                      <div className="relative w-full">
                         <Input
-                          placeholder="Search by University Name"
+                          placeholder="Enter University Name"
                           value={search}
                           onChange={(e) => setSearch(e.target.value)}
                           className="pr-10 h-11 text-[14px]"
                           style={{ borderColor: "#cacdd4", borderRadius: "12px", fontFamily: "Poppins, sans-serif", color: "#444444" }}
                         />
-                      <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "#999999" }} />
+                        <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "#999999" }} />
+                      </div>
                     </div>
 
                     <div className="w-full">
+                      <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Level of Interest</label>
                       <Select value={selectedLevel} onValueChange={setSelectedLevel} modal={false}>
                         <SelectTrigger className="h-11 text-[14px]" style={{ borderColor: "#cacdd4", borderRadius: "12px", fontFamily: "Poppins, sans-serif", color: selectedLevel === "All Levels" ? "#999999" : "#444444" }}>
-                          <SelectValue placeholder="Level of Interest" />
+                          <SelectValue placeholder="Enter Level of Interest" />
                         </SelectTrigger>
                         <SelectContent>
                           {DEGREE_LEVELS.map((l) => (
@@ -342,26 +346,16 @@ export default function Universities() {
                       </Select>
                     </div>
 
-                    <div className="w-full">
-                      <Select value={selectedField} onValueChange={setSelectedField} modal={false}>
-                        <SelectTrigger className="h-11 text-[14px]" style={{ borderColor: "#cacdd4", borderRadius: "12px", fontFamily: "Poppins, sans-serif", color: selectedField === "All Fields" ? "#999999" : "#444444" }}>
-                          <SelectValue placeholder="Field of Study" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {FIELDS_OF_STUDY.map((f) => (
-                            <SelectItem key={f} value={f}>{f}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    
 
                     <div className="w-full">
+                      <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Locations</label>
                       <Select value={selectedCity} onValueChange={setSelectedCity} modal={false}>
                         <SelectTrigger className="h-11 text-[14px]" style={{ borderColor: "#cacdd4", borderRadius: "12px", fontFamily: "Poppins, sans-serif", color: selectedCity === "all" ? "#999999" : "#444444" }}>
-                          <SelectValue placeholder="Locations" />
+                          <SelectValue placeholder="Select A State" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">All Locations</SelectItem>
+                          <SelectItem value="all">All States</SelectItem>
                           {cities.map((city: string) => (
                             <SelectItem key={city} value={city}>{city}</SelectItem>
                           ))}
@@ -370,9 +364,10 @@ export default function Universities() {
                     </div>
 
                     <div className="w-full">
+                      <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Offer Letter Fee</label>
                       <Select value={selectedOfferLetter} onValueChange={setSelectedOfferLetter} modal={false}>
                         <SelectTrigger className="h-11 text-[14px]" style={{ borderColor: "#cacdd4", borderRadius: "12px", fontFamily: "Poppins, sans-serif", color: selectedOfferLetter === "all" ? "#999999" : "#444444" }}>
-                          <SelectValue placeholder="Offer Letter Fee" />
+                          <SelectValue placeholder="Select offer letter fee type" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all">All Offer Letters</SelectItem>
@@ -393,7 +388,7 @@ export default function Universities() {
                     </Button>
                     <Button 
                       variant="outline"
-                      className="flex-1 font-bold h-11 text-sm border-gray-200 text-[#1E293B] hover:bg-gray-50"
+                      className="flex-1 font-bold h-11 text-sm border-gray-200 text-[#1E293B] hover:bg-[#2F4F97] hover:text-white transition-colors"
                       onClick={resetFilters}
                     >
                       Reset Filter
@@ -406,7 +401,7 @@ export default function Universities() {
             {/* ─── CONTENT AREA ─── */}
             <div className="flex-1 min-w-0">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-gray-200 pb-4 mb-6 gap-4">
-                <h1 className="text-[20px] md:text-[22px] font-bold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B" }}>
+                <h1 className="text-[20px] md:text-[22px] font-semibold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B" }}>
                   Universities
                 </h1>
                 
@@ -452,7 +447,7 @@ export default function Universities() {
                         key={u.id}
                         className="bg-white p-5 md:p-6 lg:p-8 border border-gray-200 rounded-3xl"
                       >
-                        <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] lg:grid-cols-[180px_1fr_140px] gap-6 lg:gap-8 items-center lg:items-start">
+                        <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] lg:grid-cols-[180px_1fr_140px] gap-6 lg:gap-8 items-center">
                           {/* Left: Logo */}
                           <Link
                             to={`/universities/${generateSlug(u.name)}`}
@@ -500,9 +495,9 @@ export default function Universities() {
                           </div>
 
                           {/* Right: Buttons */}
-                          <div className="w-full md:col-span-2 lg:col-span-1 flex flex-col gap-3 mt-4 lg:mt-2">
+                          <div className="w-full md:col-span-2 lg:col-span-1 flex flex-col gap-3 mt-4 lg:mt-0">
                             <Button
-                              className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent h-9 px-3 font-bold"
+                              className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-xl border-2 border-[#1E293B] h-10 px-2.5 font-medium"
                               onClick={() => navigate(`/apply?universityId=${u.id}`)}
                             >
                               Apply Now
@@ -510,7 +505,7 @@ export default function Universities() {
                             <Link to={`/universities/${generateSlug(u.name)}`} className="block w-full">
                               <Button
                                 variant="outline"
-                                className="bg-[#EEF4FF] text-[#2F4F97] border-[#2F4F97]/20 h-9 px-3 font-bold w-full hover:bg-[#EEF4FF]/80"
+                                className="bg-white text-[#2F4F97] hover:text-[#2F4F97] border-2 border-[#1E293B] rounded-xl h-10 px-2.5 font-medium w-full hover:bg-gray-50"
                               >
                                 Ask Us
                               </Button>

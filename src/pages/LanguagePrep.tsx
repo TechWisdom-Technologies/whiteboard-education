@@ -37,7 +37,7 @@ export default function LanguagePrep() {
       <main className="flex-1">
         {/* Hero */}
         <section className="intro-surface py-20">
-          <div className="container mx-auto px-4 text-center">
+          <div className="w-full max-w-[1640px] mx-auto px-4 text-center">
             <BookOpen className="h-12 w-12 mx-auto mb-4 text-[#2F4F97]" />
             <h1 className="text-4xl font-extrabold mb-3">IELTS & TOEFL Preparation</h1>
             <p className="text-primary-foreground/70 max-w-xl mx-auto mb-8">Get the score you need with expert tutoring and unlimited practice tests.</p>
@@ -48,7 +48,7 @@ export default function LanguagePrep() {
         </section>
 
         {/* Stats */}
-        <div className="container mx-auto px-4 -mt-8 relative z-10">
+        <div className="w-full max-w-[1640px] mx-auto px-4 -mt-8 relative z-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { label: "Students Trained", value: "5,000+" },
@@ -67,7 +67,7 @@ export default function LanguagePrep() {
         </div>
 
         {/* Pricing */}
-        <section className="container mx-auto px-4 py-16">
+        <section className="w-full max-w-[1640px] mx-auto px-4 py-16">
           <h2 className="text-2xl font-extrabold text-center mb-10">Choose Your Plan</h2>
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             {packages.map((pkg) => (
@@ -102,7 +102,7 @@ export default function LanguagePrep() {
 
         {/* CTA Banner */}
         <section className="bg-[#2F4F97]/10 py-12">
-          <div className="container mx-auto px-4 text-center">
+          <div className="w-full max-w-[1640px] mx-auto px-4 text-center">
             <h3 className="text-xl font-bold mb-3">Not sure about your current level?</h3>
             <p className="text-muted-foreground mb-6">Take our free 15-minute diagnostic test and get an estimated IELTS band score.</p>
             <Button size="lg" className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90">Take Free Mock Test</Button>

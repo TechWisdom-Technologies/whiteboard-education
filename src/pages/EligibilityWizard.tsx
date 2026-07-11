@@ -92,7 +92,7 @@ export default function EligibilityWizard() {
       
       {/* Page Header */}
       <div className="bg-white border-b border-gray-200/60">
-        <div className="container mx-auto px-4 py-12 md:py-16 text-center max-w-3xl">
+        <div className="w-full max-w-[1640px] mx-auto px-4 py-12 md:py-16 text-center max-w-3xl">
           <div className="h-16 w-16 bg-[#2F4F97]/15 rounded-full flex items-center justify-center mx-auto mb-6">
             <GraduationCap className="h-8 w-8 text-[#2F4F97]" />
           </div>
@@ -106,7 +106,7 @@ export default function EligibilityWizard() {
       </div>
 
       <main className="flex-1">
-        <div className="container mx-auto px-4 py-12 md:py-16 max-w-2xl">
+        <div className="w-full max-w-[1640px] mx-auto px-4 py-12 md:py-16 max-w-2xl">
           {!showResults && (
             <div className="mb-8">
               <div className="flex justify-between text-sm text-muted-foreground mb-2">
