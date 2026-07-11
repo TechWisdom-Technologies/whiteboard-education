@@ -21,7 +21,7 @@ function FileUploadField({ label, accept = ".pdf,.jpg,.jpeg,.png", file, onFileC
     <div className="w-full">
       <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">{label} {required && <span className="text-red-500">*</span>}</Label>
       <div
-        className={`mt-1.5 border-2 border-dashed rounded-sm p-4 text-center cursor-pointer transition-colors ${file ? 'border-[#ffa300] bg-[#ffa300]/5' : 'border-gray-200 bg-gray-50 hover:bg-white hover:border-[#ffa300]'}`}
+        className={`mt-1.5 border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-colors ${file ? 'border-[#ffa300] bg-[#ffa300]/5' : 'border-gray-200 bg-gray-50 hover:bg-white hover:border-[#ffa300]'}`}
         onClick={() => ref.current?.click()}
       >
         <input ref={ref} type="file" accept={accept} className="hidden" onChange={(e) => onFileChange(e.target.files?.[0] || null)} />
@@ -156,7 +156,7 @@ export default function PartnerRegistration() {
     }
   };
 
-  const inputCls = "h-11 bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] text-[13px] rounded-sm transition-colors shadow-none";
+  const inputCls = "h-11 bg-gray-50 border-gray-200 focus:bg-white focus:border-[#ffa300] focus:ring-1 focus:ring-[#ffa300] text-[13px] rounded-xl transition-colors shadow-none";
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -166,7 +166,7 @@ export default function PartnerRegistration() {
             <ArrowLeft className="h-4 w-4" /> Back to Partnership Page
           </Link>
           
-          <div className="bg-white rounded-sm shadow-xl overflow-hidden flex flex-col lg:flex-row border border-[#e8e8e8]">
+          <div className="bg-white rounded-xl shadow-xl overflow-hidden flex flex-col lg:flex-row border border-[#e8e8e8]">
             
             {/* Left Panel - Dark */}
             <div className="w-full lg:w-5/12 bg-[#181d29] text-white p-8 md:p-12 relative overflow-hidden flex flex-col">
@@ -179,7 +179,7 @@ export default function PartnerRegistration() {
                   <img src="/LOGO-ON-DARK-BG.png" alt="Whiteboard Education" className="h-9 w-auto object-contain" />
                 </div>
 
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-6 bg-white/5 border border-white/10 rounded-sm w-fit backdrop-blur-sm">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-6 bg-white/5 border border-white/10 rounded-xl w-fit backdrop-blur-sm">
                   <Handshake className="h-3.5 w-3.5 text-[#ffa300]" />
                   <span className="text-[10px] font-bold text-white tracking-widest uppercase">Partner Network</span>
                 </div>
@@ -222,7 +222,7 @@ export default function PartnerRegistration() {
                 {/* Section 1 */}
                 <div>
                   <h3 className="text-sm font-semibold text-[#181d29] mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
-                    <span className="bg-[#ffa300] text-[#181d29] w-5 h-5 rounded-sm flex items-center justify-center text-[10px] font-black">1</span>
+                    <span className="bg-[#ffa300] text-[#181d29] w-5 h-5 rounded-xl flex items-center justify-center text-[10px] font-black">1</span>
                     Company Details
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -244,7 +244,7 @@ export default function PartnerRegistration() {
                 {/* Section 2 */}
                 <div>
                   <h3 className="text-sm font-semibold text-[#181d29] mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
-                    <span className="bg-[#ffa300] text-[#181d29] w-5 h-5 rounded-sm flex items-center justify-center text-[10px] font-black">2</span>
+                    <span className="bg-[#ffa300] text-[#181d29] w-5 h-5 rounded-xl flex items-center justify-center text-[10px] font-black">2</span>
                     Account Representative
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -270,7 +270,7 @@ export default function PartnerRegistration() {
                 {/* Section 3 */}
                 <div>
                   <h3 className="text-sm font-semibold text-[#181d29] mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
-                    <span className="bg-[#ffa300] text-[#181d29] w-5 h-5 rounded-sm flex items-center justify-center text-[10px] font-black">3</span>
+                    <span className="bg-[#ffa300] text-[#181d29] w-5 h-5 rounded-xl flex items-center justify-center text-[10px] font-black">3</span>
                     Verification Documents
                   </h3>
                   <div className="space-y-4">
@@ -282,7 +282,7 @@ export default function PartnerRegistration() {
                       <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-2 block">Additional Certificates</Label>
                       <div className="space-y-2 mb-2">
                         {certificateFiles.map((f, i) => (
-                          <div key={i} className="flex items-center gap-2 text-sm bg-gray-50 border border-gray-100 rounded-sm px-3 py-2 text-[#181d29]">
+                          <div key={i} className="flex items-center gap-2 text-sm bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 text-[#181d29]">
                             <FileText className="h-4 w-4 text-[#ffa300]" />
                             <span className="truncate flex-1 font-medium text-[13px]">{f.name}</span>
                             <Button type="button" variant="ghost" size="icon" className="h-6 w-6 text-gray-400 hover:text-red-500 hover:bg-red-50" onClick={() => removeCertificate(i)}>
@@ -300,7 +300,7 @@ export default function PartnerRegistration() {
 
                 <div className="pt-6 border-t border-gray-100">
                   <Button 
-                    className="w-full h-12 bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 font-bold text-[14px] rounded-sm transition-all"
+                    className="w-full h-12 bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 font-bold text-[14px] rounded-xl transition-all"
                     onClick={handleSubmit} 
                     disabled={submitting}
                   >

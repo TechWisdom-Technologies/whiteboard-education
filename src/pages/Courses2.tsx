@@ -372,7 +372,7 @@ export default function Courses2() {
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
-                      className="border border-gray-300 rounded-[4px] px-3 py-1.5 text-gray-600 bg-white focus:outline-none focus:border-[#ffa300]"
+                      className="border border-gray-300 rounded-xl px-3 py-1.5 text-gray-600 bg-white focus:outline-none focus:border-[#ffa300]"
                     >
                       <option value="best_match">Best Match (Default)</option>
                       <option value="tuition_low_high">Tuition cost (Low to high)</option>
@@ -400,13 +400,13 @@ export default function Courses2() {
                     return (
                       <div
                         key={c.id}
-                        className="bg-white p-5 md:p-6 lg:p-8 border border-gray-200 rounded-[8px]"
+                        className="bg-white p-5 md:p-6 lg:p-8 border border-gray-200 rounded-3xl"
                       >
                         <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] lg:grid-cols-[180px_1fr_180px] gap-6 lg:gap-8 items-center lg:items-start">
                           {/* Left: Logo */}
                           <Link
                             to={`/courses/${generateSlug(c.title)}`}
-                            className="w-full h-[100px] flex items-center justify-center overflow-hidden border border-gray-100 rounded-md p-2"
+                            className="w-full h-[100px] flex items-center justify-center overflow-hidden border border-gray-100 rounded-2xl p-2"
                           >
                             {uni && (uni.logo_url || UNIVERSITY_LOGOS[uni.name]) ? (
                               <img
@@ -453,7 +453,7 @@ export default function Courses2() {
                             <div className="pt-2">
                               <Button
                                 size="sm"
-                                className={`rounded-md font-medium text-[13px] h-9 px-4 transition-colors border bg-white ${
+                                className={`rounded-2xl font-medium text-[13px] h-9 px-4 transition-colors border bg-white ${
                                   isComparing(c.id) 
                                     ? "bg-[#ffa300]/10 text-[#e69200] border-[#ffa300]" 
                                     : "text-gray-500 border-gray-200 hover:bg-[#ffa300] hover:text-[#181d29] hover:border-[#ffa300]"
@@ -480,14 +480,14 @@ export default function Courses2() {
                           {/* Right: Buttons */}
                           <div className="w-full md:col-span-2 lg:col-span-1 flex flex-col gap-3 mt-4 lg:mt-2">
                             <Button
-                              className="w-full h-10 font-bold text-[14px] bg-[#f9c365] text-[#181d29] hover:bg-[#e6a845] rounded-[6px] border border-[#f9c365]"
+                              className="w-full h-10 font-bold text-[14px] bg-[#f9c365] text-[#181d29] hover:bg-[#e6a845] rounded-full border border-[#f9c365]"
                               onClick={() => navigate(`/apply?courseId=${c.id}`)}
                             >
                               Apply Now
                             </Button>
                             <Link to={`/courses/${generateSlug(c.title)}`} className="block w-full">
                               <Button
-                                className="w-full h-10 font-bold text-[14px] border border-gray-800 text-[#181d29] hover:bg-gray-50 rounded-[6px] bg-white"
+                                className="w-full h-10 font-bold text-[14px] border border-gray-800 text-[#181d29] hover:bg-gray-50 rounded-full bg-white"
                               >
                                 Ask Us
                               </Button>

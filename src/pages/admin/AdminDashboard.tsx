@@ -146,7 +146,7 @@ export default function AdminDashboard() {
         {metrics.map((m, i) => (
           <Card key={m.label} className="hover:shadow-lg transition-shadow animate-fade-in" style={{ animationDelay: `${i * 60}ms` }}>
             <CardContent className="p-5 flex items-center gap-4">
-              <div className={`h-11 w-11 rounded-sm bg-muted flex items-center justify-center ${m.color}`}>
+              <div className={`h-11 w-11 rounded-xl bg-muted flex items-center justify-center ${m.color}`}>
                 <m.icon className="h-5 w-5" />
               </div>
               <div>
@@ -174,7 +174,7 @@ export default function AdminDashboard() {
               <>
                 <div className="space-y-0.5">
                   {pagedPartners.map(p => (
-                    <div key={p.id} className="flex items-center justify-between gap-3 py-2.5 px-2 border-b last:border-0 hover:bg-muted/30 transition-colors rounded-sm">
+                    <div key={p.id} className="flex items-center justify-between gap-3 py-2.5 px-2 border-b last:border-0 hover:bg-muted/30 transition-colors rounded-xl">
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-[#181d29] truncate">{p.agency_name}</p>
                         <p className="text-[11px] text-muted-foreground truncate">{p.contact_person}</p>
@@ -220,7 +220,7 @@ export default function AdminDashboard() {
               <>
                 <div className="space-y-0.5">
                   {pagedStudents.map(s => (
-                    <div key={s.id} className="flex items-center justify-between gap-3 py-2.5 px-2 border-b last:border-0 hover:bg-muted/30 transition-colors rounded-sm">
+                    <div key={s.id} className="flex items-center justify-between gap-3 py-2.5 px-2 border-b last:border-0 hover:bg-muted/30 transition-colors rounded-xl">
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-[#181d29] truncate">{s.full_name}</p>
                         <p className="text-[11px] text-muted-foreground truncate">Added by {getPartnerName(s.partner_id)}</p>

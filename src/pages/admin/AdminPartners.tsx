@@ -195,7 +195,7 @@ export default function AdminPartners() {
             }`}
           >
             {tab.label}
-            <span className={`ml-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded-sm ${
+            <span className={`ml-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded-xl ${
               activeTab === tab.key ? "bg-[#ffa300]/15 text-[#ffa300]" : "bg-gray-100 text-gray-400"
             }`}>
               {counts[tab.key]}
@@ -217,11 +217,11 @@ export default function AdminPartners() {
       )}
 
       {filtered.length === 0 ? (
-        <div className="rounded-sm border bg-card p-12 text-center text-muted-foreground">
+        <div className="rounded-xl border bg-card p-12 text-center text-muted-foreground">
           No {activeTab === "all" ? "" : activeTab} partner registrations{activeTab === "all" ? " yet" : ""}.
         </div>
       ) : (
-        <div className="rounded-sm border bg-card overflow-x-auto">
+        <div className="rounded-xl border bg-card overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>

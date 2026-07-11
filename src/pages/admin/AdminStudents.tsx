@@ -214,7 +214,7 @@ export default function AdminStudents() {
             <Card key={p.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setFilterPartner(filterPartner === p.user_id ? "all" : p.user_id)}>
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-sm bg-secondary/10 flex items-center justify-center">
+                  <div className="h-10 w-10 rounded-xl bg-secondary/10 flex items-center justify-center">
                     <Users className="h-5 w-5 text-secondary" />
                   </div>
                   <div>
@@ -254,7 +254,7 @@ export default function AdminStudents() {
       {filtered.length === 0 ? (
         <Card><CardContent className="p-12 text-center text-muted-foreground">No students found.</CardContent></Card>
       ) : (
-        <div className="rounded-sm border bg-card overflow-x-auto">
+        <div className="rounded-xl border bg-card overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>

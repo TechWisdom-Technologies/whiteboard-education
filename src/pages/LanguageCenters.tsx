@@ -214,7 +214,7 @@ export default function LanguageCentersPage() {
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
-                      className="border border-gray-300 rounded-[4px] px-3 py-1.5 text-gray-600 bg-white focus:outline-none focus:border-[#ffa300]"
+                      className="border border-gray-300 rounded-xl px-3 py-1.5 text-gray-600 bg-white focus:outline-none focus:border-[#ffa300]"
                     >
                       <option value="best_match">Best Match (Default)</option>
                       <option value="name_a_z">Name (A to Z)</option>
@@ -246,13 +246,13 @@ export default function LanguageCentersPage() {
                   return (
                     <div
                       key={lc.id}
-                      className="bg-white p-5 md:p-6 lg:p-8 border border-gray-200 rounded-[8px] animate-fade-in"
+                      className="bg-white p-5 md:p-6 lg:p-8 border border-gray-200 rounded-3xl animate-fade-in"
                     >
                       <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] lg:grid-cols-[180px_1fr_180px] gap-6 lg:gap-8 items-center lg:items-start">
                         {/* Elegant Icon Representation or Image */}
                         <Link
                           to={`/language-centers/${generateSlug(lc.name)}`}
-                          className="w-full h-[100px] bg-white flex items-center justify-center overflow-hidden border border-gray-100 rounded-md p-2"
+                          className="w-full h-[100px] bg-white flex items-center justify-center overflow-hidden border border-gray-100 rounded-2xl p-2"
                         >
                           {lc.logo_url ? (
                             <img
@@ -302,13 +302,13 @@ export default function LanguageCentersPage() {
                                   {lc.more_info.slice(0, 3).map((c: any, idx: number) => (
                                     <span
                                       key={idx}
-                                      className="px-2 py-0.5 bg-slate-100 text-slate-700 text-[12px] font-medium rounded-[4px]"
+                                      className="px-2 py-0.5 bg-slate-100 text-slate-700 text-[12px] font-medium rounded-xl"
                                     >
                                       {c.title}
                                     </span>
                                   ))}
                                   {lc.more_info.length > 3 && (
-                                    <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-[12px] font-medium rounded-[4px]">
+                                    <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-[12px] font-medium rounded-xl">
                                       +{lc.more_info.length - 3} more
                                     </span>
                                   )}
@@ -321,14 +321,14 @@ export default function LanguageCentersPage() {
                         {/* Right: Actions */}
                         <div className="flex flex-col gap-3 w-full md:col-span-2 lg:col-span-1 mt-4 lg:mt-2">
                           <Button
-                            className="w-full h-10 font-bold text-[14px] bg-[#f9c365] text-[#181d29] hover:bg-[#e6a845] rounded-[6px] border border-[#f9c365]"
+                            className="w-full h-10 font-bold text-[14px] bg-[#f9c365] text-[#181d29] hover:bg-[#e6a845] rounded-full border border-[#f9c365]"
                             onClick={() => navigate(`/apply?centerId=${lc.id}`)}
                           >
                             Apply Now
                           </Button>
                           <Link to={`/language-centers/${generateSlug(lc.name)}`} className="block w-full">
                             <Button
-                              className="w-full h-10 font-bold text-[14px] border border-gray-800 text-[#181d29] hover:bg-gray-50 rounded-[6px] bg-white"
+                              className="w-full h-10 font-bold text-[14px] border border-gray-800 text-[#181d29] hover:bg-gray-50 rounded-full bg-white"
                             >
                               View Details
                             </Button>

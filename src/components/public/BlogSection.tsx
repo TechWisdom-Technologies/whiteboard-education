@@ -39,7 +39,7 @@ export function BlogSection() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {latestPosts.map((post: any) => (
               <Link key={post.id} to={`/blog/${post.id}`} className="group">
-                <article className="relative rounded-md overflow-hidden aspect-square group/card shadow-sm hover:shadow-md transition-shadow">
+                <article className="relative rounded-2xl overflow-hidden aspect-square group/card shadow-sm hover:shadow-md transition-shadow">
                   {/* Image */}
                   <img
                     src={post.cover_image || "/placeholder-blog.jpg"}
@@ -52,13 +52,13 @@ export function BlogSection() {
                   {/* Top Meta (Category & Date) */}
                   <div className="absolute top-3 left-3 right-3 flex justify-between items-start z-10">
                     {post.category ? (
-                      <span className="bg-[#ffa300] text-white text-[9px] font-normal px-1.5 py-0.5 rounded-sm uppercase tracking-wider shadow-sm">
+                      <span className="bg-[#ffa300] text-white text-[9px] font-normal px-1.5 py-0.5 rounded-xl uppercase tracking-wider shadow-sm">
                         {post.category}
                       </span>
                     ) : (
                       <div />
                     )}
-                    <span className="text-white/90 text-[9px] font-normal flex items-center gap-1 backdrop-blur-md bg-black/30 px-1.5 py-0.5 rounded-sm border border-white/10 shadow-sm">
+                    <span className="text-white/90 text-[9px] font-normal flex items-center gap-1 backdrop-blur-md bg-black/30 px-1.5 py-0.5 rounded-xl border border-white/10 shadow-sm">
                       <Calendar className="w-2.5 h-2.5" />
                       {new Date(post.date || post.created_at).toLocaleDateString("en-US", {
                         year: "numeric",

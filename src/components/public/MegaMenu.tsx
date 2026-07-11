@@ -167,7 +167,7 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
                       <Link
                         key={item.to}
                         to={item.to}
-                        className="relative aspect-square rounded-sm overflow-hidden group shadow-sm hover:shadow-md transition-shadow"
+                        className="relative aspect-square rounded-xl overflow-hidden group shadow-sm hover:shadow-md transition-shadow"
                       >
                         <img 
                           src={item.bgImage} 
@@ -191,7 +191,7 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
             {user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-sm p-0 hover:ring-2 hover:ring-[#ffa300]/30 transition-all">
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-xl p-0 hover:ring-2 hover:ring-[#ffa300]/30 transition-all">
                     <Avatar className="h-10 w-10 border-2 border-[#ffa300]/30">
                       <AvatarImage src={avatarUrl} alt={user?.email || "User avatar"} />
                       <AvatarFallback className="bg-primary text-primary-foreground text-sm font-bold">
@@ -273,7 +273,7 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
                     <MobileNavLink to="/language-centers" icon={Languages}>Language Centers</MobileNavLink>
 
                     <Collapsible>
-                      <CollapsibleTrigger className="flex w-full items-center justify-between px-3 py-2.5 text-sm font-medium text-foreground hover:bg-[#fef1da]/50 rounded-sm transition-colors">
+                      <CollapsibleTrigger className="flex w-full items-center justify-between px-3 py-2.5 text-sm font-medium text-foreground hover:bg-[#fef1da]/50 rounded-xl transition-colors">
                         <span className="flex items-center gap-2.5">
                           <Sparkles className="h-4 w-4 text-muted-foreground" /> Resources & Tools
                         </span>
@@ -297,12 +297,12 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
                       <>
                         <SheetClose asChild>
                           <Link to="/login" className="block">
-                            <Button variant="outline" className="w-full font-medium rounded-sm border-[#181d29] text-[#181d29]">Log In</Button>
+                            <Button variant="outline" className="w-full font-medium rounded-xl border-[#181d29] text-[#181d29]">Log In</Button>
                           </Link>
                         </SheetClose>
                         <SheetClose asChild>
                           <Button
-                            className="w-full bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 font-semibold rounded-sm border border-[#ffa300]"
+                            className="w-full bg-[#ffa300] text-[#181d29] hover:bg-[#ffa300]/90 font-semibold rounded-xl border border-[#ffa300]"
                             onClick={() => navigate("/contact")}
                           >
                             <Phone className="h-4 w-4 mr-1.5" /> Free Consultation
@@ -378,7 +378,7 @@ function MobileNavLink({ to, children, icon: Icon }: { to: string; children: Rea
       <Link
         to={to}
         className={cn(
-          "flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium text-foreground hover:bg-[#fef1da]/50 rounded-sm transition-colors",
+          "flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium text-foreground hover:bg-[#fef1da]/50 rounded-xl transition-colors",
           isActive && "text-[#ffa300] bg-[#fef1da]/50 border-l-2 border-[#ffa300]",
         )}
       >

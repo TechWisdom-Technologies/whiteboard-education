@@ -22,10 +22,10 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
                 Expert guidance for international students seeking quality education in Malaysia.
               </p>
               <div className="flex gap-2.5 pt-1">
-                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="h-8 w-8 rounded-sm border border-gray-700 flex items-center justify-center text-gray-400 hover:bg-[#ffa300] hover:border-[#ffa300] hover:text-[#181d29] transition-colors"><Facebook className="h-3.5 w-3.5" /></a>
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="h-8 w-8 rounded-sm border border-gray-700 flex items-center justify-center text-gray-400 hover:bg-[#ffa300] hover:border-[#ffa300] hover:text-[#181d29] transition-colors"><Twitter className="h-3.5 w-3.5" /></a>
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="h-8 w-8 rounded-sm border border-gray-700 flex items-center justify-center text-gray-400 hover:bg-[#ffa300] hover:border-[#ffa300] hover:text-[#181d29] transition-colors"><Instagram className="h-3.5 w-3.5" /></a>
-                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="h-8 w-8 rounded-sm border border-gray-700 flex items-center justify-center text-gray-400 hover:bg-[#ffa300] hover:border-[#ffa300] hover:text-[#181d29] transition-colors"><Linkedin className="h-3.5 w-3.5" /></a>
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="h-8 w-8 rounded-xl border border-gray-700 flex items-center justify-center text-gray-400 hover:bg-[#ffa300] hover:border-[#ffa300] hover:text-[#181d29] transition-colors"><Facebook className="h-3.5 w-3.5" /></a>
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="h-8 w-8 rounded-xl border border-gray-700 flex items-center justify-center text-gray-400 hover:bg-[#ffa300] hover:border-[#ffa300] hover:text-[#181d29] transition-colors"><Twitter className="h-3.5 w-3.5" /></a>
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="h-8 w-8 rounded-xl border border-gray-700 flex items-center justify-center text-gray-400 hover:bg-[#ffa300] hover:border-[#ffa300] hover:text-[#181d29] transition-colors"><Instagram className="h-3.5 w-3.5" /></a>
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="h-8 w-8 rounded-xl border border-gray-700 flex items-center justify-center text-gray-400 hover:bg-[#ffa300] hover:border-[#ffa300] hover:text-[#181d29] transition-colors"><Linkedin className="h-3.5 w-3.5" /></a>
               </div>
             </div>
 
@@ -106,7 +106,7 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
         href="https://wa.me/60123456789"
         target="_blank"
         rel="noopener noreferrer"
-        className={`fixed ${bannerVisible ? 'bottom-[76px]' : 'bottom-[20px]'} right-2 xl:right-3 z-40 h-9 w-9 rounded-sm flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-md`}
+        className={`fixed ${bannerVisible ? 'bottom-[76px]' : 'bottom-[20px]'} right-2 xl:right-3 z-40 h-9 w-9 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-md`}
         style={{ backgroundColor: "#25d366", color: "#ffffff" }}
       >
         <MessageCircle className="h-4 w-4" />

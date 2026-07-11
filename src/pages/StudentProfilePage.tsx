@@ -136,7 +136,7 @@ function InfoRow({ label, value }: { label: string; value: string | number | nul
       <span className="text-[11px] font-medium text-muted-foreground/70 uppercase tracking-wider">
         {label}
       </span>
-      <span className={`text-[13px] font-medium leading-snug ${isEmpty ? "text-amber-600/80 italic text-xs flex items-center gap-1 bg-amber-50/50 dark:bg-amber-950/10 px-2.5 py-1 rounded-md border border-amber-200/30 w-fit" : "text-[#181d29]"}`}>
+      <span className={`text-[13px] font-medium leading-snug ${isEmpty ? "text-amber-600/80 italic text-xs flex items-center gap-1 bg-amber-50/50 dark:bg-amber-950/10 px-2.5 py-1 rounded-2xl border border-amber-200/30 w-fit" : "text-[#181d29]"}`}>
         {isEmpty ? "Not provided" : value}
       </span>
     </div>
@@ -572,12 +572,12 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
               <img
                 src={student.passport_photo_url}
                 alt={student.full_name}
-                className="w-[148px] h-[177px] rounded-md object-cover border border-[#ffa300]/25 shadow-sm shrink-0 animate-fade-in"
+                className="w-[148px] h-[177px] rounded-2xl object-cover border border-[#ffa300]/25 shadow-sm shrink-0 animate-fade-in"
                 style={{ aspectRatio: "591/709" }}
               />
             ) : (
               <div 
-                className="w-[148px] h-[177px] rounded-md border border-dashed border-border bg-muted/10 flex flex-col items-center justify-center shrink-0 text-muted-foreground/30 text-center"
+                className="w-[148px] h-[177px] rounded-2xl border border-dashed border-border bg-muted/10 flex flex-col items-center justify-center shrink-0 text-muted-foreground/30 text-center"
                 style={{ aspectRatio: "591/709" }}
               >
                 <User className="h-7 w-7 mb-1" />
@@ -1211,7 +1211,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                   {url ? (
                     <CheckCircle2 className="h-4 w-4 text-green-600" />
                   ) : (
-                    <div className="h-4 w-4 rounded-sm border border-muted-foreground/40" />
+                    <div className="h-4 w-4 rounded-xl border border-muted-foreground/40" />
                   )}
                   <span className={url ? "text-[#181d29] font-medium" : "text-muted-foreground italic"}>
                     {doc.label}

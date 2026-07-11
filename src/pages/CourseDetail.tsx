@@ -184,7 +184,7 @@ ${window.location.href}`;
             <div className="w-full bg-[#ffecd8] py-20 px-10 border border-[#ffb870]/20 rounded-tl-md rounded-tr-[3rem] rounded-bl-[3rem] rounded-br-md min-h-[220px]">
               <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
                 {uni?.logo_url && (
-                  <div className="w-32 h-32 md:w-40 md:h-40 bg-white rounded-sm border border-gray-200 p-4 shrink-0 flex items-center justify-center overflow-hidden shadow-sm">
+                  <div className="w-32 h-32 md:w-40 md:h-40 bg-white rounded-xl border border-gray-200 p-4 shrink-0 flex items-center justify-center overflow-hidden shadow-sm">
                     <img src={uni.logo_url} alt={uni.name} className="max-w-full max-h-full object-contain" />
                   </div>
                 )}
@@ -198,8 +198,8 @@ ${window.location.href}`;
                     </div>
                     
                     <div className="flex flex-row gap-3 w-full sm:w-auto justify-center md:justify-end">
-                      <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold px-8 h-12 text-[16px] rounded-sm shadow-none flex-1 sm:flex-none" onClick={() => navigate(`/apply?courseId=${course.id}`)}>Apply Now</Button>
-                      <Button variant="outline" className="border-[#9273b6] text-[#9273b6] hover:bg-[#9273b6]/10 font-bold px-8 h-12 text-[16px] bg-transparent rounded-sm shadow-none flex-1 sm:flex-none" onClick={() => navigate("/contact")}>Ask Us</Button>
+                      <Button className="bg-[#ffa300] text-[#181d29] hover:bg-[#e69200] font-bold px-8 h-12 text-[16px] rounded-xl shadow-none flex-1 sm:flex-none" onClick={() => navigate(`/apply?courseId=${course.id}`)}>Apply Now</Button>
+                      <Button variant="outline" className="border-[#9273b6] text-[#9273b6] hover:bg-[#9273b6]/10 font-bold px-8 h-12 text-[16px] bg-transparent rounded-xl shadow-none flex-1 sm:flex-none" onClick={() => navigate("/contact")}>Ask Us</Button>
                     </div>
                   </div>
                 </div>
@@ -228,8 +228,8 @@ ${window.location.href}`;
               {/* Actions in sticky nav (visible mostly on desktop) */}
               {isScrolledPastHero && (
                 <div className="hidden md:flex items-center gap-3 shrink-0 ml-6">
-                  <Button className="bg-[#f1a51c] hover:bg-[#e09819] text-black font-normal rounded-sm px-6 h-10 shadow-none text-lg" onClick={() => navigate(`/apply?courseId=${course.id}`)}>Apply Now</Button>
-                  <Button variant="outline" className="rounded-sm px-6 border-gray-300 text-gray-700 hover:bg-gray-50 font-normal h-10 text-lg shadow-none bg-white" onClick={() => navigate("/contact")}>Ask Us</Button>
+                  <Button className="bg-[#f1a51c] hover:bg-[#e09819] text-black font-normal rounded-xl px-6 h-10 shadow-none text-lg" onClick={() => navigate(`/apply?courseId=${course.id}`)}>Apply Now</Button>
+                  <Button variant="outline" className="rounded-xl px-6 border-gray-300 text-gray-700 hover:bg-gray-50 font-normal h-10 text-lg shadow-none bg-white" onClick={() => navigate("/contact")}>Ask Us</Button>
                 </div>
               )}
             </div>
@@ -248,7 +248,7 @@ ${window.location.href}`;
                   <Button 
                     variant="outline" 
                     size="sm"
-                    className="rounded-sm px-3 border-gray-300 text-gray-700 hover:bg-gray-50 font-normal h-8 text-xs shadow-none bg-white flex items-center gap-1.5" 
+                    className="rounded-xl px-3 border-gray-300 text-gray-700 hover:bg-gray-50 font-normal h-8 text-xs shadow-none bg-white flex items-center gap-1.5" 
                     onClick={handleCopy}
                   >
                     {copied ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
@@ -289,7 +289,7 @@ ${window.location.href}`;
                           return (
                             <span 
                               key={m} 
-                              className={`px-2.5 py-0.5 rounded-[4px] text-sm ${
+                              className={`px-2.5 py-0.5 rounded-xl text-sm ${
                                 isActive 
                                   ? 'bg-[#181d29] text-white border border-[#181d29] font-medium' 
                                   : 'font-normal bg-[#fcecc9] text-gray-900 border border-[#f5d9a0]'
@@ -346,7 +346,7 @@ ${window.location.href}`;
               <div className="pt-10">
                 <h3 className="text-xl font-semibold text-gray-800 mb-5">Course Fee for International Students</h3>
                 <div className="grid md:grid-cols-2 gap-12 w-full lg:w-[75%]">
-                  <div className="border border-gray-200 rounded-sm overflow-hidden bg-white shadow-sm">
+                  <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
                     <div className="bg-[#ffa300]/20 px-4 py-3 border-b border-[#ffa300]/30">
                       <h4 className="font-semibold text-gray-900 text-[16px]">Yearly Tuition fees</h4>
                     </div>
@@ -381,7 +381,7 @@ ${window.location.href}`;
                     </div>
                   </div>
 
-                  <div className="border border-gray-200 rounded-sm overflow-hidden bg-white shadow-sm">
+                  <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
                     <div className="bg-[#ffa300]/20 px-4 py-3 border-b border-[#ffa300]/30">
                       <h4 className="font-semibold text-gray-900 text-[16px]">Other Fees</h4>
                     </div>
@@ -433,11 +433,11 @@ ${window.location.href}`;
               </div>
 
               {/* Apply Banner CTA */}
-              <div className="mt-16 bg-gradient-to-r from-blue-50 to-[#fdf9f1] border border-blue-100 rounded-sm p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden shadow-sm">
+              <div className="mt-16 bg-gradient-to-r from-blue-50 to-[#fdf9f1] border border-blue-100 rounded-xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden shadow-sm">
                 <h2 className="text-[20px] font-semibold text-gray-900 max-w-md relative z-10 leading-tight">
                   Would you like to apply to {uni?.name} ?
                 </h2>
-                <Button variant="outline" className="relative z-10 bg-transparent border-2 border-gray-900 text-gray-900 hover:bg-gray-50 h-14 px-8 rounded-sm font-bold text-base transition-colors shadow-none w-full md:w-auto" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
+                <Button variant="outline" className="relative z-10 bg-transparent border-2 border-gray-900 text-gray-900 hover:bg-gray-50 h-14 px-8 rounded-xl font-bold text-base transition-colors shadow-none w-full md:w-auto" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
                   Apply now
                 </Button>
               </div>
@@ -488,7 +488,7 @@ ${window.location.href}`;
 
             {/* Programme Structure Section (Curriculum Accordion) */}
             <div id="curriculum" className="scroll-m-24 pt-10">
-              <Accordion type="single" collapsible className="w-full bg-white rounded-sm overflow-hidden">
+              <Accordion type="single" collapsible className="w-full bg-white rounded-xl overflow-hidden">
                 <AccordionItem value="curriculum" className="border-b-0">
                   <AccordionTrigger className="px-0 py-6 hover:no-underline text-xl font-semibold text-gray-900 text-left bg-transparent">
                     Curriculum

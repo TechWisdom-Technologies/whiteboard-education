@@ -402,7 +402,7 @@ function RelationArrayEditor({ value = [], onChange, relationConfig }: { value: 
 
   return (
     <div className="space-y-2">
-      <div className="flex flex-wrap gap-1.5 min-h-[30px] p-2 border rounded-sm bg-muted/20">
+      <div className="flex flex-wrap gap-1.5 min-h-[30px] p-2 border rounded-xl bg-muted/20">
         {value.length === 0 && (
           <span className="text-xs text-muted-foreground italic">No selections yet</span>
         )}
@@ -417,7 +417,7 @@ function RelationArrayEditor({ value = [], onChange, relationConfig }: { value: 
       </div>
       <div className="flex gap-2">
         <select
-          className="flex-1 h-9 rounded-sm border border-input bg-background px-3 py-1.5 text-sm"
+          className="flex-1 h-9 rounded-xl border border-input bg-background px-3 py-1.5 text-sm"
           value={selectedId}
           onChange={(e) => setSelectedId(e.target.value)}
         >
@@ -768,12 +768,12 @@ export default function AdminCrudTable({
     }
     if (f.type === "richtext") {
       return (
-        <div className="bg-white rounded-sm">
+        <div className="bg-white rounded-xl">
           <ReactQuill 
             theme="snow" 
             value={form[f.key] || ""} 
             onChange={(val) => setForm({ ...form, [f.key]: val })}
-            className="bg-white text-gray-900 rounded-sm"
+            className="bg-white text-gray-900 rounded-xl"
           />
         </div>
       );
@@ -781,7 +781,7 @@ export default function AdminCrudTable({
     if (f.type === "select") {
       return (
         <select
-          className="w-full rounded-sm border border-input bg-background px-3 py-2 text-sm"
+          className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm"
           value={form[f.key] || ""}
           onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
         >
@@ -794,7 +794,7 @@ export default function AdminCrudTable({
       const cfg = f.relationConfig;
       return (
         <select
-          className="w-full rounded-sm border border-input bg-background px-3 py-2 text-sm"
+          className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm"
           value={form[f.key] || ""}
           onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
         >
@@ -954,7 +954,7 @@ export default function AdminCrudTable({
         </DialogContent>
       </Dialog>
 
-      <div className="rounded-sm border bg-card overflow-x-auto">
+      <div className="rounded-xl border bg-card overflow-x-auto">
         <Table className="text-xs md:text-[13px]">
           <TableHeader>
             <TableRow>

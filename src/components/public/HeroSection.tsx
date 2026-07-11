@@ -67,18 +67,18 @@ export function HeroSection() {
         <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
           {/* Left Side: Content */}
           <div className="flex-1 text-center lg:text-left max-w-2xl lg:-mt-40 mx-auto lg:mx-0">
-            <div className={`inline-flex items-center gap-2 px-4 py-2 mb-8 bg-white shadow-sm border border-gray-100 rounded-sm transition-all duration-700 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+            <div className={`inline-flex items-center gap-2 px-4 py-2 mb-8 bg-white shadow-sm border border-gray-100 rounded-xl transition-all duration-700 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
               <img
                 src="https://flagcdn.com/w40/my.png"
                 alt="Malaysia Flag"
-                className="w-5 h-auto shadow-sm rounded-sm"
+                className="w-5 h-auto shadow-sm rounded-xl"
               />
               <span className="text-xs md:text-sm font-bold text-[#181d29] tracking-tight">The Most Trusted Platform for Study in Malaysia</span>
             </div>
 
             <h1 className={`text-3xl md:text-5xl lg:text-5xl font-extrabold mb-4 leading-[1.2] text-[#181d29] tracking-tighter transition-all duration-700 delay-150 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`} style={{ fontFamily: "Poppins, sans-serif" }}>
               <span className="block mb-2">Expert Guidance</span>
-              <span className="inline-block bg-[#ffa300] text-[#181d29] px-4 py-1 rounded-sm mb-2 shadow-sm">For International</span>
+              <span className="inline-block bg-[#ffa300] text-[#181d29] px-4 py-1 rounded-xl mb-2 shadow-sm">For International</span>
               <span className="block">students In Malaysia</span>
             </h1>
 

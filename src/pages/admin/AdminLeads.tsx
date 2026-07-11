@@ -147,7 +147,7 @@ export default function AdminLeads() {
           {filtered.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">No leads found.</p>
           ) : (
-            <div className="rounded-sm border">
+            <div className="rounded-xl border">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -215,7 +215,7 @@ export default function AdminLeads() {
               {selectedLead.message && (
                 <div>
                   <Label className="text-xs text-muted-foreground">Message</Label>
-                  <div className="p-3 bg-muted/50 rounded-sm mt-1 border whitespace-pre-wrap">
+                  <div className="p-3 bg-muted/50 rounded-xl mt-1 border whitespace-pre-wrap">
                     {selectedLead.message}
                   </div>
                 </div>

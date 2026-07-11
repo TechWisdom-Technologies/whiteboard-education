@@ -61,7 +61,7 @@ function InfoRow({ label, value }: { label: string; value: string | number | nul
       <span className="text-[11px] font-medium text-muted-foreground/70 uppercase tracking-wider">
         {label}
       </span>
-      <span className={`text-[13px] font-medium leading-snug ${isEmpty ? "text-amber-600/80 italic text-xs flex items-center gap-1 bg-amber-50/50 dark:bg-amber-950/10 px-2.5 py-1 rounded-md border border-amber-200/30 w-fit" : "text-[#181d29]"}`}>
+      <span className={`text-[13px] font-medium leading-snug ${isEmpty ? "text-amber-600/80 italic text-xs flex items-center gap-1 bg-amber-50/50 dark:bg-amber-950/10 px-2.5 py-1 rounded-2xl border border-amber-200/30 w-fit" : "text-[#181d29]"}`}>
         {isEmpty ? "Not provided" : value}
       </span>
     </div>
@@ -433,7 +433,7 @@ export default function AdminPartnerProfile() {
                 {doc.url ? (
                   <CheckCircle2 className="h-4 w-4 text-green-600" />
                 ) : (
-                  <div className="h-4 w-4 rounded-sm border border-muted-foreground/40" />
+                  <div className="h-4 w-4 rounded-xl border border-muted-foreground/40" />
                 )}
                 <span className={doc.url ? "text-[#181d29] font-medium" : "text-muted-foreground italic"}>
                   {doc.label}

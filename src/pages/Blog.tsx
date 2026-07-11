@@ -58,7 +58,7 @@ export default function Blog() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {paged.map((post: any) => (
                 <Link key={post.id} to={`/blog/${post.id}`} className="group">
-                  <article className="relative rounded-md overflow-hidden aspect-square md:aspect-[4/5] group/card shadow-sm hover:shadow-xl transition-all duration-300">
+                  <article className="relative rounded-2xl overflow-hidden aspect-square md:aspect-[4/5] group/card shadow-sm hover:shadow-xl transition-all duration-300">
                     {/* Image */}
                     <img
                       src={post.cover_image || "/placeholder-blog.jpg"}
@@ -71,13 +71,13 @@ export default function Blog() {
                     {/* Top Meta (Category & Date) */}
                     <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-10">
                       {post.category ? (
-                        <span className="bg-[#ffa300] text-[#181d29] text-[10px] font-bold px-2 py-1 rounded-sm uppercase tracking-wider shadow-sm">
+                        <span className="bg-[#ffa300] text-[#181d29] text-[10px] font-bold px-2 py-1 rounded-xl uppercase tracking-wider shadow-sm">
                           {post.category}
                         </span>
                       ) : (
                         <div />
                       )}
-                      <span className="text-white/90 text-[10px] font-medium flex items-center gap-1.5 backdrop-blur-md bg-black/40 px-2 py-1 rounded-sm border border-white/10 shadow-sm">
+                      <span className="text-white/90 text-[10px] font-medium flex items-center gap-1.5 backdrop-blur-md bg-black/40 px-2 py-1 rounded-xl border border-white/10 shadow-sm">
                         <Calendar className="w-3 h-3" />
                         {new Date(post.date || post.created_at).toLocaleDateString("en-US", {
                           year: "numeric",
@@ -107,7 +107,7 @@ export default function Blog() {
               <div className="flex items-center justify-center gap-2 mt-16">
                 <Button 
                   variant="outline" 
-                  className="h-10 border-gray-200 text-[#515768] hover:text-[#181d29] rounded-sm bg-white"
+                  className="h-10 border-gray-200 text-[#515768] hover:text-[#181d29] rounded-xl bg-white"
                   disabled={currentPage === 1} 
                   onClick={() => {
                     setCurrentPage(currentPage - 1);
@@ -125,7 +125,7 @@ export default function Blog() {
                         setCurrentPage(i + 1);
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
-                      className={`h-10 w-10 flex items-center justify-center text-sm font-bold rounded-sm border transition-colors ${
+                      className={`h-10 w-10 flex items-center justify-center text-sm font-bold rounded-xl border transition-colors ${
                         currentPage === i + 1 
                           ? "bg-[#ffa300] border-[#ffa300] text-[#181d29]" 
                           : "bg-white border-gray-200 text-[#515768] hover:bg-gray-50"
@@ -139,7 +139,7 @@ export default function Blog() {
 
                 <Button 
                   variant="outline" 
-                  className="h-10 border-gray-200 text-[#515768] hover:text-[#181d29] rounded-sm bg-white"
+                  className="h-10 border-gray-200 text-[#515768] hover:text-[#181d29] rounded-xl bg-white"
                   disabled={currentPage === totalPages} 
                   onClick={() => {
                     setCurrentPage(currentPage + 1);

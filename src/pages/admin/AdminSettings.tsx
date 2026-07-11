@@ -331,7 +331,7 @@ export default function AdminSettings() {
 
           {pwStep === "code_sent" && (
             <div className="space-y-4 max-w-md">
-              <div className="flex items-start gap-3 p-3 bg-blue-50 border border-blue-100 rounded-sm">
+              <div className="flex items-start gap-3 p-3 bg-blue-50 border border-blue-100 rounded-xl">
                 <ShieldCheck className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
                 <p className="text-[13px] text-blue-700">A 6-digit code has been sent to <span className="font-bold">{user?.email}</span>. Check your inbox (and spam folder).</p>
               </div>
@@ -363,7 +363,7 @@ export default function AdminSettings() {
 
           {pwStep === "verified" && (
             <div className="space-y-4 max-w-md">
-              <div className="flex items-start gap-3 p-3 bg-green-50 border border-green-100 rounded-sm">
+              <div className="flex items-start gap-3 p-3 bg-green-50 border border-green-100 rounded-xl">
                 <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
                 <p className="text-[13px] text-green-700 font-medium">Code verified! Set your new password below.</p>
               </div>

@@ -48,14 +48,14 @@ export function VideoExpertWidget({ bannerVisible = false }: VideoExpertWidgetPr
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed right-2 xl:right-3 z-40 h-9 w-9 rounded-sm bg-[#181d29] text-white flex items-center justify-center hover:bg-[#181d29]/90 transition-all duration-200 shadow-md group"
+          className="fixed right-2 xl:right-3 z-40 h-9 w-9 rounded-xl bg-[#181d29] text-white flex items-center justify-center hover:bg-[#181d29]/90 transition-all duration-200 shadow-md group"
           style={{ bottom: `${videoBottomPx}px` }}
           aria-label="Book a video call"
         >
           <div className="relative">
             <Video className="h-4 w-4 text-[#ffa300]" />
             <div className="absolute -top-1 -right-1 h-1.5 w-1.5 bg-[#ffa300] rounded-full animate-pulse" />
-            <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 whitespace-nowrap bg-[#181d29] text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border border-white/10">
+            <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 whitespace-nowrap bg-[#181d29] text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border border-white/10">
               Book Video Call
             </div>
           </div>

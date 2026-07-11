@@ -50,10 +50,10 @@ export function WhyMalaysiaSection() {
               <div className="flex-1 flex justify-center">
                 <div className="relative group w-full max-w-[440px]">
                   {/* Background accent block - offset to the bottom-right */}
-                  <div className={`absolute inset-0 translate-x-4 translate-y-4 rounded-sm transition-transform duration-500 group-hover:translate-x-2 group-hover:translate-y-2 ${i % 2 === 0 ? 'bg-[#ffa300]/10' : 'bg-[#181d29]/5'}`} />
+                  <div className={`absolute inset-0 translate-x-4 translate-y-4 rounded-xl transition-transform duration-500 group-hover:translate-x-2 group-hover:translate-y-2 ${i % 2 === 0 ? 'bg-[#ffa300]/10' : 'bg-[#181d29]/5'}`} />
                   
                   {/* Main image container */}
-                  <div className="relative aspect-[4/3] rounded-sm overflow-hidden border border-[#e5e7eb] bg-white shadow-xl z-10">
+                  <div className="relative aspect-[4/3] rounded-xl overflow-hidden border border-[#e5e7eb] bg-white shadow-xl z-10">
                     <img 
                       src={p.image} 
                       alt={p.title} 

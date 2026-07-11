@@ -47,8 +47,7 @@
     --border: 216 10% 82%;             /* #cacdd4 */
     --input: 216 10% 82%;
     --ring: 39 100% 50%;
-
-    --radius: 0.5rem;                  /* Increased per request for a softer, nicer look */
+    --radius: 1rem;                  /* Increased per request for a softer, nicer look */
 
     --sidebar-background: 225 24% 13%;
     --sidebar-foreground: 0 0% 100%;

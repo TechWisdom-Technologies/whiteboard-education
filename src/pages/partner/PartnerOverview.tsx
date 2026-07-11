@@ -99,7 +99,7 @@ export default function PartnerOverview() {
         {kpis.map((m, i) => (
           <Card key={m.label} className="hover:shadow-md transition-shadow animate-fade-in" style={{ animationDelay: `${i * 60}ms` }}>
             <CardContent className="p-4 flex items-center gap-3">
-              <div className={`h-10 w-10 rounded-sm flex items-center justify-center ${m.bg} ${m.accent}`}>
+              <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${m.bg} ${m.accent}`}>
                 <m.icon className="h-5 w-5" />
               </div>
               <div>
@@ -133,9 +133,9 @@ export default function PartnerOverview() {
                 return (
                   <div
                     key={p.status}
-                    className={`flex items-center gap-2.5 px-3 py-2.5 border rounded-sm transition-colors ${p.bgCard} ${active ? "bg-white" : "bg-gray-50/60 opacity-50"}`}
+                    className={`flex items-center gap-2.5 px-3 py-2.5 border rounded-xl transition-colors ${p.bgCard} ${active ? "bg-white" : "bg-gray-50/60 opacity-50"}`}
                   >
-                    <div className={`h-8 w-8 rounded-sm flex items-center justify-center shrink-0 ${p.color}`}>
+                    <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 ${p.color}`}>
                       <Icon className="h-4 w-4" />
                     </div>
                     <div className="min-w-0">
@@ -179,7 +179,7 @@ export default function PartnerOverview() {
               {recentSlice.map(s => {
                 const st = statusConfig[s.status] || { label: s.status, color: "bg-muted text-muted-foreground" };
                 return (
-                  <div key={s.id} className="flex items-center justify-between gap-3 py-2.5 px-2 border-b last:border-0 hover:bg-muted/30 transition-colors rounded-sm">
+                  <div key={s.id} className="flex items-center justify-between gap-3 py-2.5 px-2 border-b last:border-0 hover:bg-muted/30 transition-colors rounded-xl">
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold text-[#181d29] truncate">{s.full_name}</p>
                       <p className="text-[11px] text-muted-foreground truncate">{s.target_university || "No university"} · {s.target_course || "No course"} · {s.degree_level}</p>

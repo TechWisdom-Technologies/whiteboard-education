@@ -475,12 +475,12 @@ export default function PartnerProfile() {
                   </div>
                   
                   {partner.admin_notes && partner.status !== "approved" && (
-                    <div id="admin-notes-section" className="sm:col-span-2 pt-4 border-t border-gray-100 mt-2 rounded-md transition-all">
+                    <div id="admin-notes-section" className="sm:col-span-2 pt-4 border-t border-gray-100 mt-2 rounded-2xl transition-all">
                       <p className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-2 flex items-center gap-1.5">
                         <ClipboardList className="h-3.5 w-3.5 text-[#ffa300]" />
                         Notes from Admin
                       </p>
-                      <div className="bg-amber-50 border border-amber-200/50 rounded-md p-4 text-[13px] text-gray-700 whitespace-pre-wrap shadow-sm">
+                      <div className="bg-amber-50 border border-amber-200/50 rounded-2xl p-4 text-[13px] text-gray-700 whitespace-pre-wrap shadow-sm">
                         {partner.admin_notes}
                       </div>
                     </div>

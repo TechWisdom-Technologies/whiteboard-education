@@ -127,7 +127,7 @@ export function NotificationCenter() {
         <Button variant="ghost" size="icon" className="relative text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10">
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 h-4.5 w-4.5 rounded-sm bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center min-w-[18px] h-[18px] animate-scale-in">
+            <span className="absolute -top-0.5 -right-0.5 h-4.5 w-4.5 rounded-xl bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center min-w-[18px] h-[18px] animate-scale-in">
               {unreadCount}
             </span>
           )}
@@ -155,7 +155,7 @@ export function NotificationCenter() {
               style={{ animationDelay: `${i * 50}ms` }}
             >
               <div className="flex items-start gap-2.5">
-                <div className={`h-2 w-2 rounded-sm mt-1.5 flex-shrink-0 ${dotStyles[n.type as keyof typeof dotStyles] || dotStyles.info}`} />
+                <div className={`h-2 w-2 rounded-xl mt-1.5 flex-shrink-0 ${dotStyles[n.type as keyof typeof dotStyles] || dotStyles.info}`} />
                 
                 <button
                   className="flex-1 text-left min-w-0 pr-2"

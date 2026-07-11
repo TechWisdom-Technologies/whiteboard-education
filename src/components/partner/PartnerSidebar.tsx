@@ -117,7 +117,7 @@ export function PartnerSidebar() {
                             <div className="flex items-center gap-2">
                               <span className={`text-[13px] ${isActive ? "text-[#ffa300]" : "text-[#d1bfe8] font-medium"}`}>{item.title}</span>
                               {item.title === "Notifications" && unreadCount > 0 && (
-                                <span className="h-[16px] min-w-[16px] px-1 rounded-sm bg-destructive text-destructive-foreground text-[9px] font-bold flex items-center justify-center">
+                                <span className="h-[16px] min-w-[16px] px-1 rounded-xl bg-destructive text-destructive-foreground text-[9px] font-bold flex items-center justify-center">
                                   {unreadCount > 99 ? "99+" : unreadCount}
                                 </span>
                               )}

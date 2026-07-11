@@ -23,7 +23,7 @@ export function PreFooterCTA() {
 
       <div className="container relative z-10 mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-sm bg-[#ffa300]/20 border border-[#ffa300]/30 text-[#ffa300] mb-6 backdrop-blur-sm">
+          <div className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl bg-[#ffa300]/20 border border-[#ffa300]/30 text-[#ffa300] mb-6 backdrop-blur-sm">
             <Calendar className="h-4 w-4" />
             <span className="text-xs font-semibold tracking-wide uppercase">Intakes are open for 2026</span>
           </div>
@@ -39,14 +39,14 @@ export function PreFooterCTA() {
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to="/contact" className="w-full sm:w-auto">
-              <Button className="w-full sm:w-auto bg-[#ffa300] text-[#181d29] hover:bg-[#e08e00] font-semibold text-sm rounded-md h-11 px-6 group shadow-lg shadow-[#ffa300]/20 transition-all hover:shadow-[#ffa300]/40 hover:-translate-y-0.5">
+              <Button className="w-full sm:w-auto bg-[#ffa300] text-[#181d29] hover:bg-[#e08e00] font-semibold text-sm rounded-2xl h-11 px-6 group shadow-lg shadow-[#ffa300]/20 transition-all hover:shadow-[#ffa300]/40 hover:-translate-y-0.5">
                 Book Free Consultation
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
               </Button>
             </Link>
             
             <Link to="/universities" className="w-full sm:w-auto">
-              <Button variant="outline" className="w-full sm:w-auto border-white/20 text-white hover:bg-white hover:text-[#181d29] font-semibold text-sm rounded-md h-11 px-6 bg-white/5 backdrop-blur-sm transition-all hover:-translate-y-0.5">
+              <Button variant="outline" className="w-full sm:w-auto border-white/20 text-white hover:bg-white hover:text-[#181d29] font-semibold text-sm rounded-2xl h-11 px-6 bg-white/5 backdrop-blur-sm transition-all hover:-translate-y-0.5">
                 <GraduationCap className="mr-2 h-4 w-4" />
                 Explore Universities
               </Button>

@@ -117,11 +117,11 @@ export default function Housing() {
       <main className="flex-1">
         <div className="container mx-auto px-4 py-8 md:py-12">
           {/* Top Filters Row */}
-          <div className="bg-white p-5 border border-gray-200/60 rounded-md flex flex-col lg:flex-row items-stretch lg:items-center gap-6 shadow-sm mb-8">
+          <div className="bg-white p-5 border border-gray-200/60 rounded-2xl flex flex-col lg:flex-row items-stretch lg:items-center gap-6 shadow-sm mb-8">
             <div className="w-full lg:w-[240px]">
               <label className="text-xs font-bold text-[#181d29] uppercase tracking-wider mb-2 block" style={{ fontFamily: "Poppins, sans-serif" }}>Accommodation Type</label>
               <Select value={typeFilter} onValueChange={setTypeFilter}>
-                <SelectTrigger className="h-10 text-[13px] border-gray-200/80 rounded-md bg-white hover:bg-gray-50/50 transition-colors" style={{ fontFamily: "Poppins, sans-serif" }}><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-10 text-[13px] border-gray-200/80 rounded-2xl bg-white hover:bg-gray-50/50 transition-colors" style={{ fontFamily: "Poppins, sans-serif" }}><SelectValue /></SelectTrigger>
                 <SelectContent>{accommodationTypes.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
               </Select>
             </div>
@@ -129,7 +129,7 @@ export default function Housing() {
             <div className="w-full lg:w-[240px]">
               <label className="text-xs font-bold text-[#181d29] uppercase tracking-wider mb-2 block" style={{ fontFamily: "Poppins, sans-serif" }}>Property Type</label>
               <Select value={propertyFilter} onValueChange={setPropertyFilter}>
-                <SelectTrigger className="h-10 text-[13px] border-gray-200/80 rounded-md bg-white hover:bg-gray-50/50 transition-colors" style={{ fontFamily: "Poppins, sans-serif" }}><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-10 text-[13px] border-gray-200/80 rounded-2xl bg-white hover:bg-gray-50/50 transition-colors" style={{ fontFamily: "Poppins, sans-serif" }}><SelectValue /></SelectTrigger>
                 <SelectContent>{propertyTypes.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
               </Select>
             </div>
@@ -181,7 +181,7 @@ export default function Housing() {
                   const amenities = parseJsonArray(a.amenities);
                   const roomTypes = parseJsonArray(a.room_types);
                   return (
-                    <Card key={a.id} className="group shadow-sm border-gray-200/60 rounded-md hover:shadow-lg transition-all cursor-pointer overflow-hidden" onClick={() => setSelected(a)}>
+                    <Card key={a.id} className="group shadow-sm border-gray-200/60 rounded-2xl hover:shadow-lg transition-all cursor-pointer overflow-hidden" onClick={() => setSelected(a)}>
                       {/* Image */}
                       <div className="h-40 overflow-hidden bg-gray-100">
                         <img
@@ -239,7 +239,7 @@ export default function Housing() {
                         {amenities.length > 0 && (
                           <div className="flex flex-wrap gap-1">
                             {amenities.slice(0, 4).map((am: string, i: number) => (
-                              <span key={i} className="text-[10px] text-muted-foreground bg-muted/60 rounded-sm px-1.5 py-0.5">{am}</span>
+                              <span key={i} className="text-[10px] text-muted-foreground bg-muted/60 rounded-xl px-1.5 py-0.5">{am}</span>
                             ))}
                             {amenities.length > 4 && <span className="text-[10px] text-muted-foreground">+{amenities.length - 4}</span>}
                           </div>
@@ -270,7 +270,7 @@ export default function Housing() {
                 <DialogTitle className="text-xl">{selected.name}</DialogTitle>
               </DialogHeader>
 
-              <div className="rounded-sm overflow-hidden h-56 bg-gray-100 relative">
+              <div className="rounded-xl overflow-hidden h-56 bg-gray-100 relative">
                 <img
                   src={activeImage || fallbackImages[0]}
                   alt={selected.name}
@@ -295,7 +295,7 @@ export default function Housing() {
                     <button
                       key={idx}
                       onClick={() => setActiveImage(img)}
-                      className={`h-14 w-20 rounded-sm overflow-hidden border-2 shrink-0 transition-all ${
+                      className={`h-14 w-20 rounded-xl overflow-hidden border-2 shrink-0 transition-all ${
                         activeImage === img ? "border-[#ffa300] scale-95" : "border-transparent opacity-70 hover:opacity-100"
                       }`}
                     >
@@ -322,7 +322,7 @@ export default function Housing() {
                 {selected.travel_distance_time && typeof selected.travel_distance_time === 'object' && Object.keys(selected.travel_distance_time).length > 0 ? (
                   <div className="space-y-2">
                     <h4 className="text-sm font-semibold text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Travel Distance / Time</h4>
-                    <div className="flex flex-wrap gap-4 p-3 rounded-md bg-[#ffa300]/10 border border-[#ffa300]/20">
+                    <div className="flex flex-wrap gap-4 p-3 rounded-2xl bg-[#ffa300]/10 border border-[#ffa300]/20">
                       {selected.travel_distance_time.walking && (
                         <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
                           <Clock className="h-4 w-4 text-[#ffa300]" />
@@ -344,7 +344,7 @@ export default function Housing() {
                     </div>
                   </div>
                 ) : selected.travel_distance && (
-                  <div className="flex items-center gap-2 p-3 rounded-sm bg-[#ffa300]/10 border border-[#ffa300]/20">
+                  <div className="flex items-center gap-2 p-3 rounded-xl bg-[#ffa300]/10 border border-[#ffa300]/20">
                     <Clock className="h-4 w-4 text-[#ffa300]" />
                     <span className="text-sm font-medium">{selected.travel_distance}</span>
                     <span className="text-xs text-muted-foreground">from nearest university</span>
@@ -367,7 +367,7 @@ export default function Housing() {
                 {selected.room_rents && Array.isArray(selected.room_rents) && selected.room_rents.length > 0 ? (
                   <div>
                     <h4 className="text-sm font-semibold mb-2 text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Available Room Types & Rents</h4>
-                    <div className="border border-gray-200/80 rounded-md overflow-hidden bg-white shadow-sm">
+                    <div className="border border-gray-200/80 rounded-2xl overflow-hidden bg-white shadow-sm">
                       <table className="w-full text-sm text-left">
                         <thead className="bg-gray-50 border-b border-gray-200/80">
                           <tr>

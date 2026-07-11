@@ -67,9 +67,9 @@ export function ServicesGrid() {
                   {/* Step Number with Shadow/Offset */}
                   <div className="relative inline-block mb-8 lg:mb-12">
                     {/* Offset background */}
-                    <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-[#ffa300] rounded-sm" />
+                    <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-[#ffa300] rounded-xl" />
                     {/* Number box */}
-                    <div className="relative w-8 h-8 bg-[#181d29] text-white flex items-center justify-center font-bold text-sm rounded-sm z-10 border border-[#181d29]">
+                    <div className="relative w-8 h-8 bg-[#181d29] text-white flex items-center justify-center font-bold text-sm rounded-xl z-10 border border-[#181d29]">
                       {i + 1}
                     </div>
                   </div>

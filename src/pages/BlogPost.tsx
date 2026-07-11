@@ -78,7 +78,7 @@ export default function BlogPost() {
           
           <div className="flex flex-wrap items-center gap-3 mb-6">
             {post.category && (
-              <span className="bg-[#ffa300] text-[#181d29] text-[11px] font-semibold px-3 py-1.5 rounded-sm uppercase tracking-wider">
+              <span className="bg-[#ffa300] text-[#181d29] text-[11px] font-semibold px-3 py-1.5 rounded-xl uppercase tracking-wider">
                 {post.category}
               </span>
             )}
@@ -144,7 +144,7 @@ export default function BlogPost() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
               {related.map((r: any) => (
                 <Link key={r.id} to={`/blog/${r.id}`} className="group">
-                  <article className="relative rounded-md overflow-hidden aspect-square md:aspect-[4/5] group/card shadow-sm hover:shadow-xl transition-all duration-300">
+                  <article className="relative rounded-2xl overflow-hidden aspect-square md:aspect-[4/5] group/card shadow-sm hover:shadow-xl transition-all duration-300">
                     <img
                       src={r.cover_image || "/placeholder-blog.jpg"}
                       alt={r.title}
@@ -154,13 +154,13 @@ export default function BlogPost() {
 
                     <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-10">
                       {r.category ? (
-                        <span className="bg-[#ffa300] text-[#181d29] text-[10px] font-semibold px-2 py-1 rounded-sm uppercase tracking-wider shadow-sm">
+                        <span className="bg-[#ffa300] text-[#181d29] text-[10px] font-semibold px-2 py-1 rounded-xl uppercase tracking-wider shadow-sm">
                           {r.category}
                         </span>
                       ) : (
                         <div />
                       )}
-                      <span className="text-white/90 text-[10px] font-medium flex items-center gap-1.5 backdrop-blur-md bg-black/40 px-2 py-1 rounded-sm border border-white/10 shadow-sm">
+                      <span className="text-white/90 text-[10px] font-medium flex items-center gap-1.5 backdrop-blur-md bg-black/40 px-2 py-1 rounded-xl border border-white/10 shadow-sm">
                         <Calendar className="w-3 h-3" />
                         {new Date(r.date || r.created_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
                       </span>

@@ -340,7 +340,7 @@ export default function PartnerStudents() {
         </Card>
       ) : (
         <Card>
-          <div className="rounded-sm border overflow-x-auto">
+          <div className="rounded-xl border overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>

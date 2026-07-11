@@ -93,7 +93,7 @@ export default function LanguageCenterDetail() {
         <div className="container mx-auto px-4 lg:px-6">
           <div className="bg-[#fdf0d5] py-16 px-10 flex flex-col md:flex-row items-center md:items-start gap-8 rounded-tl-md rounded-tr-[3rem] rounded-bl-[3rem] rounded-br-md min-h-[220px]">
             {/* Logo / Icon */}
-            <div className="h-32 w-32 md:h-40 md:w-40 bg-white rounded-sm shadow flex items-center justify-center shrink-0 p-4">
+            <div className="h-32 w-32 md:h-40 md:w-40 bg-white rounded-xl shadow flex items-center justify-center shrink-0 p-4">
               {lc.logo_url ? (
                 <img
                   src={lc.logo_url}
@@ -151,7 +151,7 @@ export default function LanguageCenterDetail() {
             <div
               className={`flex items-center min-w-0 transition-all duration-300 ${isScrolled ? "opacity-100 translate-x-0 w-full" : "opacity-0 -translate-x-4 w-0 overflow-hidden"}`}
             >
-              <div className="h-10 w-10 bg-white rounded-sm border border-gray-100 shadow-sm flex items-center justify-center shrink-0 overflow-hidden">
+              <div className="h-10 w-10 bg-white rounded-xl border border-gray-100 shadow-sm flex items-center justify-center shrink-0 overflow-hidden">
                 {lc.logo_url ? (
                   <img
                     src={lc.logo_url}
@@ -219,7 +219,7 @@ export default function LanguageCenterDetail() {
 
           {/* Render scraped about section image URL directly under the description */}
           {lc.about_image_url && (
-            <div className="mt-8 flex justify-center rounded-sm overflow-hidden shadow-md border border-gray-100 bg-gray-50 max-w-2xl mx-auto">
+            <div className="mt-8 flex justify-center rounded-xl overflow-hidden shadow-md border border-gray-100 bg-gray-50 max-w-2xl mx-auto">
               <img
                 src={lc.about_image_url}
                 alt={`${lc.name} image`}
@@ -241,7 +241,7 @@ export default function LanguageCenterDetail() {
               <Card key={idx} className="border shadow-sm bg-white hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="p-3 bg-[#ffa300]/10 rounded-sm shrink-0">
+                    <div className="p-3 bg-[#ffa300]/10 rounded-xl shrink-0">
                       <BookOpen className="h-6 w-6 text-[#ffa300]" />
                     </div>
                     <div className="flex-1">
@@ -365,7 +365,7 @@ export default function LanguageCenterDetail() {
                 return (
                   <div
                     key={idx}
-                    className="bg-white border rounded-sm shadow-sm overflow-hidden transition-all"
+                    className="bg-white border rounded-xl shadow-sm overflow-hidden transition-all"
                     style={{ borderColor: isOpen ? "#ffa300" : "#e8e8e8" }}
                   >
                     <button
@@ -437,7 +437,7 @@ export default function LanguageCenterDetail() {
                   to={`/language-centers/${generateSlug(sc.name)}`}
                   className="h-full"
                 >
-                  <Card className="bg-white hover:shadow-lg transition-all hover:-translate-y-1 h-full flex flex-col rounded-sm border border-[#e8e8e8] group hover:border-[#ffa300]">
+                  <Card className="bg-white hover:shadow-lg transition-all hover:-translate-y-1 h-full flex flex-col rounded-xl border border-[#e8e8e8] group hover:border-[#ffa300]">
                     <CardContent className="p-0 flex flex-col h-full">
                       {/* Logo Container */}
                       <div className="h-48 flex items-center justify-center bg-white border-b p-6 shrink-0">

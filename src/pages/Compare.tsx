@@ -94,7 +94,7 @@ export default function Compare() {
           </div>
 
           {!hasAny && (
-            <Card className="text-center py-16 animate-fade-in shadow-sm border-gray-200/60 rounded-md">
+            <Card className="text-center py-16 animate-fade-in shadow-sm border-gray-200/60 rounded-2xl">
               <CardContent>
                 <div className="h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Trophy className="h-8 w-8 text-gray-400" />
@@ -108,13 +108,13 @@ export default function Compare() {
           {hasAny && (
             <div className="space-y-8 animate-fade-in">
               {/* Sticky university headers */}
-              <div className="sticky top-16 z-30 bg-background/95 backdrop-blur border-b py-4 -mx-4 px-4 md:mx-0 md:px-0 md:rounded-sm md:border md:shadow-sm">
+              <div className="sticky top-16 z-30 bg-background/95 backdrop-blur border-b py-4 -mx-4 px-4 md:mx-0 md:px-0 md:rounded-xl md:border md:shadow-sm">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {activeUnis.map((a, i) => (
                     <div key={i} className="text-center">
                       {a ? (
                         <div className="flex flex-col items-center gap-2">
-                          <img src={a.uni.logo_url} alt={a.uni.name} className="w-12 h-12 rounded-sm object-cover" />
+                          <img src={a.uni.logo_url} alt={a.uni.name} className="w-12 h-12 rounded-xl object-cover" />
                           <div>
                             <p className="font-bold text-sm leading-tight">{a.uni.name}</p>
                             <p className="text-xs text-muted-foreground">{a.uni.city}, {countries.find((c) => c.id === a.uni.country_id)?.name}</p>
@@ -129,7 +129,7 @@ export default function Compare() {
               </div>
 
               {/* Radar Chart */}
-              <Card className="shadow-sm border-gray-200/60 rounded-md">
+              <Card className="shadow-sm border-gray-200/60 rounded-2xl">
                 <CardHeader><CardTitle className="text-xl" style={{ fontFamily: "Poppins, sans-serif", color: "#181d29" }}>Performance Comparison</CardTitle></CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={350}>
@@ -161,7 +161,7 @@ export default function Compare() {
                 { label: "Min. IELTS", render: (a: NonNullable<typeof activeUnis[0]>) => a.comp.min_ielts.toString(), icon: GraduationCap },
                 { label: "Min. TOEFL", render: (a: NonNullable<typeof activeUnis[0]>) => a.comp.min_toefl.toString(), icon: GraduationCap },
               ].map((row) => (
-                <Card key={row.label} className="shadow-sm border-gray-200/60 rounded-md">
+                <Card key={row.label} className="shadow-sm border-gray-200/60 rounded-2xl">
                   <CardContent className="p-5">
                     <div className="flex items-center gap-2 mb-4">
                       <row.icon className="h-4 w-4 text-[#ffa300]" />
@@ -188,7 +188,7 @@ export default function Compare() {
               ))}
 
               {/* Top Courses */}
-              <Card className="shadow-sm border-gray-200/60 rounded-md">
+              <Card className="shadow-sm border-gray-200/60 rounded-2xl">
                 <CardContent className="p-5">
                   <div className="flex items-center gap-2 mb-4">
                     <GraduationCap className="h-4 w-4 text-[#ffa300]" />
@@ -200,7 +200,7 @@ export default function Compare() {
                         {a ? (
                           <div className="space-y-2">
                             {courses.filter((c) => c.university_id === a.uni.id).slice(0, 3).map((c) => (
-                              <div key={c.id} className="bg-muted/50 rounded-sm p-2.5">
+                              <div key={c.id} className="bg-muted/50 rounded-xl p-2.5">
                                 <p className="text-xs font-medium leading-tight">{c.title}</p>
                                 <p className="text-xs text-muted-foreground">{c.degree_level} • ${c.tuition_fee.toLocaleString()}/yr</p>
                               </div>
@@ -216,7 +216,7 @@ export default function Compare() {
               </Card>
 
               {/* Score Bars */}
-              <Card className="shadow-sm border-gray-200/60 rounded-md">
+              <Card className="shadow-sm border-gray-200/60 rounded-2xl">
                 <CardContent className="p-5">
                   <h3 className="font-semibold text-sm mb-4">Detailed Scores</h3>
                   {["academic_difficulty", "affordability", "campus_life"].map((key) => (

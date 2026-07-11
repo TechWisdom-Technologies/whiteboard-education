@@ -275,7 +275,7 @@ export default function UniversityDetail() {
       <section className="pb-10">
         <div className="container mx-auto px-4 lg:px-6">
           <div className="bg-[#fdf0d5] py-16 px-10 flex flex-col md:flex-row items-center md:items-start gap-8 rounded-tl-md rounded-tr-[3rem] rounded-bl-[3rem] rounded-br-md min-h-[220px]">
-            <img src={logo} alt={uni.name} className="h-32 w-32 md:h-40 md:w-40 object-contain rounded-sm bg-white p-4 shadow shrink-0" />
+            <img src={logo} alt={uni.name} className="h-32 w-32 md:h-40 md:w-40 object-contain rounded-xl bg-white p-4 shadow shrink-0" />
             <div className="flex-1 flex flex-col w-full">
               <h1 className="text-4xl font-bold text-[#181d29] mb-4 text-center md:text-left" style={{ fontFamily: "Poppins, sans-serif" }}>{uni.name}</h1>
               
@@ -308,7 +308,7 @@ export default function UniversityDetail() {
             <div className="flex items-center gap-1 shrink-0">
               {(["overview", "courses", "accommodation"] as TabKey[]).map(k => (
                 <button key={k} onClick={() => { setTab(k); setCPage(1); }}
-                  className={`capitalize text-sm md:text-base font-normal px-3 md:px-4 py-2 rounded-sm transition-colors ${tab === k ? "text-[#ffa300] bg-[#ffa300]/10" : "text-gray-500 hover:text-[#181d29] hover:bg-gray-100"}`}
+                  className={`capitalize text-sm md:text-base font-normal px-3 md:px-4 py-2 rounded-xl transition-colors ${tab === k ? "text-[#ffa300] bg-[#ffa300]/10" : "text-gray-500 hover:text-[#181d29] hover:bg-gray-100"}`}
                 >{k}</button>
               ))}
             </div>
@@ -340,7 +340,7 @@ export default function UniversityDetail() {
                 </p>
 
                 {/* High-Res Campus Image */}
-                <div className="rounded-sm overflow-hidden shadow-md border border-gray-100 bg-gray-50 flex justify-center">
+                <div className="rounded-xl overflow-hidden shadow-md border border-gray-100 bg-gray-50 flex justify-center">
                   <img 
                     src={
                       CAMPUS_IMAGES[uni.name] || 
@@ -466,7 +466,7 @@ export default function UniversityDetail() {
                 </h2>
                 <Accordion type="single" collapsible className="space-y-2">
                   {faqs.map((f: any, i: number) => (
-                    <AccordionItem key={i} value={`f${i}`} className="border rounded-sm px-4 bg-gray-50">
+                    <AccordionItem key={i} value={`f${i}`} className="border rounded-xl px-4 bg-gray-50">
                       <AccordionTrigger className="text-sm font-semibold hover:no-underline text-left">{f.question}</AccordionTrigger>
                       <AccordionContent className="text-gray-600 text-sm leading-relaxed">{f.answer}</AccordionContent>
                     </AccordionItem>
@@ -528,11 +528,11 @@ export default function UniversityDetail() {
           <div className="container mx-auto px-4 max-w-5xl">
             {/* Opaque Sticky Filter Bar */}
             <div className="sticky top-[80px] z-30 bg-[#f0f4f8] py-4 -mx-4 px-4 mb-4">
-              <div className="bg-white p-4 rounded-sm border shadow-md flex flex-col md:flex-row gap-4 items-center">
+              <div className="bg-white p-4 rounded-xl border shadow-md flex flex-col md:flex-row gap-4 items-center">
                 {/* Category Filter */}
                 <div className="w-full md:flex-1">
                   <Select value={cCategory} onValueChange={v => { setCCategory(v); setCPage(1); }}>
-                    <SelectTrigger className="w-full bg-gray-50 border-gray-200 h-11 rounded-sm"><SelectValue placeholder="All Categories" /></SelectTrigger>
+                    <SelectTrigger className="w-full bg-gray-50 border-gray-200 h-11 rounded-xl"><SelectValue placeholder="All Categories" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Categories</SelectItem>
                       {categories.map(cat => <SelectItem key={cat} value={cat.toLowerCase()}>{cat}</SelectItem>)}
@@ -543,7 +543,7 @@ export default function UniversityDetail() {
                 {/* Qualification Filter */}
                 <div className="w-full md:w-48">
                   <Select value={cLevel} onValueChange={v => { setCLevel(v); setCPage(1); }}>
-                    <SelectTrigger className="w-full bg-gray-50 border-gray-200 h-11 rounded-sm"><SelectValue placeholder="All Levels" /></SelectTrigger>
+                    <SelectTrigger className="w-full bg-gray-50 border-gray-200 h-11 rounded-xl"><SelectValue placeholder="All Levels" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Levels</SelectItem>
                       {levels.map(l => <SelectItem key={l} value={l.toLowerCase()}>{l}</SelectItem>)}
@@ -559,13 +559,13 @@ export default function UniversityDetail() {
                       placeholder="Search Program..." 
                       value={cSearch} 
                       onChange={e => { setCSearch(e.target.value); setCPage(1); }} 
-                      className="pl-9 bg-gray-50 border-gray-200 h-11 rounded-sm" 
+                      className="pl-9 bg-gray-50 border-gray-200 h-11 rounded-xl" 
                     />
                   </div>
                   <Button 
                     variant="outline" 
                     size="icon" 
-                    className="h-11 w-11 rounded-sm border-gray-200 text-gray-500 hover:text-[#181d29]"
+                    className="h-11 w-11 rounded-xl border-gray-200 text-gray-500 hover:text-[#181d29]"
                     onClick={() => { setCSearch(""); setCLevel("all"); setCCategory("all"); setCPage(1); }}
                     title="Reset Filters"
                   >
@@ -635,7 +635,7 @@ export default function UniversityDetail() {
                             else if (titleLower.includes("certificate")) effLevel = "Certificate";
                             else if (titleLower.includes("foundation")) effLevel = "Foundation";
                             return (
-                              <Badge variant="outline" className={`text-[10px] font-bold uppercase tracking-widest ${levelColor(effLevel)} bg-opacity-10 border-current rounded-sm`}>
+                              <Badge variant="outline" className={`text-[10px] font-bold uppercase tracking-widest ${levelColor(effLevel)} bg-opacity-10 border-current rounded-xl`}>
                                 {effLevel}
                               </Badge>
                             );
@@ -753,7 +753,7 @@ export default function UniversityDetail() {
                 <DialogTitle className="text-xl">{selected.name}</DialogTitle>
               </DialogHeader>
 
-              <div className="rounded-sm overflow-hidden h-56 bg-gray-100 relative">
+              <div className="rounded-xl overflow-hidden h-56 bg-gray-100 relative">
                 <img
                   src={activeImage || fallbackImages[0]}
                   alt={selected.name}
@@ -778,7 +778,7 @@ export default function UniversityDetail() {
                     <button
                       key={idx}
                       onClick={() => setActiveImage(img)}
-                      className={`h-14 w-20 rounded-sm overflow-hidden border-2 shrink-0 transition-all ${
+                      className={`h-14 w-20 rounded-xl overflow-hidden border-2 shrink-0 transition-all ${
                         activeImage === img ? "border-[#ffa300] scale-95" : "border-transparent opacity-70 hover:opacity-100"
                       }`}
                     >
@@ -805,7 +805,7 @@ export default function UniversityDetail() {
                 {selected.travel_distance_time && typeof selected.travel_distance_time === 'object' && Object.keys(selected.travel_distance_time).length > 0 ? (
                   <div className="space-y-2">
                     <h4 className="text-sm font-semibold text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Travel Distance / Time</h4>
-                    <div className="flex flex-wrap gap-4 p-3 rounded-md bg-[#ffa300]/10 border border-[#ffa300]/20">
+                    <div className="flex flex-wrap gap-4 p-3 rounded-2xl bg-[#ffa300]/10 border border-[#ffa300]/20">
                       {selected.travel_distance_time.walking && (
                         <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
                           <Clock className="h-4 w-4 text-[#ffa300]" />
@@ -827,7 +827,7 @@ export default function UniversityDetail() {
                     </div>
                   </div>
                 ) : selected.travel_distance && (
-                  <div className="flex items-center gap-2 p-3 rounded-sm bg-[#ffa300]/10 border border-[#ffa300]/20">
+                  <div className="flex items-center gap-2 p-3 rounded-xl bg-[#ffa300]/10 border border-[#ffa300]/20">
                     <Clock className="h-4 w-4 text-[#ffa300]" />
                     <span className="text-sm font-medium">{selected.travel_distance}</span>
                     <span className="text-xs text-muted-foreground">from nearest university</span>
@@ -850,7 +850,7 @@ export default function UniversityDetail() {
                 {selected.room_rents && Array.isArray(selected.room_rents) && selected.room_rents.length > 0 ? (
                   <div>
                     <h4 className="text-sm font-semibold mb-2 text-[#181d29]" style={{ fontFamily: "Poppins, sans-serif" }}>Available Room Types & Rents</h4>
-                    <div className="border border-gray-200/80 rounded-md overflow-hidden bg-white shadow-sm">
+                    <div className="border border-gray-200/80 rounded-2xl overflow-hidden bg-white shadow-sm">
                       <table className="w-full text-sm text-left">
                         <thead className="bg-gray-50 border-b border-gray-200/80">
                           <tr>

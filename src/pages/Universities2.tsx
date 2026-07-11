@@ -416,7 +416,7 @@ export default function Universities() {
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
-                      className="border border-gray-300 rounded-[4px] px-3 py-1.5 text-gray-600 bg-white focus:outline-none focus:border-[#ffa300]"
+                      className="border border-gray-300 rounded-xl px-3 py-1.5 text-gray-600 bg-white focus:outline-none focus:border-[#ffa300]"
                     >
                       <option value="best_match">Best Match (Default)</option>
                       <option value="name_a_z">Name (A to Z)</option>
@@ -449,13 +449,13 @@ export default function Universities() {
                     return (
                       <div
                         key={u.id}
-                        className="bg-white p-5 md:p-6 lg:p-8 border border-gray-200 rounded-[8px]"
+                        className="bg-white p-5 md:p-6 lg:p-8 border border-gray-200 rounded-3xl"
                       >
                         <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] lg:grid-cols-[180px_1fr_180px] gap-6 lg:gap-8 items-center lg:items-start">
                           {/* Left: Logo */}
                           <Link
                             to={`/universities/${generateSlug(u.name)}`}
-                            className="w-full h-[100px] flex items-center justify-center overflow-hidden border border-gray-100 rounded-md p-2"
+                            className="w-full h-[100px] flex items-center justify-center overflow-hidden border border-gray-100 rounded-2xl p-2"
                           >
                             {u.logo_url || UNIVERSITY_LOGOS[u.name] ? (
                               <img
@@ -501,14 +501,14 @@ export default function Universities() {
                           {/* Right: Buttons */}
                           <div className="w-full md:col-span-2 lg:col-span-1 flex flex-col gap-3 mt-4 lg:mt-2">
                             <Button
-                              className="w-full h-10 font-bold text-[14px] bg-[#f9c365] text-[#181d29] hover:bg-[#e6a845] rounded-[6px] border border-[#f9c365]"
+                              className="w-full h-10 font-bold text-[14px] bg-[#f9c365] text-[#181d29] hover:bg-[#e6a845] rounded-full border border-[#f9c365]"
                               onClick={() => navigate(`/apply?universityId=${u.id}`)}
                             >
                               Apply Now
                             </Button>
                             <Link to={`/universities/${generateSlug(u.name)}`} className="block w-full">
                               <Button
-                                className="w-full h-10 font-bold text-[14px] border border-gray-800 text-[#181d29] hover:bg-gray-50 rounded-[6px] bg-white"
+                                className="w-full h-10 font-bold text-[14px] border border-gray-800 text-[#181d29] hover:bg-gray-50 rounded-full bg-white"
                               >
                                 Ask Us
                               </Button>

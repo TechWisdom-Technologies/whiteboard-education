@@ -75,13 +75,13 @@ export default function B2BLanding() {
 
           <div className="container relative z-20 mx-auto px-4 flex-1 flex items-center justify-center">
             <div className="max-w-3xl mx-auto text-center">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-5 bg-white shadow-sm border border-gray-100 rounded-sm">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-5 bg-white shadow-sm border border-gray-100 rounded-xl">
                 <Handshake className="h-3.5 w-3.5 text-[#ffa300]" />
                 <span className="text-xs font-bold text-[#181d29] tracking-tight">Malaysia's Leading Education Partnership Network</span>
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-5xl font-bold mb-5 leading-[1.15] text-[#181d29] tracking-tight" style={{ fontFamily: "Poppins, sans-serif" }}>
                 <span className="block mb-1">Your Students Want</span>
-                <span className="inline-block bg-[#ffa300] text-[#181d29] px-3 py-0.5 rounded-sm mb-1 shadow-sm">To Study in Malaysia?</span>
+                <span className="inline-block bg-[#ffa300] text-[#181d29] px-3 py-0.5 rounded-xl mb-1 shadow-sm">To Study in Malaysia?</span>
                 <span className="block">We Make It Happen.</span>
               </h1>
               <p className="text-base text-gray-600 mb-8 max-w-xl mx-auto leading-relaxed">
@@ -89,12 +89,12 @@ export default function B2BLanding() {
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Link to="/partner/register" className="w-full sm:w-auto">
-                  <Button className="w-full sm:w-auto bg-[#ffa300] text-[#181d29] hover:bg-[#e08e00] font-semibold text-sm rounded-md h-11 px-6 group shadow-lg shadow-[#ffa300]/20 transition-all hover:shadow-[#ffa300]/40 hover:-translate-y-0.5">
+                  <Button className="w-full sm:w-auto bg-[#ffa300] text-[#181d29] hover:bg-[#e08e00] font-semibold text-sm rounded-2xl h-11 px-6 group shadow-lg shadow-[#ffa300]/20 transition-all hover:shadow-[#ffa300]/40 hover:-translate-y-0.5">
                     Register as a partner <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
                   </Button>
                 </Link>
                 <Link to="/login" className="w-full sm:w-auto">
-                  <Button variant="outline" className="w-full sm:w-auto border-[#181d29] text-[#181d29] font-semibold text-sm rounded-md h-11 px-6 transition-all hover:-translate-y-0.5">
+                  <Button variant="outline" className="w-full sm:w-auto border-[#181d29] text-[#181d29] font-semibold text-sm rounded-2xl h-11 px-6 transition-all hover:-translate-y-0.5">
                     Login as partner
                   </Button>
                 </Link>
@@ -138,13 +138,13 @@ export default function B2BLanding() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {registrationSteps.map((s, i) => (
                   <div key={s.step} className="relative z-10 group">
-                    <div className="bg-white rounded-sm border border-[#e5e7eb] overflow-hidden hover:shadow-lg hover:border-[#ffa300]/30 transition-all duration-300">
+                    <div className="bg-white rounded-xl border border-[#e5e7eb] overflow-hidden hover:shadow-lg hover:border-[#ffa300]/30 transition-all duration-300">
                       <div className="relative h-44 bg-[#f8f9fb] flex items-center justify-center overflow-hidden">
                         <img src={stepImages[i]} alt={s.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         <div className="absolute top-3 left-3">
                           <div className="relative inline-block">
-                            <div className="absolute -bottom-0.5 -right-0.5 w-7 h-7 bg-[#ffa300] rounded-sm" />
-                            <div className="relative w-7 h-7 bg-[#181d29] text-white flex items-center justify-center font-bold text-xs rounded-sm z-10">{s.step}</div>
+                            <div className="absolute -bottom-0.5 -right-0.5 w-7 h-7 bg-[#ffa300] rounded-xl" />
+                            <div className="relative w-7 h-7 bg-[#181d29] text-white flex items-center justify-center font-bold text-xs rounded-xl z-10">{s.step}</div>
                           </div>
                         </div>
                       </div>
@@ -170,7 +170,7 @@ export default function B2BLanding() {
           <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-[#ffa300]/20 to-transparent mix-blend-overlay z-0 pointer-events-none" />
           <div className="container relative z-10 mx-auto px-4 max-w-6xl">
             <div className="text-center mb-12">
-              <div className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-sm bg-[#ffa300]/20 border border-[#ffa300]/30 text-[#ffa300] mb-6 backdrop-blur-sm">
+              <div className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl bg-[#ffa300]/20 border border-[#ffa300]/30 text-[#ffa300] mb-6 backdrop-blur-sm">
                 <HeadphonesIcon className="h-4 w-4" />
                 <span className="text-xs font-semibold tracking-wide uppercase">Partner Dashboard</span>
               </div>
@@ -179,7 +179,7 @@ export default function B2BLanding() {
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {platformFeatures.map((f, i) => (
-                <div key={i} className="bg-white/5 border border-white/10 rounded-sm p-6 hover:bg-white/10 transition-colors">
+                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-colors">
                   <div className="flex items-center gap-3 mb-3">
                     <CheckCircle2 className="h-5 w-5 text-[#ffa300] flex-shrink-0" />
                     <h3 className="font-semibold text-white text-[15px]" style={{ fontFamily: "Poppins, sans-serif" }}>{f.title}</h3>
@@ -200,7 +200,7 @@ export default function B2BLanding() {
             </div>
             <Accordion type="single" collapsible className="w-full">
               {faqs.map((item, i) => (
-                <AccordionItem key={i} value={`faq-${i}`} className="border border-[#e5e7eb] rounded-sm mb-3 px-5 data-[state=open]:border-[#ffa300]/40 transition-colors">
+                <AccordionItem key={i} value={`faq-${i}`} className="border border-[#e5e7eb] rounded-xl mb-3 px-5 data-[state=open]:border-[#ffa300]/40 transition-colors">
                   <AccordionTrigger className="text-[15px] font-semibold text-[#181d29] hover:no-underline py-5" style={{ fontFamily: "Poppins, sans-serif" }}>
                     {item.q}
                   </AccordionTrigger>
@@ -221,7 +221,7 @@ export default function B2BLanding() {
           <div className="absolute inset-0 z-0 bg-[#181d29]/90 mix-blend-multiply" />
           <div className="container relative z-10 mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center">
-              <div className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-sm bg-[#ffa300]/20 border border-[#ffa300]/30 text-[#ffa300] mb-6 backdrop-blur-sm">
+              <div className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl bg-[#ffa300]/20 border border-[#ffa300]/30 text-[#ffa300] mb-6 backdrop-blur-sm">
                 <Handshake className="h-4 w-4" />
                 <span className="text-xs font-semibold tracking-wide uppercase">Become a Partner Today</span>
               </div>
@@ -231,12 +231,12 @@ export default function B2BLanding() {
               <p className="text-sm text-gray-300 mb-10 max-w-xl mx-auto leading-relaxed">Join our growing network of international agencies and start placing students into Malaysia's top universities.</p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link to="/partner/register" className="w-full sm:w-auto">
-                  <Button className="w-full sm:w-auto bg-[#ffa300] text-[#181d29] hover:bg-[#e08e00] font-semibold text-sm rounded-md h-11 px-6 group shadow-lg shadow-[#ffa300]/20 transition-all hover:shadow-[#ffa300]/40 hover:-translate-y-0.5">
+                  <Button className="w-full sm:w-auto bg-[#ffa300] text-[#181d29] hover:bg-[#e08e00] font-semibold text-sm rounded-2xl h-11 px-6 group shadow-lg shadow-[#ffa300]/20 transition-all hover:shadow-[#ffa300]/40 hover:-translate-y-0.5">
                     Register as a partner <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
                   </Button>
                 </Link>
                 <Link to="/login" className="w-full sm:w-auto">
-                  <Button variant="outline" className="w-full sm:w-auto border-white/20 text-white hover:bg-white hover:text-[#181d29] font-semibold text-sm rounded-md h-11 px-6 bg-white/5 backdrop-blur-sm transition-all hover:-translate-y-0.5">
+                  <Button variant="outline" className="w-full sm:w-auto border-white/20 text-white hover:bg-white hover:text-[#181d29] font-semibold text-sm rounded-2xl h-11 px-6 bg-white/5 backdrop-blur-sm transition-all hover:-translate-y-0.5">
                     Login as partner
                   </Button>
                 </Link>
