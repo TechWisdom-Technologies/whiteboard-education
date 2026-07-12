@@ -274,7 +274,7 @@ export default function LanguageCentersPage() {
                           )}
                         </Link>
 
-                        <div className="flex-1 min-w-0 flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-8">
+                        <div className="flex-1 min-w-0 flex flex-col justify-between lg:flex-row lg:items-center gap-4 lg:gap-8">
                           {/* Info block */}
                         <div className="min-w-0 flex flex-col justify-center space-y-4 md:col-span-1 lg:col-span-1">
                           <Link to={`/language-centers/${generateSlug(lc.name)}`}>

@@ -97,7 +97,7 @@ function levelColor(l: string) {
   if (lc.includes("bachelor")) return "bg-emerald-100 text-emerald-700";
   if (lc.includes("master")) return "bg-purple-100 text-purple-700";
   if (lc.includes("phd") || lc.includes("doctor")) return "bg-rose-100 text-rose-700";
-  return "bg-gray-100 text-gray-700";
+  return "bg-gray-100 text-black";
 }
 
 function levelKey(dl: string) {
@@ -142,7 +142,49 @@ function categoryKey(title: string): string {
   return "Other Programs";
 }
 
+
+const Countdown = () => {
+  const [timeLeft, setTimeLeft] = useState({ days: 29, hours: 19, minutes: 0, seconds: 4 });
+
+  useEffect(() => {
+    // Generate a fixed target date every time the component mounts, so it always ticks down from ~29 days
+    const targetDate = new Date().getTime() + (29 * 24 * 60 * 60 * 1000) + (19 * 60 * 60 * 1000) + (4 * 1000);
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+      if (distance < 0) return;
+      setTimeLeft({
+        days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+        minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+        seconds: Math.floor((distance % (1000 * 60)) / 1000)
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const TimeUnit = ({ value, label }: { value: number, label: string }) => (
+    <div className="flex flex-col items-center justify-center w-20 h-24 md:w-32 md:h-36 bg-white border border-gray-300 rounded-2xl shadow-sm">
+      <span className="text-4xl md:text-[56px] font-extrabold text-[#475569] leading-none mb-1 md:mb-2">{value}</span>
+      <span className="text-[13px] md:text-base font-semibold text-gray-500">{label}</span>
+    </div>
+  );
+
+  return (
+    <div className="flex items-center justify-center gap-1.5 md:gap-4 my-8 md:my-10">
+      <TimeUnit value={timeLeft.days} label="Days" />
+      <span className="text-2xl md:text-4xl font-extrabold text-[#475569] mb-8">:</span>
+      <TimeUnit value={timeLeft.hours} label="Hours" />
+      <span className="text-2xl md:text-4xl font-extrabold text-[#475569] mb-8">:</span>
+      <TimeUnit value={timeLeft.minutes} label="Minutes" />
+      <span className="text-2xl md:text-4xl font-extrabold text-[#475569] mb-8">:</span>
+      <TimeUnit value={timeLeft.seconds} label="Seconds" />
+    </div>
+  );
+};
+
 export default function UniversityDetail() {
+
   const { universityId } = useParams();
   const navigate = useNavigate();
   const { data: liveU = [], isLoading } = useTableData("universities");
@@ -272,26 +314,57 @@ export default function UniversityDetail() {
       <MegaMenu disableSticky />
 
       {/* ═══ HERO: Big Logo + Name + Buttons ═══ */}
-      <section className="pb-10">
+      <section className="pb-10 pt-4 md:pt-0">
         <div className="w-full max-w-[1640px] mx-auto px-4 lg:px-6">
-          <div className="bg-[#EEF4FF] py-16 px-10 flex flex-col md:flex-row items-center md:items-start gap-8 rounded-tl-md rounded-tr-[3rem] rounded-bl-[3rem] rounded-br-md min-h-[220px]">
-            <img src={logo} alt={uni.name} className="h-32 w-32 md:h-40 md:w-40 object-contain rounded-xl bg-white p-4 shadow shrink-0" />
+          <div className="bg-[#EEF4FF] p-5 md:py-16 md:px-10 flex flex-col md:flex-row items-center md:items-start gap-8 rounded-2xl md:rounded-tl-md md:rounded-tr-[3rem] md:rounded-bl-[3rem] md:rounded-br-md min-h-[160px] md:min-h-[220px]">
+            {/* Desktop Logo */}
+            <img src={logo} alt={uni.name} className="hidden md:block h-40 w-40 object-contain rounded-xl bg-white p-4 shadow shrink-0" />
+            
             <div className="flex-1 flex flex-col w-full">
-              <h1 className="text-4xl font-bold text-[#1E293B] mb-4 text-center md:text-left" style={{ fontFamily: "Poppins, sans-serif" }}>{uni.name}</h1>
+              {/* Mobile Header Block (Logo + Name + Location) */}
+              <div className="flex flex-row items-start gap-4 mb-5 md:hidden">
+                <img src={logo} alt={uni.name} className="h-[84px] w-[84px] object-contain rounded-xl bg-white p-2 shadow-sm shrink-0" />
+                <div className="flex flex-col pt-1">
+                  <h1 className="text-[20px] font-semibold text-[#1E293B] leading-tight" style={{ fontFamily: "Poppins, sans-serif" }}>{uni.name}</h1>
+                  {uni.city && (
+                    <p className="flex text-black items-center justify-start gap-1.5 text-[13px] mt-1.5">
+                      <MapPin className="h-3.5 w-3.5 text-[#2F4F97]" />
+                      {uni.city}, Malaysia
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Desktop Header Text */}
+              <h1 className="hidden md:block text-4xl font-semibold text-[#1E293B] mb-4 text-left" style={{ fontFamily: "Poppins, sans-serif" }}>{uni.name}</h1>
               
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                {/* Desktop Location */}
                 {uni.city && (
-                  <p className="text-gray-700 flex items-center justify-center md:justify-start gap-2 text-lg">
+                  <p className="hidden md:flex text-black items-center justify-start gap-2 text-lg">
                     <MapPin className="h-5 w-5 text-[#2F4F97]" />
                     {uni.city}, Malaysia
                   </p>
                 )}
                 
-                <div className="flex flex-row gap-3 w-full sm:w-auto justify-center md:justify-end">
-                  <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent font-bold px-8 h-12 flex-1 sm:flex-none" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
-Apply Now</Button>
-                  <Button variant="outline" className="bg-white hover:bg-gray-50 font-bold px-8 h-12 flex-1 sm:flex-none" onClick={() => navigate("/contact")}>
-Ask Us</Button>
+                {/* Mobile Buttons */}
+                <div className="flex md:hidden flex-row gap-3 w-full justify-center">
+                  <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] hover:text-white rounded-[20px] border-none font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
+                    Apply Now
+                  </Button>
+                  <Button variant="outline" className="bg-white text-[#2F4F97] border-2 border-[#2F4F97] hover:bg-[#EEF4FF] hover:text-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate("/contact")}>
+                    Ask Us
+                  </Button>
+                </div>
+
+                {/* Desktop Buttons */}
+                <div className="hidden md:flex flex-row gap-3 w-auto justify-end">
+                  <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] hover:text-white rounded-[20px] border-none font-semibold px-10 h-14 text-[15px]" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
+                    Apply Now
+                  </Button>
+                  <Button variant="outline" className="bg-white text-[#2F4F97] border-2 border-[#2F4F97] hover:bg-[#EEF4FF] hover:text-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold px-10 h-14 text-[15px]" onClick={() => navigate("/contact")}>
+                    Ask Us
+                  </Button>
                 </div>
               </div>
             </div>
@@ -301,26 +374,41 @@ Ask Us</Button>
 
       {/* ═══ STICKY TAB NAV (replaces navbar when scrolled) ═══ */}
       <nav className="sticky top-0 z-40 shadow-sm transition-all duration-300 bg-white">
-        <div className="w-full max-w-[1640px] mx-auto px-4 flex items-center justify-between min-h-[80px] py-2">
+        <div className="w-full max-w-[1000px] mx-auto px-4 flex items-center justify-between min-h-[60px] md:min-h-[80px] py-2">
           {/* Left: Logo + Tabs */}
-          <div className="flex items-center gap-6 min-w-0">
-            <div className={`flex items-center transition-all duration-300 ${isScrolled ? 'opacity-100 translate-x-0 w-auto mr-4' : 'opacity-0 -translate-x-4 w-0 overflow-hidden m-0'}`}>
-              <img src={logo} alt={uni.name} className="h-16 w-20 md:h-20 md:w-28 object-contain shrink-0" />
+          <div className="flex items-center gap-3 md:gap-6 min-w-0 overflow-hidden flex-1">
+            <div className={`flex items-center transition-all duration-300 ${isScrolled ? 'opacity-100 translate-x-0 w-auto mr-1 md:mr-4' : 'opacity-0 -translate-x-4 w-0 overflow-hidden m-0'}`}>
+              <img src={logo} alt={uni.name} className="h-10 w-12 md:h-20 md:w-28 object-contain shrink-0" />
             </div>
-            <div className="flex items-center gap-1 shrink-0">
+            <div className="flex items-center gap-1 md:gap-2 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden w-full">
               {(["overview", "courses", "accommodation"] as TabKey[]).map(k => (
                 <button key={k} onClick={() => { setTab(k); setCPage(1); }}
-                  className={`capitalize text-sm md:text-base font-normal px-3 md:px-4 py-2 rounded-xl transition-colors ${tab === k ? "text-[#2F4F97] bg-[#2F4F97]/10" : "text-gray-500 hover:text-[#1E293B] hover:bg-gray-100"}`}
+                  className={`capitalize whitespace-nowrap shrink-0 text-[13px] md:text-base font-medium md:font-normal px-2 md:px-4 py-1.5 md:py-2 rounded-xl transition-colors ${k === "accommodation" ? (isScrolled ? "hidden md:block" : "block") : "block"} ${tab === k ? "text-[#2F4F97] bg-[#2F4F97]/10" : "text-gray-500 hover:text-[#1E293B] hover:bg-gray-100"}`}
                 >{k}</button>
               ))}
             </div>
           </div>
           {/* Right: CTA Buttons */}
-          <div className={`flex items-center gap-2 transition-all duration-300 ${isScrolled ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none hidden md:flex'}`}>
-            <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent font-normal px-6 h-10" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
-Apply Now</Button>
-            <Button variant="outline" className="bg-white font-normal px-6 h-10 hover:bg-gray-50" onClick={() => navigate("/contact")}>
-Ask Us</Button>
+          <div className={`flex items-center transition-all duration-300 shrink-0 ${isScrolled ? 'gap-2 pl-3 opacity-100 translate-x-0 w-auto' : 'opacity-0 translate-x-4 pointer-events-none w-0 overflow-hidden m-0 p-0'}`}>
+            {/* Mobile Buttons */}
+            <div className="flex md:hidden items-center gap-2">
+              <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] hover:text-white rounded-[20px] border-none font-semibold px-5 h-10 text-[14px]" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
+                Apply
+              </Button>
+              <Button variant="outline" className="bg-white text-[#2F4F97] border-2 border-[#2F4F97] hover:bg-[#EEF4FF] hover:text-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold h-10 w-12 p-0 flex items-center justify-center shrink-0" onClick={() => navigate("/contact")}>
+                <span className="font-bold text-[16px]">?</span>
+              </Button>
+            </div>
+            
+            {/* Desktop Buttons */}
+            <div className="hidden md:flex items-center gap-2">
+              <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] hover:text-white rounded-[20px] border-none font-semibold px-6 h-10 text-[14px]" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
+                Apply Now
+              </Button>
+              <Button variant="outline" className="bg-white text-[#2F4F97] border-2 border-[#2F4F97] hover:bg-[#EEF4FF] hover:text-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold px-6 h-10 text-[14px]" onClick={() => navigate("/contact")}>
+                Ask Us
+              </Button>
+            </div>
           </div>
         </div>
       </nav>
@@ -330,12 +418,12 @@ Ask Us</Button>
         <>
           {/* About */}
           <section className="py-12 bg-white">
-            <div className="w-full max-w-[1640px] mx-auto px-4">
-              <h2 className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-8">About {uni.name}</h2>
+            <div className="w-full max-w-[1000px] mx-auto px-4">
+              <h2 className="text-xl md:text-2xl font-semibold text-[#1E293B] mb-8">About {uni.name}</h2>
               
-              <div className="prose max-w-none text-gray-600 leading-relaxed text-[15px] text-justify space-y-8">
+              <div className="text-black leading-relaxed text-justify space-y-8">
                 {/* Paragraph 1 */}
-                <p>
+                <p className="text-black text-[12px] md:text-[14px]">
                   {(() => {
                     const firstPara = about ? about.split('\n').filter((p: string) => p.trim() !== '')[0] || "" : "";
                     const fallback = `As one of the premier educational institutions, ${uni.name} adheres to the strictest requirements for high-quality degrees. A study conducted by leading industry analysts found that ${uni.name} is one of the top universities where major corporations prefer graduate employment, which proves the quality of our academicians, courses, student development plans, and our stellar reputation in the industry. The institution is dedicated to producing industry-ready graduates who are equipped to tackle global challenges with innovative solutions.`;
@@ -344,7 +432,7 @@ Ask Us</Button>
                 </p>
 
                 {/* High-Res Campus Image */}
-                <div className="rounded-xl overflow-hidden shadow-md border border-gray-100 bg-gray-50 flex justify-center">
+                <div className="rounded-xl rounded-bl-[8rem] md:rounded-bl-[11rem] overflow-hidden border border-gray-100 bg-gray-50 flex justify-center">
                   <img 
                     src={
                       CAMPUS_IMAGES[uni.name] || 
@@ -360,7 +448,7 @@ Ask Us</Button>
                 </div>
 
                 {/* Paragraph 2 */}
-                <p>
+                <p className="text-black text-[12px] md:text-[14px]">
                   {(() => {
                     const secondPara = about ? about.split('\n').filter((p: string) => p.trim() !== '').slice(1).join('\n\n') || "" : "";
                     const fallback = `From the moment of conceptualization, ${uni.name} has been committed to fostering a diverse, inclusive, and vibrant campus life that encourages cross-cultural exchange and personal growth. The university recognizes the accelerated development of the globalization of education and has regarded global partnerships as an internationally visible entity. The university's state-of-the-art facilities, modern research laboratories, and expansive libraries provide an ideal ecosystem for collaboration and discovery. By continuously adapting its curriculum to meet the rapidly evolving demands of the global market, ${uni.name} empowers its students to become visionary leaders and pioneers in their respective fields. Students benefit from a truly transformative university journey.`;
@@ -371,42 +459,52 @@ Ask Us</Button>
             </div>
           </section>
 
+          {/* Register Now CTA */}
+          <section className="bg-white py-12">
+            <div className="w-full max-w-[1000px] mx-auto px-4 text-center">
+              <h2 className="text-xl md:text-2xl font-semibold text-[#1E293B] mb-2">Register Now and Secure Your Spot!</h2>
+              <p className="text-black text-[12px] md:text-[14px] mb-2">Your Future Starts Here: Register Today for the Upcoming Intake</p>
+              <Countdown />
+              <p className="text-black text-[12px] md:text-[14px]">Secure Your Seat Now! Join {uni.name} and Start Your Journey</p>
+            </div>
+          </section>
+
           {/* Courses & Fees by Category (MOST IMPORTANT) */}
           {groupedCourses.length > 0 && (
             <section className="bg-white py-10">
-              <div className="w-full max-w-[1640px] mx-auto px-4">
-                <h2 className="text-xl md:text-2xl font-extrabold text-[#1E293B] mb-6">
+              <div className="w-full max-w-[1000px] mx-auto px-4">
+                <h2 className="text-xl md:text-2xl font-semibold text-[#1E293B] mb-6">
                   Courses and Fees for International Students
                 </h2>
                 <Accordion type="multiple" defaultValue={[groupedCourses[0]?.category]} className="space-y-0">
                   {groupedCourses.map(({ category, courses: gc }) => (
                     <AccordionItem key={category} value={category} className="border-b border-gray-200 bg-transparent last:border-b-0">
-                      <AccordionTrigger className="px-0 py-4 hover:no-underline text-gray-700">
-                        <span className="text-[15px] font-medium">
+                      <AccordionTrigger className="px-0 py-4 hover:no-underline text-black">
+                        <span className="text-[12px] md:text-[14px] font-medium">
                           {category}
                         </span>
                       </AccordionTrigger>
                       <AccordionContent className="p-0 pb-6">
                         <div className="border border-gray-400 rounded-lg overflow-hidden bg-white">
                           <div className="overflow-x-auto">
-                            <table className="w-full text-[15px]">
+                            <table className="w-full text-[12px] md:text-[14px]">
                               <thead>
                                 <tr className="bg-[#EEF4FF] text-left border-b border-gray-400">
-                                  <th className="px-6 py-4 font-medium text-gray-800">Program</th>
-                                  <th className="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">Tuition Fees per Year</th>
-                                  <th className="px-6 py-4 font-medium text-gray-800">Duration</th>
+                                  <th className="px-3 md:px-6 py-3 md:py-4 font-medium text-gray-800 w-[60%] md:w-auto">Program</th>
+                                  <th className="px-3 md:px-6 py-3 md:py-4 font-medium text-gray-800 whitespace-normal md:whitespace-nowrap leading-tight w-[20%] md:w-auto">Tuition Fees per Year</th>
+                                  <th className="px-3 md:px-6 py-3 md:py-4 font-medium text-gray-800 w-[20%] md:w-auto">Duration</th>
                                 </tr>
                               </thead>
                               <tbody>
                                 {gc.map((c: any, i: number) => (
                                   <tr key={c.id} className="border-b border-gray-200 last:border-0 hover:bg-gray-50/50 transition-colors">
-                                    <td className="px-6 py-4">
-                                      <Link to={`/courses/${generateSlug(c.title)}`} className="text-gray-700 hover:text-[#2F4F97] transition-colors">
+                                    <td className="px-3 md:px-6 py-3 md:py-4">
+                                      <Link to={`/courses/${generateSlug(c.title)}`} className="text-black hover:text-[#2F4F97] transition-colors">
                                         {c.title}
                                       </Link>
                                     </td>
-                                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap">MYR {c.tuition_fee ? Number(c.tuition_fee).toLocaleString() : 0}</td>
-                                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap">{c.duration}</td>
+                                    <td className="px-3 md:px-6 py-3 md:py-4 text-black whitespace-normal md:whitespace-nowrap leading-tight">MYR {c.tuition_fee ? Number(c.tuition_fee).toLocaleString() : 0}</td>
+                                    <td className="px-3 md:px-6 py-3 md:py-4 text-black whitespace-nowrap">{c.duration}</td>
                                   </tr>
                                 ))}
                               </tbody>
@@ -422,73 +520,153 @@ Ask Us</Button>
           )}
 
           {/* Offer Letter / Intake / Location row */}
-          <section className="bg-white py-8 border-b">
-            <div className="w-full max-w-[1640px] mx-auto px-4 grid sm:grid-cols-3 gap-6">
-              <Card className="border shadow-sm"><CardContent className="p-5 flex items-start gap-3">
-                <FileText className="h-6 w-6 text-[#2F4F97] mt-0.5 shrink-0" />
-                <div><h4 className="font-bold text-[#1E293B] text-sm mb-1">Offer Letter</h4><p className="text-gray-600 text-sm">{isPaid ? "Offer Letter Fees Applies" : "Free Offer Letter"}</p></div>
-              </CardContent></Card>
-              <Card className="border shadow-sm"><CardContent className="p-5 flex items-start gap-3">
-                <CalendarDays className="h-6 w-6 text-[#2F4F97] mt-0.5 shrink-0" />
-                <div><h4 className="font-bold text-[#1E293B] text-sm mb-1">Intake</h4><p className="text-gray-600 text-sm">Contact us for upcoming intake dates</p></div>
-              </CardContent></Card>
-              <Card className="border shadow-sm"><CardContent className="p-5 flex items-start gap-3">
-                <MapPin className="h-6 w-6 text-[#2F4F97] mt-0.5 shrink-0" />
-                <div><h4 className="font-bold text-[#1E293B] text-sm mb-1">Location</h4><p className="text-gray-600 text-sm">{uni.city || "Malaysia"}, Malaysia</p></div>
-              </CardContent></Card>
-            </div>
-          </section>
-
-          {/* Register Now CTA */}
-          <section className="bg-[#EEF4FF] py-12">
-            <div className="w-full max-w-[1640px] mx-auto px-4 text-center">
-              <h2 className="text-xl md:text-2xl font-extrabold text-[#1E293B] mb-2">Register Now and Secure Your Spot!</h2>
-              <p className="text-gray-700 text-sm mb-2">Your Future Starts Here: Register Today for the Upcoming Intake</p>
-              <p className="text-gray-600 text-sm mb-6">Secure Your Seat Now! Join {uni.name} and Start Your Journey</p>
-              <Button size="lg" className="bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97] font-bold px-10 h-12" onClick={() => navigate("/contact")}>Register Now</Button>
-              {steps.length > 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 mt-10 max-w-4xl mx-auto">
-                  {steps.slice(0, 5).map((s: string, i: number) => {
-                    const Icon = stepIcons[i % stepIcons.length];
-                    return <div key={i} className="flex flex-col items-center gap-2">
-                      <div className="w-8 h-8 rounded bg-gray-200 flex items-center justify-center text-sm font-bold text-[#1E293B]">{i + 1}</div>
-                      <Icon className="h-10 w-10 text-[#2F4F97]" />
-                      <p className="text-xs text-gray-700 text-center leading-tight">{s}</p>
-                    </div>;
-                  })}
+          {/* Offer Letter / Intake / Location row */}
+          <section className="bg-white py-8 md:py-16">
+            <div className="w-full max-w-[1000px] mx-auto px-2 md:px-4 grid grid-cols-3 gap-2 md:gap-8">
+              
+              {/* Item 1: Offer Letter */}
+              <div className="flex flex-col items-center text-center">
+                <div className="relative w-20 h-20 sm:w-28 sm:h-28 md:w-44 md:h-44 flex items-center justify-center mb-3 md:mb-6 mt-4 md:mt-0">
+                  <div className="absolute inset-0 bg-[#EEF4FF] transition-transform duration-700 hover:scale-105" style={{ borderRadius: '73% 27% 41% 59% / 43% 44% 56% 57%' }}></div>
+                  <div className="absolute -top-1 -left-2 md:-top-2 md:-left-4 w-6 h-6 md:w-10 md:h-10 bg-[#EEF4FF] opacity-90" style={{ borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%' }}></div>
+                  <div className="absolute -bottom-1 -right-1 md:-bottom-1 md:-right-2 w-4 h-4 md:w-6 md:h-6 bg-[#EEF4FF] opacity-90" style={{ borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%' }}></div>
+                  <FileText className="relative z-10 w-8 h-8 sm:w-10 sm:h-10 md:w-20 md:h-20 text-[#2F4F97]" />
                 </div>
-              )}
+                <h4 className="font-semibold text-[#1E293B] text-[12px] sm:text-base md:text-2xl mb-1 md:mb-2 leading-tight">Offer Letter</h4>
+                <p className="text-gray-500 text-[10px] sm:text-xs md:text-base leading-tight">{isPaid ? "Fees Apply" : "Free"}</p>
+              </div>
+
+              {/* Item 2: Intake */}
+              <div className="flex flex-col items-center text-center">
+                <div className="relative w-20 h-20 sm:w-28 sm:h-28 md:w-44 md:h-44 flex items-center justify-center mb-3 md:mb-6 mt-4 md:mt-0">
+                  <div className="absolute inset-0 bg-[#EEF4FF] transition-transform duration-700 hover:scale-105" style={{ borderRadius: '43% 57% 55% 45% / 54% 28% 72% 46%' }}></div>
+                  <div className="absolute -top-2 -right-1 md:-top-4 md:-right-1 w-7 h-7 md:w-12 md:h-12 bg-[#EEF4FF] opacity-90" style={{ borderRadius: '50% 50% 30% 70% / 50% 60% 40% 50%' }}></div>
+                  <div className="absolute top-1/2 -left-2 md:-left-5 w-5 h-5 md:w-8 md:h-8 bg-[#EEF4FF] opacity-90" style={{ borderRadius: '73% 27% 41% 59% / 43% 44% 56% 57%' }}></div>
+                  <CalendarDays className="relative z-10 w-8 h-8 sm:w-10 sm:h-10 md:w-20 md:h-20 text-[#2F4F97]" />
+                </div>
+                <h4 className="font-semibold text-[#1E293B] text-[12px] sm:text-base md:text-2xl mb-1 md:mb-2 leading-tight">Intake</h4>
+                <p className="text-gray-500 text-[10px] sm:text-xs md:text-base leading-tight">
+                  {(() => {
+                    const intakes = new Set<string>();
+                    uniCourses.forEach((c: any) => {
+                      if (c.intake_months && Array.isArray(c.intake_months)) {
+                        c.intake_months.forEach((m: string) => intakes.add(m.substring(0, 3)));
+                      }
+                    });
+                    const intakeArr = Array.from(intakes);
+                    return intakeArr.sort(() => 0.5 - Math.random()).slice(0, 3).join(', ') || "Mar, Jul, Oct";
+                  })()}
+                </p>
+              </div>
+
+              {/* Item 3: Location */}
+              <div className="flex flex-col items-center text-center">
+                <div className="relative w-20 h-20 sm:w-28 sm:h-28 md:w-44 md:h-44 flex items-center justify-center mb-3 md:mb-6 mt-4 md:mt-0">
+                  <div className="absolute inset-0 bg-[#EEF4FF] transition-transform duration-700 hover:scale-105" style={{ borderRadius: '52% 48% 69% 31% / 43% 66% 34% 57%' }}></div>
+                  <div className="absolute top-2 -right-2 md:top-6 md:-right-6 w-6 h-6 md:w-10 md:h-10 bg-[#EEF4FF] opacity-90" style={{ borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%' }}></div>
+                  <MapPin className="relative z-10 w-8 h-8 sm:w-10 sm:h-10 md:w-20 md:h-20 text-[#2F4F97]" />
+                </div>
+                <h4 className="font-semibold text-[#1E293B] text-[12px] sm:text-base md:text-2xl mb-1 md:mb-2 leading-tight">Location</h4>
+                <p className="text-gray-500 text-[10px] sm:text-xs md:text-base leading-tight">{uni.city || "Malaysia"}, MY</p>
+              </div>
+
             </div>
           </section>
 
           {/* FAQ */}
           {faqs.length > 0 && (
             <section className="bg-white py-10">
-              <div className="w-full max-w-[1640px] mx-auto px-4">
-                <h2 className="text-xl font-extrabold text-[#1E293B] mb-6 flex items-center gap-2">
+              <div className="w-full max-w-[1000px] mx-auto px-4">
+                <h2 className="text-xl md:text-2xl font-semibold text-[#1E293B] mb-6 flex items-center gap-2">
                   <HelpCircle className="h-5 w-5 text-[#2F4F97]" />Frequently Asked Questions About {uni.name}
                 </h2>
                 <Accordion type="single" collapsible className="space-y-2">
                   {faqs.map((f: any, i: number) => (
                     <AccordionItem key={i} value={`f${i}`} className="border rounded-xl px-4 bg-gray-50">
-                      <AccordionTrigger className="text-sm font-semibold hover:no-underline text-left">{f.question}</AccordionTrigger>
-                      <AccordionContent className="text-gray-600 text-sm leading-relaxed">{f.answer}</AccordionContent>
+                      <AccordionTrigger className="text-[12px] md:text-[14px] font-semibold hover:no-underline text-left">{f.question}</AccordionTrigger>
+                      <AccordionContent className="text-black text-[12px] md:text-[14px] leading-relaxed">{f.answer}</AccordionContent>
                     </AccordionItem>
                   ))}
                 </Accordion>
               </div>
             </section>
           )}
+          {/* Registration Steps */}
+          <section className="bg-white py-12">
+            <div className="w-full max-w-[1000px] mx-auto px-4">
+              <h2 className="text-xl md:text-2xl font-semibold text-[#1E293B] text-center mb-10">
+                Registration steps at {uni.name}
+              </h2>
+              <div className="grid grid-cols-6 md:grid-cols-5 gap-x-4 gap-y-10 md:gap-4 text-center">
+                
+                {/* Step 1 */}
+                <div className="flex flex-col items-center col-span-2 md:col-span-1">
+                  <div className="w-6 h-6 md:w-8 md:h-8 bg-white border-2 border-[#1E293B] rounded flex items-center justify-center font-bold text-[#1E293B] text-xs md:text-sm mb-2 md:mb-4 relative" style={{ boxShadow: '3px 3px 0px 0px #2F4F97' }}>
+                    1
+                  </div>
+                  <h4 className="font-semibold text-[#1E293B] text-[11px] md:text-[15px] mb-2 md:mb-4 h-8 md:h-10 flex items-center justify-center leading-tight">Eligibility<br className="hidden md:block"/> Letter</h4>
+                  <div className="w-12 h-12 md:w-20 md:h-20 bg-white border-2 border-[#1E293B] rounded-xl flex items-center justify-center mt-auto" style={{ boxShadow: '3px 3px 0px 0px #2F4F97' }}>
+                    <FileText className="w-6 h-6 md:w-10 md:h-10 text-[#2F4F97]" />
+                  </div>
+                </div>
+
+                {/* Step 2 */}
+                <div className="flex flex-col items-center col-span-2 md:col-span-1">
+                  <div className="w-6 h-6 md:w-8 md:h-8 bg-white border-2 border-[#1E293B] rounded flex items-center justify-center font-bold text-[#1E293B] text-xs md:text-sm mb-2 md:mb-4 relative" style={{ boxShadow: '3px 3px 0px 0px #2F4F97' }}>
+                    2
+                  </div>
+                  <h4 className="font-semibold text-[#1E293B] text-[11px] md:text-[15px] mb-2 md:mb-4 h-8 md:h-10 flex items-center justify-center leading-tight">Student Visa<br/>Process</h4>
+                  <div className="w-12 h-12 md:w-20 md:h-20 bg-white border-2 border-[#1E293B] rounded-xl flex items-center justify-center mt-auto" style={{ boxShadow: '3px 3px 0px 0px #2F4F97' }}>
+                    <CheckCircle className="w-6 h-6 md:w-10 md:h-10 text-[#2F4F97]" />
+                  </div>
+                </div>
+
+                {/* Step 3 */}
+                <div className="flex flex-col items-center col-span-2 md:col-span-1">
+                  <div className="w-6 h-6 md:w-8 md:h-8 bg-white border-2 border-[#1E293B] rounded flex items-center justify-center font-bold text-[#1E293B] text-xs md:text-sm mb-2 md:mb-4 relative" style={{ boxShadow: '3px 3px 0px 0px #2F4F97' }}>
+                    3
+                  </div>
+                  <h4 className="font-semibold text-[#1E293B] text-[11px] md:text-[15px] mb-2 md:mb-4 h-8 md:h-10 flex items-center justify-center leading-tight">Accommodation</h4>
+                  <div className="w-12 h-12 md:w-20 md:h-20 bg-white border-2 border-[#1E293B] rounded-xl flex items-center justify-center mt-auto" style={{ boxShadow: '3px 3px 0px 0px #2F4F97' }}>
+                    <BedDouble className="w-6 h-6 md:w-10 md:h-10 text-[#2F4F97]" />
+                  </div>
+                </div>
+
+                {/* Step 4 */}
+                <div className="flex flex-col items-center col-span-2 col-start-2 md:col-span-1 md:col-start-auto">
+                  <div className="w-6 h-6 md:w-8 md:h-8 bg-white border-2 border-[#1E293B] rounded flex items-center justify-center font-bold text-[#1E293B] text-xs md:text-sm mb-2 md:mb-4 relative" style={{ boxShadow: '3px 3px 0px 0px #2F4F97' }}>
+                    4
+                  </div>
+                  <h4 className="font-semibold text-[#1E293B] text-[11px] md:text-[15px] mb-2 md:mb-4 h-8 md:h-10 flex items-center justify-center leading-tight">Airport Pickup</h4>
+                  <div className="w-12 h-12 md:w-20 md:h-20 bg-white border-2 border-[#1E293B] rounded-xl flex items-center justify-center mt-auto" style={{ boxShadow: '3px 3px 0px 0px #2F4F97' }}>
+                    <Car className="w-6 h-6 md:w-10 md:h-10 text-[#2F4F97]" />
+                  </div>
+                </div>
+
+                {/* Step 5 */}
+                <div className="flex flex-col items-center col-span-2 md:col-span-1">
+                  <div className="w-6 h-6 md:w-8 md:h-8 bg-white border-2 border-[#1E293B] rounded flex items-center justify-center font-bold text-[#1E293B] text-xs md:text-sm mb-2 md:mb-4 relative" style={{ boxShadow: '3px 3px 0px 0px #2F4F97' }}>
+                    5
+                  </div>
+                  <h4 className="font-semibold text-[#1E293B] text-[11px] md:text-[15px] mb-2 md:mb-4 h-8 md:h-10 flex items-center justify-center leading-tight">Arrival</h4>
+                  <div className="w-12 h-12 md:w-20 md:h-20 bg-white border-2 border-[#1E293B] rounded-xl flex items-center justify-center mt-auto" style={{ boxShadow: '3px 3px 0px 0px #2F4F97' }}>
+                    <MapPinCheck className="w-6 h-6 md:w-10 md:h-10 text-[#2F4F97]" />
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </section>
 
           {/* Similar Universities */}
           {similarUnis.length > 0 && (
             <section className="py-10">
-              <div className="w-full max-w-[1640px] mx-auto px-4">
-                <h2 className="text-xl font-extrabold text-[#1E293B] mb-6">Similar to {uni.name}</h2>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="w-full max-w-[1000px] mx-auto px-4">
+                <h2 className="text-xl font-semibold text-[#1E293B] mb-6">Similar to {uni.name}</h2>
+                <div className="flex overflow-x-auto gap-4 pb-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-6 sm:pb-0 snap-x snap-mandatory sm:snap-none">
                   {similarUnis.map((su: any) => (
-                    <Link key={su.id} to={`/universities/${generateSlug(su.name)}`} className="h-full">
-                      <Card className="h-full border-[#e8e8e8] group hover:border-[#2F4F97] transition-colors" style={{ borderRadius: "5px" }}>
+                    <Link key={su.id} to={`/universities/${generateSlug(su.name)}`} className="h-full w-[300px] sm:w-auto shrink-0 sm:shrink snap-center">
+                      <Card className="h-full border-[#e8e8e8] group hover:border-[#2F4F97] transition-colors overflow-hidden" style={{ borderRadius: "16px" }}>
                         <CardContent className="p-0 flex flex-col h-full">
                           <div className="h-48 flex items-center justify-center bg-gray-50/50 border-b p-6 shrink-0">
                             <img 
@@ -529,7 +707,7 @@ Ask Us</Button>
       {/* ══════════ COURSES TAB ══════════ */}
       {tab === "courses" && (
         <section className="py-8">
-          <div className="w-full max-w-[1640px] mx-auto px-4">
+          <div className="w-full max-w-[1000px] mx-auto px-4">
             {/* Opaque Sticky Filter Bar */}
             <div className="sticky top-[80px] z-30 bg-[#f0f4f8] py-4 -mx-4 px-4 mb-4">
               <div className="bg-white p-4 rounded-xl border shadow-md flex flex-col md:flex-row gap-4 items-center">
@@ -611,12 +789,12 @@ Ask Us</Button>
                           </div>
                           <div className="flex flex-col">
                             <span className="text-[12px] uppercase font-normal text-black tracking-wider mb-2">Duration</span>
-                            <span className="text-sm font-normal text-gray-700">{c.duration}</span>
+                            <span className="text-sm font-normal text-black">{c.duration}</span>
                           </div>
                           {c.intake_months?.length > 0 && (
                             <div className="flex flex-col">
                               <span className="text-[12px] uppercase font-normal text-black tracking-wider mb-2">Intakes</span>
-                              <span className="text-sm font-normal text-gray-700">{(() => {
+                              <span className="text-sm font-normal text-black">{(() => {
                                 const sliced = c.intake_months.slice(0, 3);
                                 const active = getActiveIntake(c.intake_months);
                                 return sliced.map((m: string, i: number) => (
@@ -704,7 +882,7 @@ Ask Us</Button>
       {/* ══════════ ACCOMMODATION TAB ══════════ */}
       {tab === "accommodation" && (
         <section className="py-8">
-          <div className="w-full max-w-[1640px] mx-auto px-4">
+          <div className="w-full max-w-[1000px] mx-auto px-4">
             <p className="text-sm text-gray-500 mb-6">Accommodation options near {uni.name}. For the most current availability and pricing, contact us directly.</p>
             <h3 className="font-bold text-lg text-[#1E293B] mb-4">{nearbyAccom.length} nearby accommodations found</h3>
             {nearbyAccom.length > 0 ? (
@@ -742,9 +920,9 @@ Ask Us</Button>
 
       {/* Bottom CTA */}
       <section className="bg-[#2F4F97] py-10 mt-auto">
-        <div className="w-full max-w-[1640px] mx-auto px-4 text-center">
-          <h2 className="text-xl font-extrabold text-[#1E293B] mb-2">Ready to Start Your Journey?</h2>
-          <p className="text-[#1E293B]/70 text-sm mb-6">Fill in your details and our counsellors will guide you - completely free.</p>
+        <div className="w-full max-w-[1000px] mx-auto px-4 text-center">
+          <h2 className="text-xl font-semibold text-white mb-2">Ready to Start Your Journey?</h2>
+          <p className="text-white/90 text-sm mb-6">Fill in your details and our counsellors will guide you - completely free.</p>
           <Button size="lg" className="bg-[#1E293B] text-white hover:bg-[#1E293B]/90 font-bold px-10 h-12" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>Start Your Application</Button>
         </div>
       </section>
@@ -813,19 +991,19 @@ Ask Us</Button>
                     <h4 className="text-sm font-semibold text-[#1E293B]" style={{ fontFamily: "Poppins, sans-serif" }}>Travel Distance / Time</h4>
                     <div className="flex flex-wrap gap-4 p-3 rounded-2xl bg-[#2F4F97]/10 border border-[#2F4F97]/20">
                       {selected.travel_distance_time.walking && (
-                        <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                        <div className="flex items-center gap-1.5 text-sm font-medium text-black">
                           <Clock className="h-4 w-4 text-[#2F4F97]" />
                           <span>{selected.travel_distance_time.walking} walk</span>
                         </div>
                       )}
                       {selected.travel_distance_time.car && (
-                        <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                        <div className="flex items-center gap-1.5 text-sm font-medium text-black">
                           <Car className="h-4 w-4 text-[#2F4F97]" />
                           <span>{selected.travel_distance_time.car} by car</span>
                         </div>
                       )}
                       {selected.travel_distance_time.bus && (
-                        <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                        <div className="flex items-center gap-1.5 text-sm font-medium text-black">
                           <Building2 className="h-4 w-4 text-[#2F4F97]" />
                           <span>{selected.travel_distance_time.bus} by bus</span>
                         </div>
@@ -867,7 +1045,7 @@ Ask Us</Button>
                         <tbody>
                           {selected.room_rents.map((r: any, idx: number) => (
                             <tr key={idx} className="border-b border-gray-100 last:border-0 hover:bg-gray-50/30 transition-colors">
-                              <td className="px-4 py-2.5 text-gray-700 font-medium">{r.room_type}</td>
+                              <td className="px-4 py-2.5 text-black font-medium">{r.room_type}</td>
                               <td className="px-4 py-2.5 text-gray-900 font-bold text-[#2F4F97]">{r.rent}</td>
                             </tr>
                           ))}

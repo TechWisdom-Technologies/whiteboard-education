@@ -471,7 +471,7 @@ export default function Universities() {
                             )}
                           </Link>
 
-                          <div className="flex-1 min-w-0 flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-8">
+                          <div className="flex-1 min-w-0 flex flex-col justify-between lg:flex-row lg:items-center gap-4 lg:gap-8">
                           {/* Middle: Info */}
                           <div className="min-w-0 flex flex-col justify-center space-y-4">
                             <Link to={`/universities/${generateSlug(u.name)}`}>
