@@ -35,7 +35,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 5;
 
 const DEGREE_LEVELS = [
   "All Levels",
@@ -263,11 +263,21 @@ export default function Courses() {
       for (let i = 1; i <= totalPages; i++) pages.push(i);
     } else {
       pages.push(1);
-      if (currentPage > 3) pages.push("ellipsis");
-      const start = Math.max(2, currentPage - 1);
-      const end = Math.min(totalPages - 1, currentPage + 1);
+      
+      let start = Math.max(2, currentPage - 2);
+      let end = Math.min(totalPages - 1, currentPage + 2);
+      
+      if (currentPage <= 3) {
+        end = 5;
+      }
+      if (currentPage >= totalPages - 2) {
+        start = totalPages - 4;
+      }
+      
+      if (start > 2) pages.push("ellipsis");
       for (let i = start; i <= end; i++) pages.push(i);
-      if (currentPage < totalPages - 2) pages.push("ellipsis");
+      if (end < totalPages - 1) pages.push("ellipsis");
+      
       pages.push(totalPages);
     }
     return pages;
@@ -706,7 +716,7 @@ export default function Courses() {
                     className="h-9 w-9 flex items-center justify-center border transition-colors disabled:opacity-30"
                     style={{
                       borderColor: "#cacdd4",
-                      borderRadius: "4px",
+                      borderRadius: "8px",
                       color: "#64748B",
                       backgroundColor: "#ffffff",
                     }}
@@ -721,12 +731,12 @@ export default function Courses() {
                       <button
                         key={page}
                         onClick={() => changePage(page)}
-                        className="h-9 w-9 flex items-center justify-center border text-sm font-bold transition-colors"
+                        className="h-9 w-9 flex items-center justify-center border text-sm font-light transition-colors"
                         style={{
-                          borderRadius: "4px",
+                          borderRadius: "8px",
                           fontFamily: "Poppins, sans-serif",
                           backgroundColor: currentPage === page ? "#2F4F97" : "#ffffff",
-                          color: currentPage === page ? "#1E293B" : "#64748B",
+                          color: currentPage === page ? "#ffffff" : "#64748B",
                           borderColor: currentPage === page ? "#2F4F97" : "#cacdd4",
                         }}
                       >
@@ -741,7 +751,7 @@ export default function Courses() {
                     className="h-9 w-9 flex items-center justify-center border transition-colors disabled:opacity-30"
                     style={{
                       borderColor: "#cacdd4",
-                      borderRadius: "4px",
+                      borderRadius: "8px",
                       color: "#64748B",
                       backgroundColor: "#ffffff",
                     }}

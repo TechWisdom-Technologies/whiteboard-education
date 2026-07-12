@@ -103,23 +103,27 @@ export default function LanguageCentersPage() {
   // Generate page numbers for pagination with sliding window matching Universities2 / Courses2
   const getPageNumbers = () => {
     const pages: (number | "ellipsis")[] = [];
-    const startPage = Math.floor((currentPage - 1) / 9) * 9 + 1;
-    const endPage = Math.min(startPage + 9, totalPages);
-    
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-    
-    if (endPage < totalPages - 2) {
-      pages.push("ellipsis");
-      pages.push(totalPages - 1);
-      pages.push(totalPages);
-    } else if (endPage < totalPages) {
-      for (let i = endPage + 1; i <= totalPages; i++) {
-        pages.push(i);
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      
+      let start = Math.max(2, currentPage - 2);
+      let end = Math.min(totalPages - 1, currentPage + 2);
+      
+      if (currentPage <= 3) {
+        end = 5;
       }
+      if (currentPage >= totalPages - 2) {
+        start = totalPages - 4;
+      }
+      
+      if (start > 2) pages.push("ellipsis");
+      for (let i = start; i <= end; i++) pages.push(i);
+      if (end < totalPages - 1) pages.push("ellipsis");
+      
+      pages.push(totalPages);
     }
-    
     return pages;
   };
 
@@ -325,7 +329,7 @@ export default function LanguageCentersPage() {
                   className="h-9 w-9 flex items-center justify-center border transition-colors disabled:opacity-30"
                   style={{
                     borderColor: "#cacdd4",
-                    borderRadius: "4px",
+                    borderRadius: "8px",
                     color: "#64748B",
                     backgroundColor: "#ffffff",
                   }}
@@ -347,12 +351,12 @@ export default function LanguageCentersPage() {
                     <button
                       key={page}
                       onClick={() => changePage(page)}
-                      className="h-9 w-9 flex items-center justify-center border text-sm font-bold transition-colors"
+                      className="h-9 w-9 flex items-center justify-center border text-sm font-light transition-colors"
                       style={{
-                        borderRadius: "4px",
+                        borderRadius: "8px",
                         fontFamily: "Poppins, sans-serif",
                         backgroundColor: currentPage === page ? "#2F4F97" : "#ffffff",
-                        color: currentPage === page ? "#1E293B" : "#64748B",
+                        color: currentPage === page ? "#ffffff" : "#64748B",
                         borderColor: currentPage === page ? "#2F4F97" : "#cacdd4",
                       }}
                     >
@@ -368,7 +372,7 @@ export default function LanguageCentersPage() {
                   className="h-9 w-9 flex items-center justify-center border transition-colors disabled:opacity-30"
                   style={{
                     borderColor: "#cacdd4",
-                    borderRadius: "4px",
+                    borderRadius: "8px",
                     color: "#64748B",
                     backgroundColor: "#ffffff",
                   }}
