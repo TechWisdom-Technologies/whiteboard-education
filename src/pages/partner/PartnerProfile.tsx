@@ -14,6 +14,7 @@ import {
   Upload, FileCheck, FileText, ExternalLink, ClipboardList
 } from "lucide-react";
 import { toast } from "sonner";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 
 interface PartnerData {
   agency_name: string;
@@ -239,13 +240,7 @@ export default function PartnerProfile() {
     setPwStep("idle"); setOtpCode(""); setNewPassword(""); setConfirmPassword("");
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-[#2F4F97]" />
-      </div>
-    );
-  }
+  if (loading) return <LoadingScreen fullScreen />;
 
   const initials = (profile.display_name || user?.email || "P")
     .split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);

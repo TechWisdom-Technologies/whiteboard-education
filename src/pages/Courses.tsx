@@ -1,4 +1,5 @@
-import { useState, useMemo, useRef, useEffect } from "react";
+import {
+  useState, useMemo, useRef, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -12,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import {
   Search,
+  ChevronDown,
+  Filter,
   MapPin,
   ChevronLeft,
   ChevronRight,
@@ -130,6 +133,7 @@ export default function Courses() {
   
   const gridRef = useRef<HTMLDivElement>(null);
 
+  const [showFilters, setShowFilters] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState({
     search: searchParams.get("search") || "",
     selectedLevel: "All Levels",
@@ -144,7 +148,9 @@ export default function Courses() {
       search,
       selectedLevel,
       selectedArea,
-      selectedUniId
+      selectedLocation,
+      selectedIntake,
+      selectedFee
     });
     setCurrentPage(1);
   };
@@ -194,21 +200,40 @@ export default function Courses() {
 
       if (search && !titleLower.includes(search.toLowerCase())) return false;
       if (selectedLevel !== "All Levels" && !effLevel.toLowerCase().includes(selectedLevel.toLowerCase())) return false;
-      // Location, Intake, and Fee filtering can be added here once data model supports it
       
       if (selectedArea !== "All Areas") {
         const keywords = AREA_KEYWORDS[selectedArea];
         if (keywords) {
           const title = c.title?.toLowerCase() || "";
-          const category = c.category?.toLowerCase() || "";
+          const category = typeof c.category === 'string' ? c.category.toLowerCase() : "";
           const matches = keywords.some(kw => title.includes(kw) || category.includes(kw));
           if (!matches) return false;
         }
       }
-      
+
+      const uni = universities?.find((u: any) => u.id === c.university_id);
+
+      if (selectedLocation !== "All States") {
+        if (!uni) return false;
+        const stateStr = uni.state || uni.city || "";
+        if (!stateStr.toLowerCase().includes(selectedLocation.toLowerCase())) return false;
+      }
+
+      if (selectedIntake !== "All Intakes") {
+        const intakes = Array.isArray(c.intake_months) ? c.intake_months.join(" ") : (c.intake_months || "");
+        if (!intakes.toLowerCase().includes(selectedIntake.toLowerCase())) return false;
+      }
+
+      if (selectedFee !== "All Fees") {
+        if (!uni) return false;
+        const isPaid = PAID_OFFER_LETTER_UNIS.includes(uni.name);
+        if (selectedFee === "Free" && isPaid) return false;
+        if (selectedFee === "Paid" && !isPaid) return false;
+      }
+
       return true;
     });
-  }, [courses, appliedFilters]);
+  }, [courses, universities, appliedFilters]);
 
   const [sortBy, setSortBy] = useState("best_match");
 
@@ -261,7 +286,7 @@ export default function Courses() {
         ) : (
           <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
             {/* ─── SIDEBAR ─── */}
-            <aside className="lg:w-[320px] xl:w-[340px] shrink-0">
+            <aside className="lg:w-[320px] xl:w-[360px] shrink-0">
               <div
                 className="overflow-hidden border"
                 style={{
@@ -269,8 +294,21 @@ export default function Courses() {
                   borderRadius: "12px",
                 }}
               >
-                {/* Sidebar Header */}
-                <div className="px-5 py-[22px] flex items-center justify-between" style={{ backgroundColor: "#2F4F97" }}>
+                {/* Mobile Filter Toggle */}
+                <button 
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="w-full flex items-center justify-between p-4 lg:hidden text-[#1E293B] font-semibold border-b border-[#e8e8e8]"
+                >
+                  <div className="flex items-center gap-2">
+                    <Filter className="h-4 w-4" />
+                    Filter Courses
+                  </div>
+                  <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${showFilters ? 'rotate-180' : ''}`} />
+                </button>
+
+                <div className={`${showFilters ? 'block' : 'hidden lg:block'}`}>
+                  {/* Sidebar Header */}
+                  <div className="px-5 py-[22px] flex items-center justify-between bg-[#2F4F97] hidden lg:flex">
                   <h3
                     className="font-semibold"
                     style={{
@@ -282,20 +320,6 @@ export default function Courses() {
                   >
                     Search by Filter
                   </h3>
-                  <button
-                    onClick={() => {
-                      setSearch("");
-                      setSelectedLevel("All Levels");
-                      setSelectedArea("All Areas");
-                      setSelectedLocation("All States");
-    setSelectedIntake("All Intakes");
-    setSelectedFee("All Fees");
-                    }}
-                    className="text-white/70 hover:text-white transition-colors"
-                    title="Reset Filters"
-                  >
-                    <RotateCcw className="h-5 w-5" />
-                  </button>
                 </div>
 
                 {/* Sidebar Body */}
@@ -338,7 +362,7 @@ export default function Courses() {
                           color: selectedLevel === "All Levels" ? "#999999" : "#444444",
                         }}
                       >
-                        <SelectValue placeholder="Select level of interest" />
+                        <SelectValue placeholder="Select Level of Interest" />
                       </SelectTrigger>
                       <SelectContent>
                         {DEGREE_LEVELS.map((l) => (
@@ -362,7 +386,7 @@ export default function Courses() {
                           color: selectedArea === "All Areas" ? "#999999" : "#444444",
                         }}
                       >
-                        <SelectValue placeholder="Select field of study" />
+                        <SelectValue placeholder="Select Field of Study" />
                       </SelectTrigger>
                       <SelectContent>
                         {STUDY_AREAS.map((a) => (
@@ -374,7 +398,7 @@ export default function Courses() {
 
                   {/* Locations Filter */}
                   <div>
-                    <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Locations</label>
+                    <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Location</label>
                     <Select value={selectedLocation} onValueChange={setSelectedLocation} modal={false}>
                       <SelectTrigger
                         className="h-11"
@@ -386,7 +410,7 @@ export default function Courses() {
                           color: selectedLocation === "All States" ? "#999999" : "#444444",
                         }}
                       >
-                        <SelectValue placeholder="Select a state" />
+                        <SelectValue placeholder="Select a State" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="All States">All States</SelectItem>
@@ -424,7 +448,7 @@ export default function Courses() {
                           color: selectedIntake === "All Intakes" ? "#999999" : "#444444",
                         }}
                       >
-                        <SelectValue placeholder="April" />
+                        <SelectValue placeholder="Select Intake" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="All Intakes">All Intakes</SelectItem>
@@ -458,7 +482,7 @@ export default function Courses() {
                           color: selectedFee === "All Fees" ? "#999999" : "#444444",
                         }}
                       >
-                        <SelectValue placeholder="Select offer letter fee type" />
+                        <SelectValue placeholder="Select Offer Letter Fee Type" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="All Fees">All Fees</SelectItem>
@@ -485,17 +509,18 @@ export default function Courses() {
                     Reset Filter
                   </Button>
                 </div>
+                </div>
               </div>
             </aside>
 
             {/* ─── CONTENT AREA ─── */}
             <div className="flex-1 min-w-0">
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-gray-200 pb-4 mb-6 gap-4">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-gray-400 pb-4 mb-0 gap-4">
                 <h1 className="text-[20px] md:text-[22px] font-semibold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B" }}>
                   Courses
                 </h1>
                 
-                <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 md:gap-4 text-[14px]">
+                <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 md:gap-4 text-[12px] md:text-[14px]">
                   <div className="flex items-center gap-2 shrink-0">
                     <span className="font-semibold text-[#1E293B] whitespace-nowrap">Sort By:</span>
                     <Select value={sortBy} onValueChange={setSortBy}>
@@ -529,47 +554,74 @@ export default function Courses() {
                   <p className="text-sm">Try adjusting your search or filters.</p>
                 </div>
               ) : (
-                <div className="space-y-5">
+                <div className="flex flex-col divide-y divide-gray-400">
                   {paged.map((c: any, idx: number) => {
                     const uni = universities.find((u: any) => u.id === c.university_id);
                     return (
                       <div
                         key={c.id}
-                        className="bg-white p-5 md:p-6 lg:p-8 border border-gray-200 rounded-3xl"
+                        className="bg-white py-8 lg:py-11 group"
                       >
-                        <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] lg:grid-cols-[180px_1fr_140px] gap-6 lg:gap-8 items-center">
-                          {/* Left: Logo */}
-                          <Link
-                            to={`/courses/${generateSlug(c.title)}`}
-                            className="w-full h-[100px] flex items-center justify-center overflow-hidden"
-                          >
-                            {uni && (uni.logo_url || UNIVERSITY_LOGOS[uni.name]) ? (
-                              <img
-                                src={uni.logo_url || UNIVERSITY_LOGOS[uni.name]}
-                                alt={uni.name}
-                                className="max-w-full max-h-full object-contain"
-                              />
-                            ) : (
-                              <GraduationCap className="h-10 w-10 text-gray-300" />
-                            )}
-                          </Link>
+                        <div className="flex flex-row gap-4 md:gap-6 lg:gap-8 items-stretch md:items-center">
+                          {/* Left: Logo & Compare Button (Mobile) */}
+                          <div className="w-[100px] md:w-[170px] lg:w-[200px] shrink-0 flex flex-col items-center justify-between gap-3 mt-1 lg:mt-0">
+                            <Link
+                              to={`/courses/${generateSlug(c.title)}`}
+                              className="w-full h-[100px] md:h-[110px] flex items-center justify-center overflow-hidden shrink-0"
+                            >
+                              {uni && (uni.logo_url || UNIVERSITY_LOGOS[uni.name]) ? (
+                                <img
+                                  src={uni.logo_url || UNIVERSITY_LOGOS[uni.name]}
+                                  alt={uni.name}
+                                  className="max-w-full max-h-full object-contain"
+                                />
+                              ) : (
+                                <GraduationCap className="h-10 w-10 text-gray-300" />
+                              )}
+                            </Link>
 
+                            <Button
+                                size="sm"
+                                className={`lg:hidden rounded-xl font-bold text-[10px] h-10 px-1 w-full shrink-0 transition-colors border bg-white ${
+                                  isComparing(c.id) 
+                                    ? "bg-gray-100 text-gray-800 border-gray-300" 
+                                    : "text-gray-600 border-gray-300 hover:bg-gray-50 hover:text-gray-900"
+                                }`}
+                                onClick={() => {
+                                  if (isComparing(c.id)) {
+                                    removeCourse(c.id);
+                                  } else {
+                                    if (compareList.length >= 3) {
+                                      toast.error("You can only compare up to 3 courses at once.");
+                                      return;
+                                    }
+                                    addCourse(c.id);
+                                    toast.success("Added to comparison.");
+                                  }
+                                }}
+                              >
+                                <Layers className="h-3 w-3 mr-1 shrink-0" />
+                                <span className="truncate tracking-tighter">{isComparing(c.id) ? "Added" : "Compare"}</span>
+                              </Button>
+                          </div>
+
+                          <div className="flex-1 min-w-0 flex flex-col justify-between lg:flex-row lg:items-center gap-4 lg:gap-8">
                           {/* Middle: Info */}
-                          <div className="min-w-0 flex flex-col justify-center space-y-3">
+                          <div className="min-w-0 flex flex-col justify-center space-y-4">
                             <Link to={`/courses/${generateSlug(c.title)}`}>
-                              <h3 className="font-medium hover:underline text-[18px] md:text-[20px] text-[#1E293B] leading-tight mb-1">
+                              <h3 className="font-medium hover:underline text-[17px] md:text-[18px] text-[#1E293B] leading-tight mb-1">
                                 {c.title}
                               </h3>
                             </Link>
 
                             <div className="flex flex-col gap-3 mt-1">
-                              <div className="flex items-center gap-2.5 text-[14px] text-[#64748B]">
-                                <Building2 className="h-[18px] w-[18px] shrink-0 text-[#64748B]" />
+                              <div className="flex items-center gap-3 text-[12px] md:text-[14px] text-[#475569]">
+                                <Building2 className="h-[18px] w-[18px] shrink-0 text-[#475569]" />
                                 <span className="truncate">{uni?.name || "Malaysian University"}</span>
                               </div>
 
-                              <div className="flex items-start gap-2.5 text-[13px] md:text-[14px] text-[#64748B] leading-loose">
-                                <Info className="h-[18px] w-[18px] shrink-0 text-[#64748B] mt-1 md:mt-[5px]" />
+                              <div className="flex items-start gap-3 text-[12px] md:text-[14px] text-[#475569] leading-loose">
+                                <Info className="h-[18px] w-[18px] shrink-0 text-[#475569] mt-1 md:mt-[5px]" />
                                 <span>
                                   MYR {Number(c.tuition_fee).toLocaleString()}/Year &bull; {uni && PAID_OFFER_LETTER_UNIS.includes(uni.name) ? "Offer Letter Fees Applies" : "Free Offer Letter"} &bull; {c.duration || "N/A"} &bull;{" "}
                                   {Array.isArray(c.intake_months) && c.intake_months.length > 0 ? (
@@ -593,13 +645,13 @@ export default function Courses() {
                             </div>
 
                             {/* Compare Button */}
-                            <div className="pt-2">
+                            <div className="hidden lg:block pt-2">
                               <Button
                                 size="sm"
-                                className={`rounded-2xl font-medium text-[13px] h-9 px-4 transition-colors border bg-white ${
+                                className={`rounded-xl font-medium text-[13px] h-9 px-4 transition-colors border bg-white ${
                                   isComparing(c.id) 
-                                    ? "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]" 
-                                    : "text-gray-500 border-gray-200 hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97]"
+                                    ? "bg-gray-100 text-gray-800 border-gray-300" 
+                                    : "text-gray-600 border-gray-300 hover:bg-gray-50 hover:text-gray-900"
                                 }`}
                                 onClick={() => {
                                   if (isComparing(c.id)) {
@@ -621,22 +673,23 @@ export default function Courses() {
                           </div>
 
                           {/* Right: Buttons */}
-                          <div className="w-full md:col-span-2 lg:col-span-1 flex flex-col gap-3 mt-4 lg:mt-0">
+                          <div className="flex flex-row lg:flex-col gap-2 md:gap-3 mt-1 lg:mt-0 shrink-0 lg:w-[140px]">
                             <Button
-                              className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-xl border-2 border-[#1E293B] h-10 px-2.5 font-medium"
+                              className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-xl border-2 border-[#1E293B] h-10 px-3 text-[13px] font-medium w-[110px] lg:w-full"
                               onClick={() => navigate(`/apply?courseId=${c.id}`)}
                             >
                               Apply Now
                             </Button>
-                            <Link to={`/courses/${generateSlug(c.title)}`} className="block w-full">
+                            <Link to={`/courses/${generateSlug(c.title)}`} className="block">
                               <Button
                                 variant="outline"
-                                className="bg-white text-[#2F4F97] hover:text-[#2F4F97] border-2 border-[#1E293B] rounded-xl h-10 px-2.5 font-medium w-full hover:bg-gray-50"
+                                className="bg-white text-[#2F4F97] hover:text-[#2F4F97] border-2 border-[#1E293B] rounded-xl h-10 px-3 text-[13px] font-medium w-[110px] lg:w-full hover:bg-gray-50"
                               >
                                 Ask Us
                               </Button>
                             </Link>
                           </div>
+                        </div>
                         </div>
                       </div>
                     );

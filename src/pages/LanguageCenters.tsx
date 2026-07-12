@@ -134,7 +134,7 @@ export default function LanguageCentersPage() {
         ) : (
           <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
             {/* ─── SIDEBAR ─── */}
-            <aside className="lg:w-[320px] xl:w-[340px] shrink-0">
+            <aside className="lg:w-[320px] xl:w-[360px] shrink-0">
               <div className="overflow-hidden border bg-white" style={{ borderColor: "#e8e8e8", borderRadius: "12px" }}>
                 {/* Mobile Filter Toggle */}
                 <button 
@@ -161,7 +161,7 @@ export default function LanguageCentersPage() {
                         placeholder="Search by center name..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="pr-10 h-11 text-[14px]"
+                        className="pr-10 h-11 text-[12px] md:text-[14px]"
                         style={{ borderColor: "#cacdd4", borderRadius: "12px", fontFamily: "Poppins, sans-serif", color: "#444444" }}
                       />
                       <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "#999999" }} />
@@ -169,7 +169,7 @@ export default function LanguageCentersPage() {
 
                     <div className="w-full">
                       <Select value={selectedCity} onValueChange={setSelectedCity} modal={false}>
-                        <SelectTrigger className="h-11 text-[14px]" style={{ borderColor: "#cacdd4", borderRadius: "12px", fontFamily: "Poppins, sans-serif", color: selectedCity === "all" ? "#999999" : "#444444" }}>
+                        <SelectTrigger className="h-11 text-[12px] md:text-[14px]" style={{ borderColor: "#cacdd4", borderRadius: "12px", fontFamily: "Poppins, sans-serif", color: selectedCity === "all" ? "#999999" : "#444444" }}>
                           <SelectValue placeholder="Locations" />
                         </SelectTrigger>
                         <SelectContent>
@@ -203,12 +203,12 @@ export default function LanguageCentersPage() {
             </aside>
 
             <div className="flex-1 min-w-0">
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-gray-200 pb-4 mb-6 gap-4">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-gray-400 pb-4 mb-0 gap-4">
                 <h1 className="text-[20px] md:text-[22px] font-semibold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B" }}>
                   Language Centers
                 </h1>
                 
-                <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 md:gap-4 text-[14px]">
+                <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 md:gap-4 text-[12px] md:text-[14px]">
                   <div className="flex items-center gap-2 shrink-0">
                     <span className="font-semibold text-[#1E293B] whitespace-nowrap">Sort By:</span>
                     <Select value={sortBy} onValueChange={setSortBy}>
@@ -242,18 +242,18 @@ export default function LanguageCentersPage() {
                 <p className="text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
-              <div className="space-y-5">
+              <div className="flex flex-col divide-y divide-gray-400">
                 {paged.map((lc: any) => {
                   return (
                     <div
                       key={lc.id}
-                      className="bg-white p-5 md:p-6 lg:p-8 border border-gray-200 rounded-3xl animate-fade-in"
+                      className="bg-white py-8 lg:py-11 animate-fade-in group"
                     >
-                      <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] lg:grid-cols-[180px_1fr_140px] gap-6 lg:gap-8 items-center">
+                      <div className="flex flex-row gap-4 md:gap-6 lg:gap-8 items-start md:items-center">
                         {/* Elegant Icon Representation or Image */}
                         <Link
                           to={`/language-centers/${generateSlug(lc.name)}`}
-                          className="w-full h-[100px] flex items-center justify-center overflow-hidden"
+                          className="w-[100px] md:w-[170px] lg:w-[200px] shrink-0 h-[100px] md:h-[110px] flex items-center justify-center overflow-hidden"
                         >
                           {lc.logo_url ? (
                             <img
@@ -270,67 +270,38 @@ export default function LanguageCentersPage() {
                           )}
                         </Link>
 
-                        {/* Info block */}
-                        <div className="min-w-0 flex flex-col justify-center space-y-3 md:col-span-1 lg:col-span-1">
+                        <div className="flex-1 min-w-0 flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-8">
+                          {/* Info block */}
+                        <div className="min-w-0 flex flex-col justify-center space-y-4 md:col-span-1 lg:col-span-1">
                           <Link to={`/language-centers/${generateSlug(lc.name)}`}>
-                            <h3 className="font-medium hover:underline text-[18px] md:text-[20px] text-[#1E293B] leading-tight mb-1">
+                            <h3 className="font-medium hover:underline text-[17px] md:text-[18px] text-[#1E293B] leading-tight mb-1">
                               {lc.name}
                             </h3>
                           </Link>
 
-                          <div className="flex flex-col gap-2.5">
+                          <div className="flex flex-col gap-3">
                             {/* Location */}
-                            <div className="flex items-center gap-2.5 text-[15px] text-[#64748B]">
-                              <MapPin className="shrink-0 h-4 w-4 text-[#64748B]" />
+                            <div className="flex items-center gap-3 text-[12px] md:text-[14px] text-[#475569]">
+                              <MapPin className="shrink-0 h-4 w-4 text-[#475569]" />
                               <span>{lc.city || "Malaysia"}, Malaysia</span>
                             </div>
 
-                            {/* About text summary */}
-                            {lc.about_text && (
-                              <div className="flex items-start gap-2.5 text-[15px] text-[#64748B]">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-info shrink-0 mt-0.5 text-[#64748B]"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                                <span className="line-clamp-2">
-                                  {lc.about_text}
-                                </span>
-                              </div>
-                            )}
 
-                            {/* Courses list tags */}
-                            {lc.more_info && Array.isArray(lc.more_info) && lc.more_info.length > 0 && (
-                              <div className="flex items-start gap-2.5 text-[15px] text-[#64748B] mt-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-book-open shrink-0 mt-0.5 text-[#64748B]"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                                <div className="flex flex-wrap gap-1.5">
-                                  {lc.more_info.slice(0, 3).map((c: any, idx: number) => (
-                                    <span
-                                      key={idx}
-                                      className="px-2 py-0.5 bg-slate-100 text-slate-700 text-[12px] font-medium rounded-xl"
-                                    >
-                                      {c.title}
-                                    </span>
-                                  ))}
-                                  {lc.more_info.length > 3 && (
-                                    <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-[12px] font-medium rounded-xl">
-                                      +{lc.more_info.length - 3} more
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                            )}
                           </div>
                         </div>
 
                         {/* Right: Actions */}
-                        <div className="flex flex-col gap-3 w-full md:col-span-2 lg:col-span-1 mt-4 lg:mt-0">
+                        <div className="flex flex-row lg:flex-col gap-2 md:gap-3 mt-1 lg:mt-0 shrink-0 lg:w-[140px]">
                           <Button
-                            className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-xl border-2 border-[#1E293B] h-10 px-2.5 font-medium"
+                            className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-xl border-2 border-[#1E293B] h-10 px-3 text-[13px] font-medium w-[110px] lg:w-full"
                             onClick={() => navigate(`/apply?centerId=${lc.id}`)}
                           >
                             Apply Now
                           </Button>
-                          <Link to={`/language-centers/${generateSlug(lc.name)}`} className="block w-full">
+                          <Link to={`/language-centers/${generateSlug(lc.name)}`} className="block">
                             <Button
                               variant="outline"
-                              className="bg-white text-[#2F4F97] hover:text-[#2F4F97] border-2 border-[#1E293B] rounded-xl h-10 px-2.5 font-medium w-full hover:bg-gray-50"
+                              className="bg-white text-[#2F4F97] hover:text-[#2F4F97] border-2 border-[#1E293B] rounded-xl h-10 px-3 text-[13px] font-medium w-[110px] lg:w-full hover:bg-gray-50"
                             >
                               View Details
                             </Button>
@@ -338,8 +309,9 @@ export default function LanguageCentersPage() {
                         </div>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                );
+              })}
               </div>
             )}
 

@@ -11,6 +11,7 @@ import { Eye, Loader2, Search, Users, Filter, Trash2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -193,7 +194,7 @@ export default function AdminStudents() {
     studentCount: students.filter(s => s.partner_id === p.user_id).length,
   })).filter(p => p.studentCount > 0).sort((a, b) => b.studentCount - a.studentCount);
 
-  if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
+  if (loading) return <LoadingScreen fullScreen />;
 
   return (
     <div className="space-y-6">

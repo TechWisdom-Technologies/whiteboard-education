@@ -7,6 +7,7 @@ import {
   ArrowRight, FileCheck, Send, Mail, Plane, BookOpen, PauseCircle, XCircle, ChevronRight, ChevronLeft
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -61,7 +62,7 @@ export default function PartnerOverview() {
     })();
   }, [session]);
 
-  if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="h-8 w-8 animate-spin text-[#2F4F97]" /></div>;
+  if (loading) return <LoadingScreen fullScreen />;
 
   const total = students.length;
   const inReview = students.filter(s => s.status === "document_review").length;

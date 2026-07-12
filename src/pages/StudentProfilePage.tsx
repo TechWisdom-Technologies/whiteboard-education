@@ -37,6 +37,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -511,16 +512,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
 
   // ── Loading & error states ─────────────────────────────────────────────
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-[60vh]">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-8 w-8 animate-spin text-[#2F4F97]" />
-          <p className="text-sm text-muted-foreground">Loading student profile…</p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <LoadingScreen fullScreen />;
 
   if (error || !student) {
     return (

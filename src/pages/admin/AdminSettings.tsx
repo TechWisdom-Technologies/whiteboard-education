@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Camera, Save, Loader2, Building2, User, Globe, Mail, Phone, Lock, KeyRound, ShieldCheck, ArrowRight, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 
 interface UserProfile {
   display_name: string;
@@ -165,13 +166,7 @@ export default function AdminSettings() {
 
   const resetPwFlow = () => { setPwStep("idle"); setOtpCode(""); setNewPassword(""); setConfirmPassword(""); };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-sidebar-primary" />
-      </div>
-    );
-  }
+  if (loading) return <LoadingScreen fullScreen />;
 
   const initials = (profile.display_name || user?.email || "A")
     .split(" ")

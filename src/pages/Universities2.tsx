@@ -296,7 +296,7 @@ export default function Universities() {
         ) : (
           <div className="flex flex-col lg:flex-row gap-6">
             {/* ─── SIDEBAR ─── */}
-            <aside className="lg:w-[320px] xl:w-[340px] shrink-0">
+            <aside className="lg:w-[320px] xl:w-[360px] shrink-0">
               <div className="overflow-hidden border bg-white" style={{ borderColor: "#e8e8e8", borderRadius: "12px" }}>
                 {/* Mobile Filter Toggle */}
                 <button 
@@ -325,7 +325,7 @@ export default function Universities() {
                           placeholder="Enter University Name"
                           value={search}
                           onChange={(e) => setSearch(e.target.value)}
-                          className="pr-10 h-11 text-[14px]"
+                          className="pr-10 h-11 text-[12px] md:text-[14px]"
                           style={{ borderColor: "#cacdd4", borderRadius: "12px", fontFamily: "Poppins, sans-serif", color: "#444444" }}
                         />
                         <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "#999999" }} />
@@ -335,7 +335,7 @@ export default function Universities() {
                     <div className="w-full">
                       <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Level of Interest</label>
                       <Select value={selectedLevel} onValueChange={setSelectedLevel} modal={false}>
-                        <SelectTrigger className="h-11 text-[14px]" style={{ borderColor: "#cacdd4", borderRadius: "12px", fontFamily: "Poppins, sans-serif", color: selectedLevel === "All Levels" ? "#999999" : "#444444" }}>
+                        <SelectTrigger className="h-11 text-[12px] md:text-[14px]" style={{ borderColor: "#cacdd4", borderRadius: "12px", fontFamily: "Poppins, sans-serif", color: selectedLevel === "All Levels" ? "#999999" : "#444444" }}>
                           <SelectValue placeholder="Enter Level of Interest" />
                         </SelectTrigger>
                         <SelectContent>
@@ -351,7 +351,7 @@ export default function Universities() {
                     <div className="w-full">
                       <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Locations</label>
                       <Select value={selectedCity} onValueChange={setSelectedCity} modal={false}>
-                        <SelectTrigger className="h-11 text-[14px]" style={{ borderColor: "#cacdd4", borderRadius: "12px", fontFamily: "Poppins, sans-serif", color: selectedCity === "all" ? "#999999" : "#444444" }}>
+                        <SelectTrigger className="h-11 text-[12px] md:text-[14px]" style={{ borderColor: "#cacdd4", borderRadius: "12px", fontFamily: "Poppins, sans-serif", color: selectedCity === "all" ? "#999999" : "#444444" }}>
                           <SelectValue placeholder="Select A State" />
                         </SelectTrigger>
                         <SelectContent>
@@ -366,7 +366,7 @@ export default function Universities() {
                     <div className="w-full">
                       <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Offer Letter Fee</label>
                       <Select value={selectedOfferLetter} onValueChange={setSelectedOfferLetter} modal={false}>
-                        <SelectTrigger className="h-11 text-[14px]" style={{ borderColor: "#cacdd4", borderRadius: "12px", fontFamily: "Poppins, sans-serif", color: selectedOfferLetter === "all" ? "#999999" : "#444444" }}>
+                        <SelectTrigger className="h-11 text-[12px] md:text-[14px]" style={{ borderColor: "#cacdd4", borderRadius: "12px", fontFamily: "Poppins, sans-serif", color: selectedOfferLetter === "all" ? "#999999" : "#444444" }}>
                           <SelectValue placeholder="Select offer letter fee type" />
                         </SelectTrigger>
                         <SelectContent>
@@ -400,12 +400,12 @@ export default function Universities() {
 
             {/* ─── CONTENT AREA ─── */}
             <div className="flex-1 min-w-0">
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-gray-200 pb-4 mb-6 gap-4">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-gray-400 pb-4 mb-0 gap-4">
                 <h1 className="text-[20px] md:text-[22px] font-semibold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B" }}>
                   Universities
                 </h1>
                 
-                <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 md:gap-4 text-[14px]">
+                <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 md:gap-4 text-[12px] md:text-[14px]">
                   <div className="flex items-center gap-2 shrink-0">
                     <span className="font-semibold text-[#1E293B] whitespace-nowrap">Sort By:</span>
                     <Select value={sortBy} onValueChange={setSortBy}>
@@ -439,19 +439,19 @@ export default function Universities() {
                   <p className="text-sm">Try adjusting your search or filters.</p>
                 </div>
               ) : (
-                <div className="space-y-5">
+                <div className="flex flex-col divide-y divide-gray-400">
                   {paged.map((u: any) => {
                     const courseCount = courseCountMap[u.id] || 0;
                     return (
                       <div
                         key={u.id}
-                        className="bg-white p-5 md:p-6 lg:p-8 border border-gray-200 rounded-3xl"
+                        className="bg-white py-8 lg:py-11 group"
                       >
-                        <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] lg:grid-cols-[180px_1fr_140px] gap-6 lg:gap-8 items-center">
+                        <div className="flex flex-row gap-4 md:gap-6 lg:gap-8 items-start md:items-center">
                           {/* Left: Logo */}
                           <Link
                             to={`/universities/${generateSlug(u.name)}`}
-                            className="w-full h-[100px] flex items-center justify-center overflow-hidden"
+                            className="w-[100px] md:w-[170px] lg:w-[200px] shrink-0 h-[100px] md:h-[110px] flex items-center justify-center overflow-hidden"
                           >
                             {u.logo_url || UNIVERSITY_LOGOS[u.name] ? (
                               <img
@@ -469,48 +469,50 @@ export default function Universities() {
                             )}
                           </Link>
 
+                          <div className="flex-1 min-w-0 flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-8">
                           {/* Middle: Info */}
-                          <div className="min-w-0 flex flex-col justify-center space-y-3">
+                          <div className="min-w-0 flex flex-col justify-center space-y-4">
                             <Link to={`/universities/${generateSlug(u.name)}`}>
-                              <h3 className="font-medium hover:underline text-[18px] md:text-[20px] text-[#1E293B] leading-tight mb-1">
+                              <h3 className="font-medium hover:underline text-[17px] md:text-[18px] text-[#1E293B] leading-tight mb-1">
                                 {u.name}
                               </h3>
                             </Link>
                             
-                            <div className="flex flex-col gap-2.5">
-                              <div className="flex items-center gap-2.5 text-[15px] text-[#64748B]">
-                                <MapPin className="h-4 w-4 shrink-0 text-[#64748B]" />
+                            <div className="flex flex-col gap-3">
+                              <div className="flex items-center gap-3 text-[12px] md:text-[14px] text-[#475569]">
+                                <MapPin className="h-4 w-4 shrink-0 text-[#475569]" />
                                 <span>{u.city || "Malaysia"}, Malaysia</span>
                               </div>
                               
-                              <div className="flex items-center gap-2.5 text-[15px] text-[#64748B]">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mail shrink-0 text-[#64748B]"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                              <div className="flex items-center gap-3 text-[12px] md:text-[14px] text-[#475569]">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mail shrink-0 text-[#475569]"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                                 <span>{PAID_OFFER_LETTER_UNIS.includes(u.name) ? "Offer Letter Fees Applies" : "Free Offer Letter"}</span>
                               </div>
 
-                              <div className="text-[15px] text-[#64748B] mt-1">
+                              <div className="text-[12px] md:text-[14px] text-[#475569] mt-1">
                                 {courseCount} courses
                               </div>
                             </div>
                           </div>
 
                           {/* Right: Buttons */}
-                          <div className="w-full md:col-span-2 lg:col-span-1 flex flex-col gap-3 mt-4 lg:mt-0">
+                          <div className="flex flex-row lg:flex-col gap-2 md:gap-3 mt-1 lg:mt-0 shrink-0 lg:w-[140px]">
                             <Button
-                              className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-xl border-2 border-[#1E293B] h-10 px-2.5 font-medium"
+                              className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-xl border-2 border-[#1E293B] h-10 px-3 text-[13px] font-medium w-[110px] lg:w-full"
                               onClick={() => navigate(`/apply?universityId=${u.id}`)}
                             >
                               Apply Now
                             </Button>
-                            <Link to={`/universities/${generateSlug(u.name)}`} className="block w-full">
+                            <Link to={`/universities/${generateSlug(u.name)}`} className="block">
                               <Button
                                 variant="outline"
-                                className="bg-white text-[#2F4F97] hover:text-[#2F4F97] border-2 border-[#1E293B] rounded-xl h-10 px-2.5 font-medium w-full hover:bg-gray-50"
+                                className="bg-white text-[#2F4F97] hover:text-[#2F4F97] border-2 border-[#1E293B] rounded-xl h-10 px-3 text-[13px] font-medium w-[110px] lg:w-full hover:bg-gray-50"
                               >
                                 Ask Us
                               </Button>
                             </Link>
                           </div>
+                        </div>
                         </div>
                       </div>
                     );
