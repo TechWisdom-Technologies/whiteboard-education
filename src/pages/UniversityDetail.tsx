@@ -205,6 +205,9 @@ export default function UniversityDetail() {
   const [cSearch, setCSearch] = useState("");
   const [cLevel, setCLevel] = useState("all");
   const [cCategory, setCCategory] = useState("all");
+  const [tempSearch, setTempSearch] = useState("");
+  const [tempLevel, setTempLevel] = useState("all");
+  const [tempCategory, setTempCategory] = useState("all");
   const [cPage, setCPage] = useState(1);
   const itemsPerPage = 8;
   const [isScrolled, setIsScrolled] = useState(false);
@@ -708,138 +711,130 @@ export default function UniversityDetail() {
       {tab === "courses" && (
         <section className="py-8">
           <div className="w-full max-w-[1000px] mx-auto px-4">
-            {/* Opaque Sticky Filter Bar */}
-            <div className="sticky top-[80px] z-30 bg-[#f0f4f8] py-4 -mx-4 px-4 mb-4">
-              <div className="bg-white p-4 rounded-xl border shadow-md flex flex-col md:flex-row gap-4 items-center">
-                {/* Category Filter */}
-                <div className="w-full md:flex-1">
-                  <Select value={cCategory} onValueChange={v => { setCCategory(v); setCPage(1); }}>
-                    <SelectTrigger className="w-full bg-gray-50 border-gray-200 h-11 rounded-xl"><SelectValue placeholder="All Categories" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Categories</SelectItem>
-                      {categories.map(cat => <SelectItem key={cat} value={cat.toLowerCase()}>{cat}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
+            {/* Filter Bar */}
+            <div className="mb-8">
+              <div className="rounded-xl border border-gray-900 bg-white overflow-hidden shadow-sm">
+                <div className="bg-[#EEF4FF] border-b border-gray-900 px-6 py-4">
+                  <h3 className="text-[20px] font-bold text-gray-900">Filter courses</h3>
                 </div>
+                <div className="p-6 flex flex-col gap-4">
+                  {/* Filter Inputs Row */}
+                  <div className="flex flex-col md:flex-row gap-4 w-full">
+                    <div className="w-full md:flex-1">
+                      <Select value={tempCategory} onValueChange={setTempCategory}>
+                        <SelectTrigger className="w-full bg-white border border-gray-300 h-11 rounded-lg text-gray-500"><SelectValue placeholder="All Category" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Category</SelectItem>
+                          {categories.map(cat => <SelectItem key={cat} value={cat.toLowerCase()}>{cat}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                {/* Qualification Filter */}
-                <div className="w-full md:w-48">
-                  <Select value={cLevel} onValueChange={v => { setCLevel(v); setCPage(1); }}>
-                    <SelectTrigger className="w-full bg-gray-50 border-gray-200 h-11 rounded-xl"><SelectValue placeholder="All Levels" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Levels</SelectItem>
-                      {levels.map(l => <SelectItem key={l} value={l.toLowerCase()}>{l}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
+                    <div className="w-full md:flex-1">
+                      <Select value={tempLevel} onValueChange={setTempLevel}>
+                        <SelectTrigger className="w-full bg-white border border-gray-300 h-11 rounded-lg text-gray-500"><SelectValue placeholder="All Qualification" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Qualification</SelectItem>
+                          {levels.map(l => <SelectItem key={l} value={l.toLowerCase()}>{l}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                {/* Search Input + Reset */}
-                <div className="w-full md:flex-1 flex gap-2">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input 
-                      placeholder="Search Program..." 
-                      value={cSearch} 
-                      onChange={e => { setCSearch(e.target.value); setCPage(1); }} 
-                      className="pl-9 bg-gray-50 border-gray-200 h-11 rounded-xl" 
-                    />
+                    <div className="w-full md:flex-[1.5] relative">
+                      <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Input 
+                        placeholder="Search by Program Title" 
+                        value={tempSearch} 
+                        onChange={e => setTempSearch(e.target.value)} 
+                        className="pr-9 bg-white border border-gray-300 h-11 rounded-lg text-gray-500" 
+                      />
+                    </div>
                   </div>
-                  <Button 
-                    variant="outline" 
-                    size="icon" 
-                    className="h-11 w-11 rounded-xl border-gray-200 text-gray-500 hover:text-[#1E293B]"
-                    onClick={() => { setCSearch(""); setCLevel("all"); setCCategory("all"); setCPage(1); }}
-                    title="Reset Filters"
-                  >
-                    <RotateCcw className="h-4 w-4" />
-                  </Button>
+                  
+                  {/* Actions Row */}
+                  <div className="flex gap-2 justify-end w-full pt-2">
+                    <Button 
+                      className="w-full md:w-auto h-11 px-8 rounded-[20px] bg-[#2F4F97] text-white hover:bg-[#243E79] border-2 border-gray-900 font-bold shadow-none"
+                      onClick={() => { setCSearch(tempSearch); setCLevel(tempLevel); setCCategory(tempCategory); setCPage(1); }}
+                    >
+                      Apply
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      className="w-full md:w-auto h-11 px-8 rounded-[20px] bg-white text-[#2F4F97] border-2 border-gray-900 hover:bg-gray-50 font-bold shadow-none"
+                      onClick={() => { setTempSearch(""); setTempLevel("all"); setTempCategory("all"); setCSearch(""); setCLevel("all"); setCCategory("all"); setCPage(1); }}
+                    >
+                      Reset
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
 
             <p className="text-sm text-gray-500 mb-4"><span className="font-bold text-[#1E293B]">{filtered.length}</span> courses found</p>
-            <div className="space-y-5">
+            <div className="flex flex-col divide-y divide-gray-200 border-t border-gray-200 mt-4">
               {paged.map((c: any, idx: number) => (
-                <Card key={`${c.id || idx}-${cLevel}-${cCategory}`} className="bg-white hover:shadow-lg transition-all border-gray-200 overflow-hidden group">
-                  <CardContent className="p-0">
-                    <div className="flex flex-col md:flex-row items-stretch">
+                <div key={`${c.id || idx}-${cLevel}-${cCategory}`} className="bg-white py-8">
+                  <div className="flex flex-col md:flex-row justify-between items-start gap-6">
                       {/* Left: Info Section */}
-                      <div className="flex-1 p-10 space-y-6">
-                        <div>
-                          <Link to={`/courses/${generateSlug(c.title)}`} className="font-semibold text-md text-[#1E293B] hover:text-[#2F4F97] transition-colors block mb-1">
-                            {c.title}
-                          </Link>
-                          <div className="flex items-center gap-2 text-sm text-gray-500 my-4 font-normal">
-                            <Building className="h-4 w-4 text-[#2F4F97]" />
+                      <div className="flex-1 space-y-4">
+                        <Link to={`/courses/${generateSlug(c.title)}`} className="text-[18px] font-medium text-[#1E293B] hover:text-[#2F4F97] transition-colors block">
+                          {c.title}
+                        </Link>
+                        
+                        <div className="flex flex-col space-y-2">
+                          <div className="flex items-center gap-2 text-[14px] text-gray-600 font-normal">
+                            <Building className="h-4 w-4 text-gray-500" />
                             {uni.name}
                           </div>
-                        </div>
-
-                        <div className="flex flex-wrap items-center gap-y-3 gap-x-6">
-                          <div className="flex flex-col">
-                            <span className="text-[12px] uppercase font-normal text-black tracking-wider mb-2">Tuition Fee</span>
-                            <span className="text-sm font-normal text-[#2F4F97]">MYR {Number(c.tuition_fee).toLocaleString()}/Year</span>
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="text-[12px] uppercase font-normal text-black tracking-wider mb-2">Perks</span>
-                            <span className="text-sm font-normal text-green-600 flex items-center gap-1">
-                              <CheckCircle className="h-3 w-3" />
-                              {isPaid ? "Paid Offer" : "Free Offer"}
+                          
+                          <div className="flex items-center gap-2 text-[14px] text-gray-600 font-normal flex-wrap">
+                            <span className="flex items-center justify-center w-4 h-4 bg-gray-500 text-white rounded-full text-[10px] font-bold shrink-0 italic font-serif">i</span>
+                            <span>
+                              MYR {Number(c.tuition_fee).toLocaleString()}/Year • {isPaid ? "Paid Offer" : "Free Offer Letter"} • {c.duration} {c.intake_months?.length > 0 && `• ${c.intake_months.slice(0, 3).join(', ')} Intake`}
                             </span>
                           </div>
-                          <div className="flex flex-col">
-                            <span className="text-[12px] uppercase font-normal text-black tracking-wider mb-2">Duration</span>
-                            <span className="text-sm font-normal text-black">{c.duration}</span>
-                          </div>
-                          {c.intake_months?.length > 0 && (
-                            <div className="flex flex-col">
-                              <span className="text-[12px] uppercase font-normal text-black tracking-wider mb-2">Intakes</span>
-                              <span className="text-sm font-normal text-black">{(() => {
-                                const sliced = c.intake_months.slice(0, 3);
-                                const active = getActiveIntake(c.intake_months);
-                                return sliced.map((m: string, i: number) => (
-                                  <span key={m}>
-                                    <span className={m === active ? "font-bold text-[#1E293B]" : ""}>{m}</span>
-                                    {i < sliced.length - 1 ? ", " : ""}
-                                  </span>
-                                ));
-                              })()}</span>
-                            </div>
-                          )}
                         </div>
 
-                        <div className="pt-0">
-                          {(() => {
-                            const titleLower = c.title?.toLowerCase() || "";
-                            let effLevel = c.degree_level || "";
-                            if (titleLower.includes("advanced diploma")) effLevel = "Advanced Diploma";
-                            else if (titleLower.includes("diploma")) effLevel = "Diploma";
-                            else if (titleLower.includes("certificate")) effLevel = "Certificate";
-                            else if (titleLower.includes("foundation")) effLevel = "Foundation";
-                            return (
-                              <Badge variant="outline" className={`text-[10px] font-bold uppercase tracking-widest ${levelColor(effLevel)} bg-opacity-10 border-current rounded-xl`}>
-                                {effLevel}
-                              </Badge>
-                            );
-                          })()}
+                        {/* Compare button for desktop */}
+                        <div className="hidden md:block pt-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className={`h-9 px-4 rounded-lg font-medium transition-colors bg-white border ${
+                              isComparing(c.id) 
+                                ? "text-[#2F4F97] border-[#2F4F97] bg-[#EEF4FF]" 
+                                : "text-gray-600 border-gray-200 hover:text-[#2F4F97] hover:border-[#2F4F97] hover:bg-gray-50"
+                            }`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (isComparing(c.id)) {
+                                removeCourse(c.id);
+                              } else {
+                                if (compareList.length >= 3) {
+                                  toast.error("You can only compare up to 3 courses at once.");
+                                  return;
+                                }
+                                addCourse(c);
+                                toast.success("Added to comparison");
+                              }
+                            }}
+                          >
+                            <Layers className="h-3.5 w-3.5 mr-2" />
+                            Compare
+                          </Button>
                         </div>
                       </div>
 
                       {/* Right: Actions Section */}
-                      <div className="bg-gray-50/50 md:w-56 border-t md:border-t-0 md:border-l border-gray-100 p-10 flex flex-col justify-center gap-3">
-                        <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent w-full font-bold h-11" onClick={e => { e.preventDefault(); navigate(`/apply?courseId=${c.id}`); }}>
-
-                          Apply Now
-                        </Button>
-                        <Button variant="outline" className="bg-white w-full font-bold h-11 hover:bg-gray-50" onClick={e => { e.preventDefault(); navigate("/contact"); }}>
-
-                          Ask Us
-                        </Button>
+                      <div className="flex flex-row md:flex-col gap-2 md:gap-3 w-full md:w-40 shrink-0 mt-4 md:mt-0 pt-4 border-t border-gray-100 md:border-none md:pt-0">
+                        {/* Mobile Compare Button */}
                         <Button
-                          className={`w-full font-bold h-11 transition-colors bg-white border ${
+                          variant="outline"
+                          className={`md:hidden h-11 w-11 shrink-0 rounded-[20px] border bg-white ${
                             isComparing(c.id) 
-                              ? "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]" 
-                              : "border-gray-200 text-gray-500 hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97]"
+                              ? "border-[#2F4F97] text-[#2F4F97] bg-[#EEF4FF]" 
+                              : "border-gray-200 text-gray-500"
                           }`}
                           onClick={(e) => {
                             e.preventDefault();
@@ -850,29 +845,40 @@ export default function UniversityDetail() {
                                 toast.error("You can only compare up to 3 courses at once.");
                                 return;
                               }
-                              addCourse(c.id);
-                              toast.success("Added to comparison.");
+                              addCourse(c);
+                              toast.success("Added to comparison");
                             }
                           }}
                         >
-                          <Layers className="h-3.5 w-3.5 mr-1.5" />
-                          {isComparing(c.id) ? "Comparing" : "Compare"}
+                          <Layers className="h-4 w-4" />
+                        </Button>
+                        <Button className="flex-1 md:w-full bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-2 border-gray-900 shadow-none font-bold h-11" onClick={e => { e.preventDefault(); navigate(`/apply?courseId=${c.id}`); }}>
+                          Apply Now
+                        </Button>
+                        <Button variant="outline" className="flex-1 md:w-full bg-white text-[#2F4F97] border-2 border-gray-900 shadow-none rounded-[20px] font-bold h-11 hover:bg-gray-50" onClick={e => { e.preventDefault(); navigate("/contact"); }}>
+                          Ask Us
                         </Button>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
               ))}
               {paged.length === 0 && <p className="text-center py-16 text-gray-400">No courses match your filters.</p>}
             </div>
             {totalP > 1 && (
-              <div className="flex items-center justify-center gap-2 mt-8">
-                <Button variant="outline" size="sm" disabled={cPage <= 1} onClick={() => setCPage(cPage - 1)}>Previous</Button>
-                {Array.from({ length: totalP }, (_, i) => i + 1).slice(0, 8).map(p => (
+              <div className="flex items-center justify-center gap-1.5 md:gap-2 mt-8 flex-wrap">
+                <Button variant="outline" size="sm" className="bg-white" disabled={cPage <= 1} onClick={() => setCPage(cPage - 1)}>Prev</Button>
+                {Array.from({ length: totalP }, (_, i) => i + 1)
+                  .filter(p => {
+                    if (totalP <= 5) return true;
+                    if (cPage <= 3) return p <= 5;
+                    if (cPage >= totalP - 2) return p >= totalP - 4;
+                    return p >= cPage - 2 && p <= cPage + 2;
+                  })
+                  .map(p => (
                   <Button key={p} variant={p === cPage ? "default" : "outline"} size="sm"
-                    className={p === cPage ? "bg-[#2F4F97] text-[#1E293B]" : ""} onClick={() => setCPage(p)}>{p}</Button>
+                    className={p === cPage ? "bg-[#2F4F97] text-white hover:bg-[#243E79] border-[#2F4F97]" : "bg-white text-gray-700"} onClick={() => setCPage(p)}>{p}</Button>
                 ))}
-                <Button variant="outline" size="sm" disabled={cPage >= totalP} onClick={() => setCPage(cPage + 1)}>Next</Button>
+                <Button variant="outline" size="sm" className="bg-white" disabled={cPage >= totalP} onClick={() => setCPage(cPage + 1)}>Next</Button>
               </div>
             )}
           </div>

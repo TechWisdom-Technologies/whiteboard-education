@@ -178,94 +178,143 @@ ${window.location.href}`;
       <MegaMenu disableSticky={isScrolledPastHero} />
 
       <div className="w-full flex-1 flex flex-col">
-        {/* Top Hero Section */}
-        <div className="w-full pb-16">
+        {/* ═══ HERO: Big Logo + Name + Buttons ═══ */}
+        <section className="pb-10 pt-4 md:pt-0">
           <div className="w-full max-w-[1640px] mx-auto px-4 lg:px-6">
-            <div className="w-full bg-[#EEF4FF] py-20 px-10 border border-[#2F4F97]/20 rounded-tl-md rounded-tr-[3rem] rounded-bl-[3rem] rounded-br-md min-h-[220px]">
-              <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
-                {uni?.logo_url && (
-                  <div className="w-32 h-32 md:w-40 md:h-40 bg-white rounded-xl border border-gray-200 p-4 shrink-0 flex items-center justify-center overflow-hidden shadow-sm">
-                    <img src={uni.logo_url} alt={uni.name} className="max-w-full max-h-full object-contain" />
-                  </div>
-                )}
-                <div className="flex-1 flex flex-col w-full">
-                  <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-4 text-center md:text-left">{course.title}</h1>
-                  
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div className="flex items-center justify-center md:justify-start gap-2 text-gray-700">
-                      <Building2 className="w-5 h-5 shrink-0 text-[#2F4F97]" />
-                      <p className="text-lg font-medium">{uni?.name}</p>
-                    </div>
-                    
-                    <div className="flex flex-row gap-3 w-full sm:w-auto justify-center md:justify-end">
-                      <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent font-bold px-8 h-12 shadow-none flex-1 sm:flex-none" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
-Apply Now</Button>
-                      <Button variant="outline" className="bg-white hover:bg-gray-50 font-bold px-8 h-12 flex-1 sm:flex-none" onClick={() => navigate("/contact")}>
-Ask Us</Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Sticky Tab Bar */}
-        <div className="sticky top-0 z-40 shadow-sm transition-all duration-200 bg-white border-b border-gray-100">
-          <div className="w-full max-w-[1640px] mx-auto px-4 min-h-[64px] py-1.5 flex items-center">
-            <div className="flex items-center justify-between w-full">
-              <div className="flex items-center gap-6">
-                {isScrolledPastHero && uni?.logo_url && (
-                  <div className="hidden md:flex w-16 h-16 items-center justify-center shrink-0">
-                    <img src={uni.logo_url} alt={uni.name} className="max-w-full max-h-full object-contain" />
-                  </div>
-                )}
-                <div className="flex items-center h-full space-x-6 md:space-x-10">
-                  <button onClick={() => scrollToSection('key-info')} className={`h-full px-0 font-normal text-lg whitespace-nowrap transition-colors ${activeSection === 'key-info' ? 'text-[#f1a51c]' : 'text-gray-500 hover:text-[#e09819]'}`}>Key Information</button>
-                  <button onClick={() => scrollToSection('overview')} className={`h-full px-0 font-normal text-lg whitespace-nowrap transition-colors ${activeSection === 'overview' ? 'text-[#f1a51c]' : 'text-gray-500 hover:text-[#e09819]'}`}>Course Overview</button>
-                  <button onClick={() => scrollToSection('curriculum')} className={`h-full px-0 font-normal text-lg whitespace-nowrap transition-colors ${activeSection === 'curriculum' ? 'text-[#f1a51c]' : 'text-gray-500 hover:text-[#e09819]'}`}>Curriculum</button>
-                </div>
-              </div>
-              
-              {/* Actions in sticky nav (visible mostly on desktop) */}
-              {isScrolledPastHero && (
-                <div className="hidden md:flex items-center gap-3 shrink-0 ml-6">
-                  <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent font-normal px-6 h-10 shadow-none" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
-Apply Now</Button>
-                  <Button variant="outline" className="bg-white px-6 font-normal h-10 hover:bg-gray-50" onClick={() => navigate("/contact")}>
-Ask Us</Button>
+            <div className="bg-[#EEF4FF] p-5 md:py-16 md:px-10 flex flex-col md:flex-row items-center md:items-start gap-8 rounded-2xl md:rounded-tl-md md:rounded-tr-[3rem] md:rounded-bl-[3rem] md:rounded-br-md min-h-[160px] md:min-h-[220px]">
+              {/* Desktop Logo */}
+              {uni?.logo_url ? (
+                <img src={uni.logo_url} alt={uni.name} className="hidden md:block h-40 w-40 object-contain rounded-xl bg-white p-4 shadow shrink-0" />
+              ) : (
+                <div className="hidden md:flex h-40 w-40 bg-white rounded-xl border border-gray-200 p-4 shrink-0 items-center justify-center shadow-sm">
+                  <BookOpen className="h-16 w-16 text-[#2F4F97]" />
                 </div>
               )}
+              
+              <div className="flex-1 flex flex-col w-full">
+                {/* Mobile Header Block (Logo + Name + Location) */}
+                <div className="flex flex-row items-start gap-4 mb-5 md:hidden">
+                  {uni?.logo_url ? (
+                    <img src={uni.logo_url} alt={uni.name} className="h-[84px] w-[84px] object-contain rounded-xl bg-white p-2 shadow-sm shrink-0" />
+                  ) : (
+                    <div className="h-[84px] w-[84px] bg-white rounded-xl shadow-sm shrink-0 flex items-center justify-center p-2">
+                      <BookOpen className="h-10 w-10 text-[#2F4F97]" />
+                    </div>
+                  )}
+                  <div className="flex flex-col pt-1">
+                    <h1 className="text-[20px] font-semibold text-[#1E293B] leading-tight" style={{ fontFamily: "Poppins, sans-serif" }}>{course.title}</h1>
+                    <p className="flex text-black items-center justify-start gap-1.5 text-[13px] mt-1.5">
+                      <Building2 className="h-3.5 w-3.5 text-[#2F4F97]" />
+                      {uni?.name || 'University'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Desktop Header Text */}
+                <h1 className="hidden md:block text-4xl font-semibold text-[#1E293B] mb-4 text-left" style={{ fontFamily: "Poppins, sans-serif" }}>{course.title}</h1>
+                
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                  {/* Desktop Location */}
+                  <p className="hidden md:flex text-black items-center justify-start gap-2 text-lg">
+                    <Building2 className="h-5 w-5 text-[#2F4F97]" />
+                    {uni?.name || 'University'}
+                  </p>
+                  
+                  {/* Mobile Buttons */}
+                  <div className="flex md:hidden flex-row gap-3 w-full justify-center">
+                    <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] hover:text-white rounded-[20px] border-none font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
+                      Apply Now
+                    </Button>
+                    <Button variant="outline" className="bg-white text-[#2F4F97] border-2 border-[#2F4F97] hover:bg-[#EEF4FF] hover:text-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate("/contact")}>
+                      Ask Us
+                    </Button>
+                  </div>
+
+                  {/* Desktop Buttons */}
+                  <div className="hidden md:flex flex-row gap-3 w-auto justify-end">
+                    <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] hover:text-white rounded-[20px] border-none font-semibold px-10 h-14 text-[15px]" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
+                      Apply Now
+                    </Button>
+                    <Button variant="outline" className="bg-white text-[#2F4F97] border-2 border-[#2F4F97] hover:bg-[#EEF4FF] hover:text-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold px-10 h-14 text-[15px]" onClick={() => navigate("/contact")}>
+                      Ask Us
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
+
+        {/* Sticky Tab Bar */}
+        <nav className="sticky top-0 z-40 shadow-sm transition-all duration-300 bg-gradient-to-r from-blue-50 to-white border-b border-blue-100">
+          <div className="w-full max-w-[1000px] mx-auto px-4 flex items-center justify-between min-h-[60px] md:min-h-[80px] py-2">
+            {/* Left: Logo + Tabs */}
+            <div className="flex items-center gap-3 md:gap-6 min-w-0 overflow-hidden flex-1">
+              <div className={`flex items-center transition-all duration-300 ${isScrolledPastHero ? 'opacity-100 translate-x-0 w-auto mr-1 md:mr-4' : 'opacity-0 -translate-x-4 w-0 overflow-hidden m-0'}`}>
+                {uni?.logo_url ? (
+                  <img src={uni.logo_url} alt={uni.name} className="h-10 w-12 md:h-20 md:w-28 object-contain shrink-0" />
+                ) : (
+                  <BookOpen className="h-8 w-8 text-[#2F4F97]" />
+                )}
+              </div>
+              <div className="flex items-center gap-1 md:gap-2 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden w-full">
+                <button onClick={() => scrollToSection('key-info')} className={`capitalize whitespace-nowrap shrink-0 text-[11px] sm:text-[12px] md:text-base font-medium md:font-normal px-2 md:px-4 py-1.5 md:py-2 rounded-xl transition-colors block ${activeSection === 'key-info' ? 'text-[#2F4F97] bg-[#2F4F97]/10' : 'text-gray-500 hover:text-[#1E293B] hover:bg-gray-100'}`}>Key Information</button>
+                <button onClick={() => scrollToSection('overview')} className={`capitalize whitespace-nowrap shrink-0 text-[11px] sm:text-[12px] md:text-base font-medium md:font-normal px-2 md:px-4 py-1.5 md:py-2 rounded-xl transition-colors block ${activeSection === 'overview' ? 'text-[#2F4F97] bg-[#2F4F97]/10' : 'text-gray-500 hover:text-[#1E293B] hover:bg-gray-100'}`}>Course Overview</button>
+                <button onClick={() => scrollToSection('curriculum')} className={`capitalize whitespace-nowrap shrink-0 text-[11px] sm:text-[12px] md:text-base font-medium md:font-normal px-2 md:px-4 py-1.5 md:py-2 rounded-xl transition-colors block ${activeSection === 'curriculum' ? 'text-[#2F4F97] bg-[#2F4F97]/10' : 'text-gray-500 hover:text-[#1E293B] hover:bg-gray-100'}`}>Curriculum</button>
+              </div>
+            </div>
+            
+            {/* Right: CTA Buttons */}
+            <div className={`flex items-center transition-all duration-300 shrink-0 ${isScrolledPastHero ? 'gap-2 pl-3 opacity-100 translate-x-0 w-auto' : 'opacity-0 translate-x-4 pointer-events-none w-0 overflow-hidden m-0 p-0'}`}>
+              {/* Mobile Buttons */}
+              <div className="flex md:hidden items-center gap-2">
+                <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] hover:text-white rounded-[20px] border-none font-semibold px-5 h-10 text-[14px]" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
+                  Apply
+                </Button>
+                <Button variant="outline" className="bg-white text-[#2F4F97] border-2 border-[#2F4F97] hover:bg-[#EEF4FF] hover:text-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold h-10 w-12 p-0 flex items-center justify-center shrink-0" onClick={() => navigate("/contact")}>
+                  <span className="font-bold text-[16px]">?</span>
+                </Button>
+              </div>
+              
+              {/* Desktop Buttons */}
+              <div className="hidden md:flex items-center gap-2">
+                <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] hover:text-white rounded-[20px] border-none font-semibold px-6 h-10 text-[14px]" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
+                  Apply Now
+                </Button>
+                <Button variant="outline" className="bg-white text-[#2F4F97] border-2 border-[#2F4F97] hover:bg-[#EEF4FF] hover:text-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold px-6 h-10 text-[14px]" onClick={() => navigate("/contact")}>
+                  Ask Us
+                </Button>
+              </div>
+            </div>
+          </div>
+        </nav>
 
         {/* Main Content Area */}
-        <div className="flex-1 pb-24">
-          <div className="w-full max-w-[1640px] mx-auto px-4 pt-10 space-y-12">
+        <div className="flex-1 pb-16">
+          <div className="w-full max-w-[1000px] mx-auto px-4 pt-8 space-y-[46px]">
             
             {/* Key Information Section */}
-            <div id="key-info" className="space-y-10 scroll-m-20 pt-8 pb-24">
+            <div id="key-info" className="space-y-[46px] scroll-m-20">
               <div>
-                <div className="flex items-center gap-3 mb-6">
+                <div className="flex flex-row items-start md:items-center justify-start gap-3 mb-6">
                   <h3 className="text-xl font-semibold text-gray-900">{course.title}</h3>
                   <Button 
                     variant="outline" 
                     size="sm"
-                    className="rounded-xl px-3 border-gray-300 text-gray-700 hover:bg-gray-50 font-normal h-8 text-xs shadow-none bg-white flex items-center gap-1.5" 
+                    className="shrink-0 rounded-xl md:px-3 px-2 border-gray-300 text-gray-700 hover:bg-gray-50 font-normal h-10 md:h-8 text-xs shadow-none bg-white flex items-center gap-1.5" 
                     onClick={handleCopy}
                   >
-                    {copied ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
-                    {copied ? 'Copied!' : 'Copy'}
+                    {copied ? <Check className="w-5 h-5 md:w-3.5 md:h-3.5 text-green-600" /> : <Copy className="w-5 h-5 md:w-3.5 md:h-3.5" />}
+                    <span className="hidden md:inline">{copied ? 'Copied!' : 'Copy'}</span>
                   </Button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-1 w-fit">
                   <div className="py-2 flex items-center gap-4">
-                    <div className="flex items-center gap-2 w-56 shrink-0">
-                      <Info className="w-4 h-4 text-[#f1a51c] shrink-0" />
-                      <div className="text-gray-700 text-base font-semibold whitespace-nowrap">Qualification</div>
+                    <div className="flex items-center gap-2 w-40 md:w-56 shrink-0">
+                      <Info className="hidden md:block w-4 h-4 text-[#2F4F97] shrink-0" />
+                      <div className="text-gray-700 text-[12px] md:text-base font-semibold whitespace-nowrap">Qualification</div>
                     </div>
-                    <div className="text-gray-900 font-normal text-base text-left">
+                    <div className="text-gray-900 font-normal text-[12px] md:text-base text-left">
                       {course.degree_level === "Bachelor" ? "Bachelor's Degree" : 
                        course.degree_level === "Master" ? "Master's Degree" : 
                        course.degree_level}
@@ -273,17 +322,17 @@ Ask Us</Button>
                   </div>
 
                   <div className="py-2 flex items-center gap-4">
-                    <div className="flex items-center gap-2 w-56 shrink-0">
-                      <Info className="w-4 h-4 text-[#f1a51c] shrink-0" />
-                      <div className="text-gray-700 text-base font-semibold whitespace-nowrap">Duration</div>
+                    <div className="flex items-center gap-2 w-40 md:w-56 shrink-0">
+                      <Info className="hidden md:block w-4 h-4 text-[#2F4F97] shrink-0" />
+                      <div className="text-gray-700 text-[12px] md:text-base font-semibold whitespace-nowrap">Duration</div>
                     </div>
-                    <div className="text-gray-900 font-normal text-base text-left">{course.duration}</div>
+                    <div className="text-gray-900 font-normal text-[12px] md:text-base text-left">{course.duration}</div>
                   </div>
 
                   <div className="py-2 flex items-center gap-4">
-                    <div className="flex items-center gap-2 w-56 shrink-0">
-                      <Info className="w-4 h-4 text-[#f1a51c] shrink-0" />
-                      <div className="text-gray-700 text-base font-semibold whitespace-nowrap">Intake</div>
+                    <div className="flex items-center gap-2 w-40 md:w-56 shrink-0">
+                      <Info className="hidden md:block w-4 h-4 text-[#2F4F97] shrink-0" />
+                      <div className="text-gray-700 text-[12px] md:text-base font-semibold whitespace-nowrap">Intake</div>
                     </div>
                     <div className="flex flex-wrap justify-start gap-1.5">
                       {intakeMonths.length > 0 ? (() => {
@@ -293,26 +342,26 @@ Ask Us</Button>
                           return (
                             <span 
                               key={m} 
-                              className={`px-2.5 py-0.5 rounded-xl text-sm ${
+                              className={`px-2.5 py-0.5 rounded-xl text-[12px] md:text-sm ${
                                 isActive 
-                                  ? 'bg-[#1E293B] text-white border border-[#1E293B] font-medium' 
-                                  : 'font-normal bg-[#fcecc9] text-gray-900 border border-[#f5d9a0]'
+                                  ? 'bg-[#2F4F97] text-white border border-[#2F4F97] font-medium' 
+                                  : 'font-normal bg-[#EEF4FF] text-[#2F4F97] border border-[#D6E4FF]'
                               }`}
                             >
                               {m}
                             </span>
                           );
                         });
-                      })() : <span className="text-gray-900 font-normal text-base">TBA</span>}
+                      })() : <span className="text-gray-900 font-normal text-[12px] md:text-base">TBA</span>}
                     </div>
                   </div>
 
                   <div className="py-2 flex items-center gap-4">
-                    <div className="flex items-center gap-2 w-56 shrink-0">
-                      <Info className="w-4 h-4 text-[#f1a51c] shrink-0" />
-                      <div className="text-gray-700 text-base font-semibold whitespace-nowrap">English Requirements</div>
+                    <div className="flex items-center gap-2 w-40 md:w-56 shrink-0">
+                      <Info className="hidden md:block w-4 h-4 text-[#2F4F97] shrink-0" />
+                      <div className="text-gray-700 text-[12px] md:text-base font-semibold whitespace-nowrap">English Requirements</div>
                     </div>
-                    <div className="text-gray-900 font-normal text-base text-left">
+                    <div className="text-gray-900 font-normal text-[12px] md:text-base text-left">
                       {(() => {
                         const rawIelts = entryReqs && typeof entryReqs === 'object' 
                           ? ((entryReqs as any).IELTS || (entryReqs as any).ielts) 
@@ -330,24 +379,24 @@ Ask Us</Button>
                   </div>
 
                   <div className="py-2 flex items-center gap-4">
-                    <div className="flex items-center gap-2 w-56 shrink-0">
-                      <Info className="w-4 h-4 text-[#f1a51c] shrink-0" />
-                      <div className="text-gray-700 text-base font-semibold whitespace-nowrap">Offer Letter</div>
+                    <div className="flex items-center gap-2 w-40 md:w-56 shrink-0">
+                      <Info className="hidden md:block w-4 h-4 text-[#2F4F97] shrink-0" />
+                      <div className="text-gray-700 text-[12px] md:text-base font-semibold whitespace-nowrap">Offer Letter</div>
                     </div>
-                    <div className="text-gray-900 font-normal text-base text-left">{course.offer_letter || "Fees Applies"}</div>
+                    <div className="text-gray-900 font-normal text-[12px] md:text-base text-left">{course.offer_letter || "Fees Applies"}</div>
                   </div>
 
                   <div className="py-2 flex items-center gap-4">
-                    <div className="flex items-center gap-2 w-56 shrink-0">
-                      <Info className="w-4 h-4 text-[#f1a51c] shrink-0" />
-                      <div className="text-gray-700 text-base font-semibold whitespace-nowrap">Class Type</div>
+                    <div className="flex items-center gap-2 w-40 md:w-56 shrink-0">
+                      <Info className="hidden md:block w-4 h-4 text-[#2F4F97] shrink-0" />
+                      <div className="text-gray-700 text-[12px] md:text-base font-semibold whitespace-nowrap">Class Type</div>
                     </div>
-                    <div className="text-gray-900 font-normal text-base text-left">Physical</div>
+                    <div className="text-gray-900 font-normal text-[12px] md:text-base text-left">Physical</div>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-10">
+              <div>
                 <h3 className="text-xl font-semibold text-gray-800 mb-5">Course Fee for International Students</h3>
                 <div className="grid md:grid-cols-2 gap-12 w-full lg:w-[75%]">
                   <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
@@ -355,7 +404,7 @@ Ask Us</Button>
                       <h4 className="font-semibold text-gray-900 text-[16px]">Yearly Tuition fees</h4>
                     </div>
                     <div className="p-4">
-                      <table className="w-full text-[15px] font-light">
+                      <table className="w-full text-[12px] md:text-[14px] font-light">
                         <thead>
                           <tr className="border-b border-gray-100">
                             <th className="text-left pb-3 font-semibold text-gray-700">Year</th>
@@ -390,7 +439,7 @@ Ask Us</Button>
                       <h4 className="font-semibold text-gray-900 text-[16px]">Other Fees</h4>
                     </div>
                     <div className="p-4">
-                      <table className="w-full text-[15px] font-light">
+                      <table className="w-full text-[12px] md:text-[14px] font-light">
                         <thead>
                           <tr className="border-b border-gray-100">
                             <th className="text-left pb-3 font-semibold text-gray-700">Description</th>
@@ -431,40 +480,54 @@ Ask Us</Button>
                     </div>
                   </div>
                 </div>
-                <div className="mt-5 text-[15px] text-gray-500 font-medium flex items-center gap-2">
+                <div className="mt-5 text-[12px] md:text-[14px] text-gray-500 font-medium flex items-center gap-2">
                   <span className="text-2xl font-bold leading-none mt-1">+</span> University fees for this course do not include 6% tax (SST)
                 </div>
               </div>
 
               {/* Apply Banner CTA */}
-              <div className="mt-16 bg-gradient-to-r from-blue-50 to-[#fdf9f1] border border-blue-100 rounded-xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden shadow-sm">
-                <h2 className="text-[20px] font-semibold text-gray-900 max-w-md relative z-10 leading-tight">
+              <div className="bg-gradient-to-r from-[#EEF4FF] to-[#DCE6FA] border border-[#D6E4FF] rounded-xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden shadow-sm">
+                <h2 className="text-[20px] font-medium md:font-semibold text-center md:text-left text-[#1A2C5B] max-w-md relative z-10 leading-tight">
                   Would you like to apply to {uni?.name} ?
                 </h2>
-                <Button variant="outline" className="relative z-10 bg-transparent border-2 border-gray-900 text-gray-900 hover:bg-gray-50 h-14 px-8 rounded-xl font-bold text-base transition-colors shadow-none w-full md:w-auto" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
+                <Button variant="outline" className="relative z-10 bg-transparent border-2 border-[#2F4F97] text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white h-[52px] md:h-14 px-8 rounded-xl font-bold text-[14px] md:text-base transition-colors shadow-none w-full md:w-auto" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
                   Apply now
                 </Button>
               </div>
             </div>
 
             {/* Course Overview Section */}
-            <div id="overview" className="space-y-10 scroll-m-24 pt-10">
+            <div id="overview" className="space-y-[46px] scroll-m-24">
               <div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-5">Course Overview</h3>
-                <div className="text-gray-600 font-normal leading-relaxed text-[16px]">
+                <div className="text-gray-600 font-normal leading-relaxed text-justify">
+                  <style>{`
+                    .course-overview-content, .course-overview-content p, .course-overview-content span, .course-overview-content ul, .course-overview-content li {
+                      font-size: 12px !important;
+                    }
+                    @media (min-width: 768px) {
+                      .course-overview-content, .course-overview-content p, .course-overview-content span, .course-overview-content ul, .course-overview-content li {
+                        font-size: 14px !important;
+                      }
+                    }
+                  `}</style>
                   {course.overview ? (
                     course.overview.trim().startsWith('<') ? (
                       <div 
-                        className="prose prose-sm max-w-none text-gray-600"
+                        className="prose max-w-none text-gray-600 course-overview-content"
                         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(course.overview) }} 
                       />
                     ) : (
-                      <p className="whitespace-pre-wrap">
-                        {course.overview.split('Entry Requirements')[0].replace(/\n\s*\n/g, '\n\n').trim()}
-                      </p>
+                      <div className="space-y-4">
+                        {course.overview.split('Entry Requirements')[0].split(/\n\s*\n/).map((para: string, idx: number) => (
+                          <p key={idx} className="text-[12px] md:text-[14px]">
+                            {para.replace(/\n/g, ' ').trim()}
+                          </p>
+                        ))}
+                      </div>
                     )
                   ) : (
-                    <p>Overview information is currently being updated.</p>
+                    <p className="text-[12px] md:text-[14px]">Overview information is currently being updated.</p>
                   )}
                 </div>
               </div>
@@ -472,8 +535,14 @@ Ask Us</Button>
               {course.entry_requirements_text && course.entry_requirements_text.split('Curriculum')[0].trim().length > 0 && (
                 <div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-5">Entry Requirements</h3>
-                  <div className="text-gray-600 font-normal leading-relaxed text-[16px] whitespace-pre-wrap">
-                    {course.entry_requirements_text.split('Curriculum')[0].replace(/\n\s*\n/g, '\n\n').trim()}
+                  <div className="text-gray-600 font-normal leading-relaxed text-justify space-y-4">
+                    {course.entry_requirements_text
+                      .split('Curriculum')[0]
+                      .replace(/:\s*\n+/g, ': ')
+                      .split(/\n\s*\n/)
+                      .map((para: string, idx: number) => (
+                      <p key={idx} className="text-[12px] md:text-[14px]">{para.replace(/\n/g, ' ').trim()}</p>
+                    ))}
                   </div>
                 </div>
               )}
@@ -481,7 +550,7 @@ Ask Us</Button>
               {careerOutcomes.length > 0 && (
                 <div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-5">Career opportunities</h3>
-                  <ul className="list-disc pl-5 space-y-2 font-normal text-gray-600 text-[16px]">
+                  <ul className="list-disc pl-5 space-y-2 font-normal text-gray-600 text-[12px] md:text-[14px]">
                     {careerOutcomes.map((role: string, i: number) => (
                       <li key={i} className="whitespace-pre-wrap">{role}</li>
                     ))}
@@ -491,7 +560,7 @@ Ask Us</Button>
             </div>
 
             {/* Programme Structure Section (Curriculum Accordion) */}
-            <div id="curriculum" className="scroll-m-24 pt-10">
+            <div id="curriculum" className="scroll-m-24">
               <Accordion type="single" collapsible className="w-full bg-white rounded-xl overflow-hidden">
                 <AccordionItem value="curriculum" className="border-b-0">
                   <AccordionTrigger className="px-0 py-6 hover:no-underline text-xl font-semibold text-gray-900 text-left bg-transparent">
@@ -507,7 +576,7 @@ Ask Us</Button>
                             {cy.year === "Manufacturing System Engineering" && <h6 className="font-bold text-gray-900">Subjects</h6>}
                             
                             <div className="overflow-x-auto">
-                              <table className="w-full text-[15px] border-collapse">
+                              <table className="w-full text-[12px] md:text-[14px] border-collapse">
                                 <thead>
                                   <tr className="border-b border-gray-200">
                                     <th className="text-left py-3 font-semibold text-gray-800">Subject</th>
@@ -544,7 +613,7 @@ Ask Us</Button>
                                 <p className="font-bold text-gray-900 mb-2">
                                   {cy.year === "Core Subjects" ? "Programme Core Credit Hours" : `Total Credit Hours in ${cy.year}`}
                                 </p>
-                                <ul className="list-disc pl-5 text-gray-800 text-[15px]">
+                                <ul className="list-disc pl-5 text-gray-800 text-[12px] md:text-[14px]">
                                   <li>Total {cy.year === "Core Subjects" ? "Core " : ""}Credit Hours: {cy.totalCredits}</li>
                                 </ul>
                               </div>
