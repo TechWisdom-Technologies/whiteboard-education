@@ -20,6 +20,10 @@ import {
   HelpCircle,
   ChevronDown,
   ChevronUp,
+  FileText,
+  BedDouble,
+  Car,
+  MapPinCheck,
 } from "lucide-react";
 
 export default function LanguageCenterDetail() {
@@ -124,7 +128,7 @@ export default function LanguageCenterDetail() {
                 
                 <div className="flex flex-row gap-3 w-full sm:w-auto justify-center md:justify-end">
                   <Button
-                    className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent font-bold px-8 h-12 flex-1 sm:flex-none"
+                    className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-2 border-gray-900 shadow-none font-bold px-8 h-12 flex-1 sm:flex-none"
                     onClick={() => navigate(`/apply?centerId=${lc.id}`)}
                   >
 
@@ -132,7 +136,7 @@ export default function LanguageCenterDetail() {
                   </Button>
                   <Button
                     variant="outline"
-                    className="bg-white hover:bg-gray-50 font-bold px-8 h-12 flex-1 sm:flex-none"
+                    className="bg-white text-[#2F4F97] hover:bg-gray-50 border-2 border-gray-900 rounded-[20px] shadow-none font-bold px-8 h-12 flex-1 sm:flex-none"
                     onClick={() => navigate("/contact")}
                   >
 
@@ -146,8 +150,8 @@ export default function LanguageCenterDetail() {
       </section>
 
       {/* ═══ STICKY NAV BAR (appears on scroll) ═══ */}
-      <nav className="sticky top-0 z-40 shadow-sm transition-all duration-300 bg-white">
-        <div className="w-full max-w-[1640px] mx-auto px-4 flex items-center justify-between min-h-[60px] py-2">
+      <nav className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 bg-gradient-to-r from-[#EEF4FF] to-[#DCE6FA] border-b border-[#D6E4FF] ${isScrolled ? 'translate-y-0 shadow-sm opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}>
+        <div className="w-full max-w-[1000px] mx-auto px-4 flex items-center justify-between min-h-[60px] py-2">
           {/* Left: Logo + Center Name */}
           <div className="flex items-center gap-4 min-w-0 flex-1 mr-4">
             <div
@@ -181,7 +185,7 @@ export default function LanguageCenterDetail() {
             className={`flex items-center gap-2 transition-all duration-300 ${isScrolled ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none hidden md:flex"}`}
           >
             <Button
-              className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent font-normal px-6 h-10"
+              className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-2 border-gray-900 shadow-none font-bold px-6 h-10"
               onClick={() => navigate(`/apply?centerId=${lc.id}`)}
             >
 
@@ -189,7 +193,7 @@ export default function LanguageCenterDetail() {
             </Button>
             <Button
               variant="outline"
-              className="bg-white font-normal px-6 h-10 hover:bg-gray-50"
+              className="bg-white text-[#2F4F97] hover:bg-gray-50 border-2 border-gray-900 rounded-[20px] shadow-none font-bold px-6 h-10"
               onClick={() => navigate("/contact")}
             >
 
@@ -199,9 +203,12 @@ export default function LanguageCenterDetail() {
         </div>
       </nav>
 
-      {/* ═══ ABOUT SECTION ═══ */}
-      <section className="bg-white py-12">
-        <div className="w-full max-w-[1640px] mx-auto px-4">
+      {/* ═══ MAIN CONTENT AREA ═══ */}
+      <div className="flex-1 pb-16">
+        <div className="w-full max-w-[1000px] mx-auto px-4 pt-8 space-y-[46px]">
+
+          {/* ═══ ABOUT SECTION ═══ */}
+          <div id="about" className="scroll-m-20">
           <h2
             className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-8"
             style={{ fontFamily: "Poppins, sans-serif" }}
@@ -234,13 +241,11 @@ export default function LanguageCenterDetail() {
               />
             </div>
           )}
-        </div>
-      </section>
+          </div>
 
-      {/* ═══ MORE INFO SECTION (Courses Offered replaced with More Info Blocks) ═══ */}
-      {moreInfo.length > 0 && (
-        <section className="bg-[#f7f9fb] py-12 border-t border-b">
-          <div className="w-full max-w-[1640px] mx-auto px-4 space-y-8">
+          {/* ═══ MORE INFO SECTION ═══ */}
+          {moreInfo.length > 0 && (
+            <div id="more-info" className="scroll-m-20 space-y-8">
             {moreInfo.map((info: any, idx: number) => (
               <Card key={idx} className="border shadow-sm bg-white hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
@@ -260,14 +265,12 @@ export default function LanguageCenterDetail() {
                 </CardContent>
               </Card>
             ))}
-          </div>
-        </section>
-      )}
+            </div>
+          )}
 
-      {/* ═══ TUITION FEES TABLE ═══ */}
-      {tuitionFees.length > 0 && (
-        <section className="bg-white py-12">
-          <div className="w-full max-w-[1640px] mx-auto px-4">
+          {/* ═══ TUITION FEES TABLE ═══ */}
+          {tuitionFees.length > 0 && (
+            <div id="tuition-fees" className="scroll-m-20">
             <h2
               className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-8"
               style={{ fontFamily: "Poppins, sans-serif" }}
@@ -308,13 +311,11 @@ export default function LanguageCenterDetail() {
                 </table>
               </div>
             </div>
-          </div>
-        </section>
-      )}
+            </div>
+          )}
 
-      {/* ═══ KEY INFO CARDS ROW ═══ */}
-      <section className="bg-white py-8 border-t">
-        <div className="w-full max-w-[1640px] mx-auto px-4 grid sm:grid-cols-3 gap-6">
+          {/* ═══ KEY INFO CARDS ROW ═══ */}
+          <div id="key-info" className="scroll-m-20 grid sm:grid-cols-3 gap-6">
           <Card className="border shadow-sm">
             <CardContent className="p-5 flex items-start gap-3">
               <CalendarDays className="h-6 w-6 text-[#2F4F97] mt-0.5 shrink-0" />
@@ -350,13 +351,11 @@ export default function LanguageCenterDetail() {
               </div>
             </CardContent>
           </Card>
-        </div>
-      </section>
+          </div>
 
-      {/* ═══ INTERACTIVE FAQS SECTION ═══ */}
-      {faqs.length > 0 && (
-        <section className="bg-[#f7f9fb] py-12 border-t border-b">
-          <div className="w-full max-w-[1640px] mx-auto px-4">
+          {/* ═══ INTERACTIVE FAQS SECTION ═══ */}
+          {faqs.length > 0 && (
+            <div id="faqs" className="scroll-m-20">
             <h2
               className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-8"
               style={{ fontFamily: "Poppins, sans-serif" }}
@@ -395,39 +394,107 @@ export default function LanguageCenterDetail() {
                 );
               })}
             </div>
+            </div>
+          )}
+
+          {/* ═══ REGISTRATION STEPS ═══ */}
+          <div id="registration-steps" className="scroll-m-20">
+            <h2 className="text-xl md:text-2xl font-extrabold text-[#1E293B] text-center mb-10" style={{ fontFamily: "Poppins, sans-serif" }}>
+              Registration steps at {lc.name}
+            </h2>
+            <div className="grid grid-cols-6 md:grid-cols-5 gap-x-4 gap-y-10 md:gap-4 text-center">
+              
+              {/* Step 1 */}
+              <div className="flex flex-col items-center col-span-2 md:col-span-1">
+                <div className="w-6 h-6 md:w-8 md:h-8 bg-white border-2 border-[#1E293B] rounded flex items-center justify-center font-bold text-[#1E293B] text-xs md:text-sm mb-2 md:mb-4 relative" style={{ boxShadow: '3px 3px 0px 0px #2F4F97' }}>
+                  1
+                </div>
+                <h4 className="font-semibold text-[#1E293B] text-[11px] md:text-[15px] mb-2 md:mb-4 h-8 md:h-10 flex items-center justify-center leading-tight">Eligibility<br className="hidden md:block"/> Letter</h4>
+                <div className="w-12 h-12 md:w-20 md:h-20 bg-white border-2 border-[#1E293B] rounded-xl flex items-center justify-center mt-auto" style={{ boxShadow: '3px 3px 0px 0px #2F4F97' }}>
+                  <FileText className="w-6 h-6 md:w-10 md:h-10 text-[#2F4F97]" />
+                </div>
+              </div>
+
+              {/* Step 2 */}
+              <div className="flex flex-col items-center col-span-2 md:col-span-1">
+                <div className="w-6 h-6 md:w-8 md:h-8 bg-white border-2 border-[#1E293B] rounded flex items-center justify-center font-bold text-[#1E293B] text-xs md:text-sm mb-2 md:mb-4 relative" style={{ boxShadow: '3px 3px 0px 0px #2F4F97' }}>
+                  2
+                </div>
+                <h4 className="font-semibold text-[#1E293B] text-[11px] md:text-[15px] mb-2 md:mb-4 h-8 md:h-10 flex items-center justify-center leading-tight">Student Visa<br/>Process</h4>
+                <div className="w-12 h-12 md:w-20 md:h-20 bg-white border-2 border-[#1E293B] rounded-xl flex items-center justify-center mt-auto" style={{ boxShadow: '3px 3px 0px 0px #2F4F97' }}>
+                  <CheckCircle className="w-6 h-6 md:w-10 md:h-10 text-[#2F4F97]" />
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex flex-col items-center col-span-2 md:col-span-1">
+                <div className="w-6 h-6 md:w-8 md:h-8 bg-white border-2 border-[#1E293B] rounded flex items-center justify-center font-bold text-[#1E293B] text-xs md:text-sm mb-2 md:mb-4 relative" style={{ boxShadow: '3px 3px 0px 0px #2F4F97' }}>
+                  3
+                </div>
+                <h4 className="font-semibold text-[#1E293B] text-[11px] md:text-[15px] mb-2 md:mb-4 h-8 md:h-10 flex items-center justify-center leading-tight">Accommodation</h4>
+                <div className="w-12 h-12 md:w-20 md:h-20 bg-white border-2 border-[#1E293B] rounded-xl flex items-center justify-center mt-auto" style={{ boxShadow: '3px 3px 0px 0px #2F4F97' }}>
+                  <BedDouble className="w-6 h-6 md:w-10 md:h-10 text-[#2F4F97]" />
+                </div>
+              </div>
+
+              {/* Step 4 */}
+              <div className="flex flex-col items-center col-span-2 col-start-2 md:col-span-1 md:col-start-auto">
+                <div className="w-6 h-6 md:w-8 md:h-8 bg-white border-2 border-[#1E293B] rounded flex items-center justify-center font-bold text-[#1E293B] text-xs md:text-sm mb-2 md:mb-4 relative" style={{ boxShadow: '3px 3px 0px 0px #2F4F97' }}>
+                  4
+                </div>
+                <h4 className="font-semibold text-[#1E293B] text-[11px] md:text-[15px] mb-2 md:mb-4 h-8 md:h-10 flex items-center justify-center leading-tight">Airport Pickup</h4>
+                <div className="w-12 h-12 md:w-20 md:h-20 bg-white border-2 border-[#1E293B] rounded-xl flex items-center justify-center mt-auto" style={{ boxShadow: '3px 3px 0px 0px #2F4F97' }}>
+                  <Car className="w-6 h-6 md:w-10 md:h-10 text-[#2F4F97]" />
+                </div>
+              </div>
+
+              {/* Step 5 */}
+              <div className="flex flex-col items-center col-span-2 md:col-span-1">
+                <div className="w-6 h-6 md:w-8 md:h-8 bg-white border-2 border-[#1E293B] rounded flex items-center justify-center font-bold text-[#1E293B] text-xs md:text-sm mb-2 md:mb-4 relative" style={{ boxShadow: '3px 3px 0px 0px #2F4F97' }}>
+                  5
+                </div>
+                <h4 className="font-semibold text-[#1E293B] text-[11px] md:text-[15px] mb-2 md:mb-4 h-8 md:h-10 flex items-center justify-center leading-tight">Arrival</h4>
+                <div className="w-12 h-12 md:w-20 md:h-20 bg-white border-2 border-[#1E293B] rounded-xl flex items-center justify-center mt-auto" style={{ boxShadow: '3px 3px 0px 0px #2F4F97' }}>
+                  <MapPinCheck className="w-6 h-6 md:w-10 md:h-10 text-[#2F4F97]" />
+                </div>
+              </div>
+
+            </div>
           </div>
-        </section>
-      )}
 
-      {/* ═══ REGISTER NOW CTA ═══ */}
-      <section className="bg-[#EEF4FF] py-12">
-        <div className="w-full max-w-[1640px] mx-auto px-4 text-center">
-          <h2
-            className="text-xl md:text-2xl font-extrabold text-[#1E293B] mb-2"
-            style={{ fontFamily: "Poppins, sans-serif" }}
-          >
-            Register Now and Secure Your Spot!
-          </h2>
-          <p className="text-gray-700 text-sm mb-2">
-            Your Future Starts Here: Register Today for the Upcoming Intake
-          </p>
-          <p className="text-gray-600 text-sm mb-6">
-            Secure Your Seat Now! Join {lc.name} and Start Your Language Journey
-          </p>
-          <Button
-            size="lg"
-            className="bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97] font-bold px-10 h-12"
-            onClick={() => navigate(`/apply?centerId=${lc.id}`)}
-          >
-            Register Now
-          </Button>
-        </div>
-      </section>
+          {/* ═══ REGISTER NOW CTA ═══ */}
+          <div id="register-cta" className="scroll-m-20">
+          <div className="bg-gradient-to-r from-[#EEF4FF] to-[#DCE6FA] border border-[#D6E4FF] rounded-xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden shadow-sm">
+            <div className="relative z-10 flex-1 text-center md:text-left">
+              <h2
+                className="text-xl md:text-2xl font-extrabold text-[#1E293B] mb-2"
+                style={{ fontFamily: "Poppins, sans-serif" }}
+              >
+                Register Now and Secure Your Spot!
+              </h2>
+              <p className="text-gray-700 text-sm mb-2">
+                Your Future Starts Here: Register Today for the Upcoming Intake
+              </p>
+              <p className="text-[#1A2C5B] font-medium text-sm">
+                Secure Your Seat Now! Join {lc.name} and Start Your Language Journey
+              </p>
+            </div>
+            
+            <div className="relative z-10 shrink-0 w-full md:w-auto">
+              <Button
+                size="lg"
+                className="w-full md:w-auto bg-transparent text-[#1A2C5B] hover:bg-[#EEF4FF] border-2 border-[#1A2C5B] rounded-[20px] shadow-none font-bold px-10 h-12"
+                onClick={() => navigate(`/apply?centerId=${lc.id}`)}
+              >
+                Register Now
+              </Button>
+            </div>
+          </div>
+          </div>
 
-      {/* ═══ SIMILAR LANGUAGE CENTERS ═══ */}
-      {similarCenters.length > 0 && (
-        <section className="py-12">
-          <div className="w-full max-w-[1640px] mx-auto px-4">
+          {/* ═══ SIMILAR LANGUAGE CENTERS ═══ */}
+          {similarCenters.length > 0 && (
+            <div id="similar" className="scroll-m-20">
             <h2
               className="text-2xl font-extrabold text-[#1E293B] mb-6"
               style={{ fontFamily: "Poppins, sans-serif" }}
@@ -490,9 +557,11 @@ export default function LanguageCenterDetail() {
                 </Link>
               ))}
             </div>
-          </div>
-        </section>
-      )}
+            </div>
+          )}
+
+        </div>
+      </div>
 
       <PublicFooter />
     </div>
