@@ -9,6 +9,9 @@ import { getActiveIntake, generateSlug } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoadingScreen } from "@/components/ui/loading-screen";
+import { Badge } from "@/components/ui/badge";
+import { Check, Heart } from "lucide-react";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import {
   Search,
   MapPin,
@@ -109,8 +112,9 @@ const PAID_OFFER_LETTER_UNIS = [
 
 export default function Courses2() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { addCourse, removeCourse, isComparing, compareList } = useCourseCompare();
+  const { formatCurrency } = useCurrency();
   const { data: courses = [], isLoading: loadingCourses } = useTableData("courses");
   const { data: universities = [], isLoading: loadingUnis } = useTableData("universities");
   
@@ -435,7 +439,7 @@ export default function Courses2() {
 
                               <div className="flex items-center gap-2.5 text-[15px] text-[#64748B]">
                                 <DollarSign className="h-4 w-4 shrink-0 text-[#64748B]" />
-                                <span>MYR {Number(c.tuition_fee).toLocaleString()} / Year</span>
+                                <span>{formatCurrency(c.tuition_fee)} / Year</span>
                               </div>
 
                               <div className="flex items-center gap-2.5 text-[15px] text-[#64748B]">

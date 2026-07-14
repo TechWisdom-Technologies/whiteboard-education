@@ -56,6 +56,8 @@ import StudentProfilePage from "./pages/StudentProfilePage";
 import { CourseCompareProvider } from "./contexts/CourseCompareContext";
 import { CourseCompareFAB } from "./components/public/CourseCompareFAB";
 
+import { CurrencyProvider } from "./contexts/CurrencyContext";
+
 const queryClient = new QueryClient();
 
 const ScrollToTop = () => {
@@ -92,6 +94,7 @@ const App = () => (
     <BrowserRouter>
       <ScrollToTop />
       <AuthProvider>
+        <CurrencyProvider>
         <CourseCompareProvider>
           <TooltipProvider>
             <Toaster />
@@ -191,6 +194,7 @@ const App = () => (
           </Routes>
           </TooltipProvider>
         </CourseCompareProvider>
+        </CurrencyProvider>
       </AuthProvider>
     </BrowserRouter>
   </QueryClientProvider>

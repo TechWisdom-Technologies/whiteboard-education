@@ -5,6 +5,7 @@ import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
 import { useCourseCompare } from "@/contexts/CourseCompareContext";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { toast } from "sonner";
 import { generateSlug } from "@/lib/utils";
 import { getActiveIntake } from "@/lib/utils";
@@ -114,6 +115,7 @@ export default function Courses() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { addCourse, removeCourse, isComparing, compareList } = useCourseCompare();
+  const { formatCurrency } = useCurrency();
   const { data: courses = [], isLoading: loadingCourses } = useTableData("courses");
   const { data: universities = [], isLoading: loadingUnis } = useTableData("universities");
   
@@ -633,7 +635,7 @@ export default function Courses() {
                               <div className="flex items-start gap-3 text-[12px] md:text-[14px] text-[#475569] leading-loose">
                                 <Info className="h-[18px] w-[18px] shrink-0 text-[#475569] mt-1 md:mt-[5px]" />
                                 <span>
-                                  MYR {Number(c.tuition_fee).toLocaleString()}/Year &bull; {uni && PAID_OFFER_LETTER_UNIS.includes(uni.name) ? "Offer Letter Fees Applies" : "Free Offer Letter"} &bull; {c.duration || "N/A"} &bull;{" "}
+                                  {formatCurrency(c.tuition_fee)}/Year &bull; {uni && PAID_OFFER_LETTER_UNIS.includes(uni.name) ? "Offer Letter Fees Applies" : "Free Offer Letter"} &bull; {c.duration || "N/A"} &bull;{" "}
                                   {Array.isArray(c.intake_months) && c.intake_months.length > 0 ? (
                                     <>
                                       {c.intake_months.map((intake: string, idx: number) => {

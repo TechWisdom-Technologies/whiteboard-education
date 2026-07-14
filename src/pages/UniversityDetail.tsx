@@ -1,10 +1,11 @@
 import { useState, useMemo, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
 import { universities as mockU, courses as mockC, accommodations as mockA } from "@/data/mockData";
 import { getActiveIntake, generateSlug } from "@/lib/utils";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -187,6 +188,8 @@ export default function UniversityDetail() {
 
   const { universityId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { formatCurrency } = useCurrency();
   const { data: liveU = [], isLoading } = useTableData("universities");
   const { data: liveC = [] } = useTableData("courses");
   const { data: liveA = [] } = useTableData("accommodations");
@@ -506,7 +509,7 @@ export default function UniversityDetail() {
                                         {c.title}
                                       </Link>
                                     </td>
-                                    <td className="px-3 md:px-6 py-3 md:py-4 text-black whitespace-normal md:whitespace-nowrap leading-tight">MYR {c.tuition_fee ? Number(c.tuition_fee).toLocaleString() : 0}</td>
+                                    <td className="px-3 md:px-6 py-3 md:py-4 text-black whitespace-normal md:whitespace-nowrap leading-tight">{c.tuition_fee ? formatCurrency(c.tuition_fee) : "-"}</td>
                                     <td className="px-3 md:px-6 py-3 md:py-4 text-black whitespace-nowrap">{c.duration}</td>
                                   </tr>
                                 ))}
@@ -791,7 +794,7 @@ export default function UniversityDetail() {
                           <div className="flex items-center gap-2 text-[14px] text-gray-600 font-normal flex-wrap">
                             <span className="flex items-center justify-center w-4 h-4 bg-gray-500 text-white rounded-full text-[10px] font-bold shrink-0 italic font-serif">i</span>
                             <span>
-                              MYR {Number(c.tuition_fee).toLocaleString()}/Year • {isPaid ? "Paid Offer" : "Free Offer Letter"} • {c.duration} {c.intake_months?.length > 0 && `• ${c.intake_months.slice(0, 3).join(', ')} Intake`}
+                              {formatCurrency(c.tuition_fee)}/Year • {isPaid ? "Paid Offer" : "Free Offer Letter"} • {c.duration} {c.intake_months?.length > 0 && `• ${c.intake_months.slice(0, 3).join(', ')} Intake`}
                             </span>
                           </div>
                         </div>
@@ -1052,7 +1055,7 @@ export default function UniversityDetail() {
                           {selected.room_rents.map((r: any, idx: number) => (
                             <tr key={idx} className="border-b border-gray-100 last:border-0 hover:bg-gray-50/30 transition-colors">
                               <td className="px-4 py-2.5 text-black font-medium">{r.room_type}</td>
-                              <td className="px-4 py-2.5 text-gray-900 font-bold text-[#2F4F97]">{r.rent}</td>
+                              <td className="px-4 py-2.5 text-gray-900 font-bold text-[#2F4F97]">{formatCurrency(r.rent)}</td>
                             </tr>
                           ))}
                         </tbody>

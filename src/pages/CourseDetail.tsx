@@ -8,6 +8,8 @@ import { courses as mockCourses, universities as mockUniversities } from "@/data
 import { getActiveIntake, generateSlug } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { BookOpen, Copy, Check, Info, Building2 } from "lucide-react";
@@ -15,6 +17,7 @@ import { BookOpen, Copy, Check, Info, Building2 } from "lucide-react";
 export default function CourseDetail() {
   const { courseId } = useParams();
   const navigate = useNavigate();
+  const { formatCurrency } = useCurrency();
   const { data: liveCourses = [], isLoading: loadingC } = useTableData("courses");
   const { data: liveUniversities = [] } = useTableData("universities");
   const courses = liveCourses.length > 0 ? liveCourses : (mockCourses as any[]);
@@ -416,13 +419,13 @@ ${window.location.href}`;
                             course.yearly_fees.map((yf: any, i: number) => (
                               <tr key={i} className="border-b border-gray-100 last:border-0">
                                 <td className="py-3 text-gray-600">{yf.year}</td>
-                                <td className="py-3 text-gray-600">{yf.fee}</td>
+                                <td className="py-3 text-gray-600">{formatCurrency(yf.fee)}</td>
                               </tr>
                             ))
                           ) : course.tuition_fee && Number(course.tuition_fee) > 0 ? (
                             <tr>
                               <td className="py-3 text-gray-600">1st Year</td>
-                              <td className="py-3 text-gray-600">MYR {Number(course.tuition_fee).toLocaleString()}</td>
+                              <td className="py-3 text-gray-600">{formatCurrency(course.tuition_fee)}</td>
                             </tr>
                           ) : (
                             <tr>
@@ -466,7 +469,7 @@ ${window.location.href}`;
                               filteredOtherFees.map((of: any, i: number) => (
                                 <tr key={i} className="border-b border-gray-100 last:border-0">
                                   <td className="py-3 text-gray-600">{of.description}</td>
-                                  <td className="py-3 text-gray-600">{of.fee}</td>
+                                  <td className="py-3 text-gray-600">{formatCurrency(of.fee)}</td>
                                 </tr>
                               ))
                             ) : (

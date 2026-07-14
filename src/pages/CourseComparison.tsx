@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
+import { useCurrency } from "../contexts/CurrencyContext";
 import { getActiveIntake } from "@/lib/utils";
 
 // Mock university logos mapping if needed (you can keep it similar to Courses.tsx or fallback to default)
@@ -27,6 +28,7 @@ const PAID_OFFER_LETTER_UNIS = [
 
 export default function CourseComparison() {
   const { compareList, removeCourse } = useCourseCompare();
+  const { formatCurrency } = useCurrency();
   const navigate = useNavigate();
   const { data: allCourses = [], isLoading: loadingCourses } = useTableData("courses");
   const { data: allUnis = [], isLoading: loadingUnis } = useTableData("universities");
@@ -200,8 +202,10 @@ export default function CourseComparison() {
                 <tr>
                   <td className="p-5 font-semibold text-gray-700 text-sm border-b border-gray-100 align-top">Tuition fee</td>
                   {selectedCourses.map((course: any) => (
-                    <td key={course.id} className="p-5 text-gray-600 text-sm border-b border-gray-100 align-top">
-                      {course.tuition_fee ? `MYR ${Number(course.tuition_fee).toLocaleString()}/Year` : "-"}
+                    <td key={course.id} className="p-5 text-sm border-b border-gray-100 align-top">
+                      <span className="font-semibold text-gray-900">
+                        {course.tuition_fee ? `${formatCurrency(course.tuition_fee)}/Year` : "-"}
+                      </span>
                     </td>
                   ))}
                   {Array.from({ length: 3 - selectedCourses.length }).map((_, idx) => <td key={`empty-tuition-${idx}`} className="border-b border-gray-100"></td>)}
@@ -217,7 +221,7 @@ export default function CourseComparison() {
                         <div className="flex flex-col gap-2">
                           {course.other_fees.map((of: any, i: number) => {
                             if (!of.fee || of.fee === "-" || of.fee === "0") return null;
-                            const amount = isNaN(Number(of.fee)) ? of.fee : `MYR ${Number(of.fee).toLocaleString()}`;
+                            const amount = formatCurrency(of.fee);
                             return (
                               <div key={i} className="text-xs text-gray-600 leading-tight">
                                 <span className="uppercase text-gray-500 font-medium">{of.description || "Other Fee"}</span> - {amount}

@@ -7,6 +7,7 @@ import { generateSlug } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoadingScreen } from "@/components/ui/loading-screen";
+import { useCurrency } from "../contexts/CurrencyContext";
 import {
   CheckCircle,
   Clock,
@@ -29,6 +30,7 @@ import {
 export default function LanguageCenterDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { formatCurrency } = useCurrency();
   const { data: languageCenters = [], isLoading } = useTableData("language_centers");
   const lc = languageCenters.find((l: any) => generateSlug(l.name) === id || String(l.id) === String(id));
   const [isScrolled, setIsScrolled] = useState(false);
@@ -93,11 +95,11 @@ export default function LanguageCenterDetail() {
       <MegaMenu disableSticky />
 
       {/* ═══ HERO: Logo + Name + Location + Buttons ═══ */}
-      <section className="pb-10">
+      <section className="pb-10 pt-4 md:pt-0">
         <div className="w-full max-w-[1640px] mx-auto px-4 lg:px-6">
-          <div className="bg-[#EEF4FF] py-16 px-10 flex flex-col md:flex-row items-center md:items-start gap-8 rounded-tl-md rounded-tr-[3rem] rounded-bl-[3rem] rounded-br-md min-h-[220px]">
-            {/* Logo / Icon */}
-            <div className="h-32 w-32 md:h-40 md:w-40 bg-white rounded-xl shadow flex items-center justify-center shrink-0 p-4">
+          <div className="bg-[#EEF4FF] p-5 md:py-16 md:px-10 flex flex-col md:flex-row items-center md:items-start gap-8 rounded-2xl md:rounded-tl-md md:rounded-tr-[3rem] md:rounded-bl-[3rem] md:rounded-br-md min-h-[160px] md:min-h-[220px]">
+            {/* Desktop Logo / Icon */}
+            <div className="hidden md:flex h-40 w-40 bg-white rounded-xl shadow items-center justify-center shrink-0 p-4">
               {lc.logo_url ? (
                 <img
                   src={lc.logo_url}
@@ -114,32 +116,63 @@ export default function LanguageCenterDetail() {
             
             {/* Title + Location */}
             <div className="flex-1 flex flex-col w-full">
-              <h1 className="text-4xl font-bold text-[#1E293B] mb-4 text-center md:text-left" style={{ fontFamily: "Poppins, sans-serif" }}>
+              {/* Mobile Header Block (Logo + Name + Location) */}
+              <div className="flex flex-row items-start gap-4 mb-5 md:hidden">
+                {lc.logo_url ? (
+                  <img src={lc.logo_url} alt={lc.name} className="h-[84px] w-[84px] object-contain rounded-xl bg-white p-2 shadow-sm shrink-0" />
+                ) : (
+                  <div className="h-[84px] w-[84px] bg-white rounded-xl shadow-sm shrink-0 flex items-center justify-center p-2">
+                    <Languages className="h-10 w-10 text-[#2F4F97]" />
+                  </div>
+                )}
+                <div className="flex flex-col pt-1">
+                  <h1 className="text-[20px] font-semibold text-[#1E293B] leading-tight" style={{ fontFamily: "Poppins, sans-serif" }}>{lc.name}</h1>
+                  {lc.city && (
+                    <p className="flex text-gray-700 items-center justify-start gap-1.5 text-[13px] mt-1.5">
+                      <MapPin className="h-3.5 w-3.5 text-[#2F4F97]" />
+                      {lc.city}, Malaysia
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Desktop Header Text */}
+              <h1 className="hidden md:block text-4xl font-bold text-[#1E293B] mb-4 text-left" style={{ fontFamily: "Poppins, sans-serif" }}>
                 {lc.name}
               </h1>
               
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                {/* Desktop Location */}
                 {lc.city && (
-                  <p className="text-gray-700 flex items-center justify-center md:justify-start gap-2 text-lg">
+                  <p className="hidden md:flex text-gray-700 items-center justify-start gap-2 text-lg">
                     <MapPin className="h-5 w-5 text-[#2F4F97]" />
                     {lc.city}, Malaysia
                   </p>
                 )}
                 
-                <div className="flex flex-row gap-3 w-full sm:w-auto justify-center md:justify-end">
+                {/* Mobile Buttons */}
+                <div className="flex md:hidden flex-row gap-3 w-full justify-center">
+                  <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] hover:text-white rounded-[20px] border-2 border-gray-900 shadow-none font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate(`/apply?centerId=${lc.id}`)}>
+                    Apply Now
+                  </Button>
+                  <Button variant="outline" className="bg-white text-[#2F4F97] border-2 border-gray-900 shadow-none hover:bg-gray-50 rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate("/contact")}>
+                    Ask Us
+                  </Button>
+                </div>
+
+                {/* Desktop Buttons */}
+                <div className="hidden md:flex flex-row gap-3 w-auto justify-end">
                   <Button
-                    className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-2 border-gray-900 shadow-none font-bold px-8 h-12 flex-1 sm:flex-none"
+                    className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-2 border-gray-900 shadow-none font-bold px-8 h-12"
                     onClick={() => navigate(`/apply?centerId=${lc.id}`)}
                   >
-
                     Apply Now
                   </Button>
                   <Button
                     variant="outline"
-                    className="bg-white text-[#2F4F97] hover:bg-gray-50 border-2 border-gray-900 rounded-[20px] shadow-none font-bold px-8 h-12 flex-1 sm:flex-none"
+                    className="bg-white text-[#2F4F97] hover:bg-gray-50 border-2 border-gray-900 rounded-[20px] shadow-none font-bold px-8 h-12"
                     onClick={() => navigate("/contact")}
                   >
-
                     Ask Us
                   </Button>
                 </div>
@@ -172,7 +205,7 @@ export default function LanguageCenterDetail() {
                 )}
               </div>
               <span
-                className="ml-3 font-semibold text-[#1E293B] text-sm truncate flex-1"
+                className="hidden md:block ml-3 font-semibold text-[#1E293B] text-sm truncate flex-1"
                 style={{ fontFamily: "Poppins, sans-serif" }}
                 title={lc.name}
               >
@@ -180,15 +213,14 @@ export default function LanguageCenterDetail() {
               </span>
             </div>
           </div>
-          {/* Right: CTA Buttons */}
+          {/* Right: CTA Buttons (Desktop) */}
           <div
-            className={`flex items-center gap-2 transition-all duration-300 ${isScrolled ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none hidden md:flex"}`}
+            className={`hidden md:flex items-center gap-2 transition-all duration-300 ${isScrolled ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none"}`}
           >
             <Button
               className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-2 border-gray-900 shadow-none font-bold px-6 h-10"
               onClick={() => navigate(`/apply?centerId=${lc.id}`)}
             >
-
               Apply Now
             </Button>
             <Button
@@ -196,8 +228,26 @@ export default function LanguageCenterDetail() {
               className="bg-white text-[#2F4F97] hover:bg-gray-50 border-2 border-gray-900 rounded-[20px] shadow-none font-bold px-6 h-10"
               onClick={() => navigate("/contact")}
             >
-
               Ask Us
+            </Button>
+          </div>
+
+          {/* Right: CTA Buttons (Mobile) */}
+          <div
+            className={`flex md:hidden items-center gap-2 transition-all duration-300 ${isScrolled ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none"}`}
+          >
+            <Button
+              className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-2 border-gray-900 shadow-none font-bold px-4 h-10 text-[13px]"
+              onClick={() => navigate(`/apply?centerId=${lc.id}`)}
+            >
+              Apply Now
+            </Button>
+            <Button
+              variant="outline"
+              className="bg-white text-[#2F4F97] hover:bg-gray-50 border-2 border-gray-900 rounded-[20px] shadow-none font-bold px-4 h-10 flex items-center justify-center text-lg min-w-[50px]"
+              onClick={() => navigate("/contact")}
+            >
+              ?
             </Button>
           </div>
         </div>
@@ -205,24 +255,24 @@ export default function LanguageCenterDetail() {
 
       {/* ═══ MAIN CONTENT AREA ═══ */}
       <div className="flex-1 pb-16">
-        <div className="w-full max-w-[1000px] mx-auto px-4 pt-8 space-y-[46px]">
+        <div className="w-full max-w-[1000px] mx-auto px-4 pt-8 space-y-[58px]">
 
           {/* ═══ ABOUT SECTION ═══ */}
           <div id="about" className="scroll-m-20">
           <h2
-            className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-8"
+            className="text-[20px] font-semibold text-[#1E293B] mb-8"
             style={{ fontFamily: "Poppins, sans-serif" }}
           >
             About {lc.name}
           </h2>
 
-          <div className="space-y-6 text-gray-600 leading-relaxed text-[15px] text-justify">
+          <div className="space-y-6 text-gray-600 leading-relaxed text-justify">
             {lc.about_text ? (
               lc.about_text.split("\n\n").map((p: string, i: number) => (
-                <p key={i}>{p}</p>
+                <p key={i} className="text-[12px] md:text-[14px]">{p}</p>
               ))
             ) : (
-              <p>
+              <p className="text-[12px] md:text-[14px]">
                 Welcome to {lc.name}, one of the premier language centers in {lc.city || "Malaysia"}. We are dedicated to delivering exceptional language learning opportunities with experienced instructors, state-of-the-art facilities, and a supportive environment.
               </p>
             )}
@@ -230,7 +280,7 @@ export default function LanguageCenterDetail() {
 
           {/* Render scraped about section image URL directly under the description */}
           {lc.about_image_url && (
-            <div className="mt-8 flex justify-center rounded-xl overflow-hidden shadow-md border border-gray-100 bg-gray-50 max-w-2xl mx-auto">
+            <div className="mt-8 flex justify-center rounded-xl rounded-bl-[8rem] overflow-hidden shadow-md border border-gray-100 bg-gray-50 w-full mx-auto">
               <img
                 src={lc.about_image_url}
                 alt={`${lc.name} image`}
@@ -247,23 +297,14 @@ export default function LanguageCenterDetail() {
           {moreInfo.length > 0 && (
             <div id="more-info" className="scroll-m-20 space-y-8">
             {moreInfo.map((info: any, idx: number) => (
-              <Card key={idx} className="border shadow-sm bg-white hover:shadow-md transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="p-3 bg-[#2F4F97]/10 rounded-xl shrink-0">
-                      <BookOpen className="h-6 w-6 text-[#2F4F97]" />
-                    </div>
-                    <div className="flex-1">
-                      <h2 className="text-xl md:text-2xl font-bold text-[#1E293B] mb-3" style={{ fontFamily: "Poppins, sans-serif" }}>
-                        {info.title}
-                      </h2>
-                      <p className="text-gray-600 leading-relaxed text-sm text-justify whitespace-pre-line">
-                        {info.description}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <div key={idx} className="w-full">
+                <h2 className="text-[20px] font-semibold text-[#1E293B] mb-3" style={{ fontFamily: "Poppins, sans-serif" }}>
+                  {info.title}
+                </h2>
+                <p className="text-gray-600 leading-relaxed text-[12px] md:text-[14px] text-justify">
+                  {info.description}
+                </p>
+              </div>
             ))}
             </div>
           )}
@@ -272,14 +313,14 @@ export default function LanguageCenterDetail() {
           {tuitionFees.length > 0 && (
             <div id="tuition-fees" className="scroll-m-20">
             <h2
-              className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-8"
+              className="text-[20px] font-semibold text-[#1E293B] mb-8"
               style={{ fontFamily: "Poppins, sans-serif" }}
             >
               {lc.name} tuition fees for International students
             </h2>
             <div className="border border-gray-400 rounded-lg overflow-hidden bg-white">
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-[12px] md:text-[14px]">
                   <thead>
                     <tr className="bg-[#EEF4FF] text-center border-b border-gray-400">
                       <th className="px-4 py-2.5 font-medium text-gray-800">
@@ -299,8 +340,8 @@ export default function LanguageCenterDetail() {
                         <td className="px-4 py-2.5 text-gray-600 whitespace-nowrap text-center">
                           {tier.duration}
                         </td>
-                        <td className="px-4 py-2.5 text-gray-600 whitespace-nowrap text-center">
-                          {tier.tuition_fee}
+                        <td className="px-4 py-2.5 text-[#2F4F97] font-bold whitespace-nowrap text-center">
+                          {formatCurrency(tier.tuition_fee)}
                         </td>
                         <td className="px-4 py-2.5 text-gray-600 whitespace-nowrap text-center">
                           {tier.visa}
@@ -314,50 +355,12 @@ export default function LanguageCenterDetail() {
             </div>
           )}
 
-          {/* ═══ KEY INFO CARDS ROW ═══ */}
-          <div id="key-info" className="scroll-m-20 grid sm:grid-cols-3 gap-6">
-          <Card className="border shadow-sm">
-            <CardContent className="p-5 flex items-start gap-3">
-              <CalendarDays className="h-6 w-6 text-[#2F4F97] mt-0.5 shrink-0" />
-              <div>
-                <h4 className="font-bold text-[#1E293B] text-sm mb-1">
-                  Intake Period
-                </h4>
-                <p className="text-gray-600 text-sm">Monthly Intake</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="border shadow-sm">
-            <CardContent className="p-5 flex items-start gap-3">
-              <Clock className="h-6 w-6 text-[#2F4F97] mt-0.5 shrink-0" />
-              <div>
-                <h4 className="font-bold text-[#1E293B] text-sm mb-1">
-                  Flexible Duration
-                </h4>
-                <p className="text-gray-600 text-sm">1 to 12 Month(s)</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="border shadow-sm">
-            <CardContent className="p-5 flex items-start gap-3">
-              <MapPin className="h-6 w-6 text-[#2F4F97] mt-0.5 shrink-0" />
-              <div>
-                <h4 className="font-bold text-[#1E293B] text-sm mb-1">
-                  Location
-                </h4>
-                <p className="text-gray-600 text-sm">
-                  {lc.city || "Malaysia"}, Malaysia
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-          </div>
 
           {/* ═══ INTERACTIVE FAQS SECTION ═══ */}
           {faqs.length > 0 && (
             <div id="faqs" className="scroll-m-20">
             <h2
-              className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-8"
+              className="text-[20px] font-semibold text-[#1E293B] mb-8"
               style={{ fontFamily: "Poppins, sans-serif" }}
             >
               Frequently Asked Questions
@@ -372,21 +375,21 @@ export default function LanguageCenterDetail() {
                     style={{ borderColor: isOpen ? "#2F4F97" : "#e8e8e8" }}
                   >
                     <button
-                      className="w-full px-6 py-4 flex items-center justify-between text-left font-bold text-gray-800 hover:bg-gray-50/50 transition-colors"
+                      className="w-full px-6 py-4 flex items-start justify-between text-left font-medium text-gray-800 hover:bg-gray-50/50 transition-colors"
                       onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
                     >
-                      <span className="flex items-center gap-3">
-                        <HelpCircle className="h-5 w-5 text-[#2F4F97] shrink-0" />
-                        {faq.question}
+                      <span className="flex items-start gap-3">
+                        <span className="text-[#2F4F97] font-bold mt-[1px]">&gt;</span>
+                        <span>{faq.question}</span>
                       </span>
                       {isOpen ? (
-                        <ChevronUp className="h-5 w-5 text-[#2F4F97]" />
+                        <ChevronUp className="h-5 w-5 text-[#2F4F97] shrink-0 ml-4 mt-0.5" />
                       ) : (
-                        <ChevronDown className="h-5 w-5 text-gray-400" />
+                        <ChevronDown className="h-5 w-5 text-gray-400 shrink-0 ml-4 mt-0.5" />
                       )}
                     </button>
                     {isOpen && (
-                      <div className="px-6 pb-5 pt-1 text-gray-600 text-sm leading-relaxed whitespace-pre-line border-t border-gray-50">
+                      <div className="px-6 pb-5 pt-1 text-gray-600 text-sm leading-relaxed border-t border-gray-50">
                         {faq.answer}
                       </div>
                     )}
@@ -399,7 +402,7 @@ export default function LanguageCenterDetail() {
 
           {/* ═══ REGISTRATION STEPS ═══ */}
           <div id="registration-steps" className="scroll-m-20">
-            <h2 className="text-xl md:text-2xl font-extrabold text-[#1E293B] text-center mb-10" style={{ fontFamily: "Poppins, sans-serif" }}>
+            <h2 className="text-[20px] font-semibold text-[#1E293B] text-center mb-10" style={{ fontFamily: "Poppins, sans-serif" }}>
               Registration steps at {lc.name}
             </h2>
             <div className="grid grid-cols-6 md:grid-cols-5 gap-x-4 gap-y-10 md:gap-4 text-center">
@@ -467,7 +470,7 @@ export default function LanguageCenterDetail() {
           <div className="bg-gradient-to-r from-[#EEF4FF] to-[#DCE6FA] border border-[#D6E4FF] rounded-xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden shadow-sm">
             <div className="relative z-10 flex-1 text-center md:text-left">
               <h2
-                className="text-xl md:text-2xl font-extrabold text-[#1E293B] mb-2"
+                className="text-[20px] font-semibold text-[#1E293B] mb-2"
                 style={{ fontFamily: "Poppins, sans-serif" }}
               >
                 Register Now and Secure Your Spot!
@@ -496,27 +499,27 @@ export default function LanguageCenterDetail() {
           {similarCenters.length > 0 && (
             <div id="similar" className="scroll-m-20">
             <h2
-              className="text-2xl font-extrabold text-[#1E293B] mb-6"
+              className="text-[20px] font-semibold text-[#1E293B] mb-6"
               style={{ fontFamily: "Poppins, sans-serif" }}
             >
               Similar Language Centers
             </h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="flex overflow-x-auto gap-4 pb-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-6 sm:pb-0 snap-x snap-mandatory sm:snap-none">
               {similarCenters.map((sc: any) => (
                 <Link
                   key={sc.id}
                   to={`/language-centers/${generateSlug(sc.name)}`}
-                  className="h-full"
+                  className="h-full w-[300px] sm:w-auto shrink-0 sm:shrink snap-center"
                 >
-                  <Card className="bg-white hover:shadow-lg transition-all hover:-translate-y-1 h-full flex flex-col rounded-xl border border-[#e8e8e8] group hover:border-[#2F4F97]">
+                  <Card className="h-full border-[#e8e8e8] group hover:border-[#2F4F97] transition-colors overflow-hidden" style={{ borderRadius: "16px" }}>
                     <CardContent className="p-0 flex flex-col h-full">
                       {/* Logo Container */}
-                      <div className="h-48 flex items-center justify-center bg-white border-b p-6 shrink-0">
+                      <div className="h-48 flex items-center justify-center bg-gray-50/50 border-b p-6 shrink-0">
                         {sc.logo_url ? (
                           <img
                             src={sc.logo_url}
                             alt={sc.name}
-                            className="w-full h-full object-contain"
+                            className="max-h-32 max-w-[200px] object-contain"
                           />
                         ) : (
                           <Languages className="h-16 w-16 text-[#2F4F97]" />
@@ -543,7 +546,7 @@ export default function LanguageCenterDetail() {
                           <div className="flex items-center gap-2 text-xs text-gray-500">
                             <DollarSign className="h-3.5 w-3.5 text-[#64748B]" />
                             <span>
-                              MYR {Number(sc.tuition_fee).toLocaleString()}
+                              {formatCurrency(sc.tuition_fee)}
                             </span>
                           </div>
                         </div>

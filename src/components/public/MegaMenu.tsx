@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useCurrency, Currency } from "../../contexts/CurrencyContext";
 import {
   GraduationCap, Menu, ChevronDown, LogOut, LayoutDashboard, ShieldCheck, Phone,
   Calculator, RefreshCw, Sparkles, ChevronRight, MapPin, Home, GitCompare,
@@ -30,6 +31,35 @@ import {
 import { cn } from "@/lib/utils";
 import { GlobalBreadcrumbs } from "./GlobalBreadcrumbs";
 
+const CurrencySelector = () => {
+  const { currency, setCurrency } = useCurrency();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="relative h-10 w-10 rounded-xl p-0 hover:bg-[#F8FAFC]/50 transition-all border border-[#e8e8e8]">
+          <div className="relative">
+            <RefreshCw className="h-[18px] w-[18px] text-[#2F4F97]" />
+            <span className="absolute -bottom-1.5 -right-1.5 text-[9px] font-bold bg-[#2F4F97] text-white rounded-full w-[14px] h-[14px] flex items-center justify-center">
+              $
+            </span>
+          </div>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-40 border-[#e8e8e8] shadow-md rounded-xl p-2">
+        <div className="text-xs font-semibold text-gray-500 mb-2 px-2 uppercase">Currency</div>
+        <DropdownMenuItem onClick={() => setCurrency("MYR")} className={`cursor-pointer rounded-lg mb-1 ${currency === "MYR" ? "bg-[#EEF4FF] text-[#2F4F97] font-bold" : ""}`}>
+          MYR (Ringgit)
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setCurrency("USD")} className={`cursor-pointer rounded-lg mb-1 ${currency === "USD" ? "bg-[#EEF4FF] text-[#2F4F97] font-bold" : ""}`}>
+          USD (Dollar)
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setCurrency("BDT")} className={`cursor-pointer rounded-lg ${currency === "BDT" ? "bg-[#EEF4FF] text-[#2F4F97] font-bold" : ""}`}>
+          BDT (Taka)
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
 const resourceToolsLinks = [
   { label: "Blog", to: "/blog", icon: PenTool, bgImage: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=500&q=80" },
@@ -179,6 +209,7 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
               </DropdownMenu>
 
               <NavItem to="/contact" icon={Phone}>Contact</NavItem>
+              <CurrencySelector />
             </nav>
 
             {user && (
