@@ -221,7 +221,7 @@ export default function Application() {
           <div className="w-full max-w-[1640px] mx-auto px-4 flex flex-col md:flex-row items-center gap-6">
             <img src={logo || "https://placehold.co/150"} alt={uni.name} className="h-28 w-28 md:h-36 md:w-36 object-contain rounded-xl bg-white p-3 shadow" />
             <div className="flex-1 text-center md:text-left">
-              <h1 className="text-3xl font-semibold text-[#1E293B] mb-1" style={{ fontFamily: "Poppins, sans-serif" }}>{uni.name}</h1>
+              <h1 className="text-3xl font-semibold text-[#1E293B] mb-1">{uni.name}</h1>
               {uni.city && <p className="text-gray-600 flex items-center gap-1 justify-center md:justify-start"><MapPin className="h-4 w-4 text-[#2F4F97]" />{uni.city}, Malaysia</p>}
             </div>
             {/* Note: No Apply Now or Ask Us buttons here as per user request */}

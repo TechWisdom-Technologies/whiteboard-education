@@ -184,7 +184,7 @@ export default function PartnerRegistration() {
                   <span className="text-[10px] font-bold text-white tracking-widest uppercase">Partner Network</span>
                 </div>
 
-                <h1 className="text-3xl md:text-4xl font-extrabold mb-5 leading-[1.15] tracking-tight text-white" style={{ fontFamily: "Poppins, sans-serif" }}>
+                <h1 className="text-3xl md:text-4xl font-extrabold mb-5 leading-[1.15] tracking-tight text-white">
                   Join Our Global <br />
                   <span className="text-[#2F4F97]">Partner Agency Network</span>
                 </h1>
@@ -213,7 +213,7 @@ export default function PartnerRegistration() {
 
             {/* Right Panel - Form */}
             <div className="w-full lg:w-7/12 p-8 md:p-12">
-              <h2 className="text-2xl font-bold text-[#1E293B] mb-2 leading-tight" style={{ fontFamily: "Poppins, sans-serif" }}>
+              <h2 className="text-2xl font-bold text-[#1E293B] mb-2 leading-tight">
                 Agency Registration
               </h2>
               <p className="text-sm text-gray-500 mb-8 font-medium">Please fill in your company details to apply for partnership.</p>

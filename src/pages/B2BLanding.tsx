@@ -79,7 +79,7 @@ export default function B2BLanding() {
                 <Handshake className="h-3.5 w-3.5 text-[#2F4F97]" />
                 <span className="text-xs font-bold text-[#1E293B] tracking-tight">Malaysia's Leading Education Partnership Network</span>
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-5xl font-bold mb-5 leading-[1.15] text-[#1E293B] tracking-tight" style={{ fontFamily: "Poppins, sans-serif" }}>
+              <h1 className="text-4xl md:text-5xl lg:text-5xl font-bold mb-5 leading-[1.15] text-[#1E293B] tracking-tight">
                 <span className="block mb-1">Your Students Want</span>
                 <span className="inline-block bg-[#2F4F97] text-white px-3 py-0.5 rounded-xl mb-1 shadow-sm">To Study in Malaysia?</span>
                 <span className="block">We Make It Happen.</span>
@@ -118,7 +118,7 @@ export default function B2BLanding() {
                   <div className="w-32 h-32 mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                     <img src={benefitImages[i]} alt={b.title} className="w-full h-full object-contain" />
                   </div>
-                  <h3 className="font-semibold text-base mb-3 text-[#1E293B]" style={{ fontFamily: "Poppins, sans-serif" }}>{b.title}</h3>
+                  <h3 className="font-semibold text-base mb-3 text-[#1E293B]">{b.title}</h3>
                   <p className="text-[13px] leading-relaxed text-[#64748B] max-w-xs">{b.desc}</p>
                 </div>
               ))}
@@ -149,7 +149,7 @@ export default function B2BLanding() {
                         </div>
                       </div>
                       <div className="p-5">
-                        <h3 className="font-semibold text-[15px] text-[#1E293B] mb-2" style={{ fontFamily: "Poppins, sans-serif" }}>{s.title}</h3>
+                        <h3 className="font-semibold text-[15px] text-[#1E293B] mb-2">{s.title}</h3>
                         <p className="text-[13px] text-[#64748B] leading-relaxed">{s.desc}</p>
                       </div>
                     </div>
@@ -182,7 +182,7 @@ export default function B2BLanding() {
                 <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-colors">
                   <div className="flex items-center gap-3 mb-3">
                     <CheckCircle2 className="h-5 w-5 text-[#2F4F97] flex-shrink-0" />
-                    <h3 className="font-semibold text-white text-[15px]" style={{ fontFamily: "Poppins, sans-serif" }}>{f.title}</h3>
+                    <h3 className="font-semibold text-white text-[15px]">{f.title}</h3>
                   </div>
                   <p className="text-[13px] text-gray-400 leading-relaxed pl-8">{f.desc}</p>
                 </div>
@@ -201,7 +201,7 @@ export default function B2BLanding() {
             <Accordion type="single" collapsible className="w-full">
               {faqs.map((item, i) => (
                 <AccordionItem key={i} value={`faq-${i}`} className="border border-[#e5e7eb] rounded-xl mb-3 px-5 data-[state=open]:border-[#2F4F97]/40 transition-colors">
-                  <AccordionTrigger className="text-[15px] font-semibold text-[#1E293B] hover:no-underline py-5" style={{ fontFamily: "Poppins, sans-serif" }}>
+                  <AccordionTrigger className="text-[15px] font-semibold text-[#1E293B] hover:no-underline py-5">
                     {item.q}
                   </AccordionTrigger>
                   <AccordionContent className="text-[13px] text-[#64748B] leading-relaxed pb-5">

@@ -39,41 +39,47 @@ export function BlogSection() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {latestPosts.map((post: any) => (
               <Link key={post.id} to={`/blog/${post.id}`} className="group">
-                <article className="relative rounded-2xl overflow-hidden aspect-square group/card shadow-sm hover:shadow-md transition-shadow">
-                  {/* Image */}
-                  <img
-                    src={post.cover_image || "/placeholder-blog.jpg"}
-                    alt={post.title}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110"
-                  />
-                  {/* Overlay Gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1E293B]/90 via-[#1E293B]/20 to-[#1E293B]/40 transition-opacity duration-300" />
-
-                  {/* Top Meta (Category & Date) */}
-                  <div className="absolute top-3 left-3 right-3 flex justify-between items-start z-10">
-                    {post.category ? (
-                      <span className="bg-[#2F4F97] text-white text-[9px] font-normal px-1.5 py-0.5 rounded-xl uppercase tracking-wider shadow-sm">
-                        {post.category}
-                      </span>
-                    ) : (
-                      <div />
+                <article className="group/card bg-white rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-[360px] md:h-[400px] border border-gray-200">
+                  {/* Image Section */}
+                  <div className="relative h-[180px] w-full overflow-hidden shrink-0">
+                    <img
+                      src={post.cover_image || "/placeholder-blog.jpg"}
+                      alt={post.title}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                    {post.category && (
+                      <div className="absolute top-4 left-4 z-10">
+                        <span className="bg-white/95 backdrop-blur-md text-[#2F4F97] text-[10px] font-extrabold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
+                          {post.category}
+                        </span>
+                      </div>
                     )}
-                    <span className="text-white/90 text-[9px] font-normal flex items-center gap-1 backdrop-blur-md bg-black/30 px-1.5 py-0.5 rounded-xl border border-white/10 shadow-sm">
-                      <Calendar className="w-2.5 h-2.5" />
+                  </div>
+
+                  {/* Content Section */}
+                  <div className="flex flex-col flex-1 p-5 md:p-6">
+                    <div className="flex items-center gap-1.5 text-[#64748B] text-xs font-semibold uppercase tracking-wider mb-3">
+                      <Calendar className="w-3.5 h-3.5" />
                       {new Date(post.date || post.created_at).toLocaleDateString("en-US", {
                         year: "numeric",
                         month: "short",
                         day: "numeric",
                       })}
-                    </span>
-                  </div>
+                    </div>
 
-                  {/* Bottom Title */}
-                  <div className="absolute bottom-4 left-4 right-4 z-10">
-                    <h3 className="text-white font-medium uppercase text-[13px] md:text-sm leading-snug group-hover/card:text-[#2F4F97] transition-colors shadow-sm">
+                    <h3 className="text-[#1E293B] font-extrabold text-[15px] md:text-[17px] leading-snug group-hover/card:text-[#2F4F97] transition-colors line-clamp-3 mb-4">
                       {post.title}
-                      <ArrowRight className="inline-block w-4 h-4 ml-1.5 opacity-0 -translate-x-2 transition-all duration-300 group-hover/card:opacity-100 group-hover/card:translate-x-0" />
                     </h3>
+
+                    {/* Footer of Card */}
+                    <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between text-[#2F4F97]">
+                      <span className="text-[10px] md:text-[11px] font-bold uppercase tracking-widest group-hover/card:tracking-[0.15em] transition-all duration-300">
+                        Read Article
+                      </span>
+                      <div className="w-8 h-8 rounded-full bg-[#EEF4FF] flex items-center justify-center group-hover/card:bg-[#2F4F97] group-hover/card:text-white transition-colors duration-300 shrink-0 shadow-sm">
+                        <ArrowRight className="w-4 h-4" />
+                      </div>
+                    </div>
                   </div>
                 </article>
               </Link>

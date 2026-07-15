@@ -76,7 +76,7 @@ export function HeroSection() {
               <span className="text-xs md:text-sm font-bold text-[#1E293B] tracking-tight">The Most Trusted Platform for Study in Malaysia</span>
             </div>
 
-            <h1 className={`text-3xl md:text-5xl lg:text-5xl font-semibold mb-4 leading-[1.2] text-[#1E293B] tracking-tighter transition-all duration-700 delay-150 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`} style={{ fontFamily: "Poppins, sans-serif" }}>
+            <h1 className={`text-3xl md:text-5xl lg:text-5xl font-semibold mb-4 leading-[1.2] text-[#1E293B] tracking-tighter transition-all duration-700 delay-150 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
               <span className="block mb-2">Expert Guidance</span>
               <span className="inline-block bg-[#2F4F97] text-white px-4 py-1 rounded-xl mb-2 shadow-sm">For International</span>
               <span className="block">students In Malaysia</span>

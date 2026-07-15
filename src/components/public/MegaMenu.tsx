@@ -34,7 +34,7 @@ import { GlobalBreadcrumbs } from "./GlobalBreadcrumbs";
 const CurrencySelector = () => {
   const { currency, setCurrency } = useCurrency();
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-xl p-0 hover:bg-[#F8FAFC]/50 transition-all border border-[#e8e8e8]">
           <div className="relative">
@@ -173,7 +173,7 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
                     variant="ghost"
                     size="sm"
                     className={cn(
-                      "h-10 text-sm font-medium text-[#64748B] hover:text-[#2F4F97] hover:bg-transparent gap-1.5 px-3 transition-colors",
+                      "h-10 text-[14px] font-poppins font-bold text-black hover:text-[#2F4F97] hover:bg-transparent gap-1.5 px-3 transition-colors",
                       toolsActive && "text-[#2F4F97]",
                     )}
                   >
@@ -213,7 +213,7 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
             </nav>
 
             {user && (
-              <DropdownMenu>
+              <DropdownMenu modal={false}>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-10 w-10 rounded-xl p-0 hover:ring-2 hover:ring-[#2F4F97]/30 transition-all">
                     <Avatar className="h-10 w-10 border-2 border-[#2F4F97]/30">
@@ -278,7 +278,7 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
                     <MobileNavLink to="/language-centers" icon={Languages}>Language Centers</MobileNavLink>
 
                     <Collapsible>
-                      <CollapsibleTrigger className="flex w-full items-center justify-between px-3 py-3.5 text-base font-medium text-foreground hover:bg-[#F8FAFC]/50 rounded-xl transition-colors">
+                      <CollapsibleTrigger className="flex w-full items-center justify-between px-3 py-3.5 text-[16px] font-poppins font-bold text-black hover:bg-[#F8FAFC]/50 rounded-xl transition-colors">
                         <span className="flex items-center gap-3">
                           <Sparkles className="h-5 w-5 text-muted-foreground" /> Resources & Tools
                         </span>
@@ -315,7 +315,7 @@ function NavItem({ to, children, icon: Icon }: { to: string; children: React.Rea
         variant="ghost"
         size="sm"
         className={cn(
-          "h-10 text-sm font-medium text-[#64748B] hover:text-[#2F4F97] hover:bg-transparent gap-1.5 px-3 transition-colors",
+          "h-10 text-[14px] font-poppins font-bold text-black hover:text-[#2F4F97] hover:bg-transparent gap-1.5 px-3 transition-colors",
           isActive && "text-[#2F4F97]",
         )}
       >
@@ -342,7 +342,7 @@ function MobileNavLink({ to, children, icon: Icon }: { to: string; children: Rea
       <Link
         to={to}
         className={cn(
-          "flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium text-foreground hover:bg-[#F8FAFC]/50 rounded-xl transition-colors",
+          "flex items-center gap-2.5 px-3 py-2.5 text-[14px] font-poppins font-bold text-black hover:bg-[#F8FAFC]/50 rounded-xl transition-colors",
           isActive && "text-[#2F4F97]"
         )}
       >

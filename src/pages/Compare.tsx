@@ -54,37 +54,40 @@ export default function Compare() {
       <MegaMenu hideBreadcrumbs />
       
       {/* Page Header */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-[#1E293B] via-[#243B71] to-[#2F4F97] border-b border-[#2F4F97]/20 shadow-sm">
-        {/* Subtle decorative background elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 z-0 pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4 z-0 pointer-events-none"></div>
+      <div className="relative overflow-hidden bg-[#1E293B]">
+        {/* Background Image & Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=1600&q=80" 
+            alt="University Comparison" 
+            className="w-full h-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0F172A] via-[#1E293B]/90 to-transparent"></div>
+          <div className="absolute inset-0 bg-black/10"></div>
+        </div>
         
         <div className="relative z-20">
           <GlobalBreadcrumbs theme="transparent" />
         </div>
         
-        <div className="relative z-10 w-full mx-auto px-4 py-12 md:py-16 max-w-4xl flex flex-col md:flex-row items-center md:items-start justify-between gap-6 text-center md:text-left">
-          <div className="flex-1">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/10 text-blue-100 text-xs font-semibold uppercase tracking-wider mb-3 backdrop-blur-sm">
-              <GitCompare className="w-3.5 h-3.5" />
+        <div className="relative z-10 w-full mx-auto px-4 py-12 md:py-24 max-w-5xl flex flex-col md:flex-row items-center md:items-start justify-between gap-6 text-center md:text-left">
+          <div className="flex-1 max-w-2xl">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-white text-[10px] md:text-xs font-semibold uppercase tracking-wider mb-4 md:mb-5 backdrop-blur-md">
+              <GitCompare className="w-3 md:w-3.5 h-3 md:h-3.5" />
               University Comparison
             </div>
-            <h1 className="text-2xl md:text-[32px] font-extrabold text-white tracking-tight mb-2 leading-tight" style={{ fontFamily: "Poppins, sans-serif" }}>
+            <h1 className="text-2xl md:text-[42px] font-extrabold text-white tracking-tight mb-3 md:mb-4 leading-[1.2] md:leading-[1.1]">
               Compare Top Universities
             </h1>
-            <p className="text-blue-100/80 text-sm md:text-base max-w-lg mx-auto md:mx-0">
+            <p className="text-gray-200/90 text-xs md:text-base max-w-lg mx-auto md:mx-0 leading-relaxed font-medium">
               Side-by-side analysis of tuition fees, campus life, rankings, and global reputation to help you choose the best fit.
             </p>
-          </div>
-          
-          <div className="hidden md:flex shrink-0 w-20 h-20 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 items-center justify-center rotate-3 hover:rotate-6 transition-transform shadow-xl">
-            <GitCompare className="w-10 h-10 text-blue-100 drop-shadow-lg" />
           </div>
         </div>
       </div>
 
       <main className="flex-1">
-        <div className="w-full max-w-4xl mx-auto px-4 py-12 md:py-16">
+        <div className="w-full max-w-5xl mx-auto px-4 py-12 md:py-16">
           {/* Selectors */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             {[0, 1, 2].map((i) => (
@@ -115,7 +118,7 @@ export default function Compare() {
                 <div className="h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Trophy className="h-8 w-8 text-gray-400" />
                 </div>
-                <p className="text-lg font-semibold text-[#1E293B]" style={{ fontFamily: "Poppins, sans-serif" }}>No Universities Selected</p>
+                <p className="text-lg font-semibold text-[#1E293B]">No Universities Selected</p>
                 <p className="text-[#64748B] mt-1">Select universities from the dropdowns above to start comparing.</p>
               </CardContent>
             </Card>

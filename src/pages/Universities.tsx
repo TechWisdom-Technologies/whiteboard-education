@@ -48,7 +48,7 @@ const LEVEL_MAP: Record<string, string> = {
   "Doctoral Degree (PhD)": "PhD"
 };
 
-const FIELDS_OF_STUDY = [
+export const FIELDS_OF_STUDY = [
   "All Fields",
   "Business & Management",
   "Engineering & Technology",
@@ -59,7 +59,7 @@ const FIELDS_OF_STUDY = [
   "Law & Humanities"
 ];
 
-const FIELD_KEYWORDS: Record<string, string[]> = {
+export const FIELD_KEYWORDS: Record<string, string[]> = {
   "Business & Management": ["business", "management", "commerce", "accounting", "finance", "marketing", "mba", "administration"],
   "Engineering & Technology": ["engineering", "technology", "mechanical", "civil", "electrical", "mechatronics", "manufacturing"],
   "Computer Science & IT": ["computer", "computing", "software", "information technology", "cyber", "data", "ai", "intelligence", "it"],
@@ -77,7 +77,7 @@ const PAID_OFFER_LETTER_UNIS = [
   "Swinburne University of Technology Sarawak Campus"
 ];
 
-const UNIVERSITY_LOGOS: Record<string, string> = {
+export const UNIVERSITY_LOGOS: Record<string, string> = {
   "Multimedia University Malaysia (MMU)": "https://en.your-uni.com/assets/images/university/mmu-university.webp",
   "UCSI University Malaysia": "https://en.your-uni.com/assets/images/university/ucsi-university.webp",
   "Taylor's University Malaysia": "https://en.your-uni.com/assets/images/university/taylor-university-malaysia.webp",

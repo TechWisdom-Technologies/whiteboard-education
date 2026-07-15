@@ -371,7 +371,7 @@ export default function UniversityDetail() {
               <div className="flex flex-row items-start gap-4 mb-5 md:hidden">
                 <img src={logo} alt={uni.name} className="h-[84px] w-[84px] object-contain rounded-xl bg-white p-2 shadow-sm shrink-0" />
                 <div className="flex flex-col pt-1">
-                  <h1 className="text-[20px] font-semibold text-[#1E293B] leading-tight" style={{ fontFamily: "Poppins, sans-serif" }}>{uni.name}</h1>
+                  <h1 className="text-[20px] font-semibold text-[#1E293B] leading-tight">{uni.name}</h1>
                   {uni.city && (
                     <p className="flex text-black items-center justify-start gap-1.5 text-[13px] mt-1.5">
                       <MapPin className="h-3.5 w-3.5 text-[#2F4F97]" />
@@ -382,7 +382,7 @@ export default function UniversityDetail() {
               </div>
 
               {/* Desktop Header Text */}
-              <h1 className="hidden md:block text-4xl font-semibold text-[#1E293B] mb-4 text-left" style={{ fontFamily: "Poppins, sans-serif" }}>{uni.name}</h1>
+              <h1 className="hidden md:block text-4xl font-semibold text-[#1E293B] mb-4 text-left">{uni.name}</h1>
               
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 {/* Desktop Location */}
@@ -722,7 +722,7 @@ export default function UniversityDetail() {
                             />
                           </div>
                           <div className="p-5 flex-1 flex flex-col">
-                            <h3 className="font-bold text-base text-[#1E293B] mb-2 line-clamp-2 leading-snug h-12" style={{ fontFamily: "Poppins, sans-serif" }}>{su.name}</h3>
+                            <h3 className="font-bold text-base text-[#1E293B] mb-2 line-clamp-2 leading-snug h-12">{su.name}</h3>
                             
                             <div className="space-y-2 mb-4">
                               <div className="flex items-center gap-2 text-xs text-gray-500">
@@ -1014,7 +1014,7 @@ export default function UniversityDetail() {
                               {a.city && <span className="bg-[#2F4F97]/10 text-[#2F4F97] font-normal rounded-sm text-[10px] md:text-xs px-2 py-1 leading-none">{a.city}</span>}
                             </div>
 
-                            <h3 className="text-[16px] md:text-[20px] font-semibold text-[#1E293B] group-hover:text-[#2F4F97] transition-colors leading-tight mb-1 line-clamp-1" style={{ fontFamily: "Poppins, sans-serif" }}>
+                            <h3 className="text-[16px] md:text-[20px] font-semibold text-[#1E293B] group-hover:text-[#2F4F97] transition-colors leading-tight mb-1 line-clamp-1">
                               {a.name}
                             </h3>
 
@@ -1109,7 +1109,16 @@ export default function UniversityDetail() {
                                   <div className="bg-[#2F4F97]/10 p-1 rounded">
                                     <HomeIcon className="h-3.5 w-3.5 text-[#2F4F97]" />
                                   </div>
-                                  <span>Around RM {String(rent.rent).replace("MYR", "").trim()}</span>
+                                  <span>Around {(() => {
+                                      const rentStr = String(rent.rent);
+                                      const match = rentStr.match(/[\d,.]+/);
+                                      if (match) {
+                                        const num = parseFloat(match[0].replace(/,/g, ''));
+                                        const formatted = formatCurrency(num);
+                                        return rentStr.replace(match[0], formatted).replace(/MYR|RM/gi, '').trim();
+                                      }
+                                      return rentStr;
+                                  })()}</span>
                                 </div>
                               </div>
                             )) : availableRoomTypes.length > 0 ? availableRoomTypes.slice(0, 4).map((room: string, idx: number) => (
@@ -1119,7 +1128,7 @@ export default function UniversityDetail() {
                                   <div className="bg-[#2F4F97]/10 p-1 rounded">
                                     <HomeIcon className="h-3.5 w-3.5 text-[#2F4F97]" />
                                   </div>
-                                  <span>Around RM {Number(a.price_per_month).toLocaleString()}</span>
+                                  <span>Around {formatCurrency(Number(a.price_per_month))}</span>
                                 </div>
                               </div>
                             )) : (

@@ -205,7 +205,7 @@ ${window.location.href}`;
                     </div>
                   )}
                   <div className="flex flex-col pt-1">
-                    <h1 className="text-[20px] font-semibold text-[#1E293B] leading-tight" style={{ fontFamily: "Poppins, sans-serif" }}>{course.title}</h1>
+                    <h1 className="text-[20px] font-semibold text-[#1E293B] leading-tight">{course.title}</h1>
                     <p className="flex text-black items-center justify-start gap-1.5 text-[13px] mt-1.5">
                       <Building2 className="h-3.5 w-3.5 text-[#2F4F97]" />
                       {uni?.name || 'University'}
@@ -214,7 +214,7 @@ ${window.location.href}`;
                 </div>
 
                 {/* Desktop Header Text */}
-                <h1 className="hidden md:block text-4xl font-semibold text-[#1E293B] mb-4 text-left" style={{ fontFamily: "Poppins, sans-serif" }}>{course.title}</h1>
+                <h1 className="hidden md:block text-4xl font-semibold text-[#1E293B] mb-4 text-left">{course.title}</h1>
                 
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                   {/* Desktop Location */}

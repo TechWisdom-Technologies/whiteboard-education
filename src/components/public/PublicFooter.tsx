@@ -31,7 +31,7 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
 
             {/* 2nd Column: Explore */}
             <div className="md:col-span-2">
-              <h4 className="text-sm font-semibold text-[#1E293B] tracking-widest uppercase mb-4" style={{ fontFamily: "Poppins, sans-serif" }}>
+              <h4 className="text-sm font-semibold text-[#1E293B] tracking-widest uppercase mb-4">
                 Explore
               </h4>
               <ul className="space-y-2.5 text-[13px] text-[#334155]">
@@ -44,7 +44,7 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
 
             {/* 3rd Column: Other Resources */}
             <div className="md:col-span-2">
-              <h4 className="text-sm font-semibold text-[#1E293B] tracking-widest uppercase mb-4" style={{ fontFamily: "Poppins, sans-serif" }}>
+              <h4 className="text-sm font-semibold text-[#1E293B] tracking-widest uppercase mb-4">
                 Other Resources
               </h4>
               <ul className="space-y-2.5 text-[13px] text-[#334155]">
@@ -56,7 +56,7 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
 
             {/* 4th Column: Legal */}
             <div className="md:col-span-2">
-              <h4 className="text-sm font-semibold text-[#1E293B] tracking-widest uppercase mb-4" style={{ fontFamily: "Poppins, sans-serif" }}>
+              <h4 className="text-sm font-semibold text-[#1E293B] tracking-widest uppercase mb-4">
                 Legal
               </h4>
               <ul className="space-y-2.5 text-[13px] text-[#334155]">
@@ -67,7 +67,7 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
 
             {/* 5th Column: Connect with Us */}
             <div className="md:col-span-3 space-y-3">
-              <h4 className="text-sm font-semibold text-[#1E293B] tracking-widest uppercase mb-4" style={{ fontFamily: "Poppins, sans-serif" }}>
+              <h4 className="text-sm font-semibold text-[#1E293B] tracking-widest uppercase mb-4">
                 Connect with Us
               </h4>
               <div className="space-y-2.5 text-[13px] text-[#334155]">

@@ -76,7 +76,7 @@ export default function Contact() {
               <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 bg-[#2F4F97] rounded-full opacity-10 blur-2xl pointer-events-none" />
               
               <div className="relative z-10">
-                <h1 className="text-3xl font-bold mb-4 leading-tight tracking-tight text-white" style={{ fontFamily: "Poppins, sans-serif" }}>
+                <h1 className="text-3xl font-bold mb-4 leading-tight tracking-tight text-white">
                   Not sure where to start? <br />
                   <span className="text-[#2F4F97]">Let's Start Your Journey</span>
                 </h1>
@@ -145,7 +145,7 @@ export default function Contact() {
 
             {/* Right Panel - Form */}
             <div className="w-full lg:w-7/12 p-8 md:p-12">
-              <h2 className="text-2xl font-bold text-[#1E293B] mb-8 flex items-center gap-2.5" style={{ fontFamily: "Poppins, sans-serif" }}>
+              <h2 className="text-2xl font-bold text-[#1E293B] mb-8 flex items-center gap-2.5">
                 <MessageSquare className="h-5 w-5 text-[#2F4F97]" />
                 Send us a Message
               </h2>

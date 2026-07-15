@@ -30,10 +30,10 @@ export function PreFooterCTA() {
           
           <h2 className="text-2xl md:text-3xl font-semibold text-white mb-2 leading-tight">
             Ready to Start Your Malaysian <br />
-            <span className="text-[#2F4F97]">Academic Adventure?</span>
+            <span className="text-white">Academic Adventure?</span>
           </h2>
           
-          <p className="text-sm text-gray-300 mb-10 max-w-xl mx-auto leading-relaxed">
+          <p className="text-sm text-white mb-10 max-w-xl mx-auto leading-relaxed">
             Get personalized guidance from our experts and secure your place at a world-class university today. We handle the paperwork, you focus on your future.
           </p>
           

@@ -57,7 +57,7 @@ export default function CourseComparison() {
       <main className="flex-1 w-full max-w-[1640px] mx-auto px-4 pb-16">
         {selectedCourses.length === 0 ? (
           <div className="text-center py-20">
-            <h2 className="text-2xl font-bold mb-4" style={{ fontFamily: "Poppins, sans-serif" }}>No Courses Selected</h2>
+            <h2 className="text-2xl font-bold mb-4">No Courses Selected</h2>
             <p className="text-gray-600 mb-8">You haven't selected any courses to compare yet.</p>
             <Button onClick={() => navigate("/courses")} style={{ backgroundColor: "#2F4F97", color: "#1E293B", borderRadius: "5px" }}>
               Browse Courses
@@ -90,7 +90,7 @@ export default function CourseComparison() {
                               </div>
                             )}
                           </div>
-                          <h3 className="text-[15px] font-bold text-[#1E293B] mb-2 leading-snug" style={{ fontFamily: "Poppins, sans-serif" }}>
+                          <h3 className="text-[15px] font-bold text-[#1E293B] mb-2 leading-snug">
                             {course.title}
                           </h3>
                           <p className="text-[13px] text-gray-500 font-normal">

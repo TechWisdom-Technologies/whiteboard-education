@@ -28,7 +28,7 @@ export function LoadingScreen({
           <div className="absolute inset-0 rounded-full border-[3px] border-[#2F4F97]/20 border-t-[#2F4F97] animate-spin" />
           <img src="/favicon.png" alt="Loading..." className="h-9 w-9 object-contain z-10" />
         </div>
-        <h3 className="mt-2 text-[16px] font-semibold text-[#1E293B]" style={{ fontFamily: "Poppins, sans-serif" }}>{label}</h3>
+        <h3 className="mt-2 text-[16px] font-semibold text-[#1E293B]">{label}</h3>
         <p className="mt-1 text-sm text-muted-foreground">{sublabel}</p>
       </div>
     </div>

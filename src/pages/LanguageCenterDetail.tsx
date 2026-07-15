@@ -126,7 +126,7 @@ export default function LanguageCenterDetail() {
                   </div>
                 )}
                 <div className="flex flex-col pt-1">
-                  <h1 className="text-[20px] font-semibold text-[#1E293B] leading-tight" style={{ fontFamily: "Poppins, sans-serif" }}>{lc.name}</h1>
+                  <h1 className="text-[20px] font-semibold text-[#1E293B] leading-tight">{lc.name}</h1>
                   {lc.city && (
                     <p className="flex text-gray-700 items-center justify-start gap-1.5 text-[13px] mt-1.5">
                       <MapPin className="h-3.5 w-3.5 text-[#2F4F97]" />
@@ -137,7 +137,7 @@ export default function LanguageCenterDetail() {
               </div>
 
               {/* Desktop Header Text */}
-              <h1 className="hidden md:block text-4xl font-bold text-[#1E293B] mb-4 text-left" style={{ fontFamily: "Poppins, sans-serif" }}>
+              <h1 className="hidden md:block text-4xl font-bold text-[#1E293B] mb-4 text-left">
                 {lc.name}
               </h1>
               
@@ -206,7 +206,7 @@ export default function LanguageCenterDetail() {
               </div>
               <span
                 className="hidden md:block ml-3 font-semibold text-[#1E293B] text-sm truncate flex-1"
-                style={{ fontFamily: "Poppins, sans-serif" }}
+               
                 title={lc.name}
               >
                 {lc.name}
@@ -261,7 +261,7 @@ export default function LanguageCenterDetail() {
           <div id="about" className="scroll-m-20">
           <h2
             className="text-[20px] font-semibold text-[#1E293B] mb-8"
-            style={{ fontFamily: "Poppins, sans-serif" }}
+           
           >
             About {lc.name}
           </h2>
@@ -298,7 +298,7 @@ export default function LanguageCenterDetail() {
             <div id="more-info" className="scroll-m-20 space-y-8">
             {moreInfo.map((info: any, idx: number) => (
               <div key={idx} className="w-full">
-                <h2 className="text-[20px] font-semibold text-[#1E293B] mb-3" style={{ fontFamily: "Poppins, sans-serif" }}>
+                <h2 className="text-[20px] font-semibold text-[#1E293B] mb-3">
                   {info.title}
                 </h2>
                 <p className="text-gray-600 leading-relaxed text-[12px] md:text-[14px] text-justify">
@@ -314,7 +314,7 @@ export default function LanguageCenterDetail() {
             <div id="tuition-fees" className="scroll-m-20">
             <h2
               className="text-[20px] font-semibold text-[#1E293B] mb-8"
-              style={{ fontFamily: "Poppins, sans-serif" }}
+             
             >
               {lc.name} tuition fees for International students
             </h2>
@@ -361,7 +361,7 @@ export default function LanguageCenterDetail() {
             <div id="faqs" className="scroll-m-20">
             <h2
               className="text-[20px] font-semibold text-[#1E293B] mb-8"
-              style={{ fontFamily: "Poppins, sans-serif" }}
+             
             >
               Frequently Asked Questions
             </h2>
@@ -402,7 +402,7 @@ export default function LanguageCenterDetail() {
 
           {/* ═══ REGISTRATION STEPS ═══ */}
           <div id="registration-steps" className="scroll-m-20">
-            <h2 className="text-[20px] font-semibold text-[#1E293B] text-center mb-10" style={{ fontFamily: "Poppins, sans-serif" }}>
+            <h2 className="text-[20px] font-semibold text-[#1E293B] text-center mb-10">
               Registration steps at {lc.name}
             </h2>
             <div className="grid grid-cols-6 md:grid-cols-5 gap-x-4 gap-y-10 md:gap-4 text-center">
@@ -471,7 +471,7 @@ export default function LanguageCenterDetail() {
             <div className="relative z-10 flex-1 text-center md:text-left">
               <h2
                 className="text-[20px] font-semibold text-[#1E293B] mb-2"
-                style={{ fontFamily: "Poppins, sans-serif" }}
+               
               >
                 Register Now and Secure Your Spot!
               </h2>
@@ -500,7 +500,7 @@ export default function LanguageCenterDetail() {
             <div id="similar" className="scroll-m-20">
             <h2
               className="text-[20px] font-semibold text-[#1E293B] mb-6"
-              style={{ fontFamily: "Poppins, sans-serif" }}
+             
             >
               Similar Language Centers
             </h2>
@@ -529,7 +529,7 @@ export default function LanguageCenterDetail() {
                       <div className="p-5 flex-1 flex flex-col">
                         <h3
                           className="font-bold text-base text-[#1E293B] mb-2 line-clamp-2 leading-snug h-12"
-                          style={{ fontFamily: "Poppins, sans-serif" }}
+                         
                         >
                           {sc.name}
                         </h3>

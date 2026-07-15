@@ -295,7 +295,7 @@ export default function Login() {
 
             {/* Heading */}
             <div className="mb-6">
-              <h2 className="font-extrabold text-[#0c0f16] text-2xl mb-0.5" style={{ fontFamily: "Poppins, sans-serif" }}>
+              <h2 className="font-extrabold text-[#0c0f16] text-2xl mb-0.5">
                 Welcome back
               </h2>
               <p className="text-xs text-gray-400">
@@ -391,7 +391,7 @@ export default function Login() {
             {fpStep === "enter_email" && (
               <div className="space-y-4">
                 <div className="mb-2">
-                  <h3 className="font-bold text-[#0c0f16] text-lg" style={{ fontFamily: "Poppins, sans-serif" }}>Reset Password</h3>
+                  <h3 className="font-bold text-[#0c0f16] text-lg">Reset Password</h3>
                   <p className="text-xs text-gray-400">Enter the email associated with your account.</p>
                 </div>
                 <input

@@ -13,6 +13,7 @@ import { Home, MapPin, Wifi, Dumbbell, ShieldCheck, Car, Bus, BedDouble, Buildin
 import { useState, useEffect, useMemo, lazy, Suspense } from "react";
 import { accommodations as mockAccommodations } from "@/data/mockData";
 import { GlobalBreadcrumbs } from "@/components/public/GlobalBreadcrumbs";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 const accommodationTypes = ["All", "Apartment", "Hostel", "Condominium", "Studio", "Shared House", "Dormitory"];
 const propertyTypes = ["All", "Residential", "Commercial", "Mixed-Use", "Student Housing"];
@@ -57,6 +58,7 @@ const parseJsonArray = (val: any): string[] => {
 };
 
 export default function Housing() {
+  const { formatCurrency } = useCurrency();
   const { data: accommodations = [], isLoading } = useTableData("accommodations");
   const { data: universities = [] } = useTableData("universities");
   
@@ -147,7 +149,7 @@ export default function Housing() {
               <Home className="w-3 md:w-3.5 h-3 md:h-3.5" />
               Student Accommodation
             </div>
-            <h1 className="text-2xl md:text-[42px] font-extrabold text-white tracking-tight mb-3 md:mb-4 leading-[1.2] md:leading-[1.1]" style={{ fontFamily: "Poppins, sans-serif" }}>
+            <h1 className="text-2xl md:text-[42px] font-extrabold text-white tracking-tight mb-3 md:mb-4 leading-[1.2] md:leading-[1.1]">
               Find Your Perfect Home <br className="hidden md:block"/> Away From Home
             </h1>
             <p className="text-gray-200/90 text-xs md:text-base max-w-lg mx-auto md:mx-0 leading-relaxed font-medium">
@@ -158,7 +160,7 @@ export default function Housing() {
       </div>
 
       <main className="flex-1">
-        <div className="w-full max-w-4xl mx-auto px-4 py-8 md:py-12">
+        <div className="w-full max-w-5xl mx-auto px-4 py-8 md:py-12">
           {/* Top Filters Row */}
           <div className="bg-white p-4 md:p-5 border border-gray-200/60 rounded-2xl flex flex-col shadow-sm mb-6 md:mb-8">
             
@@ -212,9 +214,9 @@ export default function Housing() {
             <div className={`${isMobileFilterOpen ? 'flex mt-4' : 'hidden'} md:flex flex-col lg:flex-row items-stretch lg:items-center gap-6 order-2 md:order-1`}>
               
               <div className="w-full lg:w-[200px]">
-                <label className="text-xs font-bold text-[#1E293B] uppercase tracking-wider mb-2 block" style={{ fontFamily: "Poppins, sans-serif" }}>University</label>
+                <label className="text-xs font-bold text-[#1E293B] uppercase tracking-wider mb-2 block">University</label>
                 <Select value={draftUniversity} onValueChange={setDraftUniversity}>
-                  <SelectTrigger className="h-10 text-[13px] border-gray-200/80 rounded-2xl bg-white hover:bg-gray-50/50 transition-colors" style={{ fontFamily: "Poppins, sans-serif" }}><SelectValue placeholder="All Universities" /></SelectTrigger>
+                  <SelectTrigger className="h-10 text-[13px] border-gray-200/80 rounded-2xl bg-white hover:bg-gray-50/50 transition-colors"><SelectValue placeholder="All Universities" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="All">All Universities</SelectItem>
                     {universities.map((u: any) => <SelectItem key={u.id} value={u.id.toString()}>{u.name}</SelectItem>)}
@@ -223,25 +225,25 @@ export default function Housing() {
               </div>
 
               <div className="w-full lg:w-[180px]">
-                <label className="text-xs font-bold text-[#1E293B] uppercase tracking-wider mb-2 block" style={{ fontFamily: "Poppins, sans-serif" }}>Accommodation Type</label>
+                <label className="text-xs font-bold text-[#1E293B] uppercase tracking-wider mb-2 block">Accommodation Type</label>
                 <Select value={draftType} onValueChange={setDraftType}>
-                  <SelectTrigger className="h-10 text-[13px] border-gray-200/80 rounded-2xl bg-white hover:bg-gray-50/50 transition-colors" style={{ fontFamily: "Poppins, sans-serif" }}><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="h-10 text-[13px] border-gray-200/80 rounded-2xl bg-white hover:bg-gray-50/50 transition-colors"><SelectValue /></SelectTrigger>
                   <SelectContent>{accommodationTypes.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
               
               <div className="w-full lg:w-[180px]">
-                <label className="text-xs font-bold text-[#1E293B] uppercase tracking-wider mb-2 block" style={{ fontFamily: "Poppins, sans-serif" }}>Property Type</label>
+                <label className="text-xs font-bold text-[#1E293B] uppercase tracking-wider mb-2 block">Property Type</label>
                 <Select value={draftProperty} onValueChange={setDraftProperty}>
-                  <SelectTrigger className="h-10 text-[13px] border-gray-200/80 rounded-2xl bg-white hover:bg-gray-50/50 transition-colors" style={{ fontFamily: "Poppins, sans-serif" }}><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="h-10 text-[13px] border-gray-200/80 rounded-2xl bg-white hover:bg-gray-50/50 transition-colors"><SelectValue /></SelectTrigger>
                   <SelectContent>{propertyTypes.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
 
               <div className="flex-1 min-w-[200px] flex flex-col justify-center">
                 <div className="flex justify-between items-center mb-2">
-                  <label className="text-xs font-bold text-[#1E293B] uppercase tracking-wider block" style={{ fontFamily: "Poppins, sans-serif" }}>Max Price</label>
-                  <span className="text-xs font-bold text-[#2F4F97]" style={{ fontFamily: "Poppins, sans-serif" }}>RM {draftPrice[0].toLocaleString()}/mo</span>
+                  <label className="text-xs font-bold text-[#1E293B] uppercase tracking-wider block">Max Price</label>
+                  <span className="text-xs font-bold text-[#2F4F97]">RM {draftPrice[0].toLocaleString()}/mo</span>
                 </div>
                 <div className="py-2">
                   <Slider min={200} max={3000} step={50} value={draftPrice} onValueChange={setDraftPrice} />
@@ -372,7 +374,7 @@ export default function Housing() {
                                 {a.city && <span className="bg-[#2F4F97]/10 text-[#2F4F97] font-normal rounded-sm text-[10px] md:text-xs px-2 py-1 leading-none">{a.city}</span>}
                               </div>
 
-                              <h3 className="text-[16px] md:text-[20px] font-semibold text-[#1E293B] group-hover:text-[#2F4F97] transition-colors leading-tight mb-1 line-clamp-1" style={{ fontFamily: "Poppins, sans-serif" }}>
+                              <h3 className="text-[16px] md:text-[20px] font-semibold text-[#1E293B] group-hover:text-[#2F4F97] transition-colors leading-tight mb-1 line-clamp-1">
                                 {a.name}
                               </h3>
 
@@ -467,7 +469,15 @@ export default function Housing() {
                                     <div className="bg-[#2F4F97]/10 p-1 rounded">
                                       <Home className="h-3.5 w-3.5 text-[#2F4F97]" />
                                     </div>
-                                    <span>Around {rent.rent.replace("MYR", "RM")}</span>
+                                    <span>Around {(() => {
+                                      const match = rent.rent.match(/[\d,.]+/);
+                                      if (match) {
+                                        const num = parseFloat(match[0].replace(/,/g, ''));
+                                        const formatted = formatCurrency(num);
+                                        return rent.rent.replace(match[0], formatted).replace(/MYR|RM/gi, '').trim();
+                                      }
+                                      return rent.rent;
+                                    })()}</span>
                                   </div>
                                 </div>
                               )) : availableRoomTypes.length > 0 ? availableRoomTypes.slice(0, 4).map((room: string, idx: number) => (
@@ -477,7 +487,7 @@ export default function Housing() {
                                     <div className="bg-[#2F4F97]/10 p-1 rounded">
                                       <Home className="h-3.5 w-3.5 text-[#2F4F97]" />
                                     </div>
-                                    <span>Around RM {Number(a.price_per_month).toLocaleString()}</span>
+                                    <span>Around {formatCurrency(Number(a.price_per_month))}</span>
                                   </div>
                                 </div>
                               )) : (
@@ -528,7 +538,7 @@ export default function Housing() {
                                   ? "bg-[#2F4F97] border-[#2F4F97] text-white" 
                                   : "bg-white border-gray-200 text-[#64748B] hover:bg-gray-50"
                               }`}
-                              style={{ fontFamily: "Poppins, sans-serif" }}
+                             
                             >
                               {i + 1}
                             </button>

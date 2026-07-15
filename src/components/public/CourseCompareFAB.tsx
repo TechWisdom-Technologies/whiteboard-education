@@ -13,7 +13,7 @@ export function CourseCompareFAB() {
       <button
         onClick={() => navigate("/course-comparison")}
         className="relative bg-[#1E293B] text-white rounded-2xl flex items-center gap-2 px-5 py-3 font-semibold shadow-lg hover:bg-[#1E293B]/90 transition-colors"
-        style={{ fontFamily: "Poppins, sans-serif" }}
+       
       >
         <Layers className="h-5 w-5" />
         Course Comparison
