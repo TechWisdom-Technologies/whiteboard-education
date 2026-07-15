@@ -32,14 +32,15 @@ const programLevels = [
 ];
 
 const englishTests = [
-  { id: "IELTS", label: "IELTS" },
-  { id: "TOEFL", label: "TOEFL iBT" },
-  { id: "PTE", label: "PTE Academic" },
-  { id: "Duolingo", label: "Duolingo" },
-  { id: "Cambridge", label: "Cambridge English (C1/C2)" },
-  { id: "OET", label: "OET" },
-  { id: "MUET", label: "MUET" },
-  { id: "None", label: "No Test / Plan to take" },
+  { id: "IELTS", label: "IELTS", badge: "IELTS", color: "bg-[#E31837]" },
+  { id: "TOEFL", label: "TOEFL iBT", badge: "TOEFL", color: "bg-[#002B5C]" },
+  { id: "PTE", label: "PTE Academic", badge: "PTE", color: "bg-[#00A3A1]" },
+  { id: "Duolingo", label: "Duolingo", badge: "DET", color: "bg-[#58CC02]" },
+  { id: "Cambridge", label: "Cambridge English", badge: "CAM", color: "bg-[#F15A22]" },
+  { id: "Linguaskill", label: "Linguaskill", badge: "LIN", color: "bg-[#800080]" },
+  { id: "OET", label: "OET", badge: "OET", color: "bg-[#00529F]" },
+  { id: "MUET", label: "MUET", badge: "MUET", color: "bg-[#2F4F97]" },
+  { id: "None", label: "No Test / Plan to take", icon: FileText },
 ];
 
 const getTestScores = (test: string) => {
@@ -49,6 +50,7 @@ const getTestScores = (test: string) => {
     case "PTE": return ["40-50", "51-60", "61-70", "71-80", "81-90"];
     case "Duolingo": return ["80-90", "95-105", "110-120", "125-135", "140-160"];
     case "Cambridge": return ["160-169 (B2)", "170-179 (B2)", "180-199 (C1)", "200-230 (C2)"];
+    case "Linguaskill": return ["140-159 (B1)", "160-179 (B2)", "180+ (C1 or above)"];
     case "OET": return ["C (200-290)", "C+ (300-340)", "B (350-440)", "A (450-500)"];
     case "MUET": return ["Band 3.0", "Band 3.5", "Band 4.0", "Band 4.5", "Band 5.0", "Band 5.5+"];
     default: return [];
@@ -69,7 +71,7 @@ const budgetRanges = [
 interface WizardData {
   intendedLevel: string;
   fieldOfInterest: string;
-  gpaType: "GPA" | "Percentage";
+  gpaType: "CGPA" | "Percentage";
   gpa: string;
   englishTest: string;
   englishScore: string;
@@ -99,7 +101,7 @@ export default function EligibilityWizard() {
   const [data, setData] = useState<WizardData>({
     intendedLevel: "",
     fieldOfInterest: "",
-    gpaType: "GPA",
+    gpaType: "CGPA",
     gpa: "",
     englishTest: "",
     englishScore: "",
@@ -318,17 +320,17 @@ export default function EligibilityWizard() {
             {step === 3 && (
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <h2 className="text-xl md:text-2xl font-bold text-[#1E293B] mb-2">Academic Performance</h2>
-                <p className="text-[12px] md:text-base text-[#64748B] mb-6 md:mb-8">Enter your latest GPA or Percentage to help us gauge your admission chances.</p>
+                <p className="text-[12px] md:text-base text-[#64748B] mb-6 md:mb-8">Enter your latest CGPA or Percentage to help us gauge your admission chances.</p>
                 
                 <div className="space-y-6 max-w-md mx-auto">
                   <div>
                     <Label className="text-[12px] md:text-sm font-semibold text-gray-700 mb-2 block">Grading System</Label>
-                    <Select value={data.gpaType} onValueChange={(v: "GPA" | "Percentage") => setData({ ...data, gpaType: v, gpa: "" })}>
+                    <Select value={data.gpaType} onValueChange={(v: "CGPA" | "Percentage") => setData({ ...data, gpaType: v, gpa: "" })}>
                       <SelectTrigger className="h-10 md:h-12 rounded-xl text-sm md:text-base">
                         <SelectValue placeholder="Select grading system" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="GPA">GPA (e.g. out of 4.0 or 5.0)</SelectItem>
+                        <SelectItem value="CGPA">CGPA (e.g. out of 4.0 or 5.0)</SelectItem>
                         <SelectItem value="Percentage">Percentage (%)</SelectItem>
                       </SelectContent>
                     </Select>
@@ -336,7 +338,7 @@ export default function EligibilityWizard() {
 
                   <div>
                     <Label className="text-[12px] md:text-sm font-semibold text-gray-700 mb-2 block">
-                      {data.gpaType === "GPA" ? "Enter your GPA" : "Enter your Percentage"}
+                      {data.gpaType === "CGPA" ? "Enter your CGPA" : "Enter your Percentage"}
                     </Label>
                     <div className="relative">
                       <Input 
@@ -344,7 +346,7 @@ export default function EligibilityWizard() {
                         step="0.1" 
                         min="0" 
                         max={data.gpaType === "Percentage" ? "100" : "10"} 
-                        placeholder={data.gpaType === "GPA" ? "e.g. 3.5" : "e.g. 85"} 
+                        placeholder={data.gpaType === "CGPA" ? "e.g. 3.5" : "e.g. 85"} 
                         value={data.gpa} 
                         onChange={(e) => setData({ ...data, gpa: e.target.value })} 
                         className="h-12 md:h-14 rounded-xl text-base md:text-lg pl-4 pr-12 focus-visible:ring-[#2F4F97]" 
@@ -373,7 +375,18 @@ export default function EligibilityWizard() {
                       </SelectTrigger>
                       <SelectContent>
                         {englishTests.map((test) => (
-                          <SelectItem key={test.id} value={test.id}>{test.label}</SelectItem>
+                          <SelectItem key={test.id} value={test.id}>
+                            <div className="flex items-center">
+                              {test.logo ? (
+                                <img src={test.logo} alt={test.id} className="w-8 h-4 object-contain mr-2.5 bg-white rounded-[2px]" />
+                              ) : test.badge ? (
+                                <span className={`text-[9px] font-bold text-white px-1.5 py-0.5 rounded-[2px] mr-2.5 ${test.color}`}>{test.badge}</span>
+                              ) : test.icon ? (
+                                <test.icon className="w-4 h-4 mr-2.5 text-gray-400" />
+                              ) : null}
+                              {test.label}
+                            </div>
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -474,12 +487,52 @@ export default function EligibilityWizard() {
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-2">No exact matches found</h3>
                   <p className="text-gray-500 mb-8 max-w-md mx-auto">Try adjusting your budget or academic criteria to see more options.</p>
-                  <Button variant="outline" className="h-12 px-8 rounded-xl border-gray-300" onClick={() => { setStep(1); setData({ intendedLevel: "", gpaType: "GPA", gpa: "", englishTest: "", englishScore: "", budgetTier: "" }); }}>
+                  <Button variant="outline" className="h-12 px-8 rounded-xl border-gray-300" onClick={() => { setStep(1); setData({ intendedLevel: "", gpaType: "CGPA", gpa: "", englishTest: "", englishScore: "", budgetTier: "" }); }}>
                     Adjust Criteria
                   </Button>
                 </div>
               ) : (
                 <div className="space-y-6">
+                  {/* User Input Summary */}
+                  <div className="flex flex-wrap gap-2 md:gap-3 items-stretch mb-6 mt-2">
+                    <div className="flex-1 min-w-[130px] flex flex-col justify-center px-3.5 py-2.5 rounded-xl border border-[#2F4F97]/10 bg-gradient-to-br from-[#2F4F97]/5 to-[#2F4F97]/[0.02] shadow-sm">
+                      <span className="text-[10px] md:text-[11px] font-bold text-[#2F4F97] mb-0.5">Intended Degree Level</span>
+                      <span className="font-semibold text-[#1E293B] text-[13px] leading-tight line-clamp-1">{programLevels.find(p => p.id === data.intendedLevel)?.label || data.intendedLevel}</span>
+                    </div>
+
+                    <div className="flex-1 min-w-[130px] flex flex-col justify-center px-3.5 py-2.5 rounded-xl border border-[#2F4F97]/10 bg-gradient-to-br from-[#2F4F97]/5 to-[#2F4F97]/[0.02] shadow-sm">
+                      <span className="text-[10px] md:text-[11px] font-bold text-[#2F4F97] mb-0.5">Field of Interest</span>
+                      <span className="font-semibold text-[#1E293B] text-[13px] leading-tight line-clamp-1">{fieldOptions.find(f => f.id === data.fieldOfInterest)?.label || data.fieldOfInterest}</span>
+                    </div>
+
+                    <div className="flex-1 min-w-[130px] flex flex-col justify-center px-3.5 py-2.5 rounded-xl border border-[#2F4F97]/10 bg-gradient-to-br from-[#2F4F97]/5 to-[#2F4F97]/[0.02] shadow-sm">
+                      <span className="text-[10px] md:text-[11px] font-bold text-[#2F4F97] mb-0.5">
+                        {data.gpaType === 'Percentage' ? 'Percent' : 'CGPA'}
+                      </span>
+                      <span className="font-semibold text-[#1E293B] text-[13px] leading-tight">{data.gpa}{data.gpaType === 'Percentage' ? '%' : ''}</span>
+                    </div>
+
+                    {data.englishTest && (
+                      <div className="flex-1 min-w-[130px] flex flex-col justify-center px-3.5 py-2.5 rounded-xl border border-[#2F4F97]/10 bg-gradient-to-br from-[#2F4F97]/5 to-[#2F4F97]/[0.02] shadow-sm">
+                        <span className="text-[10px] md:text-[11px] font-bold text-[#2F4F97] mb-0.5">Language Qualification</span>
+                        <span className="font-semibold text-[#1E293B] text-[13px] leading-tight">
+                          {data.englishTest === "None" ? "No Test" : `${data.englishTest} (${data.englishScore})`}
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="flex-1 min-w-[140px] flex flex-col justify-center px-3.5 py-2.5 rounded-xl border border-[#2F4F97]/10 bg-gradient-to-br from-[#2F4F97]/5 to-[#2F4F97]/[0.02] shadow-sm">
+                      <span className="text-[10px] md:text-[11px] font-bold text-[#2F4F97] mb-0.5">Budget/Yr</span>
+                      <span className="font-semibold text-[#1E293B] text-[13px] leading-tight whitespace-nowrap">
+                        {(() => {
+                          const b = budgetRanges.find(b => b.id === data.budgetTier);
+                          if (!b) return "";
+                          return b.max === 999999 ? `> ${formatCurrency(b.min)}` : `${formatCurrency(b.min)} - ${formatCurrency(b.max)}`;
+                        })()}
+                      </span>
+                    </div>
+                  </div>
+
                   <div className="text-[13px] md:text-sm font-medium text-gray-500 pb-3 border-b border-gray-200 leading-relaxed">
                     Found <span className="text-[#2F4F97] font-bold mx-1">{filteredResults().length}</span> Universities and <span className="text-[#2F4F97] font-bold mx-1">{filteredResults().reduce((acc, curr) => acc + curr.courses.length, 0)}</span> Courses matching your profile
                   </div>

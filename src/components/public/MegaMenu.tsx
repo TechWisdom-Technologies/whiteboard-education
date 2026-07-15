@@ -258,8 +258,8 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
           {/* Mobile Hamburger - now visible on mobile */}
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="lg:hidden hover:bg-muted ml-auto">
-                <Menu className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="lg:hidden ml-auto text-[#2F4F97] hover:bg-[#2F4F97]/10 hover:text-[#2F4F97] transition-colors rounded-xl">
+                <Menu className="h-6 w-6 stroke-[3]" />
               </Button>
             </SheetTrigger>
               <SheetContent side="top" className="w-screen h-screen p-0 border-none">
