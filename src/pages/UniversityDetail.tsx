@@ -19,7 +19,8 @@ import {
   MapPin, BookOpen, GraduationCap, HelpCircle, Building, Clock,
   FileText, CheckCircle, Home as HomeIcon, Car, MapPinCheck,
   ChevronRight, Search, CalendarDays, Globe, DollarSign, RotateCcw,
-  BedDouble, Building2, Phone, Mail, Layers
+  BedDouble, Building2, Phone, Mail, Layers,
+  Wifi, Dumbbell, ShieldCheck, Footprints, ChevronLeft, Bus
 } from "lucide-react";
 import { toast } from "sonner";
 import { useCourseCompare } from "@/contexts/CourseCompareContext";
@@ -183,6 +184,45 @@ const Countdown = () => {
     </div>
   );
 };
+
+const parseJsonArray = (val: any): string[] => {
+  if (Array.isArray(val)) return val;
+  if (typeof val === "string") {
+    try { const p = JSON.parse(val); return Array.isArray(p) ? p : []; } catch { return []; }
+  }
+  return [];
+};
+
+const amenityIcons: Record<string, React.ElementType> = {
+  wifi: Wifi, gym: Dumbbell, security: ShieldCheck, parking: Car,
+};
+
+function getAmenityIcon(amenity: string) {
+  const key = amenity.toLowerCase();
+  for (const [k, Icon] of Object.entries(amenityIcons)) {
+    if (key.includes(k)) return Icon;
+  }
+  return null;
+}
+
+const fallbackImages = [
+  "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80",
+  "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80",
+  "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80",
+  "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80",
+  "https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=800&q=80",
+  "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80",
+  "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80",
+  "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800&q=80",
+  "https://images.unsplash.com/photo-1502672023488-70e25813eb80?w=800&q=80",
+  "https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=800&q=80",
+  "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800&q=80",
+  "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80",
+  "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=800&q=80",
+  "https://images.unsplash.com/photo-1460317442991-0ec209397118?w=800&q=80",
+  "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800&q=80",
+  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80"
+];
 
 export default function UniversityDetail() {
 
@@ -895,32 +935,205 @@ export default function UniversityDetail() {
             <p className="text-sm text-gray-500 mb-6">Accommodation options near {uni.name}. For the most current availability and pricing, contact us directly.</p>
             <h3 className="font-bold text-lg text-[#1E293B] mb-4">{nearbyAccom.length} nearby accommodations found</h3>
             {nearbyAccom.length > 0 ? (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {nearbyAccom.map((a: any) => (
-                  <Card key={a.id} className="bg-white hover:shadow-md hover:border-[#2F4F97]/40 transition-all cursor-pointer" onClick={() => setSelected(a)}>
-                    <CardContent className="p-4 space-y-2.5">
-                      <h4 className="font-bold text-sm text-[#1E293B]">{a.name}</h4>
-                      <div className="flex items-center gap-1 text-xs text-gray-500"><MapPin className="h-3 w-3" />{a.city}</div>
-                      <div className="flex flex-wrap gap-1">
-                        <Badge variant="outline" className="text-xs">{a.type}</Badge>
-                        {a.tag && <Badge className="text-[10px] bg-[#2F4F97] hover:bg-[#2F4F97] text-white border-0">{a.tag}</Badge>}
-                      </div>
-                      {a.travel_distance_time && typeof a.travel_distance_time === 'object' && Object.keys(a.travel_distance_time).length > 0 ? (
-                        <div className="flex flex-wrap gap-2 text-[11px] text-muted-foreground">
-                          {a.travel_distance_time.walking && (
-                            <span className="flex items-center gap-1"><Clock className="h-3 w-3 text-[#2F4F97]" /> {a.travel_distance_time.walking} walk</span>
-                          )}
-                          {a.travel_distance_time.car && (
-                            <span className="flex items-center gap-1"><Car className="h-3 w-3 text-[#2F4F97]" /> {a.travel_distance_time.car} drive</span>
+              <div className="flex flex-col gap-6">
+                {nearbyAccom.map((a: any) => {
+                  const amenities = parseJsonArray(a.amenities);
+                  const unitTypes = parseJsonArray(a.unit_types || a.room_types);
+                  const roomRents = parseJsonArray(a.room_rents);
+                  const availableRoomTypes = parseJsonArray(a.available_room_types);
+
+                  return (
+                    <Card key={a.id} className="group bg-white rounded-[16px] border-none shadow-none mb-10 overflow-hidden">
+                      {/* Top Section (Image + Details) */}
+                      <div className="flex flex-col md:flex-row gap-6 items-stretch md:h-[320px]">
+                        
+                        {/* Left: Image (40%) */}
+                        <div className="w-full md:w-[40%] h-[240px] md:h-full shrink-0 relative rounded-l-[16px] overflow-hidden bg-gray-100 group/slider">
+                          <div 
+                            id={`slider-${a.id}`}
+                            className="w-full h-full flex overflow-x-auto snap-x snap-mandatory"
+                            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                          >
+                            {(() => {
+                              const imgs = parseJsonArray(a.image_urls);
+                              const images = imgs.length > 0 ? imgs : [a.image_url || fallbackImages[0]];
+                              return images.map((img: string, i: number) => (
+                                <div key={i} className="w-full h-full shrink-0 snap-center relative">
+                                  <img
+                                    src={img}
+                                    alt={`${a.name} - image ${i + 1}`}
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                    onError={(e) => {
+                                      const target = e.currentTarget as HTMLImageElement;
+                                      if (!target.dataset.retried) {
+                                        target.dataset.retried = "1";
+                                        target.src = fallbackImages[Math.abs(a.name.length) % fallbackImages.length];
+                                      }
+                                    }}
+                                  />
+                                </div>
+                              ));
+                            })()}
+                          </div>
+
+                          {parseJsonArray(a.image_urls).length > 1 && (
+                            <>
+                              <button 
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  document.getElementById(`slider-${a.id}`)?.scrollBy({ left: -320, behavior: 'smooth' });
+                                }}
+                                className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 hover:bg-white text-[#1E293B] flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-opacity shadow-sm z-10"
+                              >
+                                <ChevronLeft className="w-5 h-5" />
+                              </button>
+                              
+                              <button 
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  document.getElementById(`slider-${a.id}`)?.scrollBy({ left: 320, behavior: 'smooth' });
+                                }}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 hover:bg-white text-[#1E293B] flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-opacity shadow-sm z-10"
+                              >
+                                <ChevronRight className="w-5 h-5" />
+                              </button>
+                            </>
                           )}
                         </div>
-                      ) : a.travel_distance && (
-                        <p className="text-[11px] text-gray-500 flex items-center gap-1"><Clock className="h-3 w-3 text-[#2F4F97]" /> {a.travel_distance} from campus</p>
-                      )}
-                      <p className="font-bold text-[#2F4F97] text-sm">RM {Number(a.price_per_month).toLocaleString()}/month</p>
-                    </CardContent>
-                  </Card>
-                ))}
+
+                        {/* Right: Details (60%) */}
+                        <div className="w-full md:w-[60%] flex flex-col justify-between py-1">
+                          
+                          {/* Block 1: Tags, Title, Address */}
+                          <div className="pb-3 border-b border-gray-200">
+                            {/* Tags */}
+                            <div className="flex gap-2 mb-2 mt-2 md:mt-0">
+                              {a.tag && <span className="bg-[#2F4F97]/10 text-[#2F4F97] font-normal rounded-sm text-[10px] md:text-xs px-2 py-1 leading-none">{a.tag}</span>}
+                              {a.city && <span className="bg-[#2F4F97]/10 text-[#2F4F97] font-normal rounded-sm text-[10px] md:text-xs px-2 py-1 leading-none">{a.city}</span>}
+                            </div>
+
+                            <h3 className="text-[16px] md:text-[20px] font-semibold text-[#1E293B] group-hover:text-[#2F4F97] transition-colors leading-tight mb-1 line-clamp-1" style={{ fontFamily: "Poppins, sans-serif" }}>
+                              {a.name}
+                            </h3>
+
+                            {/* Address */}
+                            <p className="text-xs md:text-sm font-normal text-[#64748B] flex items-start gap-1 line-clamp-1">
+                              {a.address || a.city}, Selangor, Malaysia
+                            </p>
+                          </div>
+
+                          {/* Block 2: Property Type & Unit Types */}
+                          <div className="py-3 border-b border-gray-200">
+                            <div className="grid grid-cols-2 gap-0">
+                              <div className="flex flex-col gap-1 pr-4">
+                                <p className="text-[12px] md:text-sm font-medium text-[#475569]">Property Type</p>
+                                <p className="text-[12px] md:text-sm font-normal text-[#64748B] line-clamp-1">{a.property_type || a.type}</p>
+                              </div>
+                              <div className="flex flex-col gap-1 pr-4">
+                                <p className="text-[12px] md:text-sm font-medium text-[#475569]">Unit Types</p>
+                                <p className="text-[12px] md:text-sm font-normal text-[#64748B] line-clamp-1">{unitTypes.length > 0 ? unitTypes.join(", ") : "Various"}</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Block 3: Travel Distance / Time */}
+                          <div className="py-3 border-b border-gray-200">
+                            <p className="text-[12px] md:text-sm font-medium text-[#475569] mb-2">Travel Distance / Time</p>
+                            {(() => {
+                              let tdt = a.travel_distance_time;
+                              if (typeof tdt === 'string') {
+                                try { tdt = JSON.parse(tdt); } catch { tdt = null; }
+                              }
+                              return tdt && typeof tdt === 'object' && Object.keys(tdt).length > 0 ? (
+                                <div className="flex items-center gap-6">
+                                  {tdt.walking && (
+                                    <span className="flex items-center gap-2 text-[12px] md:text-sm font-normal text-[#64748B]">
+                                      <Footprints className="h-4 w-4" /> {tdt.walking}
+                                    </span>
+                                  )}
+                                  {tdt.car && (
+                                    <span className="flex items-center gap-2 text-[12px] md:text-sm font-normal text-[#64748B]">
+                                      <Car className="h-4 w-4" /> {tdt.car}
+                                    </span>
+                                  )}
+                                  {tdt.bus && (
+                                    <span className="flex items-center gap-2 text-[12px] md:text-sm font-normal text-[#64748B]">
+                                      <Bus className="h-4 w-4" /> {tdt.bus}
+                                    </span>
+                                  )}
+                                </div>
+                              ) : a.travel_distance && (
+                                <div className="flex items-center gap-2 text-[12px] md:text-sm font-normal text-[#64748B]">
+                                  <Clock className="h-4 w-4" /> {a.travel_distance}
+                                </div>
+                              );
+                            })()}
+                          </div>
+
+                          {/* Block 4: Amenities */}
+                          <div className="pt-3 pr-4">
+                            <p className="text-[12px] md:text-[14px] font-medium text-[#1E293B] mb-2">Amenities</p>
+                            <div className="flex flex-wrap gap-6 overflow-hidden max-h-6">
+                              {amenities.map((amenity: string, idx: number) => {
+                                const Icon = getAmenityIcon(amenity.toLowerCase());
+                                return (
+                                  <span key={idx} className="flex items-center gap-2 text-[12px] md:text-sm font-normal text-[#64748B] whitespace-nowrap">
+                                    {Icon ? <Icon className="h-4 w-4" /> : <ShieldCheck className="h-4 w-4" />}
+                                    {amenity}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+
+                      {/* Bottom Section (Available Room Types) - Spans Full Width */}
+                      <div className="mt-6 pb-6">
+                        <div className="flex justify-between items-center mb-3">
+                          <p className="text-[12px] md:text-[14px] font-medium text-[#1E293B]">Available Room Types</p>
+                          {roomRents.length > 0 && (
+                            <p className="text-[12px] md:text-sm font-bold text-[#1E293B]">1/{Math.max(1, Math.ceil(roomRents.length/4))}</p>
+                          )}
+                        </div>
+                        
+                        <div className="border border-gray-200 rounded-xl p-4">
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-4 md:gap-y-0 md:divide-x divide-gray-200">
+                            {roomRents.length > 0 ? roomRents.slice(0, 4).map((rent: any, idx: number) => (
+                              <div key={idx} className="flex flex-col justify-center text-left bg-white md:px-4 md:first:pl-0 md:last:pr-0">
+                                <p className="text-[12px] md:text-sm font-medium text-[#475569] mb-2 line-clamp-1">{rent.room_type}</p>
+                                <div className="flex items-center gap-2 text-[#64748B] text-[12px] md:text-sm font-normal">
+                                  <div className="bg-[#2F4F97]/10 p-1 rounded">
+                                    <HomeIcon className="h-3.5 w-3.5 text-[#2F4F97]" />
+                                  </div>
+                                  <span>Around RM {String(rent.rent).replace("MYR", "").trim()}</span>
+                                </div>
+                              </div>
+                            )) : availableRoomTypes.length > 0 ? availableRoomTypes.slice(0, 4).map((room: string, idx: number) => (
+                              <div key={idx} className="flex flex-col justify-center text-left bg-white md:px-4 md:first:pl-0 md:last:pr-0">
+                                <p className="text-[12px] md:text-sm font-medium text-[#475569] mb-2 line-clamp-1">{room}</p>
+                                <div className="flex items-center gap-2 text-[#64748B] text-[12px] md:text-sm font-normal">
+                                  <div className="bg-[#2F4F97]/10 p-1 rounded">
+                                    <HomeIcon className="h-3.5 w-3.5 text-[#2F4F97]" />
+                                  </div>
+                                  <span>Around RM {Number(a.price_per_month).toLocaleString()}</span>
+                                </div>
+                              </div>
+                            )) : (
+                              <div className="col-span-2 md:col-span-4 flex items-center justify-center text-[12px] md:text-sm text-[#64748B] bg-white py-2">
+                                Contact for availability and pricing
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                    </Card>
+                  );
+                })}
               </div>
             ) : <p className="text-gray-400 text-center py-10">No nearby accommodations listed yet.</p>}
           </div>
@@ -935,167 +1148,6 @@ export default function UniversityDetail() {
           <Button size="lg" className="bg-[#1E293B] text-white hover:bg-[#1E293B]/90 font-bold px-10 h-12" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>Start Your Application</Button>
         </div>
       </section>
-
-      
-      {/* Detail Dialog */}
-      <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
-          {selected && (
-            <>
-              <DialogHeader>
-                <DialogTitle className="text-xl">{selected.name}</DialogTitle>
-              </DialogHeader>
-
-              <div className="rounded-xl overflow-hidden h-56 bg-gray-100 relative">
-                <img
-                  src={activeImage || fallbackImages[0]}
-                  alt={selected.name}
-                  className="w-full h-full object-cover transition-all duration-300"
-                  onError={(e) => {
-                    const target = e.currentTarget;
-                    if (!target.dataset.retried) {
-                      target.dataset.retried = "1";
-                      target.src = fallbackImages[Math.abs(selected.name.length) % fallbackImages.length];
-                    }
-                  }}
-                />
-                {selected.tag && (
-                  <Badge className="absolute top-3 left-3 bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white font-bold border-0">{selected.tag}</Badge>
-                )}
-              </div>
-
-              {/* Thumbnail Gallery */}
-              {selected.image_urls && Array.isArray(selected.image_urls) && selected.image_urls.length > 1 && (
-                <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
-                  {selected.image_urls.map((img: string, idx: number) => (
-                    <button
-                      key={idx}
-                      onClick={() => setActiveImage(img)}
-                      className={`h-14 w-20 rounded-xl overflow-hidden border-2 shrink-0 transition-all ${
-                        activeImage === img ? "border-[#2F4F97] scale-95" : "border-transparent opacity-70 hover:opacity-100"
-                      }`}
-                    >
-                      <img src={img} alt={`thumbnail ${idx}`} className="w-full h-full object-cover" />
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              <div className="space-y-5 mt-2">
-                {/* Location & Price */}
-                <div className="flex flex-wrap items-center gap-3">
-                  <Badge variant="outline" className="gap-1"><MapPin className="h-3 w-3" /> {selected.city}</Badge>
-                  <Badge variant="outline">{selected.type}</Badge>
-                  <Badge variant="secondary">{selected.property_type || "Student Housing"}</Badge>
-                  <span className="ml-auto font-extrabold text-lg text-[#2F4F97]">RM {Number(selected.price_per_month).toLocaleString()}<span className="text-xs font-normal text-muted-foreground">/mo</span></span>
-                </div>
-
-                {selected.description && (
-                  <p className="text-sm text-muted-foreground leading-relaxed">{selected.description}</p>
-                )}
-
-                {/* Travel Distance & Times */}
-                {selected.travel_distance_time && typeof selected.travel_distance_time === 'object' && Object.keys(selected.travel_distance_time).length > 0 ? (
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-semibold text-[#1E293B]" style={{ fontFamily: "Poppins, sans-serif" }}>Travel Distance / Time</h4>
-                    <div className="flex flex-wrap gap-4 p-3 rounded-2xl bg-[#2F4F97]/10 border border-[#2F4F97]/20">
-                      {selected.travel_distance_time.walking && (
-                        <div className="flex items-center gap-1.5 text-sm font-medium text-black">
-                          <Clock className="h-4 w-4 text-[#2F4F97]" />
-                          <span>{selected.travel_distance_time.walking} walk</span>
-                        </div>
-                      )}
-                      {selected.travel_distance_time.car && (
-                        <div className="flex items-center gap-1.5 text-sm font-medium text-black">
-                          <Car className="h-4 w-4 text-[#2F4F97]" />
-                          <span>{selected.travel_distance_time.car} by car</span>
-                        </div>
-                      )}
-                      {selected.travel_distance_time.bus && (
-                        <div className="flex items-center gap-1.5 text-sm font-medium text-black">
-                          <Building2 className="h-4 w-4 text-[#2F4F97]" />
-                          <span>{selected.travel_distance_time.bus} by bus</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ) : selected.travel_distance && (
-                  <div className="flex items-center gap-2 p-3 rounded-xl bg-[#2F4F97]/10 border border-[#2F4F97]/20">
-                    <Clock className="h-4 w-4 text-[#2F4F97]" />
-                    <span className="text-sm font-medium">{selected.travel_distance}</span>
-                    <span className="text-xs text-muted-foreground">from nearest university</span>
-                  </div>
-                )}
-
-                {/* Unit Types */}
-                {parseJsonArray(selected.unit_types).length > 0 && (
-                  <div>
-                    <h4 className="text-sm font-semibold mb-2 text-[#1E293B]" style={{ fontFamily: "Poppins, sans-serif" }}>Unit Types</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {parseJsonArray(selected.unit_types).map((u: string, i: number) => (
-                        <Badge key={i} variant="outline" className="bg-muted/50">{u}</Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Room Rents Table */}
-                {selected.room_rents && Array.isArray(selected.room_rents) && selected.room_rents.length > 0 ? (
-                  <div>
-                    <h4 className="text-sm font-semibold mb-2 text-[#1E293B]" style={{ fontFamily: "Poppins, sans-serif" }}>Available Room Types & Rents</h4>
-                    <div className="border border-gray-200/80 rounded-2xl overflow-hidden bg-white shadow-sm">
-                      <table className="w-full text-sm text-left">
-                        <thead className="bg-gray-50 border-b border-gray-200/80">
-                          <tr>
-                            <th className="px-4 py-2.5 font-bold text-[#1E293B]" style={{ fontFamily: "Poppins, sans-serif" }}>Room Type</th>
-                            <th className="px-4 py-2.5 font-bold text-[#1E293B]" style={{ fontFamily: "Poppins, sans-serif" }}>Rent / Month</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {selected.room_rents.map((r: any, idx: number) => (
-                            <tr key={idx} className="border-b border-gray-100 last:border-0 hover:bg-gray-50/30 transition-colors">
-                              <td className="px-4 py-2.5 text-black font-medium">{r.room_type}</td>
-                              <td className="px-4 py-2.5 text-gray-900 font-bold text-[#2F4F97]">{formatCurrency(r.rent)}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                ) : parseJsonArray(selected.available_room_types || selected.room_types).length > 0 && (
-                  <div>
-                    <h4 className="text-sm font-semibold mb-2 text-[#1E293B]" style={{ fontFamily: "Poppins, sans-serif" }}>Available Room Types</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {parseJsonArray(selected.available_room_types || selected.room_types).map((r: string, i: number) => (
-                        <Badge key={i} variant="outline" className="gap-1 bg-muted/50"><BedDouble className="h-3 w-3" /> {r}</Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Contact */}
-                {(selected.contact_phone || selected.contact_email) && (
-                  <div className="border-t pt-4">
-                    <h4 className="text-sm font-semibold mb-2">Contact</h4>
-                    <div className="flex flex-wrap gap-4">
-                      {selected.contact_phone && (
-                        <a href={`tel:${selected.contact_phone}`} className="flex items-center gap-2 text-sm text-primary hover:underline">
-                          <Phone className="h-4 w-4" /> {selected.contact_phone}
-                        </a>
-                      )}
-                      {selected.contact_email && (
-                        <a href={`mailto:${selected.contact_email}`} className="flex items-center gap-2 text-sm text-primary hover:underline">
-                          <Mail className="h-4 w-4" /> {selected.contact_email}
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
 
       <PublicFooter />
     </div>

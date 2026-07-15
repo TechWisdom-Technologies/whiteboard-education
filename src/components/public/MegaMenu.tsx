@@ -68,7 +68,7 @@ const resourceToolsLinks = [
   { label: "Housing", to: "/housing", icon: Home, bgImage: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&q=80" },
 ];
 
-export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } = {}) {
+export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { disableSticky?: boolean, hideBreadcrumbs?: boolean } = {}) {
   const { user, hasRole, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -298,10 +298,8 @@ export function MegaMenu({ disableSticky = false }: { disableSticky?: boolean } 
             </Sheet>
           </div>
         </div>
-
-
     </header>
-    <GlobalBreadcrumbs />
+    {!hideBreadcrumbs && <GlobalBreadcrumbs />}
     </>
   );
 }

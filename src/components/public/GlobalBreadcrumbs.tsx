@@ -1,7 +1,11 @@
 import { useLocation, Link } from "react-router-dom";
 import { ChevronRight, Home } from "lucide-react";
 
-export function GlobalBreadcrumbs() {
+interface GlobalBreadcrumbsProps {
+  theme?: "light" | "dark" | "transparent";
+}
+
+export function GlobalBreadcrumbs({ theme = "light" }: GlobalBreadcrumbsProps) {
   const location = useLocation();
   const pathnames = location.pathname.split("/").filter((x) => x);
 
@@ -24,11 +28,17 @@ export function GlobalBreadcrumbs() {
       .join(" ");
   };
 
+  const bgClass = theme === "light" ? "bg-white" : "bg-transparent";
+  const textClass = theme === "light" ? "text-gray-500" : "text-blue-200";
+  const hoverClass = theme === "light" ? "hover:text-[#2F4F97]" : "hover:text-white";
+  const activeClass = theme === "light" ? "text-[#1E293B]" : "text-white";
+  const separatorClass = theme === "light" ? "text-gray-400" : "text-blue-300/50";
+
   return (
-    <div className="bg-white w-full z-40 relative">
+    <div className={`${bgClass} w-full z-40 relative`}>
       <div className="w-full max-w-[1640px] mx-auto px-4 lg:px-8 py-5">
-        <nav className="flex flex-wrap items-center text-[12px] text-gray-500 font-medium">
-          <Link to="/" className="hover:text-[#2F4F97] transition-colors flex items-center shrink-0">
+        <nav className={`flex flex-wrap items-center text-[12px] ${textClass} font-medium`}>
+          <Link to="/" className={`${hoverClass} transition-colors flex items-center shrink-0`}>
             <Home className="h-3.5 w-3.5 mr-1" />
             Home
           </Link>
@@ -39,11 +49,11 @@ export function GlobalBreadcrumbs() {
 
             return (
               <div key={to} className="flex items-center shrink-0">
-                <ChevronRight className="h-3.5 w-3.5 mx-1.5 text-gray-400" />
+                <ChevronRight className={`h-3.5 w-3.5 mx-1.5 ${separatorClass}`} />
                 {last ? (
-                  <span className="text-[#1E293B] font-semibold truncate max-w-[200px] sm:max-w-xs">{formatSegment(value)}</span>
+                  <span className={`${activeClass} font-semibold truncate max-w-[200px] sm:max-w-xs`}>{formatSegment(value)}</span>
                 ) : (
-                  <Link to={to} className="hover:text-[#2F4F97] transition-colors">
+                  <Link to={to} className={`${hoverClass} transition-colors`}>
                     {formatSegment(value)}
                   </Link>
                 )}

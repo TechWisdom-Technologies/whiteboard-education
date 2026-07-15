@@ -6,9 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Trophy, DollarSign, MapPin, GraduationCap, X } from "lucide-react";
+import { Trophy, DollarSign, MapPin, GraduationCap, X, GitCompare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Legend } from "recharts";
+import { GlobalBreadcrumbs } from "@/components/public/GlobalBreadcrumbs";
 
 const RADAR_COLORS = ["hsl(38, 92%, 50%)", "hsl(220, 60%, 40%)", "hsl(142, 76%, 36%)"];
 
@@ -50,25 +51,40 @@ export default function Compare() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <MegaMenu />
+      <MegaMenu hideBreadcrumbs />
       
       {/* Page Header */}
-      <div className="bg-white border-b border-gray-200/60">
-        <div className="w-full max-w-[1640px] mx-auto px-4 py-12 md:py-16 text-center max-w-3xl">
-          <div className="h-16 w-16 bg-[#2F4F97]/15 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Trophy className="h-8 w-8 text-[#2F4F97]" />
+      <div className="relative overflow-hidden bg-gradient-to-r from-[#1E293B] via-[#243B71] to-[#2F4F97] border-b border-[#2F4F97]/20 shadow-sm">
+        {/* Subtle decorative background elements */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 z-0 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4 z-0 pointer-events-none"></div>
+        
+        <div className="relative z-20">
+          <GlobalBreadcrumbs theme="transparent" />
+        </div>
+        
+        <div className="relative z-10 w-full mx-auto px-4 py-12 md:py-16 max-w-4xl flex flex-col md:flex-row items-center md:items-start justify-between gap-6 text-center md:text-left">
+          <div className="flex-1">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/10 text-blue-100 text-xs font-semibold uppercase tracking-wider mb-3 backdrop-blur-sm">
+              <GitCompare className="w-3.5 h-3.5" />
+              University Comparison
+            </div>
+            <h1 className="text-2xl md:text-[32px] font-extrabold text-white tracking-tight mb-2 leading-tight" style={{ fontFamily: "Poppins, sans-serif" }}>
+              Compare Top Universities
+            </h1>
+            <p className="text-blue-100/80 text-sm md:text-base max-w-lg mx-auto md:mx-0">
+              Side-by-side analysis of tuition fees, campus life, rankings, and global reputation to help you choose the best fit.
+            </p>
           </div>
-          <h1 className="text-3xl md:text-[40px] font-extrabold mb-4" style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B", lineHeight: 1.2 }}>
-            Compare <span className="text-[#2F4F97]">Universities</span>
-          </h1>
-          <p className="text-[#64748B] text-base md:text-lg">
-            Select up to 3 universities to compare them side-by-side across rankings, affordability, and campus life.
-          </p>
+          
+          <div className="hidden md:flex shrink-0 w-20 h-20 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 items-center justify-center rotate-3 hover:rotate-6 transition-transform shadow-xl">
+            <GitCompare className="w-10 h-10 text-blue-100 drop-shadow-lg" />
+          </div>
         </div>
       </div>
 
       <main className="flex-1">
-        <div className="w-full max-w-[1640px] mx-auto px-4 py-12 md:py-16">
+        <div className="w-full max-w-4xl mx-auto px-4 py-12 md:py-16">
           {/* Selectors */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             {[0, 1, 2].map((i) => (
