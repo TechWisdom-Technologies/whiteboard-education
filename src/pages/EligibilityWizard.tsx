@@ -57,16 +57,43 @@ const getTestScores = (test: string) => {
   }
 };
 
-const budgetRanges = [
-  { id: "tier1", label: "Economy", min: 0, max: 15000 },
-  { id: "tier2", label: "Standard - Level 1", min: 15001, max: 20000 },
-  { id: "tier3", label: "Standard - Level 2", min: 20001, max: 25000 },
-  { id: "tier4", label: "Comfortable - Level 1", min: 25001, max: 35000 },
-  { id: "tier5", label: "Comfortable - Level 2", min: 35001, max: 50000 },
-  { id: "tier6", label: "Premium - Level 1", min: 50001, max: 80000 },
-  { id: "tier7", label: "Premium - Level 2", min: 80001, max: 120000 },
-  { id: "tier8", label: "No Limit", min: 120001, max: 999999 },
-];
+const getBudgetRanges = (currency: string) => {
+  if (currency === "USD") {
+    return [
+      { id: "tier1", label: "Economy", min: 0, max: 5000 },
+      { id: "tier2", label: "Standard - Level 1", min: 5001, max: 10000 },
+      { id: "tier3", label: "Standard - Level 2", min: 10001, max: 15000 },
+      { id: "tier4", label: "Comfortable - Level 1", min: 15001, max: 20000 },
+      { id: "tier5", label: "Comfortable - Level 2", min: 20001, max: 30000 },
+      { id: "tier6", label: "Premium - Level 1", min: 30001, max: 50000 },
+      { id: "tier7", label: "Premium - Level 2", min: 50001, max: 80000 },
+      { id: "tier8", label: "No Limit", min: 80001, max: 999999 },
+    ];
+  }
+  if (currency === "BDT") {
+    return [
+      { id: "tier1", label: "Economy", min: 0, max: 400000 },
+      { id: "tier2", label: "Standard - Level 1", min: 400001, max: 600000 },
+      { id: "tier3", label: "Standard - Level 2", min: 600001, max: 800000 },
+      { id: "tier4", label: "Comfortable - Level 1", min: 800001, max: 1200000 },
+      { id: "tier5", label: "Comfortable - Level 2", min: 1200001, max: 1500000 },
+      { id: "tier6", label: "Premium - Level 1", min: 1500001, max: 2000000 },
+      { id: "tier7", label: "Premium - Level 2", min: 2000001, max: 3000000 },
+      { id: "tier8", label: "No Limit", min: 3000001, max: 99999999 },
+    ];
+  }
+  // Default MYR
+  return [
+    { id: "tier1", label: "Economy", min: 0, max: 15000 },
+    { id: "tier2", label: "Standard - Level 1", min: 15001, max: 20000 },
+    { id: "tier3", label: "Standard - Level 2", min: 20001, max: 25000 },
+    { id: "tier4", label: "Comfortable - Level 1", min: 25001, max: 35000 },
+    { id: "tier5", label: "Comfortable - Level 2", min: 35001, max: 50000 },
+    { id: "tier6", label: "Premium - Level 1", min: 50001, max: 80000 },
+    { id: "tier7", label: "Premium - Level 2", min: 80001, max: 120000 },
+    { id: "tier8", label: "No Limit", min: 120001, max: 999999 },
+  ];
+};
 
 interface WizardData {
   intendedLevel: string;
@@ -97,7 +124,7 @@ export default function EligibilityWizard() {
   const { data: courses = [] } = useTableData("courses");
   const [step, setStep] = useState(1);
   const [expandedUniId, setExpandedUniId] = useState<string | null>(null);
-  const { formatCurrency } = useCurrency();
+  const { formatCurrency, currency, rates } = useCurrency();
   const [data, setData] = useState<WizardData>({
     intendedLevel: "",
     fieldOfInterest: "",
@@ -137,7 +164,8 @@ export default function EligibilityWizard() {
   };
 
   const filteredResults = () => {
-    const selectedTier = budgetRanges.find(b => b.id === data.budgetTier) || budgetRanges[2];
+    const currentRanges = getBudgetRanges(currency);
+    const selectedTier = currentRanges.find(b => b.id === data.budgetTier) || currentRanges[2];
     let normalizedGpa = parseFloat(data.gpa) || 0;
     if (data.gpaType === "Percentage") {
       normalizedGpa = (normalizedGpa / 100) * 4.0; // Rough conversion
@@ -151,8 +179,18 @@ export default function EligibilityWizard() {
 
     const matchedCourses = courses.filter((c: any) => {
       if (!c.degree_level.includes(data.intendedLevel)) return false;
-      if (c.tuition_fee <= 0) return false; // Filter out zero/null fees
-      if (c.tuition_fee > selectedTier.max) return false;
+      
+      const feeInMYR = typeof c.tuition_fee === 'string' 
+        ? parseFloat(c.tuition_fee.replace(/[^0-9.]/g, "")) 
+        : (Number(c.tuition_fee) || 0);
+
+      if (feeInMYR <= 0) return false; // Filter out zero/null fees
+      
+      const rate = rates[currency] || 1;
+      const feeInSelectedCurrency = feeInMYR * rate;
+
+      if (feeInSelectedCurrency > selectedTier.max) return false;
+
       if (data.fieldOfInterest) {
         const keywords = FIELD_KEYWORDS[data.fieldOfInterest];
         if (keywords) {
@@ -426,16 +464,26 @@ export default function EligibilityWizard() {
                       <SelectTrigger className="h-12 md:h-14 rounded-xl text-sm md:text-base font-semibold">
                         <SelectValue placeholder="Select your budget tier" />
                       </SelectTrigger>
-                      <SelectContent>
-                        {budgetRanges.map((tier) => (
-                          <SelectItem key={tier.id} value={tier.id} className="py-3 cursor-pointer group">
-                            <span className="font-bold text-[#1E293B] group-data-[highlighted]:text-white transition-colors">
-                              {tier.max === 999999 ? 
-                                `Above ${formatCurrency(tier.min)}` : 
-                                `${formatCurrency(tier.min)} - ${formatCurrency(tier.max)}`} / Year
-                            </span>
-                          </SelectItem>
-                        ))}
+                      <SelectContent className="bg-white border-gray-100 shadow-xl rounded-2xl max-h-[300px]">
+                        {getBudgetRanges(currency).map((tier) => {
+                          const formatRangeVal = (val: number) => {
+                            const formatter = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+                            const formatted = formatter.format(val);
+                            if (currency === "USD") return `$ ${formatted}`;
+                            if (currency === "BDT") return `BDT ${formatted}`;
+                            return `MYR ${formatted}`;
+                          };
+
+                          return (
+                            <SelectItem key={tier.id} value={tier.id} className="py-3 cursor-pointer group">
+                              <span className="font-bold text-[#1E293B] group-data-[highlighted]:text-white transition-colors">
+                                {tier.max >= 999999 ? 
+                                  `Above ${formatRangeVal(tier.min)}` : 
+                                  `${formatRangeVal(tier.min)} - ${formatRangeVal(tier.max)}`} / Year
+                              </span>
+                            </SelectItem>
+                          );
+                        })}
                       </SelectContent>
                     </Select>
                   </div>
@@ -525,9 +573,19 @@ export default function EligibilityWizard() {
                       <span className="text-[10px] md:text-[11px] font-bold text-[#2F4F97] mb-0.5">Budget/Yr</span>
                       <span className="font-semibold text-[#1E293B] text-[13px] leading-tight whitespace-nowrap">
                         {(() => {
-                          const b = budgetRanges.find(b => b.id === data.budgetTier);
+                          const currentRanges = getBudgetRanges(currency);
+                          const b = currentRanges.find(b => b.id === data.budgetTier);
                           if (!b) return "";
-                          return b.max === 999999 ? `> ${formatCurrency(b.min)}` : `${formatCurrency(b.min)} - ${formatCurrency(b.max)}`;
+                          
+                          const formatRangeVal = (val: number) => {
+                            const formatter = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+                            const formatted = formatter.format(val);
+                            if (currency === "USD") return `$ ${formatted}`;
+                            if (currency === "BDT") return `BDT ${formatted}`;
+                            return `MYR ${formatted}`;
+                          };
+                          
+                          return b.max >= 999999 ? `> ${formatRangeVal(b.min)}` : `${formatRangeVal(b.min)} - ${formatRangeVal(b.max)}`;
                         })()}
                       </span>
                     </div>
