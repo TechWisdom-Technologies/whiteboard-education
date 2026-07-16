@@ -62,8 +62,11 @@ export function TestimonialsSection() {
   const marqueeItems = [...testimonials, ...testimonials];
 
   return (
-    <section className="py-8 md:py-16 bg-white overflow-hidden">
-      <div className="w-full max-w-[1640px] mx-auto px-4">
+    <section className="py-8 md:py-16 bg-white relative overflow-hidden">
+      {/* Decorative Background Blob (Right side) */}
+      <div className="absolute top-1/4 -right-[200px] w-[600px] h-[600px] bg-[#E5EDFB] rounded-full blur-[120px] opacity-60 pointer-events-none" />
+      
+      <div className="container mx-auto px-4 relative z-10">
         {/* Section header */}
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-semibold mb-2">What Our Students Say</h2>

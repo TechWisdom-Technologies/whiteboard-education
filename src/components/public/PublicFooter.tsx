@@ -10,7 +10,7 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
   return (
     <>
       <footer className="bg-[#F8FAFC] text-[#1E293B] border-t border-gray-200">
-        <div className="w-full max-w-[1640px] mx-auto px-4 lg:px-8 pt-12 pb-5">
+        <div className="container mx-auto px-4 lg:px-8 pt-12 pb-5">
           {/* Upper portion: 5-column grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-x-4 gap-y-8 pb-10 border-b border-gray-200">
             {/* 1st Column: Logo, Subheadline, Social Icons */}

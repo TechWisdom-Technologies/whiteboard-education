@@ -263,7 +263,7 @@ export default function Courses2() {
     <div className="min-h-screen flex flex-col bg-white">
       <MegaMenu />
       {/* Main Content */}
-      <div className="w-full max-w-[1640px] mx-auto px-4 pt-10 pb-16 flex-1 w-full" ref={gridRef}>
+      <div className="container mx-auto px-4 pt-10 pb-16 flex-1 w-full" ref={gridRef}>
         {isLoading ? (
           <LoadingScreen label="Loading courses" sublabel="Finding top programs" className="py-12" />
         ) : (

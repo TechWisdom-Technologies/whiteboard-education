@@ -19,7 +19,7 @@ export default function ComingSoon() {
       <MegaMenu />
 
       <section className="intro-surface py-14 md:py-16">
-        <div className="w-full max-w-[1640px] mx-auto px-4">
+        <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="space-y-5">
               <Badge className="bg-[#2F4F97]/15 text-[#1E293B] text-sm px-4 py-1 w-fit">Coming Soon</Badge>

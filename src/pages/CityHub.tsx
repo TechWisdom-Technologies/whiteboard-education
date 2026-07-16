@@ -166,7 +166,7 @@ export default function CityHub() {
         <img src={city.image} alt={city.name} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--primary))]/95 via-[hsl(var(--primary))]/50 to-transparent" />
         <div className="absolute inset-0 flex items-end">
-          <div className="w-full max-w-[1640px] mx-auto px-4 pb-12">
+          <div className="container mx-auto px-4 pb-12">
             <Badge className="bg-[#2F4F97]/20 text-[#1E293B] mb-3">
               <MapPin className="h-3 w-3 mr-1" /> Malaysia
             </Badge>
@@ -191,7 +191,7 @@ export default function CityHub() {
 
       {/* ── ABOUT + HIGHLIGHTS ── */}
       <section className="py-16">
-        <div className="w-full max-w-[1640px] mx-auto px-4">
+        <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row gap-10">
             <div className="lg:w-1/2 space-y-4">
               <h2 className="text-2xl md:text-3xl font-extrabold text-foreground">About {city.name}</h2>
@@ -231,7 +231,7 @@ export default function CityHub() {
       {/* ── COST OF LIVING ── */}
       {costs && (
         <section className="py-16 bg-muted/50">
-          <div className="w-full max-w-[1640px] mx-auto px-4">
+          <div className="container mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-extrabold text-foreground mb-2">Cost of Living in {city.name}</h2>
             <p className="text-muted-foreground mb-8">Estimated monthly expenses for international students (USD).</p>
             <div className="grid lg:grid-cols-2 gap-8">
@@ -293,7 +293,7 @@ export default function CityHub() {
 
       {/* ── TOP COURSES ── */}
       <section className="py-16">
-        <div className="w-full max-w-[1640px] mx-auto px-4">
+        <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-2xl md:text-3xl font-extrabold text-foreground">Top Courses in {city.name}</h2>
@@ -352,7 +352,7 @@ export default function CityHub() {
 
       {/* ── UNIVERSITIES ── */}
       <section className="py-16 bg-muted/50">
-        <div className="w-full max-w-[1640px] mx-auto px-4">
+        <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-2xl md:text-3xl font-extrabold text-foreground">Universities in {city.name}</h2>
@@ -403,7 +403,7 @@ export default function CityHub() {
 
       {/* ── STUDENT LIFE ── */}
       <section className="py-16">
-        <div className="w-full max-w-[1640px] mx-auto px-4">
+        <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-extrabold text-foreground mb-2">Student Life in {city.name}</h2>
           <p className="text-muted-foreground max-w-2xl mb-8">{city.studentLifeIntro}</p>
 
@@ -489,7 +489,7 @@ export default function CityHub() {
 
       {/* ── BOTTOM CTA ── */}
       <section className="bg-[#2F4F97] py-16">
-        <div className="w-full max-w-[1640px] mx-auto px-4 text-center">
+        <div className="container mx-auto px-4 text-center">
           <h2 className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-3">
             Ready to start your journey in {city.name}?
           </h2>

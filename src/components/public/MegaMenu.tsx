@@ -160,7 +160,7 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
     <>
       {/* Top Utility Bar - Not Sticky */}
       <div className="bg-[#1E293B] text-white py-2">
-        <div className="w-full max-w-[1640px] mx-auto flex justify-end gap-6 px-4 lg:px-8">
+        <div className="container mx-auto flex justify-end gap-6 px-4 lg:px-8">
           <Link 
             to="/partner" 
             className="text-[12px] font-semibold hover:text-gray-300 transition-colors flex items-center gap-1.5 tracking-wide pr-3"
@@ -184,7 +184,7 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
 
       <header className={`${disableSticky ? 'relative' : 'sticky top-0'} z-50 w-full bg-[#F8FAFC]`}>
         <div className="bg-[#F8FAFC]">
-        <div className="w-full max-w-[1640px] mx-auto flex h-20 items-center justify-between px-4 lg:px-8">
+        <div className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-8">
           {/* Brand - Left */}
           <Link to="/" className="flex items-center gap-3 shrink-0 group">
             <img src="/logo.png" alt="Whiteboard Education" className="h-6 md:h-8 w-auto object-contain" />

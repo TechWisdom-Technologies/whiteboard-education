@@ -35,10 +35,13 @@ export function UniversityPartnersSection() {
   const row2 = [...partnersRow2, ...partnersRow2];
 
   return (
-    <section className="py-16 bg-[#f8f9fb]">
-      <div className="w-full max-w-[1640px] mx-auto px-4">
+    <section className="py-10 md:py-16 bg-[#f8f9fb] relative overflow-hidden">
+      {/* Decorative Background Blob (Right side) */}
+      <div className="absolute top-1/2 -right-[200px] w-[600px] h-[600px] bg-[#E5EDFB] rounded-full blur-[120px] opacity-60 pointer-events-none" />
+
+      <div className="container mx-auto px-4 relative z-10">
         {/* Section header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8 md:mb-12">
           <h2 className="text-2xl md:text-3xl font-semibold mb-2">Our Partner Institutions</h2>
           <p className="text-sm text-[#64748B] max-w-2xl mx-auto">
             We work with Malaysia's leading universities to connect you with world-class education opportunities.
@@ -48,14 +51,14 @@ export function UniversityPartnersSection() {
         {/* Marquees wrapped in container for width constraint */}
         <div className="overflow-hidden relative w-full">
           {/* Marquee Row 1 (Right to Left) */}
-          <div className="marquee-container mb-8">
+          <div className="marquee-container mb-2 md:mb-8">
             <div className="marquee-track">
               {row1.map((p, i) => (
-                <div key={`row1-${p.name}-${i}`} className="partner-logo-card !bg-transparent !border-0 !w-40 !flex-shrink-0 !mx-4">
+                <div key={`row1-${p.name}-${i}`} className="partner-logo-card !bg-transparent !border-0 !w-20 md:!w-40 !flex-shrink-0 !mx-2 md:!mx-4">
                   <img 
                     src={p.logo} 
                     alt={p.name} 
-                    className="h-12 max-w-full object-contain transition-all duration-300 mix-blend-multiply" 
+                    className="h-6 md:h-12 max-w-full object-contain transition-all duration-300 mix-blend-multiply" 
                   />
                 </div>
               ))}
@@ -66,11 +69,11 @@ export function UniversityPartnersSection() {
           <div className="marquee-container">
             <div className="marquee-track-reverse">
               {row2.map((p, i) => (
-                <div key={`row2-${p.name}-${i}`} className="partner-logo-card !bg-transparent !border-0 !w-40 !flex-shrink-0 !mx-4">
+                <div key={`row2-${p.name}-${i}`} className="partner-logo-card !bg-transparent !border-0 !w-20 md:!w-40 !flex-shrink-0 !mx-2 md:!mx-4">
                   <img 
                     src={p.logo} 
                     alt={p.name} 
-                    className="h-12 max-w-full object-contain transition-all duration-300 mix-blend-multiply" 
+                    className="h-6 md:h-12 max-w-full object-contain transition-all duration-300 mix-blend-multiply" 
                   />
                 </div>
               ))}

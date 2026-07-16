@@ -132,7 +132,7 @@ export default function LanguageCentersPage() {
       <MegaMenu />
 
       {/* Main Content */}
-      <div className="w-full max-w-[1640px] mx-auto px-4 lg:px-8 pt-10 pb-16 flex-1" ref={gridRef}>
+      <div className="container mx-auto px-4 lg:px-8 pt-10 pb-16 flex-1" ref={gridRef}>
         {isLoading ? (
           <LoadingScreen label="Loading language centers" sublabel="Gathering available schools" className="py-12" />
         ) : (

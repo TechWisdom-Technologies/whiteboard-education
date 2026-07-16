@@ -218,7 +218,7 @@ export default function Application() {
 
       {uni && (
         <section className="bg-[#EEF4FF] py-16">
-          <div className="w-full max-w-[1640px] mx-auto px-4 flex flex-col md:flex-row items-center gap-6">
+          <div className="container mx-auto px-4 flex flex-col md:flex-row items-center gap-6">
             <img src={logo || "https://placehold.co/150"} alt={uni.name} className="h-28 w-28 md:h-36 md:w-36 object-contain rounded-xl bg-white p-3 shadow" />
             <div className="flex-1 text-center md:text-left">
               <h1 className="text-3xl font-semibold text-[#1E293B] mb-1">{uni.name}</h1>
@@ -229,7 +229,7 @@ export default function Application() {
         </section>
       )}
 
-      <main className="flex-1 w-full max-w-[1640px] mx-auto px-4 py-12 max-w-3xl">
+      <main className="flex-1 container mx-auto px-4 py-12 max-w-3xl">
         <div className="bg-white rounded-lg shadow-sm border p-6 md:p-10">
           
           {!isAuthorized ? (

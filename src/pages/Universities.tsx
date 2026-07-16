@@ -242,7 +242,7 @@ export default function Universities() {
       <MegaMenu />
 
       {/* Main Content */}
-      <div className="w-full max-w-[1640px] mx-auto px-4 pt-10 pb-16 flex-1 w-full" ref={gridRef}>
+      <div className="container mx-auto px-4 pt-10 pb-16 flex-1 w-full" ref={gridRef}>
         {isLoading ? (
           <LoadingScreen label="Loading universities" sublabel="Finding top institutions" className="py-12" />
         ) : (

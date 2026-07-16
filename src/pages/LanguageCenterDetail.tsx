@@ -96,7 +96,7 @@ export default function LanguageCenterDetail() {
 
       {/* ═══ HERO: Logo + Name + Location + Buttons ═══ */}
       <section className="pb-10 pt-4 md:pt-0">
-        <div className="w-full max-w-[1640px] mx-auto px-4 lg:px-6">
+        <div className="container mx-auto px-4 lg:px-6">
           <div className="bg-[#EEF4FF] p-5 md:py-16 md:px-10 flex flex-col md:flex-row items-center md:items-start gap-8 rounded-2xl md:rounded-tl-md md:rounded-tr-[3rem] md:rounded-bl-[3rem] md:rounded-br-md min-h-[160px] md:min-h-[220px]">
             {/* Desktop Logo / Icon */}
             <div className="hidden md:flex h-40 w-40 bg-white rounded-xl shadow items-center justify-center shrink-0 p-4">

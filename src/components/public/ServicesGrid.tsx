@@ -30,66 +30,43 @@ const services = [
 
 export function ServicesGrid() {
   return (
-    <section className="py-8 md:py-16 bg-white relative overflow-hidden">
-      {/* Organic Background Blob */}
-      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#2F4F97]/5 rounded-full blur-[80px] pointer-events-none" />
-
-      <div className="w-full max-w-[1640px] mx-auto px-4 relative z-10">
-        <div className="text-center mb-12">
-          <h2 className="text-2xl md:text-3xl font-semibold text-[#1E293B] mb-2">
+    <section className="py-16 md:py-24 bg-[#F8FAFC] relative overflow-hidden">
+      {/* Decorative Background Blob (Right side) */}
+      <div className="absolute top-0 right-0 w-[600px] h-full bg-[#E5EDFB] rounded-l-full blur-[120px] opacity-60 pointer-events-none" />
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="text-center mb-16">
+          <h2 className="text-2xl md:text-[32px] font-bold text-[#1E293B] mb-3">
             How we can help you?
           </h2>
-          <p className="text-[#64748B] max-w-2xl mx-auto text-sm">
+          <p className="text-[#64748B] text-[13px] md:text-[14px]">
             Whiteboard Education provides comprehensive end-to-end support for your journey in Malaysia.
           </p>
         </div>
 
-        <div className="relative">
-          {/* Connecting Process Line - Aligned to middle of numbers */}
-          <div className="hidden lg:flex absolute top-[176px] left-1/2 -translate-x-1/2 w-[88%] h-3 items-center pointer-events-none z-0 opacity-30 text-[#2F4F97]">
-            {/* Start Circle */}
-            <div className="w-3 h-3 rounded-full bg-current shrink-0" />
-            {/* Line */}
-            <div className="flex-grow h-0.5 bg-current -ml-1 -mr-1" />
-            {/* End Arrow Head (Filled) */}
-            <div className="w-0 h-0 border-y-[5px] border-y-transparent border-l-[10px] border-l-current shrink-0" />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
-            {services.map((s, i) => (
-              <div key={s.title} className="relative group">
-                <div className="text-center">
-                  {/* Step Image */}
-                  <div className="mx-auto mb-8 h-32 w-32 flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
-                    <img src={s.image} alt={s.title} className="w-full h-full" />
-                  </div>
-
-                  {/* Step Number with Shadow/Offset */}
-                  <div className="relative inline-block mb-8 lg:mb-12">
-                    {/* Offset background */}
-                    <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-[#2F4F97] rounded-xl" />
-                    {/* Number box */}
-                    <div className="relative w-8 h-8 bg-[#1E293B] text-white flex items-center justify-center font-bold text-sm rounded-xl z-10 border border-[#1E293B]">
-                      {i + 1}
-                    </div>
-                  </div>
-
-                  <h3
-                    className="font-semibold text-lg mb-3 group-hover:text-[#2F4F97] transition-colors"
-                    style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B" }}
-                  >
-                    {s.title}
-                  </h3>
-                  <p
-                    className="text-[13px] leading-relaxed"
-                    style={{ color: "#64748B", fontFamily: "Poppins, sans-serif" }}
-                  >
-                    {s.description}
-                  </p>
-                </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
+          {services.map((s, i) => (
+            <div key={s.title} className="bg-white rounded-2xl shadow-sm border border-gray-50/50 p-5 pt-8 md:p-6 md:pt-10 relative flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-4 md:gap-5 group hover:shadow-md transition-shadow">
+              {/* Overlapping Number Badge */}
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-[#2F4F97] text-white flex items-center justify-center font-bold text-[14px] shadow-sm">
+                {i + 1}
               </div>
-            ))}
-          </div>
+
+              {/* Icon Image */}
+              <div className="w-16 h-16 md:w-12 md:h-12 lg:w-14 lg:h-14 shrink-0 flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
+                <img src={s.image} alt={s.title} className="w-full h-full object-contain" />
+              </div>
+
+              {/* Text Content */}
+              <div>
+                <h3 className="font-bold text-[14px] lg:text-[13px] xl:text-[14px] mb-1.5 text-[#1E293B] leading-tight">
+                  {s.title}
+                </h3>
+                <p className="text-[12px] lg:text-[10px] xl:text-[11px] text-[#64748B] leading-snug text-justify">
+                  {s.description}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

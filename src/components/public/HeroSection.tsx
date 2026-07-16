@@ -117,16 +117,12 @@ export function HeroSection() {
                   />
                 </div>
 
-                {/* Vertical Divider */}
-                <div className="block w-px bg-[#2F4F97]/30 my-2 shrink-0" />
-
                 {/* Search Button */}
                 <Button
-                  className="h-12 w-12 md:w-1/4 bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] border-l border-transparent hover:border-[#2F4F97] font-bold text-sm rounded-none transition-all active:scale-95 shrink-0 px-0 md:px-4 flex items-center justify-center"
+                  className="h-12 w-14 md:w-16 bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] border-l border-transparent hover:border-[#2F4F97] rounded-none transition-all active:scale-95 shrink-0 px-0 flex items-center justify-center"
                   onClick={handleSearch}
                 >
-                  <Search className="h-4 w-4 md:hidden block" />
-                  <span className="hidden md:block">Find Now</span>
+                  <Search className="h-5 w-5 md:h-6 md:w-6" />
                 </Button>
               </div>
             </div>

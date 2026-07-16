@@ -161,7 +161,7 @@ export default function PartnerRegistration() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <main className="flex-1 py-10 md:py-12">
-        <div className="w-full max-w-[1640px] mx-auto px-4">
+        <div className="container mx-auto px-4">
           <Link to="/partner" className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-gray-500 hover:text-[#1E293B] transition-colors mb-6">
             <ArrowLeft className="h-4 w-4" /> Back to Partnership Page
           </Link>

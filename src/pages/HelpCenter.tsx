@@ -67,7 +67,7 @@ export default function HelpCenter() {
       <MegaMenu />
       <main className="flex-1">
         <section className="intro-surface py-16">
-          <div className="w-full max-w-[1640px] mx-auto px-4 text-center">
+          <div className="container mx-auto px-4 text-center">
             <HelpCircle className="h-12 w-12 mx-auto mb-4 text-[#2F4F97]" />
             <h1 className="text-4xl font-extrabold mb-3">Help Center</h1>
             <p className="text-primary-foreground/70 max-w-xl mx-auto mb-8">Find answers to common questions about admissions, visas, payments, and student life.</p>
@@ -78,7 +78,7 @@ export default function HelpCenter() {
           </div>
         </section>
 
-        <div className="w-full max-w-[1640px] mx-auto px-4 py-12 max-w-3xl">
+        <div className="container mx-auto px-4 py-12 max-w-3xl">
           <div className="space-y-8">
             {filteredCategories.map((cat) => (
               <Card key={cat.title}>
@@ -109,7 +109,7 @@ export default function HelpCenter() {
 
       {/* Sticky Contact Footer */}
       <div className="sticky bottom-0 bg-background border-t py-4 z-40">
-        <div className="w-full max-w-[1640px] mx-auto px-4 flex items-center justify-between">
+        <div className="container mx-auto px-4 flex items-center justify-between">
           <p className="text-sm text-muted-foreground">Can't find your answer?</p>
           <Button className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90" onClick={() => navigate("/contact")}>
             <MessageCircle className="h-4 w-4 mr-2" /> Contact Support

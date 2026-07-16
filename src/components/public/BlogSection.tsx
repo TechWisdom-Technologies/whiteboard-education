@@ -19,8 +19,11 @@ export function BlogSection() {
   );
 
   return (
-    <section className="py-8 md:py-16 bg-white">
-      <div className="w-full max-w-[1640px] mx-auto px-4">
+    <section className="py-8 md:py-16 bg-white relative overflow-hidden">
+      {/* Decorative Background Blob (Left side) */}
+      <div className="absolute top-1/3 -left-[200px] w-[600px] h-[600px] bg-[#E5EDFB] rounded-full blur-[120px] opacity-60 pointer-events-none" />
+
+      <div className="container mx-auto px-4 relative z-10">
         {/* Section header */}
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-semibold mb-2">Latest Articles</h2>
@@ -36,10 +39,10 @@ export function BlogSection() {
             className="py-10"
           />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="flex overflow-x-auto md:grid md:grid-cols-4 gap-4 md:gap-6 pb-4 md:pb-0 snap-x snap-mandatory -mx-4 px-4 scroll-px-4 md:mx-0 md:px-0 md:scroll-px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {latestPosts.map((post: any) => (
-              <Link key={post.id} to={`/blog/${post.id}`} className="group">
-                <article className="group/card bg-white rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-[360px] md:h-[400px] border border-gray-200">
+              <Link key={post.id} to={`/blog/${post.id}`} className="group min-w-[280px] w-[85vw] sm:w-[320px] md:min-w-0 md:w-auto shrink-0 snap-start">
+                <article className="group/card bg-white rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-[360px] md:h-[400px] border border-gray-200 w-full">
                   {/* Image Section */}
                   <div className="relative h-[180px] w-full overflow-hidden shrink-0">
                     <img
@@ -84,6 +87,8 @@ export function BlogSection() {
                 </article>
               </Link>
             ))}
+            {/* Trailing spacer to guarantee edge padding */}
+            <div className="w-4 shrink-0 md:hidden" aria-hidden="true"></div>
           </div>
         )}
 

@@ -14,14 +14,14 @@ export default function Scholarships() {
     <div className="min-h-screen flex flex-col">
       <MegaMenu />
       <section className="intro-surface py-16">
-        <div className="w-full max-w-[1640px] mx-auto px-4 text-center">
+        <div className="container mx-auto px-4 text-center">
           <Badge variant="secondary" className="mb-4">Scholarships</Badge>
           <h1 className="text-3xl md:text-4xl font-extrabold mb-2">Scholarship Opportunities</h1>
           <p className="text-primary-foreground/70 max-w-xl mx-auto">Explore merit-based and need-based scholarships across Malaysian universities.</p>
         </div>
       </section>
 
-      <main className="flex-1 w-full max-w-[1640px] mx-auto px-4 py-10">
+      <main className="flex-1 container mx-auto px-4 py-10">
         {loadingS ? (
           <LoadingScreen label="Loading scholarships" sublabel="Finding funding options" className="py-12" />
         ) : scholarships.length === 0 ? (

@@ -64,7 +64,7 @@ export default function Contact() {
     <div className="min-h-screen flex flex-col bg-white">
       <MegaMenu />
       <main className="flex-1 py-10 md:py-16">
-        <div className="w-full max-w-[1640px] mx-auto px-4 lg:px-6">
+        <div className="container mx-auto px-4 lg:px-6">
           
           {/* Main Split Card */}
           <div className="bg-white rounded-xl shadow-xl overflow-hidden flex flex-col lg:flex-row border border-[#e8e8e8]">

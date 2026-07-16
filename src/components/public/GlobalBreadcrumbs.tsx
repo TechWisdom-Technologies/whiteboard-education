@@ -36,7 +36,7 @@ export function GlobalBreadcrumbs({ theme = "light" }: GlobalBreadcrumbsProps) {
 
   return (
     <div className={`${bgClass} w-full z-40 relative`}>
-      <div className="w-full max-w-[1640px] mx-auto px-4 lg:px-8 py-5">
+      <div className="container mx-auto px-4 lg:px-8 py-5">
         <nav className={`flex flex-wrap items-center text-[12px] ${textClass} font-medium`}>
           <Link to="/" className={`${hoverClass} transition-colors flex items-center shrink-0`}>
             <Home className="h-3.5 w-3.5 mr-1" />

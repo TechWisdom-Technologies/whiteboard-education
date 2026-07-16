@@ -35,58 +35,61 @@ export function WhyMalaysiaSection() {
   ];
 
   return (
-    <section className="py-8 md:py-16 bg-gray-50">
-      <div className="w-full max-w-[1640px] mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-2xl md:text-3xl font-semibold mb-2">Why Study in Malaysia?</h2>
-          <p className="text-sm text-[#64748B] max-w-2xl mx-auto">
+    <section className="py-12 md:py-20 bg-gray-50 relative overflow-hidden">
+      {/* Decorative Background Blob (Left side) */}
+      <div className="absolute top-1/4 -left-[200px] w-[600px] h-[600px] bg-[#E5EDFB] rounded-full blur-[120px] opacity-60 pointer-events-none" />
+      
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="text-center mb-16">
+          <h2 className="text-2xl md:text-[32px] font-bold text-[#1E293B] mb-3">Why Study in Malaysia?</h2>
+          <p className="text-[13px] md:text-[14px] text-[#1E293B] max-w-2xl mx-auto">
             Discover why thousands of international students choose Malaysia as their preferred study destination every year.
           </p>
         </div>
 
-        <div className="space-y-24">
-          {points.map((p, i) => (
-            <div key={p.title} className={`flex flex-col ${i % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'} items-center gap-12 md:gap-20`}>
-              <div className="flex-1 flex justify-center">
-                <div className="relative group w-full max-w-[440px]">
-                  {/* Background accent block - offset to the bottom-right */}
-                  <div className={`absolute inset-0 translate-x-4 translate-y-4 rounded-xl transition-transform duration-500 group-hover:translate-x-2 group-hover:translate-y-2 ${i % 2 === 0 ? 'bg-[#2F4F97]/10' : 'bg-[#1E293B]/5'}`} />
+        <div className="space-y-20 md:space-y-32">
+          {points.map((p, i) => {
+            const isReversed = i % 2 === 1;
+            return (
+              <div key={p.title} className={`flex flex-col ${isReversed ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-center gap-4 lg:gap-6`}>
+                
+                {/* Image Area - Bigger, signature curved corner */}
+                <div className="w-full lg:w-[45%] flex justify-center">
+                  <div className="relative w-full group">
+                    {/* Soft Glowing Aura Background Effect */}
+                    <div className="absolute inset-0 bg-[#2F4F97]/20 blur-[60px] rounded-full scale-75 opacity-50 -z-10 transition-all duration-700 group-hover:scale-90 group-hover:opacity-80" />
+
+                    <div className={`relative w-full aspect-[16/10] overflow-hidden bg-white shadow-lg rounded-2xl ${isReversed ? 'rounded-br-[80px] md:rounded-br-[120px]' : 'rounded-bl-[80px] md:rounded-bl-[120px]'}`}>
+                      <img 
+                        src={p.image} 
+                        alt={p.title} 
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 relative z-10" 
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Content Area - Wider, tighter line height */}
+                <div className="w-full lg:w-[55%] space-y-4 lg:px-6">
+                  <h3 className="text-2xl md:text-[28px] font-bold text-[#1E293B] mb-2">{p.title}</h3>
+                  <p className="text-[14px] md:text-[15px] text-[#1E293B] text-justify leading-[1.6]">
+                    {p.desc}
+                  </p>
                   
-                  {/* Main image container */}
-                  <div className="relative aspect-[4/3] rounded-xl overflow-hidden border border-[#e5e7eb] bg-white shadow-xl z-10">
-                    <img 
-                      src={p.image} 
-                      alt={p.title} 
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                    />
-                  </div>
-
-                  {/* Elegant corner accent */}
-                  <div className={`absolute -top-2 -left-2 w-12 h-12 border-t-2 border-l-2 z-20 transition-all duration-500 group-hover:-top-1 group-hover:-left-1 ${i % 2 === 0 ? 'border-[#2F4F97]' : 'border-[#1E293B]/20'}`} />
+                  {/* Kept the benefits list but styled compactly */}
+                  <ul className="space-y-2.5 pt-2 text-[14px]">
+                    {p.benefits.map((benefit, j) => (
+                      <li key={j} className="flex items-start gap-3 text-[#1E293B]">
+                        <CheckCircle2 className="h-5 w-5 text-[#1E293B] flex-shrink-0 mt-0.5" />
+                        <span className="leading-[1.5]">{benefit}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </div>
 
-              <div className="flex-1 space-y-6">
-                <div className="flex items-center gap-3">
-                  <h3 className="text-xl font-semibold text-[#1E293B]">{p.title}</h3>
-                  <div className="w-8 h-8 md:w-9 md:h-9 bg-[#2F4F97]/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-xs md:text-sm font-bold text-[#2F4F97]">0{i + 1}</span>
-                  </div>
-                </div>
-                <p className="text-[15px] text-[#64748B] text-justify leading-relaxed">
-                  {p.desc}
-                </p>
-                <ul className="space-y-2 text-[13px]">
-                  {p.benefits.map((benefit, j) => (
-                    <li key={j} className="flex items-center gap-3 text-[#64748B]">
-                      <CheckCircle2 className="h-4 w-4 text-[#2F4F97] flex-shrink-0" />
-                      <span>{benefit}</span>
-                    </li>
-                  ))}
-                </ul>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
