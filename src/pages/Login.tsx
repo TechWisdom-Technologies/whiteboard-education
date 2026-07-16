@@ -18,6 +18,7 @@ import {
   Loader2,
   CheckCircle2,
   KeyRound,
+  X,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -96,7 +97,7 @@ export default function Login() {
 
 
   const inputCls =
-    "w-full h-11 px-4 text-sm border border-gray-200 bg-white text-gray-900 placeholder:text-gray-400 outline-none focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] transition-colors";
+    "w-full h-12 px-4 text-sm bg-gray-50 border border-transparent text-gray-900 placeholder:text-gray-400 outline-none focus:bg-white focus:border-[#2F4F97]/30 focus:ring-4 focus:ring-[#2F4F97]/10 transition-all duration-300 rounded-2xl";
 
   // ─── Forgot Password Handlers ───
   const handleFpSendCode = async () => {
@@ -143,39 +144,20 @@ export default function Login() {
   };
 
   return (
-    <div className="fixed inset-0 flex" style={{ background: "#0c0f16" }}>
+    <div className="fixed inset-0 flex bg-[#F8FAFC]">
 
       {/* ══════════════════════════════ LEFT PANEL ══════════════════════════════ */}
-      <div className="relative hidden lg:flex flex-col w-1/2 h-full overflow-hidden">
+      <div className="relative hidden lg:flex flex-col w-1/2 h-full overflow-hidden bg-gradient-to-br from-[#EEF4FF] to-[#F8FAFC] border-r border-[#2F4F97]/10">
 
-        {/* Grid texture */}
-        <div
-          className="absolute inset-0 opacity-[0.05]"
-          style={{
-            backgroundImage:
-              "linear-gradient(#2F4F97 1px, transparent 1px), linear-gradient(90deg, #2F4F97 1px, transparent 1px)",
-            backgroundSize: "44px 44px",
-          }}
-        />
-
-        {/* Bottom radial glow */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(ellipse at 20% 110%, rgba(255,163,0,0.13) 0%, transparent 65%)",
-          }}
-        />
-
-        {/* Top amber accent line */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#2F4F97] to-transparent" />
-
-        {/* Right divider */}
-        <div className="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#2F4F97]/25 to-transparent" />
+        {/* Decorative organic background blobs */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+          <div className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] rounded-full bg-[#2F4F97]/5 blur-[100px]" />
+          <div className="absolute top-[40%] -right-[20%] w-[60%] h-[60%] rounded-full bg-[#2F4F97]/10 blur-[120px]" />
+        </div>
 
         {/* Content - full height flex column spread */}
         <div
-          className="relative z-10 flex flex-col justify-between h-full px-14 py-12"
+          className="relative z-10 flex flex-col justify-between h-full px-10 py-8 lg:px-14 lg:py-10"
           style={{
             opacity: mounted ? 1 : 0,
             transform: mounted ? "none" : "translateY(10px)",
@@ -184,58 +166,39 @@ export default function Login() {
         >
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="Whiteboard Education" className="h-10 w-auto object-contain" />
+            <Link to="/">
+              <img src="/logo.png" alt="Whiteboard Education" className="h-8 w-auto object-contain hover:opacity-80 transition-opacity" />
+            </Link>
           </div>
 
           {/* Middle hero */}
-          <div>
-            <div className="flex items-center gap-3 mb-5">
-              <div className="h-px flex-1 bg-white/10" />
-              <span className="text-[#2F4F97] text-[10px] font-bold tracking-[0.3em] uppercase">Access Portal</span>
-              <div className="h-px flex-1 bg-white/10" />
-            </div>
+          <div className="max-w-md">
 
-            <h1
-              className="font-black leading-none text-white"
-              style={{
-                fontFamily: "Poppins, sans-serif",
-                fontSize: "clamp(44px, 5vw, 64px)",
-                letterSpacing: "-2px",
-              }}
-            >
-              Admin
-            </h1>
-            <h1
-              className="font-black leading-none mb-6"
-              style={{
-                fontFamily: "Poppins, sans-serif",
-                fontSize: "clamp(44px, 5vw, 64px)",
-                letterSpacing: "-2px",
-                WebkitTextStroke: "1.5px #2F4F97",
-                color: "transparent",
-              }}
-            >
-              Panel.
+            <h1 className="font-black text-[#1E293B] text-3xl xl:text-4xl tracking-tight leading-[1.1] mb-4">
+              Manage Your <br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2F4F97] to-[#1c2f5a]">
+                Admin Panel.
+              </span>
             </h1>
 
-            <p className="text-white/30 text-xs leading-relaxed mb-7">
-              Restricted access. Authorized personnel only.
+            <p className="text-[#64748B] text-[13px] leading-relaxed mb-6 max-w-sm">
+              Authorized personnel portal for managing student applications, university partnerships, and platform configurations.
             </p>
 
             {/* Role list */}
             <div className="flex flex-col gap-3">
               {[
-                { icon: ShieldCheck, label: "Super Admin", desc: "Full system access" },
-                { icon: Layers, label: "Partner Agent", desc: "Student management" },
-                { icon: Award, label: "B2B Partners", desc: "Agency portal access" },
+                { icon: ShieldCheck, label: "Super Admin", desc: "Full system and platform access" },
+                { icon: Layers, label: "Partner Agent", desc: "Student application management" },
+                { icon: Award, label: "B2B Partners", desc: "Agency portal and analytics" },
               ].map(({ icon: Icon, label, desc }) => (
-                <div key={label} className="flex items-center gap-3 group">
-                  <div className="h-8 w-8 border border-white/10 bg-white/[0.04] flex items-center justify-center flex-shrink-0 group-hover:border-[#2F4F97]/30 transition-colors">
-                    <Icon className="h-3.5 w-3.5 text-[#2F4F97]" />
+                <div key={label} className="flex items-center gap-3 bg-white/40 p-2.5 rounded-2xl border border-white/60 shadow-sm backdrop-blur-sm">
+                  <div className="h-10 w-10 bg-white rounded-xl shadow-sm flex items-center justify-center flex-shrink-0 text-[#2F4F97]">
+                    <Icon className="h-4 w-4" />
                   </div>
                   <div>
-                    <div className="text-white/60 text-xs font-semibold">{label}</div>
-                    <div className="text-white/25 text-[10px]">{desc}</div>
+                    <div className="text-[#1E293B] text-[13px] font-bold">{label}</div>
+                    <div className="text-[#64748B] text-[11px] mt-0.5">{desc}</div>
                   </div>
                 </div>
               ))}
@@ -244,13 +207,13 @@ export default function Login() {
 
           {/* Bottom strip */}
           <div className="flex items-center justify-between">
-            <p className="text-white/15 text-[10px]">© {new Date().getFullYear()} Whiteboard Education</p>
-            <div className="flex gap-1">
+            <p className="text-[#64748B] text-[11px] font-medium">© {new Date().getFullYear()} Whiteboard Education</p>
+            <div className="flex gap-1.5">
               {[...Array(3)].map((_, i) => (
                 <div
                   key={i}
-                  className="h-1 bg-[#2F4F97]"
-                  style={{ width: i === 0 ? 20 : i === 1 ? 10 : 5, opacity: 1 - i * 0.3 }}
+                  className="h-1.5 rounded-full bg-[#2F4F97]"
+                  style={{ width: i === 0 ? 24 : i === 1 ? 12 : 6, opacity: 1 - i * 0.3 }}
                 />
               ))}
             </div>
@@ -267,26 +230,21 @@ export default function Login() {
           transition: "opacity 0.45s ease 0.08s, transform 0.45s ease 0.08s",
         }}
       >
-        {/* Top accent line (right panel) */}
-        <div className="h-[2px] w-full bg-gradient-to-r from-[#2F4F97]/40 via-[#2F4F97] to-[#2F4F97]/40 flex-shrink-0" />
-
         {/* Header bar */}
-        <div className="flex items-center justify-between px-10 py-3 border-b border-gray-200 flex-shrink-0 bg-white">
+        <div className="flex items-center justify-between px-8 py-6 flex-shrink-0 bg-white">
           {/* Mobile logo */}
           <div className="flex items-center gap-2 lg:hidden">
             <img src="/logo.png" alt="Whiteboard Education" className="h-8 w-auto object-contain" />
           </div>
-          {/* Desktop label */}
-          <span className="hidden lg:block text-xs font-bold text-gray-300 tracking-widest uppercase">
-            Whiteboard Education
-          </span>
-          <Link
-            to="/"
-            className="inline-flex items-center gap-1 text-[11px] text-gray-400 hover:text-gray-600 transition-colors"
+          {/* Desktop spacer to keep Close button aligned to the right */}
+          <div className="hidden lg:block"></div>
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-[#EEF4FF] text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white transition-colors duration-300 shadow-sm"
+            aria-label="Close"
           >
-            <ArrowLeft className="h-3 w-3" />
-            Back to site
-          </Link>
+            <X className="h-5 w-5 stroke-[2.5]" />
+          </button>
         </div>
 
         {/* Form section - centered, takes all remaining height */}
@@ -294,18 +252,15 @@ export default function Login() {
           <div className="w-full max-w-sm mx-auto">
 
             {/* Heading */}
-            <div className="mb-6">
-              <h2 className="font-extrabold text-[#0c0f16] text-2xl mb-0.5">
-                Welcome back
-              </h2>
-              <p className="text-xs text-gray-400">
+            <div className="mb-8">
+              <h2 className="font-medium tracking-tight text-[#0c0f16] text-2xl">
                 Sign in to your portal account
-              </p>
+              </h2>
             </div>
 
             {/* Alerts */}
             {regStatus?.status === "pending" && (
-              <Alert className="border-amber-300 bg-amber-50 mb-4 py-2.5 px-3" style={{ borderRadius: 0 }}>
+              <Alert className="border-amber-300 bg-amber-50 mb-4 py-2.5 px-3 rounded-2xl">
                 <Clock className="h-3.5 w-3.5 text-amber-600" />
                 <AlertTitle className="text-amber-700 text-xs font-semibold">Registration Pending</AlertTitle>
                 <AlertDescription className="text-[11px] text-amber-600">
@@ -314,7 +269,7 @@ export default function Login() {
               </Alert>
             )}
             {regStatus?.status === "rejected" && (
-              <Alert variant="destructive" className="mb-4 py-2.5 px-3" style={{ borderRadius: 0 }}>
+              <Alert variant="destructive" className="mb-4 py-2.5 px-3 rounded-2xl">
                 <XCircle className="h-3.5 w-3.5" />
                 <AlertTitle className="text-xs font-semibold">Registration Rejected</AlertTitle>
                 <AlertDescription className="text-[11px]">
@@ -327,7 +282,7 @@ export default function Login() {
             {/* Login form */}
             {fpStep === "idle" && (
               <>
-                <form onSubmit={handleLogin} className="space-y-2">
+                <form onSubmit={handleLogin} className="space-y-3.5">
                   <input
                     type="email"
                     value={email}
@@ -354,36 +309,52 @@ export default function Login() {
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full h-10 text-sm font-bold flex items-center justify-center gap-2 transition-all duration-150 hover:brightness-110 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
-                    style={{ background: "#2F4F97", color: "#0c0f16" }}
-                  >
-                    {loading ? (
-                      <>
-                        <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.37 0 0 5.37 0 12h4z" />
-                        </svg>
-                        Signing in...
-                      </>
-                    ) : (
-                      <><LogIn className="h-4 w-4" /> Sign In</>
-                    )}
-                  </button>
+                  <div className="flex flex-col gap-2 mt-4">
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full h-12 text-sm font-bold flex items-center justify-center gap-2 rounded-2xl transition-all duration-300 hover:shadow-[0_8px_20px_-6px_rgba(47,79,151,0.5)] hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-none"
+                      style={{ background: "#2F4F97", color: "#ffffff" }}
+                    >
+                      {loading ? (
+                        <>
+                          <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.37 0 0 5.37 0 12h4z" />
+                          </svg>
+                          Wait...
+                        </>
+                      ) : (
+                        <><LogIn className="h-4 w-4" /> Sign In</>
+                      )}
+                    </button>
+
+                    <div className="text-center my-1">
+                      <button
+                        type="button"
+                        onClick={() => { setFpStep("enter_email"); setFpEmail(email); }}
+                        className="text-[12px] font-semibold text-[#2F4F97] hover:text-[#1c2f5a] hover:underline transition-colors"
+                      >
+                        Forgot password?
+                      </button>
+                    </div>
+                    
+                    <div className="flex items-center w-full my-1">
+                      <div className="flex-1 h-px bg-gray-100"></div>
+                      <span className="text-[10px] text-gray-400 font-bold px-3 uppercase tracking-widest">OR</span>
+                      <div className="flex-1 h-px bg-gray-100"></div>
+                    </div>
+                    
+                    <Link
+                      to="/partner/register"
+                      className="w-full h-12 text-[13px] font-bold flex items-center justify-center gap-2 rounded-2xl border-2 border-gray-100 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-200 transition-all active:scale-[0.98]"
+                    >
+                      Register as a partner
+                    </Link>
+                  </div>
                 </form>
 
-                {/* Forgot password link */}
-                <div className="mt-2 text-right">
-                  <button
-                    type="button"
-                    onClick={() => { setFpStep("enter_email"); setFpEmail(email); }}
-                    className="text-[11px] font-semibold text-[#2F4F97] hover:underline"
-                  >
-                    Forgot password?
-                  </button>
-                </div>
+
               </>
             )}
 
@@ -404,12 +375,12 @@ export default function Login() {
                 <div className="flex gap-3">
                   <button
                     onClick={handleFpSendCode}
-                    className="flex-1 h-10 text-sm font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
+                    className="flex-1 h-12 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
                     style={{ background: "#2F4F97", color: "#0c0f16" }}
                   >
                     <KeyRound className="h-4 w-4" /> Send Code
                   </button>
-                  <button onClick={resetFpFlow} className="h-10 px-4 text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">
+                  <button onClick={resetFpFlow} className="h-12 px-4 rounded-2xl text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">
                     Cancel
                   </button>
                 </div>
@@ -424,7 +395,7 @@ export default function Login() {
 
             {fpStep === "code_sent" && (
               <div className="space-y-4">
-                <div className="flex items-start gap-3 p-3 bg-blue-50 border border-blue-100" style={{ borderRadius: 0 }}>
+                <div className="flex items-start gap-3 p-3 bg-blue-50 border border-blue-100 rounded-2xl">
                   <ShieldCheck className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
                   <p className="text-[12px] text-blue-700">A 6-digit code was sent to <span className="font-bold">{fpEmail}</span>. Check your inbox and spam folder.</p>
                 </div>
@@ -439,12 +410,12 @@ export default function Login() {
                   <button
                     onClick={handleFpVerify}
                     disabled={fpOtp.length < 6}
-                    className="flex-1 h-10 text-sm font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-50"
+                    className="flex-1 h-12 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-50"
                     style={{ background: "#0c0f16", color: "#fff" }}
                   >
                     <ArrowRight className="h-4 w-4" /> Verify Code
                   </button>
-                  <button onClick={resetFpFlow} className="h-10 px-4 text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">
+                  <button onClick={resetFpFlow} className="h-12 px-4 rounded-2xl text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">
                     Cancel
                   </button>
                 </div>
@@ -459,7 +430,7 @@ export default function Login() {
 
             {fpStep === "verified" && (
               <div className="space-y-4">
-                <div className="flex items-start gap-3 p-3 bg-green-50 border border-green-100" style={{ borderRadius: 0 }}>
+                <div className="flex items-start gap-3 p-3 bg-green-50 border border-green-100 rounded-2xl">
                   <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
                   <p className="text-[12px] text-green-700 font-medium">Code verified! Set your new password below.</p>
                 </div>
@@ -480,12 +451,12 @@ export default function Login() {
                 <div className="flex gap-3">
                   <button
                     onClick={handleFpUpdatePw}
-                    className="flex-1 h-10 text-sm font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
+                    className="flex-1 h-12 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
                     style={{ background: "#2F4F97", color: "#0c0f16" }}
                   >
                     Update Password
                   </button>
-                  <button onClick={resetFpFlow} className="h-10 px-4 text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">
+                  <button onClick={resetFpFlow} className="h-12 px-4 rounded-2xl text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">
                     Cancel
                   </button>
                 </div>
@@ -500,13 +471,13 @@ export default function Login() {
 
             {fpStep === "done" && (
               <div className="space-y-4">
-                <div className="flex items-start gap-3 p-3 bg-green-50 border border-green-100" style={{ borderRadius: 0 }}>
+                <div className="flex items-start gap-3 p-3 bg-green-50 border border-green-100 rounded-2xl">
                   <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
                   <p className="text-[12px] text-green-700 font-medium">Password updated successfully! You can now sign in with your new password.</p>
                 </div>
                 <button
                   onClick={resetFpFlow}
-                  className="w-full h-10 text-sm font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
+                  className="w-full h-12 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
                   style={{ background: "#2F4F97", color: "#0c0f16" }}
                 >
                   <LogIn className="h-4 w-4" /> Back to Sign In
@@ -514,33 +485,10 @@ export default function Login() {
               </div>
             )}
 
-            {/* Divider + partner link */}
-            {fpStep === "idle" && (
-            <div className="mt-4 pt-3 border-t border-gray-200 flex items-center justify-between">
-              <span className="text-[11px] text-gray-400">Joining as a partner agency?</span>
-              <Link to="/partner" className="text-[11px] font-semibold text-[#2F4F97] hover:underline">
-                Apply here →
-              </Link>
-            </div>
-            )}
+
           </div>
         </div>
 
-        {/* Bottom info bar - fills remaining space visually */}
-        <div className="flex-shrink-0 border-t border-gray-200 bg-white px-10 py-3">
-          <div className="flex items-center gap-6">
-            {[
-              { label: "Universities", value: "50+" },
-              { label: "Courses", value: "200+" },
-              { label: "Students Enrolled", value: "10K+" },
-            ].map(({ label, value }) => (
-              <div key={label} className="flex items-center gap-2">
-                <span className="text-sm font-extrabold text-[#0c0f16]">{value}</span>
-                <span className="text-[11px] text-gray-400">{label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );

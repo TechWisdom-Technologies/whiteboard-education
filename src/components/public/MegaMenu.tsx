@@ -246,7 +246,7 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
             {user && (
               <DropdownMenu modal={false}>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-xl p-0 hover:ring-2 hover:ring-[#2F4F97]/30 transition-all">
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 hover:ring-2 hover:ring-[#2F4F97]/30 transition-all">
                     <Avatar className="h-10 w-10 border-2 border-[#2F4F97]/30">
                       <AvatarImage src={avatarUrl} alt={user?.email || "User avatar"} />
                       <AvatarFallback className="bg-primary text-primary-foreground text-sm font-bold">
