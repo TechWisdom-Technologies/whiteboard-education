@@ -31,8 +31,33 @@ import {
 import { cn } from "@/lib/utils";
 import { GlobalBreadcrumbs } from "./GlobalBreadcrumbs";
 
-const CurrencySelector = () => {
+const CurrencySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
   const { currency, setCurrency } = useCurrency();
+  
+  if (isMobile) {
+    return (
+      <Collapsible>
+        <CollapsibleTrigger className="flex w-full items-center justify-between px-3 py-2.5 text-[14px] font-poppins font-medium text-black hover:bg-[#F8FAFC]/50 rounded-xl transition-colors">
+          <span className="flex items-center gap-2.5">
+            <RefreshCw className="h-4 w-4 text-muted-foreground" /> Currency ({currency})
+          </span>
+          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+        </CollapsibleTrigger>
+        <CollapsibleContent className="pl-9 space-y-1 mt-1">
+          <div onClick={() => setCurrency("MYR")} className={`cursor-pointer px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${currency === "MYR" ? "bg-[#EEF4FF] text-[#2F4F97] font-bold" : "text-gray-600 hover:text-black hover:bg-gray-50"}`}>
+            MYR (Ringgit)
+          </div>
+          <div onClick={() => setCurrency("USD")} className={`cursor-pointer px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${currency === "USD" ? "bg-[#EEF4FF] text-[#2F4F97] font-bold" : "text-gray-600 hover:text-black hover:bg-gray-50"}`}>
+            USD (Dollar)
+          </div>
+          <div onClick={() => setCurrency("BDT")} className={`cursor-pointer px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${currency === "BDT" ? "bg-[#EEF4FF] text-[#2F4F97] font-bold" : "text-gray-600 hover:text-black hover:bg-gray-50"}`}>
+            BDT (Taka)
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
+    );
+  }
+
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
@@ -45,7 +70,7 @@ const CurrencySelector = () => {
           </div>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-40 border-[#e8e8e8] shadow-md rounded-xl p-2">
+      <DropdownMenuContent align="end" className="w-40 bg-white border-[#e8e8e8] shadow-md rounded-xl p-2 z-[100]">
         <div className="text-xs font-semibold text-gray-500 mb-2 px-2 uppercase">Currency</div>
         <DropdownMenuItem onClick={() => setCurrency("MYR")} className={`cursor-pointer rounded-lg mb-1 ${currency === "MYR" ? "bg-[#EEF4FF] text-[#2F4F97] font-bold" : ""}`}>
           MYR (Ringgit)
@@ -173,7 +198,7 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
                     variant="ghost"
                     size="sm"
                     className={cn(
-                      "h-10 text-[14px] font-poppins font-bold text-black hover:text-[#2F4F97] hover:bg-transparent gap-1.5 px-3 transition-colors",
+                      "h-10 text-[14px] font-poppins font-medium text-black hover:text-[#2F4F97] hover:bg-transparent gap-1.5 px-3 transition-colors",
                       toolsActive && "text-[#2F4F97]",
                     )}
                   >
@@ -278,7 +303,7 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
                     <MobileNavLink to="/language-centers" icon={Languages}>Language Centers</MobileNavLink>
 
                     <Collapsible>
-                      <CollapsibleTrigger className="flex w-full items-center justify-between px-3 py-3.5 text-[16px] font-poppins font-bold text-black hover:bg-[#F8FAFC]/50 rounded-xl transition-colors">
+                      <CollapsibleTrigger className="flex w-full items-center justify-between px-3 py-3.5 text-[16px] font-poppins font-medium text-black hover:bg-[#F8FAFC]/50 rounded-xl transition-colors">
                         <span className="flex items-center gap-3">
                           <Sparkles className="h-5 w-5 text-muted-foreground" /> Resources & Tools
                         </span>
@@ -292,6 +317,7 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
                     </Collapsible>
 
                     <MobileNavLink to="/contact" icon={Phone}>Contact Us</MobileNavLink>
+                    <CurrencySelector isMobile={true} />
                   </nav>
                 </div>
               </SheetContent>
@@ -315,7 +341,7 @@ function NavItem({ to, children, icon: Icon }: { to: string; children: React.Rea
         variant="ghost"
         size="sm"
         className={cn(
-          "h-10 text-[14px] font-poppins font-bold text-black hover:text-[#2F4F97] hover:bg-transparent gap-1.5 px-3 transition-colors",
+          "h-10 text-[14px] font-poppins font-medium text-black hover:text-[#2F4F97] hover:bg-transparent gap-1.5 px-3 transition-colors",
           isActive && "text-[#2F4F97]",
         )}
       >
@@ -342,7 +368,7 @@ function MobileNavLink({ to, children, icon: Icon }: { to: string; children: Rea
       <Link
         to={to}
         className={cn(
-          "flex items-center gap-2.5 px-3 py-2.5 text-[14px] font-poppins font-bold text-black hover:bg-[#F8FAFC]/50 rounded-xl transition-colors",
+          "flex items-center gap-2.5 px-3 py-2.5 text-[14px] font-poppins font-medium text-black hover:bg-[#F8FAFC]/50 rounded-xl transition-colors",
           isActive && "text-[#2F4F97]"
         )}
       >

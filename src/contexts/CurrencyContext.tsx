@@ -112,16 +112,8 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
 
     const formattedNumber = formatter.format(converted);
 
-    // Prefix with currency symbol
-    switch (currency) {
-      case "USD":
-        return `$ ${formattedNumber}`;
-      case "BDT":
-        return `BDT ${formattedNumber}`;
-      case "MYR":
-      default:
-        return `MYR ${formattedNumber}`;
-    }
+    // Prefix with currency short name
+    return `${currency} ${formattedNumber}`;
   };
 
   return (
