@@ -44,15 +44,21 @@ const CurrencySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
           <ChevronDown className="h-4 w-4 text-muted-foreground" />
         </CollapsibleTrigger>
         <CollapsibleContent className="pl-9 space-y-1 mt-1">
-          <div onClick={() => setCurrency("MYR")} className={`cursor-pointer px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${currency === "MYR" ? "bg-[#EEF4FF] text-[#2F4F97] font-bold" : "text-gray-600 hover:text-black hover:bg-gray-50"}`}>
-            MYR (Ringgit)
-          </div>
-          <div onClick={() => setCurrency("USD")} className={`cursor-pointer px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${currency === "USD" ? "bg-[#EEF4FF] text-[#2F4F97] font-bold" : "text-gray-600 hover:text-black hover:bg-gray-50"}`}>
-            USD (Dollar)
-          </div>
-          <div onClick={() => setCurrency("BDT")} className={`cursor-pointer px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${currency === "BDT" ? "bg-[#EEF4FF] text-[#2F4F97] font-bold" : "text-gray-600 hover:text-black hover:bg-gray-50"}`}>
-            BDT (Taka)
-          </div>
+          <SheetClose asChild>
+            <div onClick={() => setCurrency("MYR")} className={`cursor-pointer px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${currency === "MYR" ? "bg-[#EEF4FF] text-[#2F4F97] font-bold" : "text-gray-600 hover:text-black hover:bg-gray-50"}`}>
+              MYR (Ringgit)
+            </div>
+          </SheetClose>
+          <SheetClose asChild>
+            <div onClick={() => setCurrency("USD")} className={`cursor-pointer px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${currency === "USD" ? "bg-[#EEF4FF] text-[#2F4F97] font-bold" : "text-gray-600 hover:text-black hover:bg-gray-50"}`}>
+              USD (Dollar)
+            </div>
+          </SheetClose>
+          <SheetClose asChild>
+            <div onClick={() => setCurrency("BDT")} className={`cursor-pointer px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${currency === "BDT" ? "bg-[#EEF4FF] text-[#2F4F97] font-bold" : "text-gray-600 hover:text-black hover:bg-gray-50"}`}>
+              BDT (Taka)
+            </div>
+          </SheetClose>
         </CollapsibleContent>
       </Collapsible>
     );
