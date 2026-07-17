@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Handshake, Upload, X, FileText, Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -56,9 +57,43 @@ async function uploadFile(file: File, folder: string): Promise<string> {
   return data.publicUrl;
 }
 
+const COUNTRIES = [
+  "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria",
+  "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan", "Bolivia",
+  "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia",
+  "Cameroon", "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo", "Costa Rica",
+  "Croatia", "Cuba", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt",
+  "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Fiji", "Finland", "France", "Gabon", "Gambia",
+  "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Honduras",
+  "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy", "Jamaica", "Japan", "Jordan",
+  "Kazakhstan", "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya",
+  "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands",
+  "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique",
+  "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea",
+  "North Macedonia", "Norway", "Oman", "Pakistan", "Palau", "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru",
+  "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia",
+  "Saint Vincent and the Grenadines", "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia",
+  "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea",
+  "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan", "Tanzania",
+  "Thailand", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu", "Uganda",
+  "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City",
+  "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
+];
+
+const STUDENT_RANGES = [
+  "1 - 10",
+  "11 - 50",
+  "51 - 100",
+  "101 - 250",
+  "251 - 500",
+  "501 - 1000",
+  "1000+"
+];
+
 export default function PartnerRegistration() {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
+  const [step, setStep] = useState(1);
 
   // Form state
   const [agencyName, setAgencyName] = useState("");
@@ -66,6 +101,8 @@ export default function PartnerRegistration() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [country, setCountry] = useState("");
+  const [website, setWebsite] = useState("");
+  const [regNumber, setRegNumber] = useState("");
   const [annualStudents, setAnnualStudents] = useState("");
   const [password, setPassword] = useState("");
 
@@ -79,6 +116,26 @@ export default function PartnerRegistration() {
   };
   const removeCertificate = (idx: number) => {
     setCertificateFiles((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const handleNext = () => {
+    if (step === 1) {
+      if (!agencyName || !country) {
+        toast.error("Please fill in the required company details.");
+        return;
+      }
+      setStep(2);
+    } else if (step === 2) {
+      if (!contactPerson || !phone || !email || !password) {
+        toast.error("Please fill in the required contact details.");
+        return;
+      }
+      setStep(3);
+    }
+  };
+
+  const handleBack = () => {
+    if (step > 1) setStep(step - 1);
   };
 
   const handleSubmit = async () => {
@@ -131,7 +188,9 @@ export default function PartnerRegistration() {
           email,
           phone,
           country,
-          annual_students: parseInt(annualStudents) || 0,
+          website_url: website,
+          registration_number: regNumber,
+          annual_students: annualStudents,
           nid_document_url: nidUrl,
           trade_license_url: tradeLicenseUrl,
           certificate_urls: certUrls,
@@ -156,119 +215,192 @@ export default function PartnerRegistration() {
     }
   };
 
-  const inputCls = "h-11 bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] text-[13px] rounded-xl transition-colors shadow-none";
+  const inputCls =
+    "w-full h-11 px-3 text-[13px] bg-gray-50 border border-transparent text-gray-900 placeholder:text-gray-400 outline-none focus:bg-white focus:border-[#2F4F97]/30 focus:ring-4 focus:ring-[#2F4F97]/10 transition-all duration-300 rounded-xl";
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
-      <main className="flex-1 py-10 md:py-12">
-        <div className="container mx-auto px-4">
-          <Link to="/partner" className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-gray-500 hover:text-[#1E293B] transition-colors mb-6">
-            <ArrowLeft className="h-4 w-4" /> Back to Partnership Page
-          </Link>
+    <div className="fixed inset-0 flex bg-[#F8FAFC]">
+      {/* ══════════════════════════════ LEFT PANEL ══════════════════════════════ */}
+      <div className="relative hidden lg:flex flex-col w-5/12 h-full overflow-hidden bg-gradient-to-br from-[#EEF4FF] to-[#F8FAFC] border-r border-[#2F4F97]/10">
+        
+        {/* Decorative organic background blobs */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+          <div className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] rounded-full bg-[#2F4F97]/5 blur-[100px]" />
+          <div className="absolute top-[40%] -right-[20%] w-[60%] h-[60%] rounded-full bg-[#2F4F97]/10 blur-[120px]" />
+        </div>
+
+        {/* Content - flex column spread */}
+        <div className="relative z-10 flex flex-col justify-between h-full px-8 py-6 lg:px-10 lg:py-8">
           
-          <div className="bg-white rounded-xl shadow-xl overflow-hidden flex flex-col lg:flex-row border border-[#e8e8e8]">
-            
-            {/* Left Panel - Dark */}
-            <div className="w-full lg:w-5/12 bg-[#1E293B] text-white p-8 md:p-12 relative overflow-hidden flex flex-col">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#2F4F97] to-[#2F4F97]/20" />
-              <div className="absolute -top-24 -right-24 w-64 h-64 bg-[#2F4F97] rounded-full opacity-10 blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-[#2F4F97] rounded-full opacity-10 blur-3xl pointer-events-none" />
-              
-              <div className="relative z-10 flex-1 flex flex-col">
-                <div className="flex items-center gap-3 mb-10">
-                  <img src="/logo.png" alt="Whiteboard Education" className="h-9 w-auto object-contain" />
-                </div>
+          <div className="flex flex-col">
+            {/* Logo */}
+            <Link to="/" className="inline-flex mb-6">
+              <img src="/logo.png" alt="Whiteboard Education" className="h-7 w-auto object-contain hover:opacity-80 transition-opacity" />
+            </Link>
 
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-6 bg-white/5 border border-white/10 rounded-xl w-fit backdrop-blur-sm">
-                  <Handshake className="h-3.5 w-3.5 text-[#2F4F97]" />
-                  <span className="text-[10px] font-bold text-white tracking-widest uppercase">Partner Network</span>
-                </div>
-
-                <h1 className="text-3xl md:text-4xl font-extrabold mb-5 leading-[1.15] tracking-tight text-white">
-                  Join Our Global <br />
-                  <span className="text-[#2F4F97]">Partner Agency Network</span>
-                </h1>
-                
-                <p className="text-gray-400 text-[13.5px] leading-relaxed font-light mb-10">
-                  Gain access to Malaysia's top universities, streamlined application processing, and dedicated support to help your students succeed.
-                </p>
-
-                <div className="space-y-6 mt-auto border-t border-white/10 pt-8">
-                  <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-2">Why Partner With Us?</h3>
-                  
-                  {[
-                    "Direct access to 50+ Malaysian Universities",
-                    "Dedicated account manager for fast support",
-                    "Full visa & compliance assistance",
-                    "Transparent commission & high approval rates"
-                  ].map((benefit, i) => (
-                    <div key={i} className="flex items-start gap-3">
-                      <CheckCircle2 className="h-4 w-4 text-[#2F4F97] mt-0.5 shrink-0" />
-                      <span className="text-[13px] text-gray-300 font-medium">{benefit}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 mb-3 bg-white border border-[#2F4F97]/10 rounded-xl w-fit shadow-sm">
+              <Handshake className="h-3 w-3 text-[#2F4F97]" />
+              <span className="text-[10px] font-bold text-[#2F4F97] tracking-widest uppercase">Partner Network</span>
             </div>
 
-            {/* Right Panel - Form */}
-            <div className="w-full lg:w-7/12 p-8 md:p-12">
-              <h2 className="text-2xl font-bold text-[#1E293B] mb-2 leading-tight">
-                Agency Registration
-              </h2>
-              <p className="text-sm text-gray-500 mb-8 font-medium">Please fill in your company details to apply for partnership.</p>
-              
-              <div className="space-y-8">
-                {/* Section 1 */}
-                <div>
-                  <h3 className="text-sm font-semibold text-[#1E293B] mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
+            <h1 className="font-black text-[#1E293B] text-2xl xl:text-3xl tracking-tight leading-[1.15] mb-2.5">
+              Join Our Global <br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2F4F97] to-[#1c2f5a]">
+                Agency Network.
+              </span>
+            </h1>
+
+            <p className="text-[#64748B] text-[12px] leading-relaxed mb-5 max-w-sm">
+              Gain access to Malaysia's top universities, streamlined application processing, and dedicated support to help your students succeed.
+            </p>
+
+            <div className="space-y-2">
+              <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1">Why Partner With Us?</h3>
+              {[
+                "Direct access to 50+ Malaysian Universities",
+                "Dedicated account manager for fast support",
+                "Full visa & compliance assistance",
+                "Transparent commission & high approval rates"
+              ].map((benefit, i) => (
+                <div key={i} className="flex items-center gap-3 bg-white/40 py-2 px-3 rounded-2xl border border-white/60 shadow-sm backdrop-blur-sm max-w-sm">
+                  <div className="h-5 w-5 rounded-full bg-[#2F4F97]/10 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle2 className="h-3 w-3 text-[#2F4F97]" />
+                  </div>
+                  <span className="text-[11px] text-[#1E293B] font-bold">{benefit}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Bottom strip */}
+          <div className="flex items-center justify-between pt-4 mt-4 border-t border-[#2F4F97]/10">
+            <p className="text-[#64748B] text-[11px] font-medium">© {new Date().getFullYear()} Whiteboard Education</p>
+          </div>
+        </div>
+      </div>
+
+      {/* ══════════════════════════════ RIGHT PANEL ══════════════════════════════ */}
+      <div className="relative w-full lg:w-7/12 h-full flex flex-col bg-gradient-to-br from-[#EEF4FF] to-[#F8FAFC] lg:bg-none lg:bg-white overflow-hidden">
+        
+        {/* Mobile decorative blobs */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none lg:hidden">
+          <div className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] rounded-full bg-[#2F4F97]/10 blur-[100px]" />
+          <div className="absolute top-[40%] -right-[20%] w-[60%] h-[60%] rounded-full bg-[#2F4F97]/15 blur-[120px]" />
+        </div>
+
+        {/* Header bar */}
+        <div className="relative z-10 flex items-center justify-between px-8 py-6 flex-shrink-0 bg-transparent lg:bg-white border-b lg:border-none border-[#2F4F97]/10">
+          <div className="flex items-center gap-2 lg:hidden">
+            <img src="/logo.png" alt="Whiteboard Education" className="h-8 w-auto object-contain" />
+          </div>
+          <div className="hidden lg:block"></div>
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-[#EEF4FF] text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white transition-colors duration-300 shadow-sm"
+            aria-label="Close"
+          >
+            <X className="h-5 w-5 stroke-[2.5]" />
+          </button>
+        </div>
+
+        {/* Scrollable Form section */}
+        <div className="relative z-10 flex-1 overflow-y-auto px-6 py-6 md:px-12 md:py-8 lg:px-16">
+          <div className="max-w-2xl mx-auto pb-12">
+            <h2 className="font-medium tracking-tight text-[#0c0f16] text-2xl mb-2">
+              Agency Registration
+            </h2>
+            <p className="text-sm text-[#64748B] mb-8 font-medium">Please fill in your company details to apply for partnership.</p>
+            
+            {/* Stepper */}
+            <div className="flex items-center gap-2 mb-8">
+              {[1, 2, 3].map((s) => (
+                <div key={s} className="flex-1 flex flex-col gap-2">
+                  <div className={`h-1.5 w-full rounded-full transition-colors duration-300 ${s <= step ? 'bg-[#2F4F97]' : 'bg-gray-200'}`} />
+                  <span className={`text-[10px] font-bold uppercase tracking-widest transition-colors duration-300 ${s <= step ? 'text-[#2F4F97]' : 'text-gray-400'}`}>
+                    {s === 1 ? 'Company' : s === 2 ? 'Rep' : 'Docs'}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-8">
+              {/* Section 1 */}
+              {step === 1 && (
+                <div className="animate-fade-in">
+                  <h3 className="text-sm font-semibold text-[#1E293B] mb-3 pb-2 border-b border-gray-100 flex items-center gap-2">
                     <span className="bg-[#2F4F97] text-white w-5 h-5 rounded-xl flex items-center justify-center text-[10px] font-black">1</span>
                     Company Details
                   </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div className="space-y-1.5">
-                      <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Agency Name <span className="text-red-500">*</span></Label>
-                      <Input value={agencyName} onChange={(e) => setAgencyName(e.target.value)} placeholder="E.g. Global Ed Consultants" required className={inputCls} />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Agency Name <span className="text-red-500">*</span></Label>
+                      <Input value={agencyName} onChange={(e) => setAgencyName(e.target.value)} placeholder="Global Ed Consultants" required className={inputCls} />
                     </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Country <span className="text-red-500">*</span></Label>
-                      <Input value={country} onChange={(e) => setCountry(e.target.value)} placeholder="E.g. Bangladesh" required className={inputCls} />
+                    <div className="space-y-1">
+                      <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Country <span className="text-red-500">*</span></Label>
+                      <Select value={country} onValueChange={setCountry} required>
+                        <SelectTrigger className={inputCls}>
+                          <SelectValue placeholder="Select Country" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {COUNTRIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
                     </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Annual Students</Label>
-                      <Input type="number" value={annualStudents} onChange={(e) => setAnnualStudents(e.target.value)} placeholder="E.g. 50" className={inputCls} />
+                    <div className="space-y-1">
+                      <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Website URL</Label>
+                      <Input value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://agency.com" className={inputCls} />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Company Reg. No</Label>
+                      <Input value={regNumber} onChange={(e) => setRegNumber(e.target.value)} placeholder="E.g. CR-123456" className={inputCls} />
+                    </div>
+                    <div className="space-y-1 sm:col-span-2">
+                      <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Annual Students</Label>
+                      <Select value={annualStudents} onValueChange={setAnnualStudents} required>
+                        <SelectTrigger className={inputCls}>
+                          <SelectValue placeholder="Select Range" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {STUDENT_RANGES.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                 </div>
+              )}
 
-                {/* Section 2 */}
-                <div>
-                  <h3 className="text-sm font-semibold text-[#1E293B] mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
+              {/* Section 2 */}
+              {step === 2 && (
+                <div className="animate-fade-in">
+                  <h3 className="text-sm font-semibold text-[#1E293B] mb-3 pb-2 border-b border-gray-100 flex items-center gap-2">
                     <span className="bg-[#2F4F97] text-white w-5 h-5 rounded-xl flex items-center justify-center text-[10px] font-black">2</span>
                     Account Representative
                   </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div className="space-y-1.5">
-                      <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Contact Person <span className="text-red-500">*</span></Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Contact Person <span className="text-red-500">*</span></Label>
                       <Input value={contactPerson} onChange={(e) => setContactPerson(e.target.value)} placeholder="Full name" required className={inputCls} />
                     </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Phone Number <span className="text-red-500">*</span></Label>
+                    <div className="space-y-1">
+                      <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Phone Number <span className="text-red-500">*</span></Label>
                       <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+880 1XXXXXXXXX" required className={inputCls} />
                     </div>
-                    <div className="space-y-1.5 sm:col-span-2">
-                      <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Email (Login ID) <span className="text-red-500">*</span></Label>
+                    <div className="space-y-1 sm:col-span-2">
+                      <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Email (Login ID) <span className="text-red-500">*</span></Label>
                       <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="contact@agency.com" required className={inputCls} />
                     </div>
-                    <div className="space-y-1.5 sm:col-span-2">
-                      <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Password <span className="text-red-500">*</span></Label>
+                    <div className="space-y-1 sm:col-span-2">
+                      <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Password <span className="text-red-500">*</span></Label>
                       <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min. 6 characters" required className={inputCls} />
                     </div>
                   </div>
                 </div>
+              )}
 
-                {/* Section 3 */}
-                <div>
+              {/* Section 3 */}
+              {step === 3 && (
+                <div className="animate-fade-in">
                   <h3 className="text-sm font-semibold text-[#1E293B] mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
                     <span className="bg-[#2F4F97] text-white w-5 h-5 rounded-xl flex items-center justify-center text-[10px] font-black">3</span>
                     Verification Documents
@@ -297,10 +429,30 @@ export default function PartnerRegistration() {
                     </div>
                   </div>
                 </div>
+              )}
 
-                <div className="pt-6 border-t border-gray-100">
+              <div className="pt-6 border-t border-gray-100 flex gap-3">
+                {step > 1 && (
                   <Button 
-                    className="w-full h-12 bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-bold text-[14px] rounded-xl transition-all"
+                    variant="outline"
+                    className="h-12 border-gray-200 text-gray-700 font-bold text-[14px] rounded-xl flex-1 max-w-[140px]"
+                    onClick={handleBack}
+                    disabled={submitting}
+                  >
+                    ← Back
+                  </Button>
+                )}
+
+                {step < 3 ? (
+                  <Button 
+                    className="flex-1 h-12 bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-bold text-[14px] rounded-xl transition-all"
+                    onClick={handleNext}
+                  >
+                    Next →
+                  </Button>
+                ) : (
+                  <Button 
+                    className="flex-1 h-12 bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-bold text-[14px] rounded-xl transition-all"
                     onClick={handleSubmit} 
                     disabled={submitting}
                   >
@@ -310,15 +462,18 @@ export default function PartnerRegistration() {
                       "Submit Application"
                     )}
                   </Button>
-                  <p className="text-[11px] text-gray-400 text-center mt-4 max-w-sm mx-auto">
-                    By submitting this form, you agree to our Partnership Terms. Your account will be activated after admin verification.
-                  </p>
-                </div>
+                )}
               </div>
+              
+              {step === 3 && (
+                <p className="text-[11px] text-gray-400 text-center mt-4 max-w-sm mx-auto animate-fade-in">
+                  By submitting this form, you agree to our Partnership Terms. Your account will be activated after admin verification.
+                </p>
+              )}
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
