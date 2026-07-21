@@ -7,13 +7,15 @@ interface StatusTrackerProps {
   onStatusChange?: (status: string) => void;
   isUpdating?: boolean;
   isAdmin?: boolean;
+  fileOpenedAt?: string;
 }
 
 export function StatusTracker({ 
   currentStatus, 
   onStatusChange,
   isUpdating = false,
-  isAdmin = false 
+  isAdmin = false,
+  fileOpenedAt 
 }: StatusTrackerProps) {
   
   const orderedIds = getOrderedStatusIds();
@@ -83,9 +85,9 @@ export function StatusTracker({
               size="sm" 
               onClick={handleNextStep}
               disabled={isUpdating}
-              className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white shadow-sm shrink-0 whitespace-nowrap"
+              className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white shadow-sm shrink-0 whitespace-nowrap text-xs px-4 h-7"
             >
-              {isUpdating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+              {isUpdating ? <Loader2 className="h-3 w-3 animate-spin mr-2" /> : null}
               Advance to Next Step
             </Button>
           )}
@@ -164,28 +166,38 @@ export function StatusTracker({
         </div>
       )}
       
-      {/* ── Override Dropdown (Admin Only) ── */}
-      {isAdmin && (
-        <div className="bg-slate-50/50 px-4 py-2 border-t flex items-center justify-end gap-2 text-xs text-slate-500">
-          Manual Override: 
-          <select 
-            value={currentStatus} 
-            onChange={(e) => onStatusChange?.(e.target.value)}
-            disabled={isUpdating}
-            className="bg-transparent border-none text-[#2F4F97] font-semibold focus:ring-0 cursor-pointer outline-none p-0 ml-1"
-          >
-            {getOrderedStatusIds().map(id => (
-              <option key={id} value={id}>
-                {statusPhases.find(p => p.steps.some(s => s.id === id))?.steps.find(s => s.id === id)?.label}
-              </option>
-            ))}
-            <option disabled>──────────</option>
-            {exceptionalStatuses.map(s => (
-              <option key={s.id} value={s.id}>{s.label}</option>
-            ))}
-          </select>
+      {/* ── Bottom Bar ── */}
+      <div className="bg-slate-50/50 px-4 py-2 border-t flex items-center justify-between gap-2 text-xs text-slate-500">
+        <div>
+          {fileOpenedAt && (
+            <span>
+              File Opened on {new Date(fileOpenedAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
+            </span>
+          )}
         </div>
-      )}
+        
+        {isAdmin && (
+          <div className="flex items-center gap-2">
+            Manual Override: 
+            <select 
+              value={currentStatus} 
+              onChange={(e) => onStatusChange?.(e.target.value)}
+              disabled={isUpdating}
+              className="bg-transparent border-none text-[#2F4F97] font-semibold focus:ring-0 cursor-pointer outline-none p-0 ml-1"
+            >
+              {getOrderedStatusIds().map(id => (
+                <option key={id} value={id}>
+                  {statusPhases.find(p => p.steps.some(s => s.id === id))?.steps.find(s => s.id === id)?.label}
+                </option>
+              ))}
+              <option disabled>──────────</option>
+              {exceptionalStatuses.map(s => (
+                <option key={s.id} value={s.id}>{s.label}</option>
+              ))}
+            </select>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

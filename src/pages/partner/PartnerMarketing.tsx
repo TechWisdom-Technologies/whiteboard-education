@@ -25,8 +25,8 @@ export default function PartnerMarketing() {
   return (
     <div className="space-y-8 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-extrabold">Marketing & Resource Hub</h1>
-        <p className="text-muted-foreground text-sm">Download marketing materials and track your referral link</p>
+        <h1 className="text-[12px] font-normal">Marketing & Resource Hub</h1>
+        <p className="text-muted-foreground text-[12px]">Download marketing materials and track your referral link</p>
       </div>
 
       {/* Referral Link */}
@@ -34,27 +34,27 @@ export default function PartnerMarketing() {
         <CardContent className="p-6">
           <div className="flex items-center gap-2 mb-3">
             <Link2 className="h-5 w-5 text-[#2F4F97]" />
-            <h3 className="font-bold">Your Unique Referral Link</h3>
+            <h3 className="font-normal">Your Unique Referral Link</h3>
           </div>
-          <p className="text-sm text-muted-foreground mb-4">Share this link to track organic leads from your network. All students who apply through this link will be automatically attributed to your agency.</p>
+          <p className="text-[12px] text-muted-foreground mb-4">Share this link to track organic leads from your network. All students who apply through this link will be automatically attributed to your agency.</p>
           <div className="flex flex-col sm:flex-row gap-2">
-            <Input value={REFERRAL_LINK} readOnly className="flex-1 font-mono text-sm bg-muted/50" />
+            <Input value={REFERRAL_LINK} readOnly className="flex-1 font-mono text-[12px] bg-muted/50" />
             <Button className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 gap-1.5 w-full sm:w-auto" onClick={copyLink}>
               <Copy className="h-4 w-4" /> Copy
             </Button>
           </div>
           <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="text-center p-3 bg-muted/50 rounded-xl">
-              <p className="text-lg font-extrabold">247</p>
-              <p className="text-xs text-muted-foreground">Total Clicks</p>
+              <p className="text-[12px] font-normal">247</p>
+              <p className="text-[12px] text-muted-foreground">Total Clicks</p>
             </div>
             <div className="text-center p-3 bg-muted/50 rounded-xl">
-              <p className="text-lg font-extrabold">38</p>
-              <p className="text-xs text-muted-foreground">Applications</p>
+              <p className="text-[12px] font-normal">38</p>
+              <p className="text-[12px] text-muted-foreground">Applications</p>
             </div>
             <div className="text-center p-3 bg-muted/50 rounded-xl">
-              <p className="text-lg font-extrabold">15.4%</p>
-              <p className="text-xs text-muted-foreground">Conversion Rate</p>
+              <p className="text-[12px] font-normal">15.4%</p>
+              <p className="text-[12px] text-muted-foreground">Conversion Rate</p>
             </div>
           </div>
         </CardContent>
@@ -62,7 +62,7 @@ export default function PartnerMarketing() {
 
       {/* Downloadable Assets */}
       <div>
-        <h2 className="text-lg font-bold mb-4">Downloadable Assets</h2>
+        <h2 className="text-[12px] font-normal mb-4">Downloadable Assets</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {marketingAssets.map((asset, i) => (
             <Card key={asset.id} className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-fade-in" style={{ animationDelay: `${i * 80}ms` }}>
@@ -71,10 +71,10 @@ export default function PartnerMarketing() {
                   <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${asset.color}`}>
                     <asset.icon className="h-5 w-5" />
                   </div>
-                  <Badge variant="outline" className="text-xs">{asset.type}</Badge>
+                  <Badge variant="outline" className="text-[12px]">{asset.type}</Badge>
                 </div>
-                <h3 className="font-bold text-sm mb-1">{asset.title}</h3>
-                <p className="text-xs text-muted-foreground mb-4">{asset.size}</p>
+                <h3 className="font-normal text-[12px] mb-1">{asset.title}</h3>
+                <p className="text-[12px] text-muted-foreground mb-4">{asset.size}</p>
                 <Button variant="outline" size="sm" className="w-full gap-1.5 group-hover:bg-[#2F4F97]/10 group-hover:text-[#2F4F97] group-hover:border-[#2F4F97]/30 transition-colors" onClick={() => toast.success(`${asset.title} downloaded!`)}>
                   <Download className="h-3.5 w-3.5" /> Download
                 </Button>

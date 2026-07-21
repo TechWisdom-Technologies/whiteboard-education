@@ -5,7 +5,7 @@ const fields: FieldConfig[] = [
   { key: "title", label: "Title", showInTable: true },
   { key: "excerpt", label: "Excerpt", type: "textarea", showInTable: false },
   { key: "content", label: "Content", type: "richtext", showInTable: false },
-  { key: "author", label: "Author", showInTable: true },
+  { key: "author", label: "Author", showInTable: false },
   { key: "category", label: "Category", showInTable: true },
   { key: "read_time", label: "Read Time", showInTable: true, placeholder: "5 min read" },
   { key: "image", label: "Thumbnail URL", showInTable: false },

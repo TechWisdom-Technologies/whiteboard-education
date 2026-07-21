@@ -36,6 +36,8 @@ import {
   Pencil,
   X,
   Languages,
+  ShieldAlert,
+  AlertTriangle,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -124,6 +126,13 @@ interface Student {
   recommendation_letter_url: string;
   other_documents: string[];
   created_at: string;
+  passport_expiry_date?: string;
+  english_test_type?: string;
+  english_test_score?: string;
+  guardian_name?: string;
+  guardian_relationship?: string;
+  guardian_phone?: string;
+  guardian_email?: string;
 }
 
 interface Application {
@@ -133,6 +142,9 @@ interface Application {
   course_id: string;
   status: string;
   created_at: string;
+  admin_notes?: string;
+  emgs_application_number?: string;
+  emgs_status_percentage?: number;
   universities?: { name: string };
   courses?: { title: string };
 }
@@ -187,6 +199,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
   // Admin status update
   const [newStatus, setNewStatus] = useState("");
   const [adminNotes, setAdminNotes] = useState("");
+  const [activityNotes, setActivityNotes] = useState<any[]>([]);
   const [savingStatus, setSavingStatus] = useState(false);
 
   // Document upload
@@ -203,6 +216,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
   const [isEditingAcademic, setIsEditingAcademic] = useState(false);
   const [isEditingLanguage, setIsEditingLanguage] = useState(false);
   const [isEditingTarget, setIsEditingTarget] = useState(false);
+  const [isEditingGuardian, setIsEditingGuardian] = useState(false);
 
   // Edit form state
   const [editForm, setEditForm] = useState({
@@ -220,14 +234,21 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     previous_degree: "",
     major: "",
     gpa: "",
-    // Language Proficiency
-    language_test_name: "",
-    ielts_score: "",
     // Target Info
     target_university: "",
     target_course: "",
     intake_month: "",
     degree_level: "",
+    emgs_application_number: "",
+    emgs_status_percentage: "",
+    // New Fields
+    passport_expiry_date: "",
+    english_test_type: "",
+    english_test_score: "",
+    guardian_name: "",
+    guardian_relationship: "",
+    guardian_phone: "",
+    guardian_email: "",
   });
 
   const startEditingPersonal = () => {
@@ -238,6 +259,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
       email: student.email || "",
       phone: student.phone || "",
       passport_number: student.passport_number || "",
+      passport_expiry_date: student.passport_expiry_date || "",
       nationality: student.nationality || "",
       nid_number: student.nid_number || "",
       date_of_birth: student.date_of_birth || "",
@@ -262,8 +284,8 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     if (!student) return;
     setEditForm((prev) => ({
       ...prev,
-      language_test_name: student.language_test_name || "",
-      ielts_score: student.ielts_score !== undefined && student.ielts_score !== null ? student.ielts_score.toString() : "",
+      english_test_type: student.english_test_type || "",
+      english_test_score: student.english_test_score || "",
     }));
     setIsEditingLanguage(true);
   };
@@ -276,8 +298,22 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
       target_course: student.target_course || "",
       intake_month: student.intake_month || "",
       degree_level: student.degree_level || "",
+      emgs_application_number: student.emgs_application_number || "",
+      emgs_status_percentage: student.emgs_status_percentage?.toString() || "",
     }));
     setIsEditingTarget(true);
+  };
+
+  const startEditingGuardian = () => {
+    if (!student) return;
+    setEditForm((prev) => ({
+      ...prev,
+      guardian_name: student.guardian_name || "",
+      guardian_relationship: student.guardian_relationship || "",
+      guardian_phone: student.guardian_phone || "",
+      guardian_email: student.guardian_email || "",
+    }));
+    setIsEditingGuardian(true);
   };
 
   const handleSaveSection = async (section: "personal" | "academic" | "language" | "target") => {
@@ -290,6 +326,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
         email: editForm.email,
         phone: editForm.phone,
         passport_number: editForm.passport_number,
+        passport_expiry_date: editForm.passport_expiry_date || null,
         nationality: editForm.nationality,
         nid_number: editForm.nid_number,
         date_of_birth: editForm.date_of_birth || null,
@@ -304,8 +341,8 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
       };
     } else if (section === "language") {
       bodyToUpdate = {
-        language_test_name: editForm.language_test_name,
-        ielts_score: editForm.ielts_score ? parseFloat(editForm.ielts_score) : 0,
+        english_test_type: editForm.english_test_type,
+        english_test_score: editForm.english_test_score,
       };
     } else if (section === "target") {
       bodyToUpdate = {
@@ -313,6 +350,15 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
         target_course: editForm.target_course,
         intake_month: editForm.intake_month,
         degree_level: editForm.degree_level,
+        emgs_application_number: editForm.emgs_application_number,
+        emgs_status_percentage: editForm.emgs_status_percentage ? parseInt(editForm.emgs_status_percentage) : null,
+      };
+    } else if (section as string === "guardian") {
+      bodyToUpdate = {
+        guardian_name: editForm.guardian_name,
+        guardian_relationship: editForm.guardian_relationship,
+        guardian_phone: editForm.guardian_phone,
+        guardian_email: editForm.guardian_email,
       };
     }
 
@@ -338,8 +384,49 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
       if (section === "academic") setIsEditingAcademic(false);
       if (section === "language") setIsEditingLanguage(false);
       if (section === "target") setIsEditingTarget(false);
+      if (section as string === "guardian") setIsEditingGuardian(false);
     } catch (e: any) {
       toast.error(e.message || "Failed to save details");
+    }
+  };
+
+  const handleAddActivityNote = async () => {
+    if (!student || !session || !adminNotes.trim()) return;
+    setSavingStatus(true);
+    try {
+      const adminName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Admin";
+      
+      const newNote = {
+        student_id: student.id,
+        admin_name: adminName,
+        content: adminNotes.trim(),
+      };
+      
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/student_notes`,
+        {
+          method: "POST",
+          headers: {
+            ...headers,
+            "Content-Type": "application/json",
+            Prefer: "return=representation",
+          },
+          body: JSON.stringify(newNote),
+        }
+      );
+      
+      if (!res.ok) throw new Error("Failed to add note");
+      const savedData = await res.json();
+      
+      if (savedData && savedData.length > 0) {
+        setActivityNotes(prev => [savedData[0], ...prev]);
+        setAdminNotes("");
+        toast.success("Note added to activity stream");
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Failed to add note");
+    } finally {
+      setSavingStatus(false);
     }
   };
 
@@ -388,6 +475,18 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
           if (Array.isArray(data)) setApplications(data);
         }).catch(err => console.error("Error fetching applications:", err))
       );
+
+      // Fetch activity notes if admin
+      if (mode === "admin") {
+        promises.push(
+          fetch(
+            `${SUPABASE_URL}/rest/v1/student_notes?student_id=eq.${studentId}&select=*&order=created_at.desc`,
+            { headers }
+          ).then(res => res.json()).then(data => {
+            if (Array.isArray(data)) setActivityNotes(data);
+          }).catch(err => console.error("Error fetching notes:", err))
+        );
+      }
       
       // Fetch universities for the dropdown if admin
       if (mode === "admin") {
@@ -718,109 +817,113 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
         {/* ── Header ─────────────────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 no-print">
           <Button
-            variant="ghost"
-            size="sm"
+            variant="default"
             onClick={handleBack}
-            className="w-fit -ml-2 text-muted-foreground hover:text-[#1E293B]"
+            className="w-fit mb-4 bg-primary hover:bg-primary/90 text-white rounded-full h-7 px-3 text-[11px] font-medium transition-all shadow-sm"
           >
-            <ArrowLeft className="h-4 w-4 mr-1.5" />
+            <ArrowLeft className="h-3 w-3 mr-1.5" />
             Back to Students
           </Button>
         </div>
 
-        <Tabs defaultValue="status" className="w-full space-y-8">
-          <TabsList className="grid w-full grid-cols-4 h-12 bg-muted/50 p-1 no-print">
-            <TabsTrigger value="status" className="text-[13px] font-bold h-10 tracking-wide uppercase">1. Student Status</TabsTrigger>
-            <TabsTrigger value="profile" className="text-[13px] font-bold h-10 tracking-wide uppercase">2. Profile Details</TabsTrigger>
-            <TabsTrigger value="documents" className="text-[13px] font-bold h-10 tracking-wide uppercase">3. Documents</TabsTrigger>
-            <TabsTrigger value="applications" className="text-[13px] font-bold h-10 tracking-wide uppercase">4. Applications</TabsTrigger>
+        <Tabs defaultValue="profile" className="w-full space-y-8">
+          <TabsList className="grid w-full grid-cols-3 h-12 bg-muted/50 p-1 no-print">
+            <TabsTrigger value="profile" className="text-[13px] font-bold h-10 tracking-wide uppercase">1. Profile Details</TabsTrigger>
+            <TabsTrigger value="documents" className="text-[13px] font-bold h-10 tracking-wide uppercase">2. Documents</TabsTrigger>
+            <TabsTrigger value="applications" className="text-[13px] font-bold h-10 tracking-wide uppercase">3. Applications</TabsTrigger>
           </TabsList>
 
-          <div className="flex flex-col md:flex-row gap-6">
-          {/* Left side: Photo & Info */}
-          <div className="flex items-start gap-5 flex-1">
+          <div className="flex flex-col lg:flex-row gap-8">
+          {/* Left Column: Photo, Info & Actions */}
+          <div className="flex flex-col items-center lg:items-start gap-4 shrink-0 w-full lg:w-[180px]">
+            {/* Image */}
             {student.passport_photo_url ? (
               <img
                 src={student.passport_photo_url}
                 alt={student.full_name}
-                className="w-[148px] h-[177px] rounded-2xl object-cover border border-[#2F4F97]/25 shadow-sm shrink-0 animate-fade-in"
+                className="w-32 h-40 lg:w-[180px] lg:h-[216px] rounded-xl object-cover border border-[#2F4F97]/25 shadow-sm shrink-0 animate-fade-in"
                 style={{ aspectRatio: "591/709" }}
               />
             ) : (
               <div 
-                className="w-[148px] h-[177px] rounded-2xl border border-dashed border-border bg-muted/10 flex flex-col items-center justify-center shrink-0 text-muted-foreground/30 text-center"
+                className="w-32 h-40 lg:w-[180px] lg:h-[216px] rounded-xl border border-dashed border-border bg-muted/10 flex flex-col items-center justify-center shrink-0 text-muted-foreground/30 text-center"
                 style={{ aspectRatio: "591/709" }}
               >
-                <User className="h-7 w-7 mb-1" />
-                <span className="text-[9px] leading-normal font-semibold">PASSPORT<br/>PHOTO</span>
+                <User className="h-10 w-10 mb-2" />
+                <span className="text-xs leading-normal font-semibold">PASSPORT<br/>PHOTO</span>
               </div>
             )}
             
-            <div className="flex flex-col gap-1.5 pt-1">
-              <h1 className="text-3xl font-extrabold text-[#1E293B] leading-tight">
+            {/* Info */}
+            <div className="flex flex-col items-center lg:items-start gap-1 w-full text-center lg:text-left">
+              <h1 className="text-xl lg:text-2xl font-bold text-[#1E293B] leading-tight">
                 {student.full_name}
               </h1>
-              <p className="text-[13px] text-muted-foreground font-medium mb-1">
-                File Opened on {new Date(student.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-              </p>
-              
-              <div className="flex items-center gap-2 mt-0.5">
-                <span className={`text-sm font-bold ${statusColors[student.status]?.replace(/bg-[^\s]+/, '').replace(/border-[^\s]+/, '').trim() || 'text-[#1E293B]'}`}>
-                  {getStatusLabel(student.status)}
-                </span>
-                
-                {profileComplete && (
-                  <Badge className="bg-green-600/10 text-green-700 border-green-600/30 text-[10px] uppercase px-1.5 py-0 h-4" variant="outline">
-                    <CheckCircle2 className="h-2.5 w-2.5 mr-0.5" />
-                    Complete
-                  </Badge>
-                )}
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-col w-full gap-2 mt-2 no-print">
+              <div className="flex w-full gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 h-7 text-[11px] font-medium px-2"
+                  disabled={!profileComplete}
+                  onClick={handlePrint}
+                >
+                  <Download className="h-3 w-3 mr-1.5" />
+                  PDF
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 h-7 text-[11px] font-medium px-2"
+                  disabled={!profileComplete}
+                  onClick={handlePrint}
+                >
+                  <Printer className="h-3 w-3 mr-1.5" />
+                  Print
+                </Button>
               </div>
+              {!profileComplete && (
+                <p className="text-[10px] leading-tight text-muted-foreground text-center lg:text-left">
+                  Complete required fields & upload 6 docs to enable print/PDF.
+                </p>
+              )}
             </div>
           </div>
 
-          {/* Right side: Actions */}
-          <div className="flex flex-col gap-2 shrink-0 md:items-end no-print pt-1">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-9 font-semibold"
-                disabled={!profileComplete}
-                onClick={handlePrint}
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Download PDF
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-9 font-semibold"
-                disabled={!profileComplete}
-                onClick={handlePrint}
-              >
-                <Printer className="h-4 w-4 mr-2" />
-                Print
-              </Button>
+          {/* Right Column: Status Tracker */}
+          <div className="flex-1 min-w-0 max-w-full overflow-hidden no-print">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-2">
+              <h3 className="text-lg font-bold text-[#1E293B]">Application Progress</h3>
+              
+              {/* EMGS Info Badges */}
+              {(student.emgs_application_number || student.emgs_status_percentage !== undefined) && (
+                <div className="flex items-center gap-3 bg-indigo-50 border border-indigo-100 rounded-lg px-3 py-1.5">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">EMGS No.</span>
+                    <span className="text-xs font-semibold text-indigo-900">{student.emgs_application_number || 'N/A'}</span>
+                  </div>
+                  <div className="w-px h-4 bg-indigo-200/50"></div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Status</span>
+                    <Badge variant="outline" className="bg-white border-indigo-200 text-indigo-700 h-5 px-1.5 text-[11px]">
+                      {student.emgs_status_percentage ?? 0}%
+                    </Badge>
+                  </div>
+                </div>
+              )}
             </div>
-            {!profileComplete && (
-              <p className="text-[11px] text-muted-foreground text-right max-w-[220px]">
-                Complete required fields & upload 6 docs to enable print/PDF.
-              </p>
-            )}
-          </div>
-        </div>
-
-        <TabsContent value="status" className="space-y-6 mt-0">
-          <div className="no-print">
             <StatusTracker 
               currentStatus={student.status} 
               onStatusChange={handleSaveStatusTracker}
               isUpdating={savingStatus}
               isAdmin={mode === 'admin'}
+              fileOpenedAt={student.created_at}
             />
           </div>
-        </TabsContent>
+        </div>
 
         <TabsContent value="documents" className="space-y-6 mt-0">
           {/* ── Horizontal Documents Section ─────────────────────────────── */}
@@ -982,6 +1085,22 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                       />
                     </div>
                     <div className="space-y-1">
+                      <Label className="text-xs font-semibold text-muted-foreground">Passport No.</Label>
+                      <Input
+                        value={editForm.passport_number}
+                        onChange={(e) => setEditForm({ ...editForm, passport_number: e.target.value })}
+                        placeholder="Passport Number"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs font-semibold text-muted-foreground">Passport Expiry Date</Label>
+                      <Input
+                        type="date"
+                        value={editForm.passport_expiry_date || ""}
+                        onChange={(e) => setEditForm({ ...editForm, passport_expiry_date: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-1">
                       <Label className="text-xs font-semibold text-muted-foreground">Gender</Label>
                       <Select
                         value={editForm.gender}
@@ -1039,6 +1158,35 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                     <InfoRow label="Nationality" value={student.nationality} />
                     <InfoRow label="NID Number" value={student.nid_number} />
                     <InfoRow label="Passport Number" value={student.passport_number} />
+                    
+                    {/* Passport Expiry & Validation */}
+                    <div className="flex flex-col gap-1.5 py-1">
+                      <span className="text-[11px] font-medium text-muted-foreground/70 uppercase tracking-wider">
+                        Passport Expiry
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[13px] font-medium leading-snug ${!student.passport_expiry_date ? "text-amber-600/80 italic text-xs flex items-center gap-1 bg-amber-50/50 dark:bg-amber-950/10 px-2.5 py-1 rounded-2xl border border-amber-200/30 w-fit" : "text-[#1E293B]"}`}>
+                          {student.passport_expiry_date ? new Date(student.passport_expiry_date).toLocaleDateString() : "Not provided"}
+                        </span>
+                        {student.passport_expiry_date && (
+                          (() => {
+                            const today = new Date();
+                            const expiry = new Date(student.passport_expiry_date);
+                            const monthsDiff = (expiry.getFullYear() - today.getFullYear()) * 12 + (expiry.getMonth() - today.getMonth());
+                            if (monthsDiff < 18) {
+                              return (
+                                <Badge variant="outline" className="bg-red-50 text-red-600 border-red-200 text-[10px] px-1.5 h-4 uppercase">
+                                  <AlertTriangle className="h-2.5 w-2.5 mr-0.5" />
+                                  &lt; 18m
+                                </Badge>
+                              );
+                            }
+                            return null;
+                          })()
+                        )}
+                      </div>
+                    </div>
+
                     <InfoRow
                       label="Date of Birth"
                       value={
@@ -1186,28 +1334,36 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                   {isEditingLanguage ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <Label className="text-xs font-semibold text-muted-foreground">Test Name</Label>
-                        <Input
-                          value={editForm.language_test_name}
-                          onChange={(e) => setEditForm({ ...editForm, language_test_name: e.target.value })}
-                          placeholder="e.g. IELTS, TOEFL, Duolingo"
-                        />
+                        <Label className="text-xs font-semibold text-muted-foreground">Test Type / Medium</Label>
+                        <Select
+                          value={editForm.english_test_type}
+                          onValueChange={(val) => setEditForm({ ...editForm, english_test_type: val })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="e.g. IELTS, MOI" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="IELTS">IELTS</SelectItem>
+                            <SelectItem value="TOEFL">TOEFL</SelectItem>
+                            <SelectItem value="Duolingo">Duolingo</SelectItem>
+                            <SelectItem value="MOI">MOI (Medium of Instruction)</SelectItem>
+                            <SelectItem value="Other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-xs font-semibold text-muted-foreground">Score</Label>
+                        <Label className="text-xs font-semibold text-muted-foreground">Score / Status</Label>
                         <Input
-                          type="number"
-                          step="0.5"
-                          value={editForm.ielts_score}
-                          onChange={(e) => setEditForm({ ...editForm, ielts_score: e.target.value })}
-                          placeholder="e.g. 6.5"
+                          value={editForm.english_test_score}
+                          onChange={(e) => setEditForm({ ...editForm, english_test_score: e.target.value })}
+                          placeholder="e.g. 6.5 or 'Approved'"
                         />
                       </div>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4">
-                      <InfoRow label="Test Name" value={student.language_test_name} />
-                      <InfoRow label="Score" value={student.ielts_score || null} />
+                      <InfoRow label="Proficiency Type" value={student.english_test_type} />
+                      <InfoRow label="Score / Status" value={student.english_test_score} />
                     </div>
                   )}
                 </div>
@@ -1291,18 +1447,140 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                           placeholder="e.g. September 2026"
                         />
                       </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs font-semibold text-muted-foreground">EMGS Application No.</Label>
+                        <Input
+                          value={editForm.emgs_application_number}
+                          onChange={(e) => setEditForm({ ...editForm, emgs_application_number: e.target.value })}
+                          placeholder="e.g. E123456789"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs font-semibold text-muted-foreground">EMGS Status %</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          max="100"
+                          value={editForm.emgs_status_percentage}
+                          onChange={(e) => setEditForm({ ...editForm, emgs_status_percentage: e.target.value })}
+                          placeholder="e.g. 35"
+                        />
+                      </div>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-5">
                       <InfoRow label="Degree Level" value={student.degree_level} />
                       <InfoRow label="Preferred Program" value={student.target_course} />
-                      {/* University info moved to Applications tab */}
                       <InfoRow label="Preferred Intake" value={student.intake_month} />
+                      
+                      <div className="col-span-1 sm:col-span-2 lg:col-span-3 h-px bg-border/40 my-1"></div>
+                      
+                      <InfoRow label="Primary Target Institution" value={applications.length > 0 ? applications[0].universities?.name : "No Applications"} />
+                      <div className="flex flex-col gap-1.5 py-1">
+                        <span className="text-[11px] font-medium text-muted-foreground/70 uppercase tracking-wider">
+                          Offer Status
+                        </span>
+                        <span className="text-[13px] font-bold text-[#1E293B]">
+                          {applications.length > 0 ? getStatusLabel(applications[0].status) : "N/A"}
+                        </span>
+                      </div>
+                      
+                      <div className="col-span-1 sm:col-span-2 lg:col-span-3 h-px bg-border/40 my-1"></div>
+
+                      <InfoRow label="EMGS Application No." value={student.emgs_application_number} />
+                      <InfoRow label="EMGS Status %" value={student.emgs_status_percentage !== undefined && student.emgs_status_percentage !== null ? `${student.emgs_status_percentage}%` : null} />
                     </div>
                   )}
                 </div>
 
-                {/* ── Section 5: Submitted By ─────────────────────── */}
+                {/* ── Section 5: Emergency Contact / Guardian ───────────── */}
+                <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
+                  <div className="flex items-center justify-between pb-4">
+                    <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
+                      <ShieldAlert className="h-4 w-4 text-[#2F4F97]" />
+                      Emergency Contact
+                    </h3>
+                    <div className="no-print">
+                      {isEditingGuardian ? (
+                        <div className="flex gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 text-xs text-muted-foreground hover:text-foreground"
+                            onClick={() => setIsEditingGuardian(false)}
+                          >
+                            <X className="h-3.5 w-3.5 mr-1" />
+                            Cancel
+                          </Button>
+                          <Button
+                            size="sm"
+                            className="h-8 text-xs bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-semibold"
+                            onClick={() => handleSaveSection("guardian")}
+                          >
+                            <Save className="h-3.5 w-3.5 mr-1" />
+                            Save
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 text-xs text-muted-foreground hover:text-[#1E293B]"
+                          onClick={startEditingGuardian}
+                        >
+                          <Pencil className="h-3.5 w-3.5 mr-1" />
+                          Edit
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                  {isEditingGuardian ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                      <div className="space-y-1">
+                        <Label className="text-xs font-semibold text-muted-foreground">Guardian Name</Label>
+                        <Input
+                          value={editForm.guardian_name}
+                          onChange={(e) => setEditForm({ ...editForm, guardian_name: e.target.value })}
+                          placeholder="e.g. Jane Doe"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs font-semibold text-muted-foreground">Relationship</Label>
+                        <Input
+                          value={editForm.guardian_relationship}
+                          onChange={(e) => setEditForm({ ...editForm, guardian_relationship: e.target.value })}
+                          placeholder="e.g. Mother"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs font-semibold text-muted-foreground">Phone Number</Label>
+                        <Input
+                          value={editForm.guardian_phone}
+                          onChange={(e) => setEditForm({ ...editForm, guardian_phone: e.target.value })}
+                          placeholder="e.g. +60123456789"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs font-semibold text-muted-foreground">Email Address</Label>
+                        <Input
+                          type="email"
+                          value={editForm.guardian_email}
+                          onChange={(e) => setEditForm({ ...editForm, guardian_email: e.target.value })}
+                          placeholder="e.g. jane@example.com"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4">
+                      <InfoRow label="Guardian Name" value={student.guardian_name} />
+                      <InfoRow label="Relationship" value={student.guardian_relationship} />
+                      <InfoRow label="Phone" value={student.guardian_phone} />
+                      <InfoRow label="Email" value={student.guardian_email} />
+                    </div>
+                  )}
+                </div>
+
+                {/* ── Section 6: Submitted By ─────────────────────── */}
                 <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
                   <div className="flex items-center justify-between pb-4">
                     <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
@@ -1324,33 +1602,74 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
               </CardContent>
         </Card>
 
-        {/* Admin Notes Section (Admin only) - Moved to bottom */}
+        {/* Admin Activity Stream (Admin only) - Moved to bottom */}
         {mode === "admin" && (
-          <Card className="no-print border-dashed border-amber-200/50 bg-amber-50/20">
-            <CardContent className="p-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm font-semibold text-[#1E293B]">
-                  <ClipboardList className="h-4 w-4 text-[#2F4F97]" />
-                  Admin Internal Notes
-                </div>
-                <Button
-                  size="sm"
-                  className="h-8 px-3 bg-white border border-border text-xs hover:bg-muted font-medium"
-                  onClick={handleSaveStatus}
-                  disabled={savingStatus}
-                >
-                  {savingStatus ? <Loader2 className="h-3 w-3 animate-spin mr-1.5" /> : <Save className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />}
-                  Save Notes
-                </Button>
+          <Card className="no-print border border-[#2F4F97]/10 shadow-sm mt-8">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-2 text-sm font-bold text-[#1E293B] uppercase tracking-wide mb-6">
+                <ClipboardList className="h-4 w-4 text-[#2F4F97]" />
+                Admin Internal Notes & Activity
               </div>
               
-              <Textarea
-                value={adminNotes}
-                onChange={(e) => setAdminNotes(e.target.value)}
-                placeholder="Add private notes about this application (not visible to partners)..."
-                rows={4}
-                className="resize-none bg-white/60 focus:bg-white"
-              />
+              <div className="space-y-6">
+                {/* Notes Feed */}
+                <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                  {activityNotes.length === 0 ? (
+                    <div className="text-center py-6 text-sm text-muted-foreground italic bg-gray-50/50 rounded-lg border border-dashed border-gray-200">
+                      No internal notes yet.
+                    </div>
+                  ) : (
+                    activityNotes.map((note) => (
+                      <div key={note.id} className="flex gap-3 text-sm">
+                        <div className="mt-0.5 shrink-0">
+                          <div className="h-8 w-8 rounded-full bg-[#2F4F97]/10 flex items-center justify-center text-[#2F4F97] font-semibold text-xs border border-[#2F4F97]/20">
+                            {note.admin_name ? note.admin_name.substring(0, 2).toUpperCase() : "AD"}
+                          </div>
+                        </div>
+                        <div className="flex-1 space-y-1 bg-gray-50 rounded-lg p-3 border border-gray-100">
+                          <div className="flex items-center justify-between">
+                            <span className="font-semibold text-[#1E293B] text-xs">
+                              {note.admin_name || "Admin"}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground">
+                              {new Date(note.created_at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
+                            </span>
+                          </div>
+                          <p className="text-gray-700 whitespace-pre-wrap leading-relaxed text-[13px]">
+                            {note.content}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {/* Add Note Form */}
+                <div className="pt-4 border-t border-gray-100 flex flex-col gap-3">
+                  <Textarea
+                    value={adminNotes}
+                    onChange={(e) => setAdminNotes(e.target.value)}
+                    placeholder="Add a private note about this application..."
+                    rows={2}
+                    className="resize-none text-sm bg-gray-50/50 focus:bg-white transition-colors"
+                  />
+                  <div className="flex justify-end">
+                    <Button
+                      size="sm"
+                      className="h-8 px-4 bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-medium text-xs shadow-sm"
+                      onClick={handleAddActivityNote}
+                      disabled={savingStatus || !adminNotes.trim()}
+                    >
+                      {savingStatus ? (
+                        <Loader2 className="h-3 w-3 animate-spin mr-1.5" />
+                      ) : (
+                        <Save className="h-3.5 w-3.5 mr-1.5" />
+                      )}
+                      Add Note
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         )}

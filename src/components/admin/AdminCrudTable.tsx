@@ -3,11 +3,10 @@ import { useRef, useState, useMemo, type ChangeEvent } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { LoadingScreen } from "@/components/ui/loading-screen";
-import { Plus, Pencil, Trash2, Search, X, Upload, Download } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, X, Upload, Download, ArrowLeft } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import * as XLSX from "xlsx";
@@ -867,12 +866,52 @@ export default function AdminCrudTable({
     );
   }
 
+  if (dialogOpen) {
+    return (
+      <div className="space-y-6 animate-fade-in pb-12">
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => setDialogOpen(false)} 
+            className="h-8 w-8 rounded-full bg-[#2F4F97]/10 text-[#2F4F97] hover:bg-[#2F4F97]/20 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h2 className="text-sm font-semibold text-[#1E293B]">
+            {editingRow ? "Edit" : "Add"} {singularize(title)}
+          </h2>
+        </div>
+        
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div className="p-6 sm:p-8 space-y-6 max-w-4xl">
+            {fields.map((f) => (
+              <div key={f.key}>
+                <Label className="mb-1.5 block text-[13px] font-semibold text-gray-700">{f.label}</Label>
+                {renderField(f)}
+                {f.helpText && <p className="text-[11px] text-muted-foreground mt-1.5">{f.helpText}</p>}
+              </div>
+            ))}
+            <div className="pt-6 border-t border-gray-100 flex items-center justify-end gap-3">
+              <Button variant="outline" onClick={() => setDialogOpen(false)} className="h-10 px-6">
+                Cancel
+              </Button>
+              <Button className="h-10 px-6 bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white" onClick={handleSave}>
+                {editingRow ? "Update" : "Save"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
-      <div className="mb-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 w-full">
+      <div className="mb-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
           {/* Search Field */}
-          <div className="relative w-full md:flex-1">
+          <div className="relative w-full md:max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <Input 
               placeholder={`Search ${title.toLowerCase()}...`} 
@@ -881,7 +920,7 @@ export default function AdminCrudTable({
                 setSearch(e.target.value);
                 setCurrentPage(1);
               }} 
-              className="pl-9 h-8 text-xs md:text-[13px] bg-white w-full" 
+              className="pl-9 bg-white shadow-sm border-slate-200 h-9 text-[12px] w-full focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200" 
             />
           </div>
 
@@ -893,12 +932,12 @@ export default function AdminCrudTable({
             onChange={handleFileSelect}
           />
           
-          <div className="flex flex-wrap lg:flex-nowrap items-center gap-1.5 md:gap-2 justify-end flex-shrink-0">
+          <div className="flex flex-wrap lg:flex-nowrap items-center gap-2 md:gap-3 justify-end flex-shrink-0">
             {selectedIds.length > 0 && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive" className="h-8 text-xs xl:text-[13px] px-2 xl:px-2.5 whitespace-nowrap">
-                    <Trash2 className="h-3.5 w-3.5 mr-1 xl:mr-1.5" />Delete Selected ({selectedIds.length})
+                  <Button variant="destructive" className="h-9 text-[12px] px-3 whitespace-nowrap">
+                    <Trash2 className="h-3.5 w-3.5 mr-1.5" />Delete Selected ({selectedIds.length})
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent className="text-[13px]">
@@ -907,52 +946,34 @@ export default function AdminCrudTable({
                     <AlertDialogDescription className="text-xs">This action cannot be undone.</AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel className="text-[13px] h-8">Cancel</AlertDialogCancel>
-                    <AlertDialogAction className="text-[13px] h-8 bg-destructive hover:bg-destructive/90" onClick={handleBulkDelete}>Delete All</AlertDialogAction>
+                    <AlertDialogCancel className="text-[13px] h-9">Cancel</AlertDialogCancel>
+                    <AlertDialogAction className="text-[13px] h-9 bg-destructive hover:bg-destructive/90" onClick={handleBulkDelete}>Delete All</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
             )}
-            <Button variant="outline" onClick={handleDownloadTemplate} className="h-8 text-xs xl:text-[13px] px-2 xl:px-2.5 whitespace-nowrap">
-              <Download className="h-3.5 w-3.5 mr-1 xl:mr-1.5" />Download Template
+            <Button variant="outline" onClick={handleDownloadTemplate} className="h-9 text-[12px] px-3 bg-white shadow-sm whitespace-nowrap hover:bg-[#FF7A00] hover:text-white hover:border-[#FF7A00] group transition-all gap-1.5">
+              <Download className="h-3.5 w-3.5 text-muted-foreground group-hover:text-white transition-colors" />Template
             </Button>
-            <Button variant="outline" onClick={handleExportExcel} className="h-8 text-xs xl:text-[13px] px-2 xl:px-2.5 whitespace-nowrap">
-              <Download className="h-3.5 w-3.5 mr-1 xl:mr-1.5" />Export Excel
+            <Button variant="outline" onClick={handleExportExcel} className="h-9 text-[12px] px-3 bg-white shadow-sm whitespace-nowrap hover:bg-[#FF7A00] hover:text-white hover:border-[#FF7A00] group transition-all gap-1.5">
+              <Download className="h-3.5 w-3.5 text-muted-foreground group-hover:text-white transition-colors" />Export
             </Button>
             <Button
               variant="outline"
               disabled={!onBulkUpsert || isImporting}
               onClick={() => fileInputRef.current?.click()}
-              className="h-8 text-xs xl:text-[13px] px-2 xl:px-2.5 whitespace-nowrap"
+              className="h-9 text-[12px] px-3 bg-white shadow-sm whitespace-nowrap hover:bg-[#FF7A00] hover:text-white hover:border-[#FF7A00] group transition-all gap-1.5"
             >
-              <Upload className="h-3.5 w-3.5 mr-1 xl:mr-1.5" />{isImporting ? "Importing..." : "Import Excel"}
+              <Upload className="h-3.5 w-3.5 text-muted-foreground group-hover:text-white transition-colors" />{isImporting ? "Importing..." : "Import"}
             </Button>
-            <Button onClick={openCreate} className="h-8 text-xs xl:text-[13px] px-2 xl:px-2.5 whitespace-nowrap">
-              <Plus className="h-3.5 w-3.5 mr-1 xl:mr-1.5" />Add {singularize(title)}
+            <Button onClick={openCreate} className="h-9 text-[12px] px-3 bg-[#2F4F97] hover:bg-[#FF7A00] text-white shadow-sm whitespace-nowrap transition-all gap-1.5">
+              <Plus className="h-3.5 w-3.5" />Add {singularize(title)}
             </Button>
           </div>
         </div>
       </div>
 
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl text-[13px]">
-          <DialogHeader>
-            <DialogTitle className="text-base">{editingRow ? "Edit" : "Add"} {singularize(title)}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 pt-2">
-            {fields.map((f) => (
-              <div key={f.key}>
-                <Label className="mb-1 block text-xs font-semibold">{f.label}</Label>
-                {renderField(f)}
-                {f.helpText && <p className="text-[11px] text-muted-foreground mt-1">{f.helpText}</p>}
-              </div>
-            ))}
-            <Button className="w-full text-[13px] h-9" onClick={handleSave}>
-              {editingRow ? "Update" : "Save"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+
 
       <div className="rounded-xl border bg-card overflow-x-auto">
         <Table className="text-xs md:text-[13px]">
@@ -979,40 +1000,41 @@ export default function AdminCrudTable({
               </TableRow>
             ) : (
               paginatedData.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell className="text-center px-0">
+                <TableRow 
+                  key={row.id} 
+                  className="h-10 hover:bg-muted/50 transition-colors cursor-pointer"
+                  onClick={() => openEdit(row)}
+                >
+                  <TableCell className="text-center px-0 py-1" onClick={(e) => e.stopPropagation()}>
                     <Checkbox 
                       checked={selectedIds.includes(row.id)}
                       onCheckedChange={(c) => handleSelectRow(row.id, c as boolean)}
                     />
                   </TableCell>
                   {tableFields.map((f) => (
-                    <TableCell key={f.key} className={`${f.key === searchKey ? "font-medium" : ""} py-2.5 text-xs md:text-[13px]`}>
-                      {renderCell ? renderCell(row, f.key) ?? formatCellValue(row, f.key) : formatCellValue(row, f.key)}
+                    <TableCell key={f.key} className={`${f.key === searchKey ? "font-normal" : ""} py-1 text-xs md:text-[13px]`}>
+                      {renderCell ? renderCell(row, f.key) : formatCellValue(row, f.key)}
                     </TableCell>
                   ))}
-                  <TableCell className="text-right py-2.5 text-xs md:text-[13px]">
-                    <div className="flex justify-end gap-1">
-                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(row)}>
-                      <Pencil className="h-3.5 w-3.5" />
-                    </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-destructive h-7 w-7">
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent className="text-[13px]">
-                        <AlertDialogHeader>
-                          <AlertDialogTitle className="text-base">Delete this item?</AlertDialogTitle>
-                          <AlertDialogDescription className="text-xs">This action cannot be undone.</AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel className="text-[13px] h-8">Cancel</AlertDialogCancel>
-                          <AlertDialogAction className="text-[13px] h-8 bg-destructive hover:bg-destructive/90" onClick={() => onDelete(row.id)}>Delete</AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                  <TableCell className="text-right py-1" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center justify-end gap-1">
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10">
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className="text-[13px]">
+                          <AlertDialogHeader>
+                            <AlertDialogTitle className="text-base">Delete this item?</AlertDialogTitle>
+                            <AlertDialogDescription className="text-xs">This action cannot be undone.</AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel className="text-[13px] h-8">Cancel</AlertDialogCancel>
+                            <AlertDialogAction className="text-[13px] h-8 bg-destructive hover:bg-destructive/90" onClick={() => onDelete(row.id)}>Delete</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </TableCell>
                 </TableRow>

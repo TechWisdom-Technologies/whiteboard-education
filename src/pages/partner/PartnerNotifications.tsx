@@ -118,14 +118,14 @@ export default function PartnerNotifications() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
+          <h1 className="text-[12px] font-normal flex items-center gap-2">
             <Bell className="h-6 w-6 text-primary" />
             Notifications
             {unreadCount > 0 && (
               <Badge variant="destructive" className="ml-1">{unreadCount} new</Badge>
             )}
           </h1>
-          <p className="text-muted-foreground text-sm mt-1">Student status updates and important alerts</p>
+          <p className="text-muted-foreground text-[12px] mt-1">Student status updates and important alerts</p>
         </div>
         <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           <Select value={filter} onValueChange={setFilter}>
@@ -151,7 +151,7 @@ export default function PartnerNotifications() {
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">Activity Feed</CardTitle>
+          <CardTitle className="text-[12px]">Activity Feed</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           {loading ? (
@@ -159,8 +159,8 @@ export default function PartnerNotifications() {
           ) : filtered.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <Bell className="h-10 w-10 mx-auto mb-3 opacity-30" />
-              <p className="font-medium">No notifications yet</p>
-              <p className="text-sm">Status updates for your students will appear here</p>
+              <p className="font-normal">No notifications yet</p>
+              <p className="text-[12px]">Status updates for your students will appear here</p>
             </div>
           ) : (
             <div className="divide-y">
@@ -175,11 +175,11 @@ export default function PartnerNotifications() {
                     <Circle className={`h-2.5 w-2.5 mt-1.5 flex-shrink-0 ${!n.read ? "fill-primary text-primary" : "fill-muted text-muted"}`} />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
-                        <span className={`text-sm ${!n.read ? "font-semibold" : "font-medium"}`}>{n.title}</span>
-                        <Badge variant={badge.variant} className="text-[10px] h-5">{badge.label}</Badge>
+                        <span className={`text-[12px] ${!n.read ? "font-normal" : "font-normal"}`}>{n.title}</span>
+                        <Badge variant={badge.variant} className="text-[12px] h-5">{badge.label}</Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{n.message}</p>
-                      <p className="text-xs text-muted-foreground/60 mt-1">
+                      <p className="text-[12px] text-muted-foreground leading-relaxed">{n.message}</p>
+                      <p className="text-[12px] text-muted-foreground/60 mt-1">
                         {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
                       </p>
                     </div>

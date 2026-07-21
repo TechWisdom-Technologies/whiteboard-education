@@ -4,7 +4,7 @@ import { useTableData, useInsertRow, useUpdateRow, useDeleteRow, useBulkUpsertRo
 
 const fields: FieldConfig[] = [
   { key: "name", label: "Center Name", showInTable: true },
-  { key: "slug", label: "Slug", showInTable: true },
+  { key: "slug", label: "Slug", showInTable: false },
   { key: "city", label: "City", showInTable: true },
   { key: "logo_url", label: "Logo URL", showInTable: false, placeholder: "e.g. https://..." },
   { key: "about_image_url", label: "About Image URL", showInTable: false, placeholder: "e.g. https://..." },

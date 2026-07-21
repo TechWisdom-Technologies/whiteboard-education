@@ -12,21 +12,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { LoadingScreen } from "@/components/ui/loading-screen";
+import { statusPhases, exceptionalStatuses, getStatusLabel } from "@/config/statusFlow";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
 const statusOptions = [
-  { value: "document_review", label: "Document Review" },
-  { value: "documents_verified", label: "Documents Verified" },
-  { value: "university_applied", label: "University Applied" },
-  { value: "offer_letter", label: "Offer Letter" },
-  { value: "emgs_processing", label: "EMGS Processing" },
-  { value: "visa_approved", label: "Visa Approved" },
-  { value: "travel_ready", label: "Travel Ready" },
-  { value: "enrolled", label: "Enrolled" },
-  { value: "rejected", label: "Rejected" },
-  { value: "on_hold", label: "On Hold" },
+  ...statusPhases.flatMap(p => p.steps.map(s => ({ value: s.id, label: s.label }))),
+  ...exceptionalStatuses.map(s => ({ value: s.id, label: s.label }))
 ];
 
 const statusColors: Record<string, string> = {
@@ -128,7 +121,9 @@ export default function AdminStudents() {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to delete student");
+        let errMsg = "Failed to delete student";
+        try { const errData = await res.json(); errMsg = errData.message || errData.details || errMsg; } catch(e) {}
+        throw new Error(errMsg);
       }
 
       toast.success("Student deleted successfully");
@@ -167,8 +162,12 @@ export default function AdminStudents() {
             "apikey": SUPABASE_KEY,
             "Authorization": `Bearer ${session.access_token}`,
           },
-        }).then(res => {
-          if (!res.ok) throw new Error("Failed to delete student");
+        }).then(async res => {
+          if (!res.ok) {
+            let errMsg = "Failed to delete student";
+            try { const errData = await res.json(); errMsg = errData.message || errData.details || errMsg; } catch(e) {}
+            throw new Error(errMsg);
+          }
         })
       ));
 
@@ -188,19 +187,15 @@ export default function AdminStudents() {
     return matchSearch && matchPartner && matchStatus;
   });
 
-  // Group by partner for summary
-  const partnerSummary = partners.map(p => ({
-    ...p,
-    studentCount: students.filter(s => s.partner_id === p.user_id).length,
-  })).filter(p => p.studentCount > 0).sort((a, b) => b.studentCount - a.studentCount);
+
 
   if (loading) return <LoadingScreen fullScreen />;
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end gap-2 text-xs">
+      <div className="flex justify-end gap-2 text-[12px]">
         {selectedIds.length > 0 && (
-          <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-6 text-xs px-2 py-0">
+          <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-6 text-[12px] px-2 py-0">
             <Trash2 className="h-3 w-3 mr-1" /> Delete Selected ({selectedIds.length})
           </Button>
         )}
@@ -208,47 +203,38 @@ export default function AdminStudents() {
         <Badge variant="secondary" className="px-2 py-0.5">{partners.length} Partners</Badge>
       </div>
 
-      {/* Partner Summary Cards */}
-      {partnerSummary.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {partnerSummary.slice(0, 4).map(p => (
-            <Card key={p.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setFilterPartner(filterPartner === p.user_id ? "all" : p.user_id)}>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-secondary/10 flex items-center justify-center">
-                    <Users className="h-5 w-5 text-secondary" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-sm">{p.agency_name}</p>
-                    <p className="text-xs text-muted-foreground">{p.studentCount} student{p.studentCount > 1 ? "s" : ""}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+
 
       {/* Filters */}
-      <div className="flex gap-3 flex-wrap">
-        <div className="relative flex-1 min-w-[220px] w-full sm:w-auto sm:max-w-sm">
+      <div className="flex flex-col sm:flex-row justify-between gap-4 items-center mb-2">
+        {/* Left: Search */}
+        <div className="relative w-full sm:max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search students..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
+          <Input 
+            placeholder="Search students by name or email..." 
+            value={search} 
+            onChange={e => setSearch(e.target.value)} 
+            className="pl-9 bg-white shadow-sm border-slate-200 h-10 w-full focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200" 
+          />
         </div>
-        <Select value={filterPartner} onValueChange={setFilterPartner}>
-          <SelectTrigger className="w-full sm:w-[200px]"><Filter className="h-4 w-4 mr-2" /><SelectValue placeholder="All Partners" /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Partners</SelectItem>
-            {partners.map(p => <SelectItem key={p.user_id} value={p.user_id}>{p.agency_name}</SelectItem>)}
-          </SelectContent>
-        </Select>
-        <Select value={filterStatus} onValueChange={setFilterStatus}>
-          <SelectTrigger className="w-full sm:w-[200px]"><SelectValue placeholder="All Statuses" /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Statuses</SelectItem>
-            {statusOptions.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
-          </SelectContent>
-        </Select>
+        
+        {/* Right: Select Filters */}
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <Select value={filterPartner} onValueChange={setFilterPartner}>
+            <SelectTrigger className="w-full sm:w-[200px] bg-white shadow-sm border-slate-200 h-10 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200"><Filter className="h-4 w-4 mr-2 text-slate-400" /><SelectValue placeholder="All Partners" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Partners</SelectItem>
+              {partners.map(p => <SelectItem key={p.user_id} value={p.user_id}>{p.agency_name}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={filterStatus} onValueChange={setFilterStatus}>
+            <SelectTrigger className="w-full sm:w-[200px] bg-white shadow-sm border-slate-200 h-10 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200"><SelectValue placeholder="All Statuses" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Statuses</SelectItem>
+              {statusOptions.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Students Table */}
@@ -267,10 +253,7 @@ export default function AdminStudents() {
                 </TableHead>
                 <TableHead>Student Name</TableHead>
                 <TableHead>Partner Agency</TableHead>
-                <TableHead>University</TableHead>
-                <TableHead>Course</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Docs</TableHead>
                 <TableHead>Added</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -278,30 +261,30 @@ export default function AdminStudents() {
             <TableBody>
               {filtered.map(s => {
                 const partner = getPartner(s.partner_id);
-                const st = statusOptions.find(o => o.value === s.status);
+                const label = getStatusLabel(s.status);
                 const docCount = [s.passport_photo_url, s.passport_url, s.academic_transcript_url, s.ielts_certificate_url, s.personal_statement_url, s.recommendation_letter_url].filter(Boolean).length;
                 return (
-                  <TableRow key={s.id}>
-                    <TableCell className="text-center px-0">
+                  <TableRow 
+                    key={s.id} 
+                    className="h-10 hover:bg-muted/50 cursor-pointer transition-colors"
+                    onClick={() => navigate(`/admin/students/${s.id}`)}
+                  >
+                    <TableCell className="text-center px-0 py-1" onClick={(e) => e.stopPropagation()}>
                       <Checkbox 
                         checked={selectedIds.includes(s.id)}
                         onCheckedChange={(c) => handleSelectRow(s.id, c as boolean)}
                       />
                     </TableCell>
-                    <TableCell className="font-medium">{s.full_name}</TableCell>
-                    <TableCell className="text-sm">{partner?.agency_name || "Unknown"}</TableCell>
-                    <TableCell className="text-sm">{s.target_university || "-"}</TableCell>
-                    <TableCell className="text-sm">{s.target_course || "-"}</TableCell>
-                    <TableCell><Badge variant="outline" className={statusColors[s.status] || ""}>{st?.label || s.status}</Badge></TableCell>
-                    <TableCell><Badge variant="secondary">{docCount}/6</Badge></TableCell>
-                    <TableCell className="text-sm text-muted-foreground">{new Date(s.created_at).toLocaleDateString()}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="font-normal py-1">{s.full_name}</TableCell>
+                    <TableCell className="text-[12px] py-1">{partner?.agency_name || "Unknown"}</TableCell>
+                    <TableCell className="py-1"><Badge variant="outline" className={statusColors[s.status] || "bg-muted text-muted-foreground"}>{label}</Badge></TableCell>
+                    <TableCell className="text-[12px] text-muted-foreground py-1">
+                      {new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </TableCell>
+                    <TableCell className="text-right py-1" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-end gap-1">
-                        <Button variant="ghost" size="icon" onClick={() => navigate(`/admin/students/${s.id}`)} title="View Details">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10" onClick={(e) => handleDelete(s.id, e)} title="Delete Student">
-                          <Trash2 className="h-4 w-4" />
+                        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={(e) => handleDelete(s.id, e)} title="Delete Student">
+                          <Trash2 className="h-3.5 w-3.5" />
                         </Button>
                       </div>
                     </TableCell>

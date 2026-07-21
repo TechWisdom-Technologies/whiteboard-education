@@ -71,22 +71,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (event === 'PASSWORD_RECOVERY') {
         setIsRecoverySession(true);
       }
-      setSession(sess);
-      if (sess?.user) {
-        const r = await fetchUserRoles(sess.user.id, sess.access_token);
-        setRoles(r);
-      } else {
-        setRoles([]);
-      }
+      
+      setSession(prev => {
+        if (prev?.access_token === sess?.access_token) return prev;
+        
+        // Only fetch roles if we're actually setting a new session
+        if (sess?.user) {
+          fetchUserRoles(sess.user.id, sess.access_token).then(r => setRoles(r));
+        } else {
+          setRoles([]);
+        }
+        
+        return sess;
+      });
+      
       setLoading(false);
     });
 
-    supabase.auth.getSession().then(async ({ data: { session: sess } }) => {
-      setSession(sess);
-      if (sess?.user) {
-        const r = await fetchUserRoles(sess.user.id, sess.access_token);
-        setRoles(r);
-      }
+    supabase.auth.getSession().then(({ data: { session: sess } }) => {
+      setSession(prev => {
+        if (prev?.access_token === sess?.access_token) return prev;
+        
+        if (sess?.user) {
+          fetchUserRoles(sess.user.id, sess.access_token).then(r => setRoles(r));
+        } else {
+          setRoles([]);
+        }
+        return sess;
+      });
       setLoading(false);
     });
 

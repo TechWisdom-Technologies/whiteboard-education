@@ -58,7 +58,13 @@ import { CourseCompareFAB } from "./components/public/CourseCompareFAB";
 
 import { CurrencyProvider } from "./contexts/CurrencyContext";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();

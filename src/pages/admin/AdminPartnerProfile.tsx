@@ -59,10 +59,10 @@ function InfoRow({ label, value }: { label: string; value: string | number | nul
   const isEmpty = value === null || value === undefined || value === "" || (typeof value === "number" && value === 0);
   return (
     <div className="flex flex-col gap-1.5 py-1">
-      <span className="text-[11px] font-medium text-muted-foreground/70 uppercase tracking-wider">
+      <span className="text-[12px] font-normal text-muted-foreground/70 uppercase tracking-wider">
         {label}
       </span>
-      <span className={`text-[13px] font-medium leading-snug ${isEmpty ? "text-amber-600/80 italic text-xs flex items-center gap-1 bg-amber-50/50 dark:bg-amber-950/10 px-2.5 py-1 rounded-2xl border border-amber-200/30 w-fit" : "text-[#1E293B]"}`}>
+      <span className={`text-[12px] font-normal leading-snug ${isEmpty ? "text-amber-600/80 italic text-[12px] flex items-center gap-1 bg-amber-50/50 dark:bg-amber-950/10 px-2.5 py-1 rounded-2xl border border-amber-200/30 w-fit" : "text-[#1E293B]"}`}>
         {isEmpty ? "Not provided" : value}
       </span>
     </div>
@@ -191,7 +191,7 @@ export default function AdminPartnerProfile() {
         <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center">
           <User className="h-8 w-8 text-destructive" />
         </div>
-        <h2 className="text-xl font-semibold">{error || "Partner not found"}</h2>
+        <h2 className="text-[12px] font-normal">{error || "Partner not found"}</h2>
         <Button variant="outline" onClick={handleBack}>
           <ArrowLeft className="h-4 w-4 mr-2" />
           Go Back
@@ -246,15 +246,15 @@ export default function AdminPartnerProfile() {
             </div>
             
             <div className="pt-1">
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#1E293B] tracking-tight mb-1">
+              <h1 className="text-[12px] sm:text-[12px] font-normal text-[#1E293B] tracking-tight mb-1">
                 {partner.agency_name}
               </h1>
-              <p className="text-sm font-medium text-muted-foreground mb-4">
+              <p className="text-[12px] font-normal text-muted-foreground mb-4">
                 Registered on {registeredDate}
               </p>
               
               <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                <span className={`text-sm font-bold uppercase tracking-wider px-0 ${statusColors[partner.status] ? statusColors[partner.status].split(" ")[1] : "text-gray-500"}`}>
+                <span className={`text-[12px] font-normal uppercase tracking-wider px-0 ${statusColors[partner.status] ? statusColors[partner.status].split(" ")[1] : "text-gray-500"}`}>
                   {partner.status.replace("_", " ")}
                 </span>
                 
@@ -263,7 +263,7 @@ export default function AdminPartnerProfile() {
                     value={currentStatus}
                     onValueChange={setCurrentStatus}
                   >
-                    <SelectTrigger className="h-8 w-[140px] text-xs font-semibold bg-white border-border">
+                    <SelectTrigger className="h-8 w-[140px] text-[12px] font-normal bg-white border-border">
                       <SelectValue placeholder="Update Status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -274,7 +274,7 @@ export default function AdminPartnerProfile() {
                   </Select>
                   <Button
                     size="sm"
-                    className="h-8 bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-semibold"
+                    className="h-8 bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-normal"
                     onClick={handleSaveStatusAndNotes}
                     disabled={savingStatus || (currentStatus === partner.status && adminNotes === partner.admin_notes)}
                   >
@@ -290,7 +290,7 @@ export default function AdminPartnerProfile() {
             <Button
               variant="outline"
               size="sm"
-              className="h-9 font-semibold"
+              className="h-9 font-normal"
               onClick={handlePrint}
             >
               <Download className="h-4 w-4 mr-2" />
@@ -299,7 +299,7 @@ export default function AdminPartnerProfile() {
             <Button
               variant="outline"
               size="sm"
-              className="h-9 font-semibold"
+              className="h-9 font-normal"
               onClick={handlePrint}
             >
               <Printer className="h-4 w-4 mr-2" />
@@ -312,7 +312,7 @@ export default function AdminPartnerProfile() {
         <Card className="no-print">
           <CardContent className="p-5 sm:p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="flex items-center gap-2 text-sm font-semibold text-[#1E293B]">
+              <h3 className="flex items-center gap-2 text-[12px] font-normal text-[#1E293B]">
                 <FileCheck className="h-4 w-4 text-[#2F4F97]" />
                 Agency Documents
               </h3>
@@ -334,7 +334,7 @@ export default function AdminPartnerProfile() {
                     <FileText className="h-6 w-6 text-muted-foreground/30 mb-2" />
                   )}
                   
-                  <p className="text-[10px] font-medium leading-tight mb-3 px-1 text-muted-foreground h-6 flex items-center justify-center">
+                  <p className="text-[12px] font-normal leading-tight mb-3 px-1 text-muted-foreground h-6 flex items-center justify-center">
                     {doc.label}
                   </p>
 
@@ -350,7 +350,7 @@ export default function AdminPartnerProfile() {
                         <ExternalLink className="h-3.5 w-3.5" />
                       </a>
                     ) : (
-                      <span className="text-[10px] text-muted-foreground italic mt-1">Missing</span>
+                      <span className="text-[12px] text-muted-foreground italic mt-1">Missing</span>
                     )}
                   </div>
                 </div>
@@ -364,7 +364,7 @@ export default function AdminPartnerProfile() {
           <CardContent className="p-6 sm:p-7 print:p-0">
                 {/* ── Section 1: Agency Information ──────────────── */}
                 <div className="flex items-center justify-between pb-4">
-                  <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
+                  <h3 className="flex items-center gap-2.5 text-[12px] font-normal text-[#1E293B] uppercase tracking-wide">
                     <Building2 className="h-4 w-4 text-[#2F4F97]" />
                     Agency Information
                   </h3>
@@ -379,7 +379,7 @@ export default function AdminPartnerProfile() {
                 {/* ── Section 2: Contact Details ──────────────── */}
                 <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
                   <div className="flex items-center justify-between pb-4">
-                    <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
+                    <h3 className="flex items-center gap-2.5 text-[12px] font-normal text-[#1E293B] uppercase tracking-wide">
                       <User className="h-4 w-4 text-[#2F4F97]" />
                       Contact Person
                     </h3>
@@ -397,7 +397,7 @@ export default function AdminPartnerProfile() {
         <Card className="no-print border-dashed border-amber-200/50 bg-amber-50/20">
           <CardContent className="p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm font-semibold text-[#1E293B]">
+              <div className="flex items-center gap-2 text-[12px] font-normal text-[#1E293B]">
                 <ClipboardList className="h-4 w-4 text-[#2F4F97]" />
                 Admin Notes (Visible to Partner)
               </div>
@@ -415,19 +415,19 @@ export default function AdminPartnerProfile() {
 
         {/* ── Print-Only Documents Checklist ──────────────────────────── */}
         <div className="hidden print:block pt-8 mt-8">
-          <h3 className="text-[13px] font-bold text-[#1E293B] uppercase tracking-wide mb-5 flex items-center gap-2.5">
+          <h3 className="text-[12px] font-normal text-[#1E293B] uppercase tracking-wide mb-5 flex items-center gap-2.5">
             <FileCheck className="h-4 w-4 text-[#2F4F97]" />
             Uploaded Documents Checklist
           </h3>
           <div className="grid grid-cols-2 gap-y-4 gap-x-8">
             {docs.map((doc, idx) => (
-              <div key={idx} className="flex items-center gap-3 text-[13px]">
+              <div key={idx} className="flex items-center gap-3 text-[12px]">
                 {doc.url ? (
                   <CheckCircle2 className="h-4 w-4 text-green-600" />
                 ) : (
                   <div className="h-4 w-4 rounded-xl border border-muted-foreground/40" />
                 )}
-                <span className={doc.url ? "text-[#1E293B] font-medium" : "text-muted-foreground italic"}>
+                <span className={doc.url ? "text-[#1E293B] font-normal" : "text-muted-foreground italic"}>
                   {doc.label}
                 </span>
               </div>

@@ -12,7 +12,7 @@ import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Eye } from "lucide-react";
+import { Eye, ArrowLeft } from "lucide-react";
 
 const statusColors: Record<string, string> = {
   new: "bg-primary/10 text-primary",
@@ -99,6 +99,68 @@ export default function AdminLeads() {
     return <div className="flex items-center justify-center h-64"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>;
   }
 
+  if (detailOpen && selectedLead) {
+    return (
+      <div className="space-y-6 animate-fade-in pb-12">
+              <div className="flex items-center gap-3 bg-white/50 p-2 rounded-xl border border-gray-100 shadow-sm backdrop-blur-md sticky top-4 z-10">
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={() => setDetailOpen(false)} 
+                  className="h-8 w-8 rounded-full bg-[#2F4F97]/10 text-[#2F4F97] hover:bg-[#2F4F97]/20 transition-colors flex-shrink-0"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+                <h2 className="text-sm font-semibold text-[#1E293B]">
+                  Lead Details
+                </h2>
+              </div>
+        
+        <Card className="border border-gray-200 shadow-sm overflow-hidden">
+          <CardContent className="p-6 sm:p-8 space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <div><Label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Name</Label><p className="font-medium text-[14px] mt-1 text-gray-900">{selectedLead.full_name}</p></div>
+                <div><Label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Email</Label><p className="font-medium text-[14px] mt-1 text-gray-900">{selectedLead.email}</p></div>
+                <div><Label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Phone</Label><p className="font-medium text-[14px] mt-1 text-gray-900">{selectedLead.phone || "N/A"}</p></div>
+                <div><Label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Nationality</Label><p className="font-medium text-[14px] mt-1 text-gray-900">{selectedLead.nationality || "N/A"}</p></div>
+              </div>
+              <div className="space-y-4">
+                <div><Label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Interested Course</Label><p className="font-medium text-[14px] mt-1 text-gray-900">{selectedLead.interested_course || "N/A"}</p></div>
+                <div><Label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Interested University</Label><p className="font-medium text-[14px] mt-1 text-gray-900">{selectedLead.interested_university || "N/A"}</p></div>
+                <div><Label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Source</Label><p className="font-medium text-[14px] mt-1 text-gray-900">{formatSource(selectedLead.source)}</p></div>
+                <div><Label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Date Received</Label><p className="font-medium text-[14px] mt-1 text-gray-900">{new Date(selectedLead.created_at).toLocaleString()}</p></div>
+              </div>
+            </div>
+            
+            {selectedLead.message && (
+              <div className="pt-4 border-t border-gray-100">
+                <Label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Message</Label>
+                <div className="p-4 bg-[#F8FAFC] rounded-xl mt-2 border border-gray-100 whitespace-pre-wrap text-[13px] leading-relaxed text-gray-700">
+                  {selectedLead.message}
+                </div>
+              </div>
+            )}
+            
+            <div className="pt-6 border-t border-gray-100 bg-gray-50/50 -mx-6 sm:-mx-8 px-6 sm:px-8 pb-2 mt-4 rounded-b-xl">
+              <Label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold mb-3 block">Update Lead Status</Label>
+              <Select value={selectedLead.status} onValueChange={(v) => { updateStatus(selectedLead.id, v); setSelectedLead({...selectedLead, status: v}); }}>
+                <SelectTrigger className="w-full sm:w-[250px] bg-white h-11"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="new">New</SelectItem>
+                  <SelectItem value="contacted">Contacted</SelectItem>
+                  <SelectItem value="qualified">Qualified</SelectItem>
+                  <SelectItem value="converted">Converted</SelectItem>
+                  <SelectItem value="lost">Lost</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
 
@@ -113,26 +175,26 @@ export default function AdminLeads() {
             <CardContent className="p-4 flex items-center gap-3">
               <s.icon className={`h-8 w-8 ${s.color}`} />
               <div>
-                <p className="text-2xl font-bold">{s.value}</p>
-                <p className="text-xs text-muted-foreground">{s.label}</p>
+                <p className="text-[12px] font-normal">{s.value}</p>
+                <p className="text-[12px] text-muted-foreground">{s.label}</p>
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <Card>
-        <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 gap-3">
+      <div className="mb-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
           <div className="flex items-center gap-3">
-            <CardTitle>All Leads</CardTitle>
+            <h2 className="text-lg font-semibold">All Leads</h2>
             {selectedIds.length > 0 && (
-              <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-7 text-xs px-2.5">
-                <Trash2 className="h-3 w-3 mr-1" /> Delete Selected ({selectedIds.length})
+              <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-10 text-[13px] px-4 whitespace-nowrap">
+                <Trash2 className="h-4 w-4 mr-2" /> Delete Selected ({selectedIds.length})
               </Button>
             )}
           </div>
           <Select value={filter} onValueChange={setFilter}>
-            <SelectTrigger className="w-full sm:w-[150px]"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-full sm:w-[200px] h-10 bg-white shadow-sm border-slate-200"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="new">New</SelectItem>
@@ -142,12 +204,12 @@ export default function AdminLeads() {
               <SelectItem value="lost">Lost</SelectItem>
             </SelectContent>
           </Select>
-        </CardHeader>
-        <CardContent>
+        </div>
+      </div>
           {filtered.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">No leads found.</p>
           ) : (
-            <div className="rounded-xl border">
+            <div className="rounded-xl border bg-card overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -157,34 +219,36 @@ export default function AdminLeads() {
                         onCheckedChange={handleSelectAll}
                       />
                     </TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Source</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead className="h-10 text-xs text-muted-foreground">Name</TableHead>
+                    <TableHead className="h-10 text-xs text-muted-foreground">Email</TableHead>
+                    <TableHead className="h-10 text-xs text-muted-foreground">Date</TableHead>
+                    <TableHead className="h-10 text-xs text-muted-foreground">Status</TableHead>
+                    <TableHead className="h-10 text-xs text-muted-foreground">Source</TableHead>
+                    <TableHead className="text-right h-10 text-xs text-muted-foreground">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filtered.map((lead: any) => (
-                    <TableRow key={lead.id}>
-                      <TableCell className="text-center px-0">
+                    <TableRow key={lead.id} className="h-10 hover:bg-muted/50 transition-colors">
+                      <TableCell className="text-center px-0 py-1">
                         <Checkbox 
                           checked={selectedIds.includes(lead.id)}
                           onCheckedChange={(c) => handleSelectRow(lead.id, c as boolean)}
                         />
                       </TableCell>
-                      <TableCell className="font-medium text-foreground">{lead.full_name}</TableCell>
-                      <TableCell>
-                        <a href={`mailto:${lead.email}`} className="text-sm text-primary hover:underline">{lead.email}</a>
+                      <TableCell className="font-normal text-foreground py-1 text-xs md:text-[13px]">{lead.full_name}</TableCell>
+                      <TableCell className="py-1 text-xs md:text-[13px]">
+                        <a href={`mailto:${lead.email}`} className="text-[#2F4F97] hover:underline">{lead.email}</a>
                       </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">{new Date(lead.created_at).toLocaleDateString()}</TableCell>
-                      <TableCell><Badge className={`${statusColors[lead.status] || ""} border-0`}>{lead.status}</Badge></TableCell>
-                      <TableCell className="text-sm text-muted-foreground">{formatSource(lead.source)}</TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="icon" onClick={() => openDetail(lead)}>
-                          <Eye className="h-4 w-4" />
-                        </Button>
+                      <TableCell className="py-1 text-xs md:text-[13px] text-muted-foreground">{new Date(lead.created_at).toLocaleDateString()}</TableCell>
+                      <TableCell className="py-1"><Badge className={`${statusColors[lead.status] || ""} border-0`}>{lead.status}</Badge></TableCell>
+                      <TableCell className="py-1 text-xs md:text-[13px] text-muted-foreground">{formatSource(lead.source)}</TableCell>
+                      <TableCell className="text-right py-1">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-muted" onClick={() => openDetail(lead)}>
+                            <Eye className="h-3.5 w-3.5 text-muted-foreground" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -192,51 +256,6 @@ export default function AdminLeads() {
               </Table>
             </div>
           )}
-        </CardContent>
-      </Card>
-
-      <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
-        <DialogContent className="max-w-2xl text-sm">
-          <DialogHeader>
-            <DialogTitle>Lead Details</DialogTitle>
-          </DialogHeader>
-          {selectedLead && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div><Label className="text-xs text-muted-foreground">Name</Label><p className="font-medium">{selectedLead.full_name}</p></div>
-                <div><Label className="text-xs text-muted-foreground">Email</Label><p className="font-medium">{selectedLead.email}</p></div>
-                <div><Label className="text-xs text-muted-foreground">Phone</Label><p className="font-medium">{selectedLead.phone || "N/A"}</p></div>
-                <div><Label className="text-xs text-muted-foreground">Nationality</Label><p className="font-medium">{selectedLead.nationality || "N/A"}</p></div>
-                <div><Label className="text-xs text-muted-foreground">Interested Course</Label><p className="font-medium">{selectedLead.interested_course || "N/A"}</p></div>
-                <div><Label className="text-xs text-muted-foreground">Interested University</Label><p className="font-medium">{selectedLead.interested_university || "N/A"}</p></div>
-                <div><Label className="text-xs text-muted-foreground">Source</Label><p className="font-medium">{formatSource(selectedLead.source)}</p></div>
-                <div><Label className="text-xs text-muted-foreground">Date</Label><p className="font-medium">{new Date(selectedLead.created_at).toLocaleString()}</p></div>
-              </div>
-              {selectedLead.message && (
-                <div>
-                  <Label className="text-xs text-muted-foreground">Message</Label>
-                  <div className="p-3 bg-muted/50 rounded-xl mt-1 border whitespace-pre-wrap">
-                    {selectedLead.message}
-                  </div>
-                </div>
-              )}
-              <div className="border-t pt-4 mt-4">
-                <Label className="text-xs text-muted-foreground mb-2 block">Update Status</Label>
-                <Select value={selectedLead.status} onValueChange={(v) => { updateStatus(selectedLead.id, v); setSelectedLead({...selectedLead, status: v}); }}>
-                  <SelectTrigger className="w-full sm:w-[200px]"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="new">New</SelectItem>
-                    <SelectItem value="contacted">Contacted</SelectItem>
-                    <SelectItem value="qualified">Qualified</SelectItem>
-                    <SelectItem value="converted">Converted</SelectItem>
-                    <SelectItem value="lost">Lost</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

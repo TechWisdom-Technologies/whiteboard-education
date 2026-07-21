@@ -241,49 +241,47 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
 
               <NavItem to="/contact" icon={Phone}>Contact</NavItem>
               <CurrencySelector />
-            </nav>
 
-            {user && (
-              <DropdownMenu modal={false}>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 hover:ring-2 hover:ring-[#2F4F97]/30 transition-all">
-                    <Avatar className="h-10 w-10 border-2 border-[#2F4F97]/30">
-                      <AvatarImage src={avatarUrl} alt={user?.email || "User avatar"} />
-                      <AvatarFallback className="bg-primary text-primary-foreground text-sm font-bold">
-                        {userInitial}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <div className="px-3 py-2.5">
-                    <p className="text-sm font-semibold text-foreground truncate">{user.email}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {hasRole("admin") ? "Administrator" : hasRole("partner") ? "Partner" : "Student"}
-                    </p>
-                  </div>
-                  <DropdownMenuSeparator />
-                  {hasRole("admin") && (
-                    <DropdownMenuItem asChild>
-                      <Link to="/admin" className="flex items-center gap-2 cursor-pointer">
-                        <ShieldCheck className="h-4 w-4" /> Admin Panel
-                      </Link>
+              {user && (
+                <DropdownMenu modal={false}>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 hover:bg-transparent transition-all ml-1">
+                      <Avatar className="h-10 w-10 border-2 border-[#2F4F97]/30">
+                        <AvatarImage src={avatarUrl} alt={user?.email || "User avatar"} />
+                        <AvatarFallback className="bg-primary text-primary-foreground text-sm font-bold">
+                          {userInitial}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56 bg-white border-[#e8e8e8] shadow-md rounded-xl p-2 z-[100] mt-1">
+                    <div className="flex flex-col space-y-1 p-2 mb-2 border-b border-gray-100">
+                      <p className="text-sm font-medium leading-none truncate">{user.email}</p>
+                      <p className="text-[11px] text-muted-foreground uppercase tracking-widest mt-1">
+                        {hasRole("admin") ? "Administrator" : hasRole("partner") ? "Partner" : "User"}
+                      </p>
+                    </div>
+                    {hasRole("admin") && (
+                      <DropdownMenuItem onClick={() => navigate("/admin")} className="cursor-pointer rounded-lg py-2.5">
+                        <ShieldCheck className="mr-2 h-4 w-4 text-[#2F4F97]" />
+                        <span>Admin Panel</span>
+                      </DropdownMenuItem>
+                    )}
+                    {hasRole("partner") && (
+                      <DropdownMenuItem onClick={() => navigate("/partner")} className="cursor-pointer rounded-lg py-2.5">
+                        <Handshake className="mr-2 h-4 w-4 text-[#2F4F97]" />
+                        <span>Partner Dashboard</span>
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator className="bg-gray-100" />
+                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 rounded-lg py-2.5">
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Log out</span>
                     </DropdownMenuItem>
-                  )}
-                  {hasRole("partner") && (
-                    <DropdownMenuItem asChild>
-                      <Link to="/partner-dashboard" className="flex items-center gap-2 cursor-pointer">
-                        <LayoutDashboard className="h-4 w-4" /> Partner Dashboard
-                      </Link>
-                    </DropdownMenuItem>
-                  )}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive">
-                    <LogOut className="h-4 w-4" /> Sign Out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+            </nav>
           </div>
 
           {/* Mobile Hamburger - now visible on mobile */}

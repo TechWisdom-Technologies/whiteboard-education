@@ -91,8 +91,8 @@ export default function PartnerOverview() {
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-[#1E293B]">Dashboard Overview</h1>
-        <p className="text-muted-foreground text-sm mt-0.5">Track your students' application progress through the Malaysian visa journey</p>
+        <h1 className="text-[12px] font-normal tracking-tight text-[#1E293B]">Dashboard Overview</h1>
+        <p className="text-muted-foreground text-[12px] mt-0.5">Track your students' application progress through the Malaysian visa journey</p>
       </div>
 
       {/* KPI Cards */}
@@ -104,8 +104,8 @@ export default function PartnerOverview() {
                 <m.icon className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">{m.label}</p>
-                <p className="text-xl font-extrabold text-[#1E293B]">{m.value}</p>
+                <p className="text-[12px] text-muted-foreground font-normal uppercase tracking-wider">{m.label}</p>
+                <p className="text-[12px] font-normal text-[#1E293B]">{m.value}</p>
               </div>
             </CardContent>
           </Card>
@@ -115,7 +115,7 @@ export default function PartnerOverview() {
       {/* Application Pipeline — Horizontal Flow */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-[12px] flex items-center gap-2">
             <ArrowRight className="h-4 w-4 text-[#2F4F97]" />
             Application Pipeline
           </CardTitle>
@@ -124,7 +124,7 @@ export default function PartnerOverview() {
           {total === 0 ? (
             <div className="text-center py-10 text-muted-foreground">
               <Users className="h-10 w-10 mx-auto mb-3 opacity-30" />
-              <p className="text-sm">No students added yet. Go to Students tab to add your first student.</p>
+              <p className="text-[12px]">No students added yet. Go to Students tab to add your first student.</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -140,8 +140,8 @@ export default function PartnerOverview() {
                       <Icon className="h-4 w-4" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-lg font-extrabold text-[#1E293B] leading-none">{p.count}</p>
-                      <p className="text-[10px] text-muted-foreground font-semibold leading-tight truncate">{p.label}</p>
+                      <p className="text-[12px] font-normal text-[#1E293B] leading-none">{p.count}</p>
+                      <p className="text-[12px] text-muted-foreground font-normal leading-tight truncate">{p.label}</p>
                     </div>
                   </div>
                 );
@@ -153,12 +153,12 @@ export default function PartnerOverview() {
             <div className="flex gap-4 mt-3 pt-3 border-t">
               {rejected > 0 && (
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-200 text-[10px] font-bold">{rejected} Rejected</Badge>
+                  <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-200 text-[12px] font-normal">{rejected} Rejected</Badge>
                 </div>
               )}
               {students.filter(s => s.status === "on_hold").length > 0 && (
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-200 text-[10px] font-bold">{students.filter(s => s.status === "on_hold").length} On Hold</Badge>
+                  <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-200 text-[12px] font-normal">{students.filter(s => s.status === "on_hold").length} On Hold</Badge>
                 </div>
               )}
             </div>
@@ -170,7 +170,7 @@ export default function PartnerOverview() {
       {students.length > 0 && (
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-[12px] flex items-center gap-2">
               <BookOpen className="h-4 w-4 text-[#2F4F97]" />
               Recent Students
             </CardTitle>
@@ -182,10 +182,10 @@ export default function PartnerOverview() {
                 return (
                   <div key={s.id} className="flex items-center justify-between gap-3 py-2.5 px-2 border-b last:border-0 hover:bg-muted/30 transition-colors rounded-xl">
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-[#1E293B] truncate">{s.full_name}</p>
-                      <p className="text-[11px] text-muted-foreground truncate">{s.target_university || "No university"} · {s.target_course || "No course"} · {s.degree_level}</p>
+                      <p className="text-[12px] font-normal text-[#1E293B] truncate">{s.full_name}</p>
+                      <p className="text-[12px] text-muted-foreground truncate">{s.target_university || "No university"} · {s.target_course || "No course"} · {s.degree_level}</p>
                     </div>
-                    <Badge variant="outline" className={`shrink-0 text-[10px] font-bold uppercase tracking-wider ${st.color}`}>
+                    <Badge variant="outline" className={`shrink-0 text-[12px] font-normal uppercase tracking-wider ${st.color}`}>
                       {st.label}
                     </Badge>
                   </div>
@@ -194,7 +194,7 @@ export default function PartnerOverview() {
             </div>
             {totalRecentPages > 1 && (
               <div className="flex items-center justify-between mt-3 pt-3 border-t">
-                <span className="text-[11px] text-muted-foreground">Page {recentPage + 1} of {totalRecentPages}</span>
+                <span className="text-[12px] text-muted-foreground">Page {recentPage + 1} of {totalRecentPages}</span>
                 <div className="flex gap-1">
                   <Button variant="outline" size="icon" className="h-7 w-7" disabled={recentPage === 0} onClick={() => setRecentPage(p => p - 1)}>
                     <ChevronLeft className="h-3.5 w-3.5" />

@@ -13,7 +13,7 @@ export default function AdminAccommodations() {
   const fields = useMemo<FieldConfig[]>(() => [
     { key: "name", label: "Name", showInTable: true },
     { key: "city", label: "City", showInTable: true },
-    { key: "property_type", label: "Property Type", type: "select", options: ["Residential", "Commercial", "Mixed-Use", "Student Housing"], showInTable: true },
+    { key: "property_type", label: "Property Type", type: "select", options: ["Residential", "Commercial", "Mixed-Use", "Student Housing"], showInTable: false },
     { key: "type", label: "Accommodation Type", type: "select", options: ["Apartment", "Hostel", "Condominium", "Studio", "Shared House", "Dormitory"], showInTable: true },
     { key: "price_per_month", label: "Price/Month (MYR)", type: "number", showInTable: true },
     { key: "description", label: "Description", type: "textarea", showInTable: false, placeholder: "Brief description of the property..." },

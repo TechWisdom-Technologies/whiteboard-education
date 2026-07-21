@@ -245,7 +245,7 @@ export default function PartnerProfile() {
   const initials = (profile.display_name || user?.email || "P")
     .split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
 
-  const inputCls = "h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] transition-colors shadow-none";
+  const inputCls = "h-10 text-[12px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] transition-colors shadow-none";
 
   const mainDocs = [
     { field: "nid_document_url", label: "National ID / Passport" },
@@ -255,8 +255,8 @@ export default function PartnerProfile() {
   return (
     <div className="space-y-6 animate-fade-in pb-10">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-[#1E293B]">My Profile</h1>
-        <p className="text-muted-foreground text-sm mt-1">Manage your account, agency details, and security settings.</p>
+        <h1 className="text-[12px] font-normal tracking-tight text-[#1E293B]">My Profile</h1>
+        <p className="text-muted-foreground text-[12px] mt-1">Manage your account, agency details, and security settings.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
@@ -264,7 +264,7 @@ export default function PartnerProfile() {
         <div className="lg:col-span-1 space-y-6">
           <Card className="shadow-sm">
             <CardHeader className="pb-4 border-b border-gray-100">
-              <CardTitle className="flex items-center gap-2 text-lg">
+              <CardTitle className="flex items-center gap-2 text-[12px]">
                 <User className="h-5 w-5 text-[#2F4F97]" />
                 Account Settings
               </CardTitle>
@@ -275,7 +275,7 @@ export default function PartnerProfile() {
                 <div className="relative group mb-4">
                   <Avatar className="h-24 w-24 border-4 border-background shadow-md">
                     <AvatarImage src={profile.avatar_url} />
-                    <AvatarFallback className="text-3xl font-bold bg-[#2F4F97]/10 text-[#2F4F97]">{initials}</AvatarFallback>
+                    <AvatarFallback className="text-[12px] font-normal bg-[#2F4F97]/10 text-[#2F4F97]">{initials}</AvatarFallback>
                   </Avatar>
                   <button
                     onClick={() => fileInputRef.current?.click()}
@@ -290,7 +290,7 @@ export default function PartnerProfile() {
 
               <div className="space-y-4">
                 <div className="space-y-1.5">
-                  <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Display Name</Label>
+                  <Label className="text-[12px] font-normal text-gray-500 uppercase tracking-widest">Display Name</Label>
                   <Input
                     value={profile.display_name}
                     onChange={e => setProfile(prev => ({ ...prev, display_name: e.target.value }))}
@@ -299,10 +299,10 @@ export default function PartnerProfile() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Login Email</Label>
-                  <Input value={user?.email || ""} disabled className="h-10 text-[13px] bg-gray-100 border-gray-200 cursor-not-allowed text-gray-500" />
+                  <Label className="text-[12px] font-normal text-gray-500 uppercase tracking-widest">Login Email</Label>
+                  <Input value={user?.email || ""} disabled className="h-10 text-[12px] bg-gray-100 border-gray-200 cursor-not-allowed text-gray-500" />
                 </div>
-                <Button onClick={handleSaveProfile} disabled={savingProfile} className="w-full bg-[#1E293B] hover:bg-[#1E293B]/90 text-white gap-2 font-semibold text-[13px] h-10 mt-2">
+                <Button onClick={handleSaveProfile} disabled={savingProfile} className="w-full bg-[#1E293B] hover:bg-[#1E293B]/90 text-white gap-2 font-normal text-[12px] h-10 mt-2">
                   {savingProfile ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                   Save Profile
                 </Button>
@@ -311,18 +311,18 @@ export default function PartnerProfile() {
               <div className="pt-6 border-t border-gray-100 space-y-4">
                 <div className="flex items-center gap-2 mb-2">
                   <Lock className="h-4 w-4 text-[#2F4F97]" />
-                  <span className="text-[13px] font-bold text-gray-500 uppercase tracking-widest">Security</span>
+                  <span className="text-[12px] font-normal text-gray-500 uppercase tracking-widest">Security</span>
                 </div>
 
                 {pwStep === "idle" && (
-                  <Button onClick={handleSendCode} variant="outline" className="w-full text-[#1E293B] border-gray-200 hover:bg-gray-50 gap-2 font-semibold text-[13px] h-10">
+                  <Button onClick={handleSendCode} variant="outline" className="w-full text-[#1E293B] border-gray-200 hover:bg-gray-50 gap-2 font-normal text-[12px] h-10">
                     <KeyRound className="h-4 w-4" />
                     Change Password
                   </Button>
                 )}
 
                 {pwStep === "sending" && (
-                  <div className="flex items-center gap-3 text-sm text-gray-500 justify-center py-2">
+                  <div className="flex items-center gap-3 text-[12px] text-gray-500 justify-center py-2">
                     <Loader2 className="h-4 w-4 animate-spin text-[#2F4F97]" />
                     Sending code...
                   </div>
@@ -330,12 +330,12 @@ export default function PartnerProfile() {
 
                 {pwStep === "code_sent" && (
                   <div className="space-y-3">
-                    <p className="text-[11px] text-gray-500 leading-tight">Code sent to {user?.email}. Check your inbox.</p>
+                    <p className="text-[12px] text-gray-500 leading-tight">Code sent to {user?.email}. Check your inbox.</p>
                     <Input
                       value={otpCode}
                       onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                       placeholder="6-digit code"
-                      className={inputCls + " tracking-[0.3em] text-center font-bold text-base"}
+                      className={inputCls + " tracking-[0.3em] text-center font-normal text-[12px]"}
                       maxLength={6}
                     />
                     <div className="flex gap-2">
@@ -348,7 +348,7 @@ export default function PartnerProfile() {
                 )}
 
                 {pwStep === "verifying" && (
-                  <div className="flex items-center gap-3 text-sm text-gray-500 justify-center py-2">
+                  <div className="flex items-center gap-3 text-[12px] text-gray-500 justify-center py-2">
                     <Loader2 className="h-4 w-4 animate-spin text-[#2F4F97]" />
                     Verifying...
                   </div>
@@ -356,7 +356,7 @@ export default function PartnerProfile() {
 
                 {pwStep === "verified" && (
                   <div className="space-y-3">
-                    <p className="text-[11px] text-green-600 font-medium leading-tight">Code verified! Set new password.</p>
+                    <p className="text-[12px] text-green-600 font-normal leading-tight">Code verified! Set new password.</p>
                     <Input
                       type="password"
                       value={newPassword}
@@ -380,7 +380,7 @@ export default function PartnerProfile() {
                   </div>
                 )}
                 {pwStep === "updating" && (
-                  <div className="flex items-center gap-3 text-sm text-gray-500 justify-center py-2">
+                  <div className="flex items-center gap-3 text-[12px] text-gray-500 justify-center py-2">
                     <Loader2 className="h-4 w-4 animate-spin text-[#2F4F97]" />
                     Updating...
                   </div>
@@ -397,7 +397,7 @@ export default function PartnerProfile() {
             <CardHeader className="pb-4 relative">
               <div className="flex justify-between items-start">
                 <div>
-                  <CardTitle className="flex items-center gap-2 text-lg">
+                  <CardTitle className="flex items-center gap-2 text-[12px]">
                     <Building2 className="h-5 w-5 text-[#2F4F97]" />
                     Agency Details
                   </CardTitle>
@@ -409,7 +409,7 @@ export default function PartnerProfile() {
                       <X className="h-4 w-4 mr-1.5" />
                       Cancel
                     </Button>
-                    <Button size="sm" onClick={handleSaveAgency} disabled={savingAgency} className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white font-semibold">
+                    <Button size="sm" onClick={handleSaveAgency} disabled={savingAgency} className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white font-normal">
                       {savingAgency ? <Loader2 className="h-4 w-4 animate-spin mr-1.5" /> : <Save className="h-4 w-4 mr-1.5" />}
                       Save
                     </Button>
@@ -426,27 +426,27 @@ export default function PartnerProfile() {
               {isEditingAgency && editAgencyData ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="space-y-1.5">
-                    <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Agency Name</Label>
+                    <Label className="text-[12px] font-normal text-gray-500 uppercase tracking-widest">Agency Name</Label>
                     <Input value={editAgencyData.agency_name} onChange={e => setEditAgencyData({...editAgencyData, agency_name: e.target.value})} className={inputCls} />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Contact Person</Label>
+                    <Label className="text-[12px] font-normal text-gray-500 uppercase tracking-widest">Contact Person</Label>
                     <Input value={editAgencyData.contact_person} onChange={e => setEditAgencyData({...editAgencyData, contact_person: e.target.value})} className={inputCls} />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Email (Cannot be changed)</Label>
-                    <Input value={editAgencyData.email} disabled className="h-10 text-[13px] bg-gray-100 border-gray-200 cursor-not-allowed text-gray-500" />
+                    <Label className="text-[12px] font-normal text-gray-500 uppercase tracking-widest">Email (Cannot be changed)</Label>
+                    <Input value={editAgencyData.email} disabled className="h-10 text-[12px] bg-gray-100 border-gray-200 cursor-not-allowed text-gray-500" />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Phone</Label>
+                    <Label className="text-[12px] font-normal text-gray-500 uppercase tracking-widest">Phone</Label>
                     <Input value={editAgencyData.phone || ""} onChange={e => setEditAgencyData({...editAgencyData, phone: e.target.value})} className={inputCls} />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Country</Label>
+                    <Label className="text-[12px] font-normal text-gray-500 uppercase tracking-widest">Country</Label>
                     <Input value={editAgencyData.country || ""} onChange={e => setEditAgencyData({...editAgencyData, country: e.target.value})} className={inputCls} />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Annual Students</Label>
+                    <Label className="text-[12px] font-normal text-gray-500 uppercase tracking-widest">Annual Students</Label>
                     <Input type="number" value={editAgencyData.annual_students || ""} onChange={e => setEditAgencyData({...editAgencyData, annual_students: parseInt(e.target.value) || 0})} className={inputCls} />
                   </div>
                 </div>
@@ -459,7 +459,7 @@ export default function PartnerProfile() {
                   <InfoRow icon={Globe} label="Country" value={partner.country || "Not provided"} />
                   <InfoRow icon={Users} label="Annual Students" value={String(partner.annual_students || 0)} />
                   <div className="sm:col-span-2 pt-2 border-t border-gray-100 mt-2">
-                    <p className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-2">Account Status</p>
+                    <p className="text-[12px] font-normal text-gray-500 uppercase tracking-widest mb-2">Account Status</p>
                     <Badge variant="outline" className={
                       partner.status === "approved" ? "bg-green-500/10 text-green-600 border-green-200" :
                       partner.status === "rejected" ? "bg-red-500/10 text-red-600 border-red-200" :
@@ -471,11 +471,11 @@ export default function PartnerProfile() {
                   
                   {partner.admin_notes && partner.status !== "approved" && (
                     <div id="admin-notes-section" className="sm:col-span-2 pt-4 border-t border-gray-100 mt-2 rounded-2xl transition-all">
-                      <p className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                      <p className="text-[12px] font-normal text-gray-500 uppercase tracking-widest mb-2 flex items-center gap-1.5">
                         <ClipboardList className="h-3.5 w-3.5 text-[#2F4F97]" />
                         Notes from Admin
                       </p>
-                      <div className="bg-amber-50 border border-amber-200/50 rounded-2xl p-4 text-[13px] text-gray-700 whitespace-pre-wrap shadow-sm">
+                      <div className="bg-amber-50 border border-amber-200/50 rounded-2xl p-4 text-[12px] text-gray-700 whitespace-pre-wrap shadow-sm">
                         {partner.admin_notes}
                       </div>
                     </div>
@@ -490,7 +490,7 @@ export default function PartnerProfile() {
       {partner && (
         <Card className="shadow-sm">
           <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-2 text-lg">
+            <CardTitle className="flex items-center gap-2 text-[12px]">
               <FileCheck className="h-5 w-5 text-[#2F4F97]" />
               Agency Documents
             </CardTitle>
@@ -516,7 +516,7 @@ export default function PartnerProfile() {
                       <FileText className="h-6 w-6 text-muted-foreground/30 mb-2" />
                     )}
                     
-                    <p className="text-[10px] font-medium leading-tight mb-3 px-1 text-muted-foreground h-6 flex items-center justify-center">
+                    <p className="text-[12px] font-normal leading-tight mb-3 px-1 text-muted-foreground h-6 flex items-center justify-center">
                       {doc.label}
                     </p>
 
@@ -573,10 +573,10 @@ export default function PartnerProfile() {
 function InfoRow({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
   return (
     <div>
-      <p className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1 flex items-center gap-1">
+      <p className="text-[12px] font-normal text-gray-500 uppercase tracking-widest mb-1 flex items-center gap-1">
         <Icon className="h-3 w-3" /> {label}
       </p>
-      <p className="text-sm font-medium text-[#1E293B]">{value}</p>
+      <p className="text-[12px] font-normal text-[#1E293B]">{value}</p>
     </div>
   );
 }

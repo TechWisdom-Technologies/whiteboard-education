@@ -1,13 +1,31 @@
+import { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminNotificationCenter } from "@/components/admin/AdminNotificationCenter";
 import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function AdminLayout() {
   const location = useLocation();
   const { user, hasRole } = useAuth();
+  const [profile, setProfile] = useState<{ display_name?: string; avatar_url?: string } | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchProfile = async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("display_name, avatar_url")
+        .eq("user_id", user.id)
+        .single();
+      if (data) {
+        setProfile(data);
+      }
+    };
+    fetchProfile();
+  }, [user]);
 
   const getPageTitle = () => {
     const path = location.pathname;
@@ -43,16 +61,16 @@ export default function AdminLayout() {
                 <div className="flex items-center gap-3">
                   <div className="hidden flex-col items-end sm:flex">
                     <span className="text-[13px] font-bold text-gray-800 leading-tight">
-                      {hasRole("admin") ? "Administrator" : "User"}
+                      {profile?.display_name || (hasRole("admin") ? "Administrator" : "User")}
                     </span>
                     <span className="text-[11px] text-gray-500 truncate max-w-[160px] font-medium leading-tight">
                       {user?.email}
                     </span>
                   </div>
                   <Avatar className="h-9 w-9 ring-2 ring-gray-100 transition-transform hover:scale-105 cursor-pointer shadow-sm">
-                    <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`} alt="Avatar" />
+                    <AvatarImage src={profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`} alt="Avatar" />
                     <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">
-                      {user?.email?.charAt(0).toUpperCase() || "A"}
+                      {profile?.display_name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || "A"}
                     </AvatarFallback>
                   </Avatar>
                 </div>

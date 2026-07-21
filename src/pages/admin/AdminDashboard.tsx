@@ -145,8 +145,8 @@ export default function AdminDashboard() {
                 <m.icon className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">{m.label}</p>
-                <p className="text-2xl font-extrabold">{m.value}</p>
+                <p className="text-[12px] text-muted-foreground">{m.label}</p>
+                <p className="text-[12px] font-normal">{m.value}</p>
               </div>
             </CardContent>
           </Card>
@@ -157,24 +157,24 @@ export default function AdminDashboard() {
         {/* Recent Partners */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-[12px] flex items-center gap-2">
               <Users className="h-4 w-4 text-[#2F4F97]" />
               Recent Partner Agents
             </CardTitle>
           </CardHeader>
           <CardContent>
             {allPartners.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-8">No partners yet</p>
+              <p className="text-[12px] text-muted-foreground text-center py-8">No partners yet</p>
             ) : (
               <>
                 <div className="space-y-0.5">
                   {pagedPartners.map(p => (
                     <div key={p.id} className="flex items-center justify-between gap-3 py-2.5 px-2 border-b last:border-0 hover:bg-muted/30 transition-colors rounded-xl">
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-[#1E293B] truncate">{p.agency_name}</p>
-                        <p className="text-[11px] text-muted-foreground truncate">{p.contact_person}</p>
+                        <p className="text-[12px] font-normal text-[#1E293B] truncate">{p.agency_name}</p>
+                        <p className="text-[12px] text-muted-foreground truncate">{p.contact_person}</p>
                       </div>
-                      <Badge variant="outline" className={`shrink-0 text-[10px] font-bold uppercase tracking-wider ${partnerStatusColor(p.status)}`}>
+                      <Badge variant="outline" className={`shrink-0 text-[12px] font-normal uppercase tracking-wider ${partnerStatusColor(p.status)}`}>
                         {p.status}
                       </Badge>
                     </div>
@@ -182,7 +182,7 @@ export default function AdminDashboard() {
                 </div>
                 {totalPartnerPages > 1 && (
                   <div className="flex items-center justify-between mt-3 pt-3 border-t">
-                    <span className="text-[11px] text-muted-foreground">
+                    <span className="text-[12px] text-muted-foreground">
                       Page {partnerPage + 1} of {totalPartnerPages}
                     </span>
                     <div className="flex gap-1">
@@ -203,24 +203,24 @@ export default function AdminDashboard() {
         {/* Recent Students */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-[12px] flex items-center gap-2">
               <UserCheck className="h-4 w-4 text-[#2F4F97]" />
               Recent Students
             </CardTitle>
           </CardHeader>
           <CardContent>
             {allStudents.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-8">No students yet</p>
+              <p className="text-[12px] text-muted-foreground text-center py-8">No students yet</p>
             ) : (
               <>
                 <div className="space-y-0.5">
                   {pagedStudents.map(s => (
                     <div key={s.id} className="flex items-center justify-between gap-3 py-2.5 px-2 border-b last:border-0 hover:bg-muted/30 transition-colors rounded-xl">
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-[#1E293B] truncate">{s.full_name}</p>
-                        <p className="text-[11px] text-muted-foreground truncate">Added by {getPartnerName(s.partner_id)}</p>
+                        <p className="text-[12px] font-normal text-[#1E293B] truncate">{s.full_name}</p>
+                        <p className="text-[12px] text-muted-foreground truncate">Added by {getPartnerName(s.partner_id)}</p>
                       </div>
-                      <Badge variant="outline" className={`shrink-0 text-[10px] font-bold uppercase tracking-wider ${studentStatusLabels[s.status]?.color || "bg-muted text-muted-foreground"}`}>
+                      <Badge variant="outline" className={`shrink-0 text-[12px] font-normal uppercase tracking-wider ${studentStatusLabels[s.status]?.color || "bg-muted text-muted-foreground"}`}>
                         {studentStatusLabels[s.status]?.label || s.status}
                       </Badge>
                     </div>
@@ -228,7 +228,7 @@ export default function AdminDashboard() {
                 </div>
                 {totalStudentPages > 1 && (
                   <div className="flex items-center justify-between mt-3 pt-3 border-t">
-                    <span className="text-[11px] text-muted-foreground">
+                    <span className="text-[12px] text-muted-foreground">
                       Page {studentPage + 1} of {totalStudentPages}
                     </span>
                     <div className="flex gap-1">

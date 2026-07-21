@@ -25,6 +25,9 @@ export default function AdminSettings() {
   
   const [profile, setProfile] = useState<UserProfile>({ display_name: "", avatar_url: "" });
 
+  type TabType = "profile" | "security" | "platform";
+  const [activeTab, setActiveTab] = useState<TabType>("profile");
+
   // Password change state
   type PwStep = "idle" | "sending" | "code_sent" | "verifying" | "verified" | "updating";
   const [pwStep, setPwStep] = useState<PwStep>("idle");
@@ -177,216 +180,249 @@ export default function AdminSettings() {
 
   return (
     <div className="space-y-8 animate-fade-in pb-10">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-[#1E293B]">Settings</h1>
-        <p className="text-muted-foreground text-sm mt-1">Manage your administrator profile and global platform preferences.</p>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-        {/* Profile Settings */}
-        <Card className="border-sidebar-border shadow-sm">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <User className="h-5 w-5 text-[#2F4F97]" />
-              Admin Profile
-            </CardTitle>
-            <CardDescription>Update your personal information and avatar.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-              <div className="relative group shrink-0">
-                <Avatar className="h-24 w-24 border-4 border-background shadow-md">
-                  <AvatarImage src={profile.avatar_url} />
-                  <AvatarFallback className="text-2xl font-bold bg-[#2F4F97]/10 text-[#2F4F97]">{initials}</AvatarFallback>
-                </Avatar>
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={uploading}
-                  className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
-                >
-                  {uploading ? (
-                    <Loader2 className="h-6 w-6 text-white animate-spin" />
-                  ) : (
-                    <Camera className="h-6 w-6 text-white" />
-                  )}
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleAvatarUpload}
-                />
-              </div>
-              <div className="flex-1 space-y-4 w-full">
-                <div className="space-y-1.5">
-                  <Label htmlFor="displayName" className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Display Name</Label>
-                  <Input
-                    id="displayName"
-                    value={profile.display_name}
-                    onChange={e => setProfile(prev => ({ ...prev, display_name: e.target.value }))}
-                    placeholder="E.g. John Doe"
-                    className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] transition-colors shadow-none"
-                  />
+
+      <div className="flex flex-col md:flex-row gap-8 items-start">
+        {/* Sidebar Nav */}
+        <div className="w-full md:w-56 flex flex-col gap-1 shrink-0">
+          <Button 
+            variant="ghost" 
+            onClick={() => setActiveTab("profile")}
+            className={`justify-start h-10 px-4 text-[13px] font-normal transition-colors ${activeTab === "profile" ? "bg-[#2F4F97]/10 text-[#2F4F97] hover:bg-[#2F4F97]/20" : "text-gray-500 hover:text-[#1E293B] hover:bg-gray-100/50"}`}
+          >
+            <User className="mr-3 h-4 w-4" /> Admin Profile
+          </Button>
+          <Button 
+            variant="ghost" 
+            onClick={() => setActiveTab("security")}
+            className={`justify-start h-10 px-4 text-[13px] font-normal transition-colors ${activeTab === "security" ? "bg-[#2F4F97]/10 text-[#2F4F97] hover:bg-[#2F4F97]/20" : "text-gray-500 hover:text-[#1E293B] hover:bg-gray-100/50"}`}
+          >
+            <Lock className="mr-3 h-4 w-4" /> Security
+          </Button>
+          <Button 
+            variant="ghost" 
+            onClick={() => setActiveTab("platform")}
+            className={`justify-start h-10 px-4 text-[13px] font-normal transition-colors ${activeTab === "platform" ? "bg-[#2F4F97]/10 text-[#2F4F97] hover:bg-[#2F4F97]/20" : "text-gray-500 hover:text-[#1E293B] hover:bg-gray-100/50"}`}
+          >
+            <Globe className="mr-3 h-4 w-4" /> Platform Settings
+          </Button>
+        </div>
+
+        {/* Content Area */}
+        <div className="flex-1 w-full max-w-3xl">
+          
+          {/* Profile Settings */}
+          {activeTab === "profile" && (
+            <Card className="border-sidebar-border shadow-sm animate-fade-in">
+              <CardHeader className="pb-4 border-b border-gray-100 mb-6">
+                <CardTitle className="flex items-center gap-2 text-sm font-semibold text-[#1E293B]">
+                  Admin Profile
+                </CardTitle>
+                <CardDescription>Update your personal information and avatar.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8">
+                  <div className="relative group shrink-0">
+                    <Avatar className="h-28 w-28 border-4 border-background shadow-md">
+                      <AvatarImage src={profile.avatar_url} />
+                      <AvatarFallback className="text-sm font-semibold bg-[#2F4F97]/10 text-[#2F4F97]">{initials}</AvatarFallback>
+                    </Avatar>
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                      className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
+                    >
+                      {uploading ? (
+                        <Loader2 className="h-6 w-6 text-white animate-spin" />
+                      ) : (
+                        <Camera className="h-6 w-6 text-white" />
+                      )}
+                    </button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleAvatarUpload}
+                    />
+                  </div>
+                  <div className="flex-1 space-y-5 w-full">
+                    <div className="space-y-2">
+                      <Label htmlFor="displayName" className="text-[12px] font-medium text-gray-700">Display Name</Label>
+                      <Input
+                        id="displayName"
+                        value={profile.display_name}
+                        onChange={e => setProfile(prev => ({ ...prev, display_name: e.target.value }))}
+                        placeholder="E.g. John Doe"
+                        className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] transition-colors shadow-sm"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[12px] font-medium text-gray-700">Login Email</Label>
+                      <Input value={user?.email || ""} disabled className="h-10 text-[13px] bg-gray-50 border-gray-200 cursor-not-allowed text-gray-500 shadow-sm" />
+                      <p className="text-[11px] text-gray-500 mt-1">Email cannot be changed here. Contact support if you need to update it.</p>
+                    </div>
+                  </div>
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Login Email</Label>
-                  <Input value={user?.email || ""} disabled className="h-10 text-[13px] bg-gray-100 border-gray-200 cursor-not-allowed text-gray-500" />
-                  <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider">Email cannot be changed here.</p>
+                <div className="pt-6 border-t border-gray-100 mt-8 flex justify-end">
+                  <Button onClick={handleSaveProfile} disabled={savingProfile} className="w-full sm:w-auto bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white gap-2 font-medium text-[13px] h-10 px-6">
+                    {savingProfile ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                    Save Profile
+                  </Button>
                 </div>
-              </div>
-            </div>
-            <div className="pt-2 border-t border-gray-100 mt-6">
-              <Button onClick={handleSaveProfile} disabled={savingProfile} className="w-full sm:w-auto bg-[#1E293B] hover:bg-[#1E293B]/90 text-white gap-2 font-semibold text-[13px] h-10 mt-4">
-                {savingProfile ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                Save Profile
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          )}
 
-        {/* System Settings */}
-        <Card className="border-sidebar-border shadow-sm">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Globe className="h-5 w-5 text-[#2F4F97]" />
-              Platform Settings
-            </CardTitle>
-            <CardDescription>Manage global contact information shown on the site.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-5">
-            <div className="space-y-1.5">
-              <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-1.5">
-                <Building2 className="h-3.5 w-3.5" /> Company Name
-              </Label>
-              <Input 
-                value={systemSettings.companyName} 
-                onChange={(e) => setSystemSettings(p => ({ ...p, companyName: e.target.value }))}
-                className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] transition-colors shadow-none"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-1.5">
-                <Mail className="h-3.5 w-3.5" /> Public Support Email
-              </Label>
-              <Input 
-                value={systemSettings.contactEmail} 
-                onChange={(e) => setSystemSettings(p => ({ ...p, contactEmail: e.target.value }))}
-                className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] transition-colors shadow-none"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-1.5">
-                <Phone className="h-3.5 w-3.5" /> Main Phone Number
-              </Label>
-              <Input 
-                value={systemSettings.phoneNumber} 
-                onChange={(e) => setSystemSettings(p => ({ ...p, phoneNumber: e.target.value }))}
-                className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] transition-colors shadow-none"
-              />
-            </div>
-            <div className="pt-2 border-t border-gray-100 mt-6">
-              <Button onClick={handleSaveSystem} disabled={savingSystem} className="w-full sm:w-auto bg-white border border-[#e8e8e8] text-[#1E293B] hover:bg-gray-50 hover:border-[#2F4F97] gap-2 shadow-sm font-semibold text-[13px] h-10 mt-4">
-                {savingSystem ? <Loader2 className="h-4 w-4 animate-spin text-[#2F4F97]" /> : <Save className="h-4 w-4 text-[#2F4F97]" />}
-                Update Settings
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+          {/* Security / Change Password */}
+          {activeTab === "security" && (
+            <Card className="border-sidebar-border shadow-sm animate-fade-in">
+              <CardHeader className="pb-4 border-b border-gray-100 mb-6">
+                <CardTitle className="flex items-center gap-2 text-sm font-semibold text-[#1E293B]">
+                  Security
+                </CardTitle>
+                <CardDescription>Update your account password using email verification.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {pwStep === "idle" && (
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+                    <div className="flex-1 space-y-1">
+                      <p className="text-[13px] font-medium text-[#1E293B]">Change Password</p>
+                      <p className="text-[12px] text-gray-500">To change your password, we'll send a 6-digit verification code to <span className="font-medium text-[#1E293B]">{user?.email}</span>.</p>
+                    </div>
+                    <Button onClick={handleSendCode} className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 gap-2 font-medium text-[13px] h-10 shrink-0 px-6">
+                      <KeyRound className="h-4 w-4" />
+                      Send Code
+                    </Button>
+                  </div>
+                )}
+
+                {pwStep === "sending" && (
+                  <div className="flex items-center gap-3 text-[13px] text-gray-500 p-4">
+                    <Loader2 className="h-5 w-5 animate-spin text-[#2F4F97]" />
+                    Sending verification code to your email...
+                  </div>
+                )}
+
+                {pwStep === "code_sent" && (
+                  <div className="space-y-5 max-w-md">
+                    <div className="flex items-start gap-3 p-4 bg-blue-50/50 border border-blue-100 rounded-xl">
+                      <ShieldCheck className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
+                      <p className="text-[12px] text-blue-800 leading-relaxed">A 6-digit code has been sent to <span className="font-semibold">{user?.email}</span>. Check your inbox (and spam folder).</p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[12px] font-medium text-gray-700">Verification Code</Label>
+                      <Input
+                        value={otpCode}
+                        onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                        placeholder="000000"
+                        className="h-12 text-lg bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm tracking-[0.5em] text-center font-medium"
+                        maxLength={6}
+                      />
+                    </div>
+                    <div className="flex gap-3 pt-2">
+                      <Button onClick={handleVerifyCode} disabled={otpCode.length < 6} className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white gap-2 font-medium text-[13px] h-10 px-6 flex-1">
+                        Verify Code <ArrowRight className="h-4 w-4 ml-1" />
+                      </Button>
+                      <Button variant="outline" onClick={resetPwFlow} className="text-gray-600 text-[13px] h-10 px-6 bg-white shadow-sm hover:bg-gray-50">Cancel</Button>
+                    </div>
+                  </div>
+                )}
+
+                {pwStep === "verifying" && (
+                  <div className="flex items-center gap-3 text-[13px] text-gray-500 p-4">
+                    <Loader2 className="h-5 w-5 animate-spin text-[#2F4F97]" />
+                    Verifying code...
+                  </div>
+                )}
+
+                {pwStep === "verified" && (
+                  <div className="space-y-5 max-w-md">
+                    <div className="flex items-start gap-3 p-4 bg-green-50/50 border border-green-100 rounded-xl">
+                      <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
+                      <p className="text-[12px] text-green-800 font-medium">Code verified! Set your new password below.</p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[12px] font-medium text-gray-700">New Password</Label>
+                      <Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Min. 6 characters" className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[12px] font-medium text-gray-700">Confirm Password</Label>
+                      <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat new password" className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm" />
+                    </div>
+                    <div className="flex gap-3 pt-4">
+                      <Button onClick={handleUpdatePw} className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 gap-2 font-medium text-[13px] h-10 px-6 flex-1">
+                        <Save className="h-4 w-4" /> Update Password
+                      </Button>
+                      <Button variant="outline" onClick={resetPwFlow} className="text-gray-600 text-[13px] h-10 px-6 bg-white shadow-sm hover:bg-gray-50">Cancel</Button>
+                    </div>
+                  </div>
+                )}
+
+                {pwStep === "updating" && (
+                  <div className="flex items-center gap-3 text-[13px] text-gray-500 p-4">
+                    <Loader2 className="h-5 w-5 animate-spin text-[#2F4F97]" />
+                    Updating your password...
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* System Settings */}
+          {activeTab === "platform" && (
+            <Card className="border-sidebar-border shadow-sm animate-fade-in">
+              <CardHeader className="pb-4 border-b border-gray-100 mb-6">
+                <CardTitle className="flex items-center gap-2 text-sm font-semibold text-[#1E293B]">
+                  Platform Settings
+                </CardTitle>
+                <CardDescription>Manage global contact information shown on the public site.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="text-[12px] font-medium text-gray-700 flex items-center gap-1.5">
+                      <Building2 className="h-3.5 w-3.5 text-gray-400" /> Company Name
+                    </Label>
+                    <Input 
+                      value={systemSettings.companyName} 
+                      onChange={(e) => setSystemSettings(p => ({ ...p, companyName: e.target.value }))}
+                      className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[12px] font-medium text-gray-700 flex items-center gap-1.5">
+                      <Mail className="h-3.5 w-3.5 text-gray-400" /> Public Support Email
+                    </Label>
+                    <Input 
+                      value={systemSettings.contactEmail} 
+                      onChange={(e) => setSystemSettings(p => ({ ...p, contactEmail: e.target.value }))}
+                      className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[12px] font-medium text-gray-700 flex items-center gap-1.5">
+                      <Phone className="h-3.5 w-3.5 text-gray-400" /> Main Phone Number
+                    </Label>
+                    <Input 
+                      value={systemSettings.phoneNumber} 
+                      onChange={(e) => setSystemSettings(p => ({ ...p, phoneNumber: e.target.value }))}
+                      className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm"
+                    />
+                  </div>
+                </div>
+                <div className="pt-6 border-t border-gray-100 mt-8 flex justify-end">
+                  <Button onClick={handleSaveSystem} disabled={savingSystem} className="w-full sm:w-auto bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white gap-2 font-medium text-[13px] h-10 px-6">
+                    {savingSystem ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                    Update Settings
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+        </div>
       </div>
-
-      {/* ────────── Security / Change Password Card ────────── */}
-      <Card className="border-sidebar-border shadow-sm">
-        <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Lock className="h-5 w-5 text-[#2F4F97]" />
-            Security
-          </CardTitle>
-          <CardDescription>Update your account password using email verification.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {pwStep === "idle" && (
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <div className="flex-1">
-                <p className="text-sm text-gray-600">To change your password, we'll send a 6-digit verification code to <span className="font-semibold text-[#1E293B]">{user?.email}</span>.</p>
-              </div>
-              <Button onClick={handleSendCode} className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 gap-2 font-semibold text-[13px] h-10 shrink-0">
-                <KeyRound className="h-4 w-4" />
-                Change Password
-              </Button>
-            </div>
-          )}
-
-          {pwStep === "sending" && (
-            <div className="flex items-center gap-3 text-sm text-gray-500">
-              <Loader2 className="h-5 w-5 animate-spin text-[#2F4F97]" />
-              Sending verification code to your email...
-            </div>
-          )}
-
-          {pwStep === "code_sent" && (
-            <div className="space-y-4 max-w-md">
-              <div className="flex items-start gap-3 p-3 bg-blue-50 border border-blue-100 rounded-xl">
-                <ShieldCheck className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
-                <p className="text-[13px] text-blue-700">A 6-digit code has been sent to <span className="font-bold">{user?.email}</span>. Check your inbox (and spam folder).</p>
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Verification Code</Label>
-                <Input
-                  value={otpCode}
-                  onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                  placeholder="Enter 6-digit code"
-                  className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] transition-colors shadow-none tracking-[0.3em] text-center font-bold text-lg"
-                  maxLength={6}
-                />
-              </div>
-              <div className="flex gap-3">
-                <Button onClick={handleVerifyCode} disabled={otpCode.length < 6} className="bg-[#1E293B] hover:bg-[#1E293B]/90 text-white gap-2 font-semibold text-[13px] h-10">
-                  <ArrowRight className="h-4 w-4" /> Verify Code
-                </Button>
-                <Button variant="ghost" onClick={resetPwFlow} className="text-gray-500 text-[13px] h-10">Cancel</Button>
-              </div>
-            </div>
-          )}
-
-          {pwStep === "verifying" && (
-            <div className="flex items-center gap-3 text-sm text-gray-500">
-              <Loader2 className="h-5 w-5 animate-spin text-[#2F4F97]" />
-              Verifying code...
-            </div>
-          )}
-
-          {pwStep === "verified" && (
-            <div className="space-y-4 max-w-md">
-              <div className="flex items-start gap-3 p-3 bg-green-50 border border-green-100 rounded-xl">
-                <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
-                <p className="text-[13px] text-green-700 font-medium">Code verified! Set your new password below.</p>
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">New Password</Label>
-                <Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Min. 6 characters" className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] transition-colors shadow-none" />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Confirm Password</Label>
-                <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat new password" className="h-10 text-[13px] bg-gray-50 border-gray-200 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] transition-colors shadow-none" />
-              </div>
-              <div className="flex gap-3">
-                <Button onClick={handleUpdatePw} className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 gap-2 font-semibold text-[13px] h-10">
-                  <Save className="h-4 w-4" /> Update Password
-                </Button>
-                <Button variant="ghost" onClick={resetPwFlow} className="text-gray-500 text-[13px] h-10">Cancel</Button>
-              </div>
-            </div>
-          )}
-
-          {pwStep === "updating" && (
-            <div className="flex items-center gap-3 text-sm text-gray-500">
-              <Loader2 className="h-5 w-5 animate-spin text-[#2F4F97]" />
-              Updating your password...
-            </div>
-          )}
-        </CardContent>
-      </Card>
     </div>
   );
 }

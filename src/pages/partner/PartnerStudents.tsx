@@ -8,12 +8,13 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Users, UserPlus, Eye, Loader2, Search, Trash2 } from "lucide-react";
+import { Users, UserPlus, Eye, Loader2, Search, Trash2, ArrowLeft } from "lucide-react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LoadingScreen } from "@/components/ui/loading-screen";
+import { getStatusLabel } from "@/config/statusFlow";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -191,7 +192,9 @@ export default function PartnerStudents() {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to delete student");
+        let errMsg = "Failed to delete student";
+        try { const errData = await res.json(); errMsg = errData.message || errData.details || errMsg; } catch(e) {}
+        throw new Error(errMsg);
       }
 
       toast.success("Student deleted successfully");
@@ -214,8 +217,12 @@ export default function PartnerStudents() {
             "apikey": SUPABASE_KEY,
             "Authorization": `Bearer ${session.access_token}`,
           },
-        }).then(res => {
-          if (!res.ok) throw new Error("Failed to delete student");
+        }).then(async res => {
+          if (!res.ok) {
+            let errMsg = "Failed to delete student";
+            try { const errData = await res.json(); errMsg = errData.message || errData.details || errMsg; } catch(e) {}
+            throw new Error(errMsg);
+          }
         })
       ));
 
@@ -235,12 +242,113 @@ export default function PartnerStudents() {
 
   if (loading) return <LoadingScreen fullScreen />;
 
+  if (addOpen) {
+    return (
+      <div className="space-y-6 animate-fade-in pb-12">
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => setAddOpen(false)} 
+            className="h-8 w-8 rounded-full bg-[#2F4F97]/10 text-[#2F4F97] hover:bg-[#2F4F97]/20 transition-colors flex-shrink-0"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h2 className="text-sm font-semibold text-[#1E293B]">
+            Add New Student
+          </h2>
+        </div>
+        
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div className="p-6 sm:p-8 space-y-6 max-w-4xl">
+            <h3 className="font-semibold text-sm text-gray-900 border-b pb-2">Personal Information</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div><Label className="text-xs">Full Name *</Label><Input value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))} placeholder="Full name" className="h-9 mt-1" /></div>
+              <div><Label className="text-xs">Email *</Label><Input value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} placeholder="email@example.com" className="h-9 mt-1" /></div>
+              <div><Label className="text-xs">Phone</Label><Input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="+880..." className="h-9 mt-1" /></div>
+              <div>
+                <Label className="text-xs">Gender</Label>
+                <Select value={form.gender} onValueChange={v => setForm(f => ({ ...f, gender: v }))}>
+                  <SelectTrigger className="h-9 mt-1"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Male">Male</SelectItem>
+                    <SelectItem value="Female">Female</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div><Label className="text-xs">Nationality</Label><Input value={form.nationality} onChange={e => setForm(f => ({ ...f, nationality: e.target.value }))} className="h-9 mt-1" /></div>
+              <div><Label className="text-xs">NID Number</Label><Input value={form.nid_number} onChange={e => setForm(f => ({ ...f, nid_number: e.target.value }))} placeholder="National ID" className="h-9 mt-1" /></div>
+              <div><Label className="text-xs">Passport Number</Label><Input value={form.passport_number} onChange={e => setForm(f => ({ ...f, passport_number: e.target.value }))} className="h-9 mt-1" /></div>
+              <div><Label className="text-xs">Date of Birth</Label><Input type="date" value={form.date_of_birth} onChange={e => setForm(f => ({ ...f, date_of_birth: e.target.value }))} className="h-9 mt-1" /></div>
+            </div>
+
+            <h3 className="font-semibold text-sm text-gray-900 border-b pb-2 pt-4">Academic Background</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div><Label className="text-xs">Degree Name</Label><Input value={form.previous_degree} onChange={e => setForm(f => ({ ...f, previous_degree: e.target.value }))} placeholder="e.g. HSC, Bachelor of Science" className="h-9 mt-1" /></div>
+              <div><Label className="text-xs">Institution</Label><Input value={form.previous_institution} onChange={e => setForm(f => ({ ...f, previous_institution: e.target.value }))} className="h-9 mt-1" /></div>
+              <div><Label className="text-xs">Major</Label><Input value={form.major} onChange={e => setForm(f => ({ ...f, major: e.target.value }))} placeholder="e.g. Computer Science" className="h-9 mt-1" /></div>
+              <div><Label className="text-xs">GPA / CGPA</Label><Input type="number" step="0.01" value={form.gpa} onChange={e => setForm(f => ({ ...f, gpa: e.target.value }))} className="h-9 mt-1" /></div>
+            </div>
+
+            <h3 className="font-semibold text-sm text-gray-900 border-b pb-2 pt-4">Language Proficiency</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div><Label className="text-xs">Test Name</Label><Input value={form.language_test_name} onChange={e => setForm(f => ({ ...f, language_test_name: e.target.value }))} placeholder="e.g. IELTS, TOEFL, Duolingo" className="h-9 mt-1" /></div>
+              <div><Label className="text-xs">Score</Label><Input type="number" step="0.5" value={form.ielts_score} onChange={e => setForm(f => ({ ...f, ielts_score: e.target.value }))} className="h-9 mt-1" /></div>
+            </div>
+
+            <h3 className="font-semibold text-sm text-gray-900 border-b pb-2 pt-4">Target Program</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Label className="text-xs">Degree Level</Label>
+                <Select value={form.degree_level} onValueChange={v => setForm(f => ({ ...f, degree_level: v }))}>
+                  <SelectTrigger className="h-9 mt-1"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Foundation">Foundation</SelectItem>
+                    <SelectItem value="Diploma">Diploma</SelectItem>
+                    <SelectItem value="Bachelor">Bachelor</SelectItem>
+                    <SelectItem value="Master">Master</SelectItem>
+                    <SelectItem value="PhD">PhD</SelectItem>
+                    <SelectItem value="English Course">English Course</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div><Label className="text-xs">Course</Label><Input value={form.target_course} onChange={e => setForm(f => ({ ...f, target_course: e.target.value }))} className="h-9 mt-1" /></div>
+              <div><Label className="text-xs">University</Label><Input value={form.target_university} onChange={e => setForm(f => ({ ...f, target_university: e.target.value }))} className="h-9 mt-1" /></div>
+              <div>
+                <Label className="text-xs">Intake Month</Label>
+                <Select value={form.intake_month} onValueChange={v => setForm(f => ({ ...f, intake_month: v }))}>
+                  <SelectTrigger className="h-9 mt-1"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map(m => (
+                      <SelectItem key={m} value={m}>{m}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            <div className="pt-6 border-t border-gray-100 flex items-center justify-end gap-3">
+              <Button variant="outline" onClick={() => setAddOpen(false)} className="h-10 px-6">
+                Cancel
+              </Button>
+              <Button className="h-10 px-6 bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white" onClick={handleAdd} disabled={submitting}>
+                {submitting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UserPlus className="h-4 w-4 mr-2" />}
+                Save Student
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-extrabold">Student Profiles</h1>
-          <p className="text-muted-foreground text-sm">Manage your students and track their application progress</p>
+          <h1 className="text-[12px] font-normal">Student Profiles</h1>
+          <p className="text-muted-foreground text-[12px]">Manage your students and track their application progress</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           {selectedIds.length > 0 && (
@@ -248,101 +356,35 @@ export default function PartnerStudents() {
               <Trash2 className="h-4 w-4 mr-2" /> Delete Selected ({selectedIds.length})
             </Button>
           )}
-          <Dialog open={addOpen} onOpenChange={setAddOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 w-full sm:w-auto">
-                <UserPlus className="h-4 w-4 mr-2" />Add Student
-              </Button>
-            </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader><DialogTitle>Add New Student</DialogTitle></DialogHeader>
-            <div className="space-y-4 pt-2">
-              <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Personal Information</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div><Label>Full Name *</Label><Input value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))} placeholder="Full name" /></div>
-                <div><Label>Email *</Label><Input value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} placeholder="email@example.com" /></div>
-                <div><Label>Phone</Label><Input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="+880..." /></div>
-                <div>
-                  <Label>Gender</Label>
-                  <Select value={form.gender} onValueChange={v => setForm(f => ({ ...f, gender: v }))}>
-                    <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Male">Male</SelectItem>
-                      <SelectItem value="Female">Female</SelectItem>
-                      <SelectItem value="Other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div><Label>Nationality</Label><Input value={form.nationality} onChange={e => setForm(f => ({ ...f, nationality: e.target.value }))} /></div>
-                <div><Label>NID Number</Label><Input value={form.nid_number} onChange={e => setForm(f => ({ ...f, nid_number: e.target.value }))} placeholder="National ID" /></div>
-                <div><Label>Passport Number</Label><Input value={form.passport_number} onChange={e => setForm(f => ({ ...f, passport_number: e.target.value }))} /></div>
-                <div><Label>Date of Birth</Label><Input type="date" value={form.date_of_birth} onChange={e => setForm(f => ({ ...f, date_of_birth: e.target.value }))} /></div>
-              </div>
-
-              <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide pt-2">Academic Background</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div><Label>Degree Name</Label><Input value={form.previous_degree} onChange={e => setForm(f => ({ ...f, previous_degree: e.target.value }))} placeholder="e.g. HSC, Bachelor of Science" /></div>
-                <div><Label>Institution</Label><Input value={form.previous_institution} onChange={e => setForm(f => ({ ...f, previous_institution: e.target.value }))} /></div>
-                <div><Label>Major</Label><Input value={form.major} onChange={e => setForm(f => ({ ...f, major: e.target.value }))} placeholder="e.g. Computer Science" /></div>
-                <div><Label>GPA / CGPA</Label><Input type="number" step="0.01" value={form.gpa} onChange={e => setForm(f => ({ ...f, gpa: e.target.value }))} /></div>
-              </div>
-
-              <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide pt-2">Language Proficiency</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div><Label>Test Name</Label><Input value={form.language_test_name} onChange={e => setForm(f => ({ ...f, language_test_name: e.target.value }))} placeholder="e.g. IELTS, TOEFL, Duolingo" /></div>
-                <div><Label>Score</Label><Input type="number" step="0.5" value={form.ielts_score} onChange={e => setForm(f => ({ ...f, ielts_score: e.target.value }))} /></div>
-              </div>
-
-              <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide pt-2">Target Program</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <Label>Degree Level</Label>
-                  <Select value={form.degree_level} onValueChange={v => setForm(f => ({ ...f, degree_level: v }))}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Foundation">Foundation</SelectItem>
-                      <SelectItem value="Diploma">Diploma</SelectItem>
-                      <SelectItem value="Bachelor">Bachelor</SelectItem>
-                      <SelectItem value="Master">Master</SelectItem>
-                      <SelectItem value="PhD">PhD</SelectItem>
-                      <SelectItem value="English Course">English Course</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div><Label>Course</Label><Input value={form.target_course} onChange={e => setForm(f => ({ ...f, target_course: e.target.value }))} /></div>
-                <div><Label>University</Label><Input value={form.target_university} onChange={e => setForm(f => ({ ...f, target_university: e.target.value }))} /></div>
-                <div><Label>Preferred Intake</Label><Input value={form.intake_month} onChange={e => setForm(f => ({ ...f, intake_month: e.target.value }))} placeholder="e.g. September 2026" /></div>
-              </div>
-
-              <Button className="w-full bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90" onClick={handleAdd} disabled={submitting}>
-                {submitting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UserPlus className="h-4 w-4 mr-2" />}
-                Add Student
-              </Button>
-            </div>
-          </DialogContent>
-          </Dialog>
+          <Button className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 w-full sm:w-auto" onClick={() => setAddOpen(true)}>
+            <UserPlus className="h-4 w-4 mr-2" />Add Student
+          </Button>
         </div>
       </div>
 
-      {/* Search */}
-      <div className="relative w-full sm:max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input placeholder="Search students..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
+      {/* Search & Filters Bar */}
+      <div className="flex justify-between items-center mb-2">
+        <div className="relative w-full sm:max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input 
+            placeholder="Search students by name or course..." 
+            value={search} 
+            onChange={e => setSearch(e.target.value)} 
+            className="pl-9 bg-white shadow-sm border-slate-200 h-10 w-full focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200" 
+          />
+        </div>
       </div>
 
       {/* Students Table */}
       {filtered.length === 0 ? (
-        <Card>
-          <CardContent className="p-12 text-center text-muted-foreground">
-            <Users className="h-12 w-12 mx-auto mb-4 opacity-30" />
-            <p className="text-lg font-medium">No students yet</p>
-            <p className="text-sm">Add your first student to get started</p>
-          </CardContent>
-        </Card>
+        <div className="p-12 text-center text-muted-foreground border rounded-xl bg-card">
+          <Users className="h-12 w-12 mx-auto mb-4 opacity-30" />
+          <p className="text-[12px] font-normal">No students yet</p>
+          <p className="text-[12px]">Add your first student to get started</p>
+        </div>
       ) : (
-        <Card>
-          <div className="rounded-xl border overflow-x-auto">
-            <Table>
+        <div className="rounded-xl border bg-card overflow-x-auto">
+          <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[40px] text-center px-0">
@@ -352,17 +394,16 @@ export default function PartnerStudents() {
                     />
                   </TableHead>
                   <TableHead>Student Name</TableHead>
-                  <TableHead>Target University</TableHead>
-                  <TableHead>Target Course</TableHead>
                   <TableHead>Degree</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Documents</TableHead>
+                  <TableHead>Added</TableHead>
                   <TableHead className="text-right">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filtered.map(s => {
-                  const st = statusMap[s.status] || { label: s.status, class: "" };
+                  const label = getStatusLabel(s.status);
+                  const stClass = statusMap[s.status]?.class || "bg-muted text-muted-foreground";
                   const docCount = [s.passport_photo_url, s.passport_url, s.academic_transcript_url, s.ielts_certificate_url, s.personal_statement_url, s.recommendation_letter_url].filter(Boolean).length;
                   return (
                     <TableRow
@@ -370,27 +411,25 @@ export default function PartnerStudents() {
                       ref={(row) => {
                         studentRowRefs.current[s.id] = row;
                       }}
-                      className={highlightedStudentId === s.id ? "bg-[#2F4F97]/10 ring-1 ring-[#2F4F97]/40" : undefined}
+                      className={`h-10 hover:bg-muted/50 cursor-pointer transition-colors ${highlightedStudentId === s.id ? "bg-[#2F4F97]/10 ring-1 ring-[#2F4F97]/40" : ""}`}
+                      onClick={() => navigate(`/partner-dashboard/students/${s.id}`)}
                     >
-                      <TableCell className="text-center px-0">
+                      <TableCell className="text-center px-0 py-1" onClick={(e) => e.stopPropagation()}>
                         <Checkbox 
                           checked={selectedIds.includes(s.id)}
                           onCheckedChange={(c) => handleSelectRow(s.id, c as boolean)}
                         />
                       </TableCell>
-                      <TableCell className="font-medium">{s.full_name}</TableCell>
-                      <TableCell>{s.target_university || "-"}</TableCell>
-                      <TableCell>{s.target_course || "-"}</TableCell>
-                      <TableCell>{s.degree_level}</TableCell>
-                      <TableCell><Badge variant="outline" className={st.class}>{st.label}</Badge></TableCell>
-                      <TableCell><Badge variant="secondary">{docCount}/6</Badge></TableCell>
-                      <TableCell className="text-right min-w-[120px]">
+                      <TableCell className="font-normal py-1">{s.full_name}</TableCell>
+                      <TableCell className="py-1">{s.degree_level}</TableCell>
+                      <TableCell className="py-1"><Badge variant="outline" className={stClass}>{label}</Badge></TableCell>
+                      <TableCell className="text-[12px] text-muted-foreground py-1">
+                        {new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </TableCell>
+                      <TableCell className="text-right min-w-[80px] py-1" onClick={(e) => e.stopPropagation()}>
                         <div className="flex justify-end gap-1">
-                          <Button variant="ghost" size="icon" onClick={() => navigate(`/partner-dashboard/students/${s.id}`)}>
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" onClick={() => handleDelete(s.id)} className="text-destructive hover:bg-destructive hover:text-destructive-foreground">
-                            <Trash2 className="h-4 w-4" />
+                          <Button variant="ghost" size="icon" onClick={() => handleDelete(s.id)} className="h-7 w-7 text-destructive hover:bg-destructive hover:text-destructive-foreground">
+                            <Trash2 className="h-3.5 w-3.5" />
                           </Button>
                         </div>
                       </TableCell>
@@ -400,7 +439,6 @@ export default function PartnerStudents() {
               </TableBody>
             </Table>
           </div>
-        </Card>
       )}
 
     </div>

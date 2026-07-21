@@ -188,14 +188,14 @@ export default function AdminPartners() {
           <button
             key={tab.key}
             onClick={() => { setActiveTab(tab.key); setSelectedIds([]); }}
-            className={`relative px-4 py-2.5 text-sm font-semibold transition-colors ${
+            className={`relative px-4 py-2.5 text-[12px] font-normal transition-colors ${
               activeTab === tab.key
                 ? "text-[#1E293B]"
                 : "text-gray-400 hover:text-gray-600"
             }`}
           >
             {tab.label}
-            <span className={`ml-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded-xl ${
+            <span className={`ml-1.5 text-[12px] font-normal px-1.5 py-0.5 rounded-xl ${
               activeTab === tab.key ? "bg-[#2F4F97]/15 text-[#2F4F97]" : "bg-gray-100 text-gray-400"
             }`}>
               {counts[tab.key]}
@@ -210,7 +210,7 @@ export default function AdminPartners() {
       {/* Bulk actions */}
       {selectedIds.length > 0 && (
         <div className="flex justify-end mb-3">
-          <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-7 text-xs px-3">
+          <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-7 text-[12px] px-3">
             <Trash2 className="h-3 w-3 mr-1" /> Delete Selected ({selectedIds.length})
           </Button>
         </div>
@@ -231,47 +231,47 @@ export default function AdminPartners() {
                     onCheckedChange={handleSelectAll}
                   />
                 </TableHead>
-                <TableHead>Agency</TableHead>
-                <TableHead>Representative</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead className="w-[80px]">Status</TableHead>
-                <TableHead className="w-[100px]">Documents</TableHead>
-                <TableHead className="w-[120px]">Date</TableHead>
-                <TableHead className="text-right w-[80px]">Action</TableHead>
+                <TableHead className="h-10 text-xs text-muted-foreground">Agency</TableHead>
+                <TableHead className="h-10 text-xs text-muted-foreground">Representative</TableHead>
+                <TableHead className="h-10 text-xs text-muted-foreground">Email</TableHead>
+                <TableHead className="w-[80px] h-10 text-xs text-muted-foreground">Status</TableHead>
+                <TableHead className="w-[100px] h-10 text-xs text-muted-foreground">Documents</TableHead>
+                <TableHead className="w-[120px] h-10 text-xs text-muted-foreground">Date</TableHead>
+                <TableHead className="text-right w-[80px] h-10 text-xs text-muted-foreground">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filtered.map((reg) => {
                 const docCount = (reg.nid_document_url ? 1 : 0) + (reg.trade_license_url ? 1 : 0) + ((reg.certificate_urls as string[])?.length || 0);
                 return (
-                  <TableRow key={reg.id}>
-                    <TableCell className="text-center px-0">
+                  <TableRow key={reg.id} className="h-10 hover:bg-muted/50 transition-colors">
+                    <TableCell className="text-center px-0 py-1">
                       <Checkbox 
                         checked={selectedIds.includes(reg.id)}
                         onCheckedChange={(c) => handleSelectRow(reg.id, c as boolean)}
                       />
                     </TableCell>
-                    <TableCell className="font-medium max-w-[150px] truncate" title={reg.agency_name}>{reg.agency_name}</TableCell>
-                    <TableCell className="max-w-[150px] truncate" title={reg.contact_person}>{reg.contact_person}</TableCell>
-                    <TableCell className="text-sm max-w-[150px] truncate" title={reg.email}>{reg.email}</TableCell>
-                    <TableCell>
-                      {reg.status === 'approved' && <span title="Approved"><CheckCircle className="h-5 w-5 text-green-600" /></span>}
-                      {reg.status === 'pending' && <span title="Pending"><Clock className="h-5 w-5 text-warning" /></span>}
-                      {reg.status === 'rejected' && <span title="Rejected"><XCircle className="h-5 w-5 text-destructive" /></span>}
+                    <TableCell className="font-normal max-w-[150px] truncate py-1 text-xs md:text-[13px]" title={reg.agency_name}>{reg.agency_name}</TableCell>
+                    <TableCell className="max-w-[150px] truncate py-1 text-xs md:text-[13px]" title={reg.contact_person}>{reg.contact_person}</TableCell>
+                    <TableCell className="text-[12px] max-w-[150px] truncate py-1 md:text-[13px]" title={reg.email}>{reg.email}</TableCell>
+                    <TableCell className="py-1">
+                      {reg.status === 'approved' && <span title="Approved"><CheckCircle className="h-4 w-4 text-green-600" /></span>}
+                      {reg.status === 'pending' && <span title="Pending"><Clock className="h-4 w-4 text-warning" /></span>}
+                      {reg.status === 'rejected' && <span title="Rejected"><XCircle className="h-4 w-4 text-destructive" /></span>}
                     </TableCell>
-                    <TableCell>
-                      <span className="text-sm font-medium text-muted-foreground">{docCount} Docs</span>
+                    <TableCell className="py-1">
+                      <span className="text-xs md:text-[13px] font-normal text-muted-foreground">{docCount} Docs</span>
                     </TableCell>
-                    <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
+                    <TableCell className="text-xs md:text-[13px] text-muted-foreground whitespace-nowrap py-1">
                       {new Date(reg.created_at).toLocaleDateString()}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right py-1">
                       <div className="flex items-center justify-end gap-1">
-                        <Button variant="ghost" size="icon" onClick={() => openDetail(reg)} title="View Details">
-                          <Eye className="h-4 w-4" />
+                        <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-muted" onClick={() => openDetail(reg)} title="View Details">
+                          <Eye className="h-3.5 w-3.5 text-muted-foreground" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10" onClick={(e) => handleDelete(reg.id, e)} title="Delete Partner">
-                          <Trash2 className="h-4 w-4" />
+                        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={(e) => handleDelete(reg.id, e)} title="Delete Partner">
+                          <Trash2 className="h-3.5 w-3.5" />
                         </Button>
                       </div>
                     </TableCell>
