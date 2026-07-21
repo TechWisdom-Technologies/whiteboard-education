@@ -29,8 +29,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 217 33% 17%;
 
-    --primary: 222 53% 39%;             /* #2F4F97 — amber */
-    --primary-foreground: 217 33% 17%;  /* #1E293B — dark on amber */
+    --primary: 222 53% 39%;             /* #2F4F97 */
+    --primary-foreground: 0 0% 100%;    /* White text on primary background */
 
     --secondary: 206 61% 46%;           /* #2E7FBC — purple */
     --secondary-foreground: 0 0% 100%;
@@ -52,7 +52,7 @@
     --sidebar-background: 217 33% 17%;
     --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 222 53% 39%;
-    --sidebar-primary-foreground: 217 33% 17%;
+    --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 225 15% 37%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 225 15% 22%;
@@ -77,7 +77,7 @@
     --popover-foreground: 0 0% 100%;
 
     --primary: 222 53% 39%;
-    --primary-foreground: 217 33% 17%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 206 61% 46%;
     --secondary-foreground: 0 0% 100%;
@@ -98,7 +98,7 @@
     --sidebar-background: 225 28% 9%;
     --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 222 53% 39%;
-    --sidebar-primary-foreground: 217 33% 17%;
+    --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 225 15% 37%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 225 15% 18%;

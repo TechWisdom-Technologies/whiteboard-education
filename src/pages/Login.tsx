@@ -44,6 +44,8 @@ export default function Login() {
   const [fpOtp, setFpOtp] = useState("");
   const [fpNewPw, setFpNewPw] = useState("");
   const [fpConfirmPw, setFpConfirmPw] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [fpError, setFpError] = useState("");
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 30);
@@ -76,7 +78,7 @@ export default function Login() {
       if (reg && (reg.status === "pending" || reg.status === "rejected")) {
         setRegStatus(reg);
       } else {
-        toast({ title: "Login failed", description: result.error, variant: "destructive" });
+        setLoginError(result.error || "Invalid email or password");
       }
     } else {
       // Login successful, but if they are supposed to be a partner and lack the role, check registration.
@@ -90,7 +92,6 @@ export default function Login() {
         }
       }
       
-      toast({ title: "Welcome back!" });
       navigate(result.redirectTo || "/");
     }
   };
@@ -101,32 +102,35 @@ export default function Login() {
 
   // ─── Forgot Password Handlers ───
   const handleFpSendCode = async () => {
-    if (!fpEmail) { toast({ title: "Please enter your email.", variant: "destructive" }); return; }
+    if (!fpEmail) { setFpError("Please enter your email."); return; }
+    setFpError("");
     setFpStep("sending");
     const result = await resetPassword(fpEmail);
     if (result.success) {
       setFpStep("code_sent");
     } else {
-      toast({ title: "Error", description: result.error || "Failed to send code.", variant: "destructive" });
+      setFpError(result.error || "Failed to send code.");
       setFpStep("enter_email");
     }
   };
 
   const handleFpVerify = async () => {
-    if (fpOtp.length < 6) { toast({ title: "Enter the 6-digit code.", variant: "destructive" }); return; }
+    if (fpOtp.length < 6) { setFpError("Enter the 6-digit code."); return; }
+    setFpError("");
     setFpStep("verifying");
     const result = await verifyResetOtp(fpEmail, fpOtp);
     if (result.success) {
       setFpStep("verified");
     } else {
-      toast({ title: "Invalid code", description: result.error || "Please try again.", variant: "destructive" });
+      setFpError(result.error || "Please try again.");
       setFpStep("code_sent");
     }
   };
 
   const handleFpUpdatePw = async () => {
-    if (fpNewPw.length < 6) { toast({ title: "Password must be at least 6 characters.", variant: "destructive" }); return; }
-    if (fpNewPw !== fpConfirmPw) { toast({ title: "Passwords do not match.", variant: "destructive" }); return; }
+    if (fpNewPw.length < 6) { setFpError("Password must be at least 6 characters."); return; }
+    if (fpNewPw !== fpConfirmPw) { setFpError("Passwords do not match."); return; }
+    setFpError("");
     setFpStep("updating");
     const result = await updatePassword(fpNewPw);
     if (result.success) {
@@ -134,13 +138,13 @@ export default function Login() {
       // Sign out from the recovery session so they can log in fresh
       await signOut();
     } else {
-      toast({ title: "Error", description: result.error || "Failed to update password.", variant: "destructive" });
+      setFpError(result.error || "Failed to update password.");
       setFpStep("verified");
     }
   };
 
   const resetFpFlow = () => {
-    setFpStep("idle"); setFpEmail(""); setFpOtp(""); setFpNewPw(""); setFpConfirmPw("");
+    setFpStep("idle"); setFpEmail(""); setFpOtp(""); setFpNewPw(""); setFpConfirmPw(""); setFpError(""); setLoginError("");
   };
 
   return (
@@ -283,31 +287,36 @@ export default function Login() {
             {fpStep === "idle" && (
               <>
                 <form onSubmit={handleLogin} className="space-y-3.5">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Email address"
-                    required
-                    className={inputCls}
-                  />
-                  <div className="relative">
+                  <div>
                     <input
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Password"
+                      type="email"
+                      value={email}
+                      onChange={(e) => { setEmail(e.target.value); setLoginError(""); }}
+                      placeholder="Email address"
                       required
-                      className={inputCls + " pr-10"}
+                      className={inputCls}
                     />
-                    <button
-                      type="button"
-                      tabIndex={-1}
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
+                  </div>
+                  <div>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => { setPassword(e.target.value); setLoginError(""); }}
+                        placeholder="Password"
+                        required
+                        className={inputCls + " pr-10"}
+                      />
+                      <button
+                        type="button"
+                        tabIndex={-1}
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                    {loginError && <p className="text-red-500 text-[11px] mt-1.5 ml-1">{loginError}</p>}
                   </div>
                   <div className="flex flex-col gap-2 mt-4">
                     <button
@@ -365,13 +374,16 @@ export default function Login() {
                   <h3 className="font-bold text-[#0c0f16] text-lg">Reset Password</h3>
                   <p className="text-xs text-gray-400">Enter the email associated with your account.</p>
                 </div>
-                <input
-                  type="email"
-                  value={fpEmail}
-                  onChange={(e) => setFpEmail(e.target.value)}
-                  placeholder="Your login email"
-                  className={inputCls}
-                />
+                <div>
+                  <input
+                    type="email"
+                    value={fpEmail}
+                    onChange={(e) => { setFpEmail(e.target.value); setFpError(""); }}
+                    placeholder="Your login email"
+                    className={inputCls}
+                  />
+                  {fpError && <p className="text-red-500 text-[11px] mt-1.5 ml-1">{fpError}</p>}
+                </div>
                 <div className="flex gap-3">
                   <button
                     onClick={handleFpSendCode}
@@ -399,13 +411,16 @@ export default function Login() {
                   <ShieldCheck className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
                   <p className="text-[12px] text-blue-700">A 6-digit code was sent to <span className="font-bold">{fpEmail}</span>. Check your inbox and spam folder.</p>
                 </div>
-                <input
-                  value={fpOtp}
-                  onChange={(e) => setFpOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                  placeholder="Enter 6-digit code"
-                  className={inputCls + " tracking-[0.3em] text-center font-bold text-lg"}
-                  maxLength={6}
-                />
+                <div>
+                  <input
+                    value={fpOtp}
+                    onChange={(e) => { setFpOtp(e.target.value.replace(/\D/g, "").slice(0, 6)); setFpError(""); }}
+                    placeholder="Enter 6-digit code"
+                    className={inputCls + " tracking-[0.3em] text-center font-bold text-lg"}
+                    maxLength={6}
+                  />
+                  {fpError && <p className="text-red-500 text-[11px] mt-1.5 ml-1 text-center">{fpError}</p>}
+                </div>
                 <div className="flex gap-3">
                   <button
                     onClick={handleFpVerify}
@@ -434,20 +449,25 @@ export default function Login() {
                   <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
                   <p className="text-[12px] text-green-700 font-medium">Code verified! Set your new password below.</p>
                 </div>
-                <input
-                  type="password"
-                  value={fpNewPw}
-                  onChange={(e) => setFpNewPw(e.target.value)}
-                  placeholder="New password (min. 6 chars)"
-                  className={inputCls}
-                />
-                <input
-                  type="password"
-                  value={fpConfirmPw}
-                  onChange={(e) => setFpConfirmPw(e.target.value)}
-                  placeholder="Confirm new password"
-                  className={inputCls}
-                />
+                <div>
+                  <input
+                    type="password"
+                    value={fpNewPw}
+                    onChange={(e) => { setFpNewPw(e.target.value); setFpError(""); }}
+                    placeholder="New password (min. 6 chars)"
+                    className={inputCls}
+                  />
+                </div>
+                <div>
+                  <input
+                    type="password"
+                    value={fpConfirmPw}
+                    onChange={(e) => { setFpConfirmPw(e.target.value); setFpError(""); }}
+                    placeholder="Confirm new password"
+                    className={inputCls}
+                  />
+                  {fpError && <p className="text-red-500 text-[11px] mt-1.5 ml-1">{fpError}</p>}
+                </div>
                 <div className="flex gap-3">
                   <button
                     onClick={handleFpUpdatePw}

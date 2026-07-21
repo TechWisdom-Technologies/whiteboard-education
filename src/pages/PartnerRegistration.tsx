@@ -94,6 +94,7 @@ export default function PartnerRegistration() {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [step, setStep] = useState(1);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Form state
   const [agencyName, setAgencyName] = useState("");
@@ -119,30 +120,41 @@ export default function PartnerRegistration() {
   };
 
   const handleNext = () => {
+    const newErrors: Record<string, string> = {};
     if (step === 1) {
-      if (!agencyName || !country) {
-        toast.error("Please fill in the required company details.");
+      if (!agencyName) newErrors.agencyName = "Agency Name is required";
+      if (!country) newErrors.country = "Country is required";
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
         return;
       }
+      setErrors({});
       setStep(2);
     } else if (step === 2) {
-      if (!contactPerson || !phone || !email || !password) {
-        toast.error("Please fill in the required contact details.");
+      if (!contactPerson) newErrors.contactPerson = "Contact Person is required";
+      if (!phone) newErrors.phone = "Phone Number is required";
+      if (!email) newErrors.email = "Email is required";
+      if (!password || password.length < 6) newErrors.password = "Password must be at least 6 characters";
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
         return;
       }
+      setErrors({});
       setStep(3);
     }
   };
 
   const handleBack = () => {
+    setErrors({});
     if (step > 1) setStep(step - 1);
   };
 
   const handleSubmit = async () => {
-    if (!agencyName || !contactPerson || !email || !password || !nidFile) {
-      toast.error("Please fill all required fields and upload NID document.");
+    if (!nidFile) {
+      setErrors({ nidFile: "National ID document is required" });
       return;
     }
+    setErrors({});
 
     setSubmitting(true);
     try {
@@ -334,11 +346,12 @@ export default function PartnerRegistration() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Agency Name <span className="text-red-500">*</span></Label>
-                      <Input value={agencyName} onChange={(e) => setAgencyName(e.target.value)} placeholder="Global Ed Consultants" required className={inputCls} />
+                      <Input value={agencyName} onChange={(e) => { setAgencyName(e.target.value); setErrors((p) => ({ ...p, agencyName: "" })); }} placeholder="Global Ed Consultants" className={inputCls} />
+                      {errors.agencyName && <p className="text-red-500 text-[10px] mt-0.5">{errors.agencyName}</p>}
                     </div>
                     <div className="space-y-1">
                       <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Country <span className="text-red-500">*</span></Label>
-                      <Select value={country} onValueChange={setCountry} required>
+                      <Select value={country} onValueChange={(val) => { setCountry(val); setErrors((p) => ({ ...p, country: "" })); }}>
                         <SelectTrigger className={inputCls}>
                           <SelectValue placeholder="Select Country" />
                         </SelectTrigger>
@@ -346,6 +359,7 @@ export default function PartnerRegistration() {
                           {COUNTRIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                         </SelectContent>
                       </Select>
+                      {errors.country && <p className="text-red-500 text-[10px] mt-0.5">{errors.country}</p>}
                     </div>
                     <div className="space-y-1">
                       <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Website URL</Label>
@@ -357,7 +371,7 @@ export default function PartnerRegistration() {
                     </div>
                     <div className="space-y-1 sm:col-span-2">
                       <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Annual Students</Label>
-                      <Select value={annualStudents} onValueChange={setAnnualStudents} required>
+                      <Select value={annualStudents} onValueChange={setAnnualStudents}>
                         <SelectTrigger className={inputCls}>
                           <SelectValue placeholder="Select Range" />
                         </SelectTrigger>
@@ -380,19 +394,23 @@ export default function PartnerRegistration() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Contact Person <span className="text-red-500">*</span></Label>
-                      <Input value={contactPerson} onChange={(e) => setContactPerson(e.target.value)} placeholder="Full name" required className={inputCls} />
+                      <Input value={contactPerson} onChange={(e) => { setContactPerson(e.target.value); setErrors((p) => ({ ...p, contactPerson: "" })); }} placeholder="Full name" className={inputCls} />
+                      {errors.contactPerson && <p className="text-red-500 text-[10px] mt-0.5">{errors.contactPerson}</p>}
                     </div>
                     <div className="space-y-1">
                       <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Phone Number <span className="text-red-500">*</span></Label>
-                      <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+880 1XXXXXXXXX" required className={inputCls} />
+                      <Input value={phone} onChange={(e) => { setPhone(e.target.value); setErrors((p) => ({ ...p, phone: "" })); }} placeholder="+880 1XXXXXXXXX" className={inputCls} />
+                      {errors.phone && <p className="text-red-500 text-[10px] mt-0.5">{errors.phone}</p>}
                     </div>
                     <div className="space-y-1 sm:col-span-2">
                       <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Email (Login ID) <span className="text-red-500">*</span></Label>
-                      <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="contact@agency.com" required className={inputCls} />
+                      <Input type="email" value={email} onChange={(e) => { setEmail(e.target.value); setErrors((p) => ({ ...p, email: "" })); }} placeholder="contact@agency.com" className={inputCls} />
+                      {errors.email && <p className="text-red-500 text-[10px] mt-0.5">{errors.email}</p>}
                     </div>
                     <div className="space-y-1 sm:col-span-2">
                       <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Password <span className="text-red-500">*</span></Label>
-                      <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min. 6 characters" required className={inputCls} />
+                      <Input type="password" value={password} onChange={(e) => { setPassword(e.target.value); setErrors((p) => ({ ...p, password: "" })); }} placeholder="Min. 6 characters" className={inputCls} />
+                      {errors.password && <p className="text-red-500 text-[10px] mt-0.5">{errors.password}</p>}
                     </div>
                   </div>
                 </div>
@@ -407,8 +425,13 @@ export default function PartnerRegistration() {
                   </h3>
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <FileUploadField label="National ID (NID)" file={nidFile} onFileChange={setNidFile} required />
-                      <FileUploadField label="Trade License" file={tradeLicenseFile} onFileChange={setTradeLicenseFile} />
+                      <div>
+                        <FileUploadField label="National ID (NID)" file={nidFile} onFileChange={(f) => { setNidFile(f); setErrors((p) => ({ ...p, nidFile: "" })); }} required />
+                        {errors.nidFile && <p className="text-red-500 text-[10px] mt-1">{errors.nidFile}</p>}
+                      </div>
+                      <div>
+                        <FileUploadField label="Trade License" file={tradeLicenseFile} onFileChange={setTradeLicenseFile} />
+                      </div>
                     </div>
                     <div className="pt-2">
                       <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-2 block">Additional Certificates</Label>

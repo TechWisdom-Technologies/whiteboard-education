@@ -3,6 +3,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminNotificationCenter } from "@/components/admin/AdminNotificationCenter";
 import { useAuth } from "@/hooks/useAuth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function AdminLayout() {
   const location = useLocation();
@@ -28,22 +29,37 @@ export default function AdminLayout() {
       <div className="min-h-screen flex w-full">
         <AdminSidebar />
         <div className="flex-1 flex flex-col">
-          <header className="min-h-14 flex flex-wrap items-center border-b px-3 sm:px-4 py-2 gap-2 sm:gap-3 bg-background justify-between">
-            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-              <SidebarTrigger />
-              <span className="font-bold text-[15px] text-foreground tracking-tight ml-1">
+          <header className="min-h-[60px] flex flex-wrap items-center border-b border-gray-200/60 px-4 sm:px-6 py-2 gap-3 bg-white/80 backdrop-blur-md sticky top-0 z-10 justify-between shadow-sm">
+            <div className="flex items-center gap-4 min-w-0">
+              <SidebarTrigger className="text-gray-500 hover:text-gray-900 transition-colors" />
+              <span className="font-extrabold text-[16px] text-gray-800 tracking-tight hidden md:block">
                 {getPageTitle()}
               </span>
             </div>
-            <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto justify-end">
-              <span className="text-[11px] text-muted-foreground truncate max-w-[200px] hidden sm:inline" title={user?.email || ""}>
-                {user?.email}
-                {hasRole("admin") && <span className="text-primary font-semibold ml-1">(Admin)</span>}
-              </span>
-              <AdminNotificationCenter />
+            
+            <div className="flex items-center gap-4 sm:gap-6 w-full sm:w-auto justify-end flex-1 sm:flex-none">
+              <div className="flex items-center gap-4">
+                <AdminNotificationCenter />
+                <div className="flex items-center gap-3">
+                  <div className="hidden flex-col items-end sm:flex">
+                    <span className="text-[13px] font-bold text-gray-800 leading-tight">
+                      {hasRole("admin") ? "Administrator" : "User"}
+                    </span>
+                    <span className="text-[11px] text-gray-500 truncate max-w-[160px] font-medium leading-tight">
+                      {user?.email}
+                    </span>
+                  </div>
+                  <Avatar className="h-9 w-9 ring-2 ring-gray-100 transition-transform hover:scale-105 cursor-pointer shadow-sm">
+                    <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`} alt="Avatar" />
+                    <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">
+                      {user?.email?.charAt(0).toUpperCase() || "A"}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+              </div>
             </div>
           </header>
-          <main className="flex-1 p-3 sm:p-6 bg-muted/20 overflow-x-hidden">
+          <main className="flex-1 p-4 sm:p-6 bg-[#F8FAFC] overflow-x-hidden">
             <Outlet />
           </main>
         </div>

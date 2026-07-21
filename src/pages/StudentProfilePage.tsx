@@ -12,6 +12,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import {
   ArrowLeft,
@@ -37,6 +40,8 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { StatusTracker } from "@/components/ui/StatusTracker";
+import { getStatusLabel } from "@/config/statusFlow";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -121,6 +126,17 @@ interface Student {
   created_at: string;
 }
 
+interface Application {
+  id: string;
+  application_code: string;
+  university_id: string;
+  course_id: string;
+  status: string;
+  created_at: string;
+  universities?: { name: string };
+  courses?: { title: string };
+}
+
 interface Partner {
   id: string;
   agency_name: string;
@@ -153,6 +169,18 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
 
   const [student, setStudent] = useState<Student | null>(null);
   const [partner, setPartner] = useState<Partner | null>(null);
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [universities, setUniversities] = useState<any[]>([]);
+  const [courses, setCourses] = useState<any[]>([]);
+  
+  // Add Application Modal State
+  const [isAppModalOpen, setIsAppModalOpen] = useState(false);
+  const [addingApp, setAddingApp] = useState(false);
+  const [newAppForm, setNewAppForm] = useState({
+    university_id: "",
+    course_id: "",
+  });
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -338,17 +366,48 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
       setNewStatus(s.status);
       setAdminNotes(s.admin_notes || "");
 
-      // Fetch partner info
+      // Fetch partner info and applications concurrently
+      const promises = [];
+      
       if (s.partner_id) {
-        const partnerRes = await fetch(
-          `${SUPABASE_URL}/rest/v1/partner_registrations?user_id=eq.${s.partner_id}&select=id,agency_name,contact_person,email,phone,user_id`,
-          { headers }
+        promises.push(
+          fetch(
+            `${SUPABASE_URL}/rest/v1/partner_registrations?user_id=eq.${s.partner_id}&select=id,agency_name,contact_person,email,phone,user_id`,
+            { headers }
+          ).then(res => res.json()).then(data => {
+            if (data && data.length > 0) setPartner(data[0]);
+          })
         );
-        if (partnerRes.ok) {
-          const pData = await partnerRes.json();
-          if (pData.length > 0) setPartner(pData[0]);
-        }
       }
+      
+      promises.push(
+        fetch(
+          `${SUPABASE_URL}/rest/v1/student_applications?student_id=eq.${studentId}&select=*,universities(name),courses(title)`,
+          { headers }
+        ).then(res => res.json()).then(data => {
+          if (Array.isArray(data)) setApplications(data);
+        }).catch(err => console.error("Error fetching applications:", err))
+      );
+      
+      // Fetch universities for the dropdown if admin
+      if (mode === "admin") {
+        promises.push(
+          fetch(`${SUPABASE_URL}/rest/v1/universities?select=id,name`, { headers })
+            .then(res => res.json())
+            .then(data => {
+              if (Array.isArray(data)) setUniversities(data);
+            }).catch(err => console.error("Error fetching universities:", err))
+        );
+        promises.push(
+          fetch(`${SUPABASE_URL}/rest/v1/courses?select=id,title,university_id`, { headers })
+            .then(res => res.json())
+            .then(data => {
+              if (Array.isArray(data)) setCourses(data);
+            }).catch(err => console.error("Error fetching courses:", err))
+        );
+      }
+      
+      await Promise.all(promises);
     } catch (e: any) {
       setError(e.message || "Something went wrong");
     } finally {
@@ -399,7 +458,119 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     }
   };
 
-  // ── Save status (admin only) ───────────────────────────────────────────
+  // ── Add Application ──────────────────────────────────────────────────────
+
+  const handleAddApplication = async () => {
+    if (!newAppForm.university_id || !newAppForm.course_id || !student || !session) {
+      toast.error("Please select a university and course.");
+      return;
+    }
+    
+    setAddingApp(true);
+    
+    try {
+      const selectedUni = universities.find(u => u.id === newAppForm.university_id);
+      
+      // Generate short name
+      const words = selectedUni?.name?.replace(/[^a-zA-Z\s]/g, '').split(' ') || [];
+      const shortName = words.map((w: string) => w.charAt(0)).join('').toUpperCase().substring(0, 4) || 'UNI';
+      
+      // Generate date DDMM
+      const today = new Date();
+      const dd = String(today.getDate()).padStart(2, '0');
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      
+      const randomSuffix = Math.floor(100 + Math.random() * 900);
+      const applicationCode = `WBU-${shortName}-${dd}${mm}-${randomSuffix}`;
+      
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/student_applications`, {
+        method: "POST",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+          Prefer: "return=representation",
+        },
+        body: JSON.stringify({
+          student_id: student.id,
+          university_id: newAppForm.university_id,
+          course_id: newAppForm.course_id,
+          application_code: applicationCode,
+          status: "document_review"
+        })
+      });
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to create application");
+      }
+      
+      toast.success("Application created successfully");
+      setIsAppModalOpen(false);
+      setNewAppForm({ university_id: "", course_id: "" });
+      fetchStudent(); // Refresh data
+    } catch (e: any) {
+      toast.error(e.message || "Failed to create application");
+    } finally {
+      setAddingApp(false);
+    }
+  };
+
+  // ── Print / PDF ────────────────────────────────────────────────────────
+
+  const handleSaveStatusTracker = async (updatedStatus: string) => {
+    if (!student || updatedStatus === student.status) return;
+    setSavingStatus(true);
+    try {
+      const { error } = await supabase
+        .from("students")
+        .update({ status: updatedStatus })
+        .eq("id", student.id);
+      if (error) throw error;
+      setStudent({ ...student, status: updatedStatus });
+      toast.success("Status updated successfully");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update status");
+    } finally {
+      setSavingStatus(false);
+    }
+  };
+
+  // ── Auto-Progression Logic ──────────────────────────────────────────────
+  useEffect(() => {
+    if (!student || mode !== "admin") return;
+
+    const checkAutoProgression = async () => {
+      let newStatus = null;
+      
+      const currentDocCount = documentFields.filter((d) => !!(student as any)[d.field]).length;
+
+      // Rule 1: Document Upload -> Document Review
+      if (student.status === "document_upload" && currentDocCount === documentFields.length) {
+        newStatus = "document_review";
+      }
+      
+      // Rule 2: University Selection -> University Application
+      if (student.status === "university_selection" && applications.length > 0) {
+        newStatus = "university_application";
+      }
+
+      if (newStatus) {
+        try {
+          const { error } = await supabase
+            .from("students")
+            .update({ status: newStatus })
+            .eq("id", student.id);
+          if (error) throw error;
+          setStudent(prev => prev ? { ...prev, status: newStatus as string } : null);
+          toast.success(`System automatically advanced status to: ${getStatusLabel(newStatus)}`);
+        } catch (err) {
+          console.error("Failed to auto-advance status:", err);
+        }
+      }
+    };
+
+    checkAutoProgression();
+  }, [student, applications.length, mode]);
 
   const handleSaveStatus = async () => {
     if (!student || !session) return;
@@ -557,7 +728,15 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
           </Button>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-6">
+        <Tabs defaultValue="status" className="w-full space-y-8">
+          <TabsList className="grid w-full grid-cols-4 h-12 bg-muted/50 p-1 no-print">
+            <TabsTrigger value="status" className="text-[13px] font-bold h-10 tracking-wide uppercase">1. Student Status</TabsTrigger>
+            <TabsTrigger value="profile" className="text-[13px] font-bold h-10 tracking-wide uppercase">2. Profile Details</TabsTrigger>
+            <TabsTrigger value="documents" className="text-[13px] font-bold h-10 tracking-wide uppercase">3. Documents</TabsTrigger>
+            <TabsTrigger value="applications" className="text-[13px] font-bold h-10 tracking-wide uppercase">4. Applications</TabsTrigger>
+          </TabsList>
+
+          <div className="flex flex-col md:flex-row gap-6">
           {/* Left side: Photo & Info */}
           <div className="flex items-start gap-5 flex-1">
             {student.passport_photo_url ? (
@@ -587,7 +766,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
               
               <div className="flex items-center gap-2 mt-0.5">
                 <span className={`text-sm font-bold ${statusColors[student.status]?.replace(/bg-[^\s]+/, '').replace(/border-[^\s]+/, '').trim() || 'text-[#1E293B]'}`}>
-                  {statusLabels[student.status] || student.status}
+                  {getStatusLabel(student.status)}
                 </span>
                 
                 {profileComplete && (
@@ -597,32 +776,6 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                   </Badge>
                 )}
               </div>
-
-              {/* Status Update (Admin Only) */}
-              {mode === "admin" && (
-                <div className="flex items-center gap-2 mt-3 no-print">
-                  <Select value={newStatus} onValueChange={setNewStatus}>
-                    <SelectTrigger className="h-8 text-xs w-[180px] bg-white">
-                      <SelectValue placeholder="Update Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {statusOptions.map((s) => (
-                        <SelectItem key={s.value} value={s.value} className="text-xs">
-                          {s.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    size="sm"
-                    className="h-8 px-3 bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 text-xs font-semibold"
-                    onClick={handleSaveStatus}
-                    disabled={savingStatus || newStatus === student.status}
-                  >
-                    {savingStatus ? <Loader2 className="h-3 w-3 animate-spin" /> : "Update"}
-                  </Button>
-                </div>
-              )}
             </div>
           </div>
 
@@ -658,9 +811,21 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
           </div>
         </div>
 
-        {/* ── Horizontal Documents Section ─────────────────────────────── */}
-        <Card className="no-print">
-          <CardContent className="p-5 sm:p-6">
+        <TabsContent value="status" className="space-y-6 mt-0">
+          <div className="no-print">
+            <StatusTracker 
+              currentStatus={student.status} 
+              onStatusChange={handleSaveStatusTracker}
+              isUpdating={savingStatus}
+              isAdmin={mode === 'admin'}
+            />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="documents" className="space-y-6 mt-0">
+          {/* ── Horizontal Documents Section ─────────────────────────────── */}
+          <Card className="no-print">
+            <CardContent className="p-5 sm:p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="flex items-center gap-2 text-sm font-semibold text-[#1E293B]">
                 <FileCheck className="h-4 w-4 text-[#2F4F97]" />
@@ -671,76 +836,84 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
               </Badge>
             </div>
             
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-              {documentFields.map((doc) => {
-                const url = (student as any)[doc.field] as string | undefined;
-                const isUploading = uploading[doc.field];
-                return (
-                  <div
-                    key={doc.field}
-                    className={`flex flex-col items-center justify-center p-3 rounded-lg border transition-colors text-center relative group ${
-                      url
-                        ? "bg-green-50/40 border-green-200/60 dark:bg-green-950/20 dark:border-green-900/40 hover:border-green-300"
-                        : "bg-muted/10 border-dashed hover:border-border/80"
-                    }`}
-                  >
-                    {url ? (
-                      <CheckCircle2 className="h-6 w-6 text-green-500 mb-2" />
-                    ) : (
-                      <FileText className="h-6 w-6 text-muted-foreground/30 mb-2" />
-                    )}
-                    
-                    <p className="text-[10px] font-medium leading-tight mb-3 px-1 text-muted-foreground h-6 flex items-center justify-center">
-                      {doc.label}
-                    </p>
-
-                    <div className="flex items-center gap-2 mt-auto">
-                      {url && (
-                        <a
-                          href={url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          title="Preview Document"
-                          className="h-7 w-7 rounded-full bg-white border border-border flex items-center justify-center text-[#2F4F97] hover:bg-muted transition-colors shadow-sm"
-                        >
-                          <ExternalLink className="h-3.5 w-3.5" />
-                        </a>
-                      )}
-                      
-                      <input
-                        type="file"
-                        className="hidden"
-                        ref={(el) => { fileInputRefs.current[doc.field] = el; }}
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) handleUploadDoc(doc.field, file);
-                          e.target.value = "";
-                        }}
-                      />
-                      <button
-                        type="button"
-                        title={url ? "Replace Document" : "Upload Document"}
-                        disabled={isUploading}
-                        onClick={() => fileInputRefs.current[doc.field]?.click()}
-                        className={`h-7 w-7 rounded-full bg-white border border-border flex items-center justify-center transition-colors shadow-sm ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-muted text-muted-foreground hover:text-foreground'}`}
-                      >
-                        {isUploading ? (
-                          <Loader2 className="h-3 w-3 animate-spin" />
-                        ) : (
-                          <Upload className="h-3.5 w-3.5" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
+            <div className="border rounded-md overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/30">
+                    <TableHead>Document Type</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {documentFields.map((doc) => {
+                    const url = (student as any)[doc.field] as string | undefined;
+                    const isUploading = uploading[doc.field];
+                    return (
+                      <TableRow key={doc.field}>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            <FileText className="h-4 w-4 text-muted-foreground/50" />
+                            {doc.label}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {url ? (
+                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 uppercase text-[10px] font-bold">Uploaded</Badge>
+                          ) : (
+                            <Badge variant="outline" className="bg-muted text-muted-foreground border-dashed uppercase text-[10px] font-bold">Missing</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            {url && (
+                              <a
+                                href={url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex h-8 w-8 items-center justify-center rounded-md border bg-white text-[#2F4F97] hover:bg-muted shadow-sm transition-colors"
+                                title="Preview Document"
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                              </a>
+                            )}
+                            <input
+                              type="file"
+                              className="hidden"
+                              ref={(el) => { fileInputRefs.current[doc.field] = el; }}
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleUploadDoc(doc.field, file);
+                                e.target.value = "";
+                              }}
+                            />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              title={url ? "Replace Document" : "Upload Document"}
+                              disabled={isUploading}
+                              onClick={() => fileInputRefs.current[doc.field]?.click()}
+                              className={`h-8 w-8 p-0 ${isUploading ? 'opacity-50' : 'text-muted-foreground hover:text-foreground'}`}
+                            >
+                              {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
             </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* ── Main Single Column Layout ──────────────────────────────── */}
-        <Card className="print:border-none print:shadow-none">
-          <CardContent className="p-6 sm:p-7 print:p-0">
+          <TabsContent value="profile" className="space-y-6 mt-0">
+            {/* ── Main Single Column Layout ──────────────────────────────── */}
+            <Card className="print:border-none print:shadow-none">
+              <CardContent className="p-6 sm:p-7 print:p-0">
                 {/* ── Section 1: Personal Information ──────────────── */}
                 <div className="flex items-center justify-between pb-4">
                   <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
@@ -1102,21 +1275,14 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                         </Select>
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-xs font-semibold text-muted-foreground">Course</Label>
+                        <Label className="text-xs font-semibold text-muted-foreground">Preferred Program</Label>
                         <Input
                           value={editForm.target_course}
                           onChange={(e) => setEditForm({ ...editForm, target_course: e.target.value })}
                           placeholder="Target Course"
                         />
                       </div>
-                      <div className="space-y-1">
-                        <Label className="text-xs font-semibold text-muted-foreground">University</Label>
-                        <Input
-                          value={editForm.target_university}
-                          onChange={(e) => setEditForm({ ...editForm, target_university: e.target.value })}
-                          placeholder="Target University"
-                        />
-                      </div>
+                      {/* Target University is deprecated and hidden. Applications tab handles this. */}
                       <div className="space-y-1">
                         <Label className="text-xs font-semibold text-muted-foreground">Preferred Intake</Label>
                         <Input
@@ -1129,8 +1295,8 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-5">
                       <InfoRow label="Degree Level" value={student.degree_level} />
-                      <InfoRow label="Course" value={student.target_course} />
-                      <InfoRow label="University" value={student.target_university} />
+                      <InfoRow label="Preferred Program" value={student.target_course} />
+                      {/* University info moved to Applications tab */}
                       <InfoRow label="Preferred Intake" value={student.intake_month} />
                     </div>
                   )}
@@ -1213,7 +1379,130 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
             })}
           </div>
         </div>
+        </TabsContent>
+        
+        <TabsContent value="applications" className="space-y-6 mt-0">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="flex items-center gap-2.5 text-[15px] font-bold text-[#1E293B]">
+                  <GraduationCap className="h-5 w-5 text-[#2F4F97]" />
+                  University Applications
+                </h3>
+                {mode === "admin" && (
+                  <Button size="sm" className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-semibold h-8" onClick={() => setIsAppModalOpen(true)}>
+                    + Add Application
+                  </Button>
+                )}
+              </div>
+              
+              {applications.length === 0 ? (
+                <div className="text-center py-10">
+                  <div className="h-12 w-12 rounded-full bg-muted/20 flex items-center justify-center mx-auto mb-3">
+                    <Target className="h-6 w-6 text-muted-foreground/40" />
+                  </div>
+                  <h4 className="text-sm font-semibold text-[#1E293B]">No applications yet</h4>
+                  <p className="text-xs text-muted-foreground mt-1 max-w-[250px] mx-auto">
+                    {mode === "admin" ? "Create an application to track this student's progress." : "No applications have been created for this student."}
+                  </p>
+                </div>
+              ) : (
+                <div className="border rounded-md overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-muted/30">
+                        <TableHead>Code</TableHead>
+                        <TableHead>University</TableHead>
+                        <TableHead>Course</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Date Applied</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {applications.map(app => (
+                        <TableRow key={app.id} className="hover:bg-muted/20">
+                          <TableCell className="font-mono text-xs font-bold tracking-wider">{app.application_code}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1.5 font-medium">
+                              <Building2 className="h-3.5 w-3.5 text-[#2F4F97]/60" />
+                              {app.universities?.name || "Unknown University"}
+                            </div>
+                          </TableCell>
+                          <TableCell className="font-semibold text-[#1E293B]">
+                            {app.courses?.title || "Unknown Course"}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className={`text-[10px] uppercase font-bold px-2 py-0.5 h-5 ${statusColors[app.status]?.replace(/bg-[^\s]+/, '').replace(/border-[^\s]+/, '').trim() || 'text-gray-600'}`}>
+                              {statusLabels[app.status] || app.status.replace("_", " ")}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right text-xs text-muted-foreground font-medium">
+                            {new Date(app.created_at).toLocaleDateString("en-GB")}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
       </div>
+
+      {/* Add Application Modal */}
+      <Dialog open={isAppModalOpen} onOpenChange={setIsAppModalOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Add New Application</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="university">University</Label>
+              <Select
+                value={newAppForm.university_id}
+                onValueChange={(val) => setNewAppForm({ ...newAppForm, university_id: val, course_id: "" })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a university" />
+                </SelectTrigger>
+                <SelectContent>
+                  {universities.map(u => (
+                    <SelectItem key={u.id} value={u.id}>{u.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="course">Course</Label>
+              <Select
+                value={newAppForm.course_id}
+                onValueChange={(val) => setNewAppForm({ ...newAppForm, course_id: val })}
+                disabled={!newAppForm.university_id}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={newAppForm.university_id ? "Select a course" : "Select university first"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {courses.filter(c => c.university_id === newAppForm.university_id).map(c => (
+                    <SelectItem key={c.id} value={c.id}>{c.title}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsAppModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleAddApplication} disabled={addingApp || !newAppForm.university_id || !newAppForm.course_id} className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90">
+              {addingApp && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Create Application
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

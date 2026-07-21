@@ -39,14 +39,9 @@ export function AdminSidebar() {
       <div className="border-b border-sidebar-border/50 py-4 px-4 bg-sidebar-background flex flex-col gap-1 flex-shrink-0">
         <div className="flex items-center gap-2">
           {!collapsed ? (
-            <img src="/logo.png" alt="Whiteboard Education" className="h-8 w-auto object-contain" />
+            <img src="/logo-white.png" alt="Whiteboard Education" className="h-8 w-auto object-contain" />
           ) : (
-            <div
-              className="h-8 w-8 bg-[#2F4F97] flex items-center justify-center flex-shrink-0"
-              style={{ clipPath: "polygon(0 0, 100% 0, 100% 75%, 75% 100%, 0 100%)" }}
-            >
-              <GraduationCap className="h-4 w-4 text-[#0c0f16]" />
-            </div>
+            <img src="/icon-white.jpg" alt="W Icon" className="h-8 w-8 object-contain" />
           )}
         </div>
       </div>
@@ -59,19 +54,19 @@ export function AdminSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <NavLink 
-                      to={item.url} 
-                      end 
-                      className={`relative hover:bg-sidebar-accent/40 transition-colors py-1.5 flex items-center w-full ${collapsed ? "justify-center" : "justify-between"}`}
-                      activeClassName="bg-transparent text-sidebar-primary font-semibold"
-                    >
+                      <NavLink 
+                        to={item.url} 
+                        end 
+                        className={`relative hover:bg-sidebar-accent/40 transition-colors py-1.5 flex items-center w-full ${collapsed ? "justify-center" : "justify-between"}`}
+                        activeClassName="bg-transparent text-white font-bold"
+                      >
                       {({ isActive }) => (
                         <>
                           {isActive && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-3.5 w-[2px] bg-sidebar-primary rounded-r-sm" />
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-3.5 w-[3px] bg-white rounded-r-sm" />
                           )}
-                          {!collapsed && <span className="text-[13px] font-medium">{item.title}</span>}
-                          <item.icon className="h-4 w-4 flex-shrink-0" />
+                          {!collapsed && <span className={`text-[13px] ${isActive ? "font-bold" : "font-medium"}`}>{item.title}</span>}
+                          <item.icon className="h-4 w-4 flex-shrink-0" strokeWidth={isActive ? 2.5 : 2} />
                         </>
                       )}
                     </NavLink>
