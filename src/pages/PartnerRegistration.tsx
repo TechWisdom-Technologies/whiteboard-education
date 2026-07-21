@@ -119,7 +119,7 @@ export default function PartnerRegistration() {
     setCertificateFiles((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     const newErrors: Record<string, string> = {};
     if (step === 1) {
       if (!agencyName) newErrors.agencyName = "Agency Name is required";
@@ -135,6 +135,27 @@ export default function PartnerRegistration() {
       if (!phone) newErrors.phone = "Phone Number is required";
       if (!email) newErrors.email = "Email is required";
       if (!password || password.length < 6) newErrors.password = "Password must be at least 6 characters";
+
+      if (Object.keys(newErrors).length === 0) {
+        setSubmitting(true);
+        try {
+          // Attempt immediate check via RPC (requires admin to add the SQL function)
+          const { data, error } = await supabase.rpc('check_registration_exists', {
+            check_email: email,
+            check_phone: phone
+          });
+
+          if (!error && data) {
+            if (data.email_exists) newErrors.email = "This email is already registered.";
+            if (data.phone_exists) newErrors.phone = "This phone number is already registered.";
+          }
+        } catch (e) {
+          // If RPC doesn't exist yet, gracefully continue
+        } finally {
+          setSubmitting(false);
+        }
+      }
+
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
         return;
@@ -212,6 +233,12 @@ export default function PartnerRegistration() {
 
       if (!res.ok) {
         const errText = await res.text();
+        // Catch the specific Supabase foreign key error for duplicate emails
+        if (errText.includes("partner_registrations_user_id_fkey") || errText.includes("Key is not present in table")) {
+          setStep(2);
+          setErrors({ email: "This email is already registered." });
+          throw new Error("Validation_Error");
+        }
         throw new Error(errText);
       }
 
@@ -221,7 +248,9 @@ export default function PartnerRegistration() {
       toast.success("Registration submitted! Your application is pending admin approval.");
       navigate("/partner");
     } catch (err: any) {
-      toast.error(err.message || "Registration failed. Please try again.");
+      if (err.message !== "Validation_Error") {
+        toast.error(err.message || "Registration failed. Please try again.");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -468,10 +497,11 @@ export default function PartnerRegistration() {
 
                 {step < 3 ? (
                   <Button 
-                    className="flex-1 h-12 bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-bold text-[14px] rounded-xl transition-all"
+                    className="flex-1 h-12 bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-bold text-[14px] rounded-xl transition-all flex items-center justify-center gap-2"
                     onClick={handleNext}
+                    disabled={submitting}
                   >
-                    Next →
+                    {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Next →"}
                   </Button>
                 ) : (
                   <Button 
