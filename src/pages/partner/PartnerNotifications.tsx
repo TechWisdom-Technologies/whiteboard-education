@@ -115,18 +115,8 @@ export default function PartnerNotifications() {
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-[12px] font-normal flex items-center gap-2">
-            <Bell className="h-6 w-6 text-primary" />
-            Notifications
-            {unreadCount > 0 && (
-              <Badge variant="destructive" className="ml-1">{unreadCount} new</Badge>
-            )}
-          </h1>
-          <p className="text-muted-foreground text-[12px] mt-1">Student status updates and important alerts</p>
-        </div>
+    <div className="space-y-6 animate-fade-in">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
         <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           <Select value={filter} onValueChange={setFilter}>
             <SelectTrigger className="w-full sm:w-[150px]">

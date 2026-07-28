@@ -1,17 +1,15 @@
 import { useState, useEffect, useRef } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Users, UserPlus, Eye, Loader2, Search, Trash2, ArrowLeft } from "lucide-react";
+import { Users, UserPlus, Loader2, Trash2, ArrowLeft } from "lucide-react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { getStatusLabel } from "@/config/statusFlow";
@@ -49,19 +47,42 @@ interface Student {
   recommendation_letter_url: string;
   other_documents: string[];
   created_at: string;
+  wb_student_id?: number;
 }
 
 const statusMap: Record<string, { label: string; class: string }> = {
+  document_upload: { label: "Document Upload", class: "bg-gray-100 text-gray-600" },
   document_review: { label: "Document Review", class: "bg-gray-100 text-gray-600" },
-  documents_verified: { label: "Documents Verified", class: "bg-blue-500/10 text-blue-600 border-blue-500/30" },
-  university_applied: { label: "University Applied", class: "bg-indigo-500/10 text-indigo-600 border-indigo-500/30" },
-  offer_letter: { label: "Offer Letter", class: "bg-purple-500/10 text-purple-600 border-purple-500/30" },
-  emgs_processing: { label: "EMGS Processing", class: "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]/20" },
-  visa_approved: { label: "Visa Approved", class: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30" },
-  travel_ready: { label: "Travel Ready", class: "bg-teal-500/10 text-teal-600 border-teal-500/30" },
+  document_verification: { label: "Doc Verification", class: "bg-blue-500/10 text-blue-600 border-blue-500/30" },
+  university_selection: { label: "Uni Selection", class: "bg-indigo-500/10 text-indigo-600 border-indigo-500/30" },
+  university_application: { label: "Uni Applied", class: "bg-indigo-500/10 text-indigo-600 border-indigo-500/30" },
+  application_pending: { label: "App Pending", class: "bg-purple-500/10 text-purple-600 border-purple-500/30" },
+  university_accepted: { label: "Uni Accepted", class: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30" },
+  offer_letter_signed: { label: "Offer Signed", class: "bg-emerald-600/10 text-emerald-700 border-emerald-600/30" },
+  emgs_application_submitted: { label: "EMGS Submitted", class: "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]/20" },
+  emgs_fee_paid: { label: "EMGS Fee Paid", class: "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]/20" },
+  pre_medical_clearance: { label: "Pre-Medical", class: "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]/20" },
+  emgs_approval_pending: { label: "EMGS Pending", class: "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]/20" },
+  val_issued: { label: "VAL Issued", class: "bg-teal-500/10 text-teal-600 border-teal-500/30" },
+  sev_application: { label: "SEV Applied", class: "bg-teal-500/10 text-teal-600 border-teal-500/30" },
+  sev_received: { label: "SEV Received", class: "bg-green-600/10 text-green-700 border-green-600/30" },
   enrolled: { label: "Enrolled", class: "bg-green-600/10 text-green-700 border-green-600/30" },
+  enrolled_completed: { label: "Completed", class: "bg-green-600/10 text-green-700 border-green-600/30" },
   rejected: { label: "Rejected", class: "bg-destructive/10 text-destructive border-destructive/20" },
   on_hold: { label: "On Hold", class: "bg-amber-500/10 text-amber-600 border-amber-500/20" },
+};
+
+const statusFilterMap: Record<string, string[]> = {
+  received_at_wb: ['document_upload', 'document_review', 'document_verification'],
+  in_progress: ['university_selection', 'university_application'],
+  on_hold_intake: ['on_hold'],
+  on_hold_wb: ['on_hold'],
+  on_hold_uni: ['on_hold'],
+  submitted: ['application_pending'],
+  offer: ['university_accepted', 'offer_letter_signed'],
+  emgs: ['emgs_application_submitted', 'emgs_fee_paid', 'pre_medical_clearance', 'emgs_approval_pending'],
+  visa: ['val_issued', 'sev_application', 'sev_received'],
+  rejected: ['rejected'],
 };
 
 const emptyForm = {
@@ -75,16 +96,26 @@ export default function PartnerStudents() {
   const { session, user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const [students, setStudents] = useState<Student[]>([]);
+  const [contactPerson, setContactPerson] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [addOpen, setAddOpen] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [submitting, setSubmitting] = useState(false);
-  const [search, setSearch] = useState("");
   const [highlightedStudentId, setHighlightedStudentId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const navigate = useNavigate();
   const handledStudentParamRef = useRef(false);
   const studentRowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
+
+  // Filter States
+  const [wbIdFilter, setWbIdFilter] = useState("");
+  const [nameFilter, setNameFilter] = useState("");
+  const [dateFromFilter, setDateFromFilter] = useState("");
+  const [dateToFilter, setDateToFilter] = useState("");
+  const [countryFilter, setCountryFilter] = useState("all");
+  const [intakeFilter, setIntakeFilter] = useState("all");
+  const [yearFilter, setYearFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState(searchParams.get("status") || "all");
 
   const fetchStudents = async () => {
     if (!session) return;
@@ -94,6 +125,15 @@ export default function PartnerStudents() {
         { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}` } }
       );
       if (res.ok) setStudents(await res.json());
+
+      const partnerRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/partner_registrations?select=contact_person&user_id=eq.${user?.id}&limit=1`,
+        { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}` } }
+      );
+      if (partnerRes.ok) {
+        const pData = await partnerRes.json();
+        if (pData.length > 0) setContactPerson(pData[0].contact_person);
+      }
     } catch { /* ignore */ } finally { setLoading(false); }
   };
 
@@ -113,7 +153,7 @@ export default function PartnerStudents() {
     if (!studentFromNotification) return;
 
     handledStudentParamRef.current = true;
-    setSearch("");
+    setNameFilter(""); // Clear filters possibly hiding it?
     setHighlightedStudentId(studentFromNotification.id);
 
     window.requestAnimationFrame(() => {
@@ -234,11 +274,39 @@ export default function PartnerStudents() {
     }
   };
 
-  const filtered = students.filter(s =>
-    s.full_name.toLowerCase().includes(search.toLowerCase()) ||
-    s.email.toLowerCase().includes(search.toLowerCase()) ||
-    s.target_university.toLowerCase().includes(search.toLowerCase())
-  );
+  const resetFilters = () => {
+    setWbIdFilter("");
+    setNameFilter("");
+    setDateFromFilter("");
+    setDateToFilter("");
+    setCountryFilter("all");
+    setIntakeFilter("all");
+    setYearFilter("all");
+    setStatusFilter("all");
+  };
+
+  const filtered = students.filter(s => {
+    if (wbIdFilter && !String(s.wb_student_id || s.id).toLowerCase().includes(wbIdFilter.toLowerCase())) return false;
+    if (nameFilter && !s.full_name.toLowerCase().includes(nameFilter.toLowerCase())) return false;
+    
+    if (dateFromFilter && new Date(s.created_at) < new Date(dateFromFilter)) return false;
+    if (dateToFilter && new Date(s.created_at) > new Date(dateToFilter)) return false;
+    
+    if (countryFilter && countryFilter !== "all") {
+      if (countryFilter === "Malaysia" && !s.nationality?.toLowerCase().includes("malay")) return false;
+    }
+    
+    if (intakeFilter && intakeFilter !== "all" && s.intake_month !== intakeFilter) return false;
+    
+    if (yearFilter && yearFilter !== "all" && new Date(s.created_at).getFullYear().toString() !== yearFilter) return false;
+    
+    if (statusFilter && statusFilter !== "all") {
+      const statuses = statusFilterMap[statusFilter];
+      if (statuses && !statuses.includes(s.status)) return false;
+    }
+    
+    return true;
+  });
 
   if (loading) return <LoadingScreen fullScreen />;
 
@@ -345,11 +413,7 @@ export default function PartnerStudents() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <h1 className="text-[12px] font-normal">Student Profiles</h1>
-          <p className="text-muted-foreground text-[12px]">Manage your students and track their application progress</p>
-        </div>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           {selectedIds.length > 0 && (
             <Button variant="destructive" onClick={handleBulkDelete} className="w-full sm:w-auto">
@@ -362,25 +426,94 @@ export default function PartnerStudents() {
         </div>
       </div>
 
-      {/* Search & Filters Bar */}
-      <div className="flex justify-between items-center mb-2">
-        <div className="relative w-full sm:max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Search students by name or course..." 
-            value={search} 
-            onChange={e => setSearch(e.target.value)} 
-            className="pl-9 bg-white shadow-sm border-slate-200 h-10 w-full focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200" 
-          />
-        </div>
-      </div>
+      {/* Advanced Filters */}
+      <Card>
+        <CardContent className="p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            <div>
+              <Label className="text-[12px]">WB Student ID</Label>
+              <Input placeholder="Enter ID" value={wbIdFilter} onChange={e => setWbIdFilter(e.target.value)} className="h-8 mt-1 text-[12px]" />
+            </div>
+            <div>
+              <Label className="text-[12px]">Student Name</Label>
+              <Input placeholder="Enter name" value={nameFilter} onChange={e => setNameFilter(e.target.value)} className="h-8 mt-1 text-[12px]" />
+            </div>
+            <div>
+              <Label className="text-[12px]">Date Created (From)</Label>
+              <Input type="date" value={dateFromFilter} onChange={e => setDateFromFilter(e.target.value)} className="h-8 mt-1 text-[12px]" />
+            </div>
+            <div>
+              <Label className="text-[12px]">Date Created (To)</Label>
+              <Input type="date" value={dateToFilter} onChange={e => setDateToFilter(e.target.value)} className="h-8 mt-1 text-[12px]" />
+            </div>
+            <div>
+              <Label className="text-[12px]">Country</Label>
+              <Select value={countryFilter} onValueChange={setCountryFilter}>
+                <SelectTrigger className="h-8 mt-1 text-[12px]"><SelectValue placeholder="All Countries" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Countries</SelectItem>
+                  <SelectItem value="Malaysia">Malaysia</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-[12px]">Intake</Label>
+              <Select value={intakeFilter} onValueChange={setIntakeFilter}>
+                <SelectTrigger className="h-8 mt-1 text-[12px]"><SelectValue placeholder="All Intakes" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Intakes</SelectItem>
+                  {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map(m => (
+                    <SelectItem key={m} value={m}>{m}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-[12px]">Year</Label>
+              <Select value={yearFilter} onValueChange={setYearFilter}>
+                <SelectTrigger className="h-8 mt-1 text-[12px]"><SelectValue placeholder="All Years" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Years</SelectItem>
+                  <SelectItem value="2024">2024</SelectItem>
+                  <SelectItem value="2025">2025</SelectItem>
+                  <SelectItem value="2026">2026</SelectItem>
+                  <SelectItem value="2027">2027</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-[12px]">Status</Label>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="h-8 mt-1 text-[12px]"><SelectValue placeholder="All Statuses" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="received_at_wb">Received Application at WB</SelectItem>
+                  <SelectItem value="in_progress">Application in Progress</SelectItem>
+                  <SelectItem value="on_hold_intake">Application on Hold – Intake yet to open</SelectItem>
+                  <SelectItem value="on_hold_wb">Application on Hold – WB team</SelectItem>
+                  <SelectItem value="on_hold_uni">Application on Hold – University</SelectItem>
+                  <SelectItem value="submitted">Application Submitted</SelectItem>
+                  <SelectItem value="offer">Get Offer</SelectItem>
+                  <SelectItem value="emgs">EMGS Approval Pending</SelectItem>
+                  <SelectItem value="visa">Ready for Visa Application</SelectItem>
+                  <SelectItem value="rejected">Rejected by University</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 mt-4 justify-end">
+            <Button variant="outline" size="sm" onClick={resetFilters}>Reset</Button>
+            <Button size="sm" className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90">Search</Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Students Table */}
       {filtered.length === 0 ? (
         <div className="p-12 text-center text-muted-foreground border rounded-xl bg-card">
           <Users className="h-12 w-12 mx-auto mb-4 opacity-30" />
-          <p className="text-[12px] font-normal">No students yet</p>
-          <p className="text-[12px]">Add your first student to get started</p>
+          <p className="text-[12px] font-normal">No students found</p>
+          <p className="text-[12px]">Try adjusting your filters or add a new student</p>
         </div>
       ) : (
         <div className="rounded-xl border bg-card overflow-x-auto">
@@ -393,10 +526,13 @@ export default function PartnerStudents() {
                       onCheckedChange={handleSelectAll}
                     />
                   </TableHead>
+                  <TableHead>WB ID</TableHead>
+                  <TableHead>Created By</TableHead>
+                  <TableHead>Created on</TableHead>
                   <TableHead>Student Name</TableHead>
-                  <TableHead>Degree</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Phone Number</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Added</TableHead>
                   <TableHead className="text-right">Action</TableHead>
                 </TableRow>
               </TableHeader>
@@ -404,7 +540,6 @@ export default function PartnerStudents() {
                 {filtered.map(s => {
                   const label = getStatusLabel(s.status);
                   const stClass = statusMap[s.status]?.class || "bg-muted text-muted-foreground";
-                  const docCount = [s.passport_photo_url, s.passport_url, s.academic_transcript_url, s.ielts_certificate_url, s.personal_statement_url, s.recommendation_letter_url].filter(Boolean).length;
                   return (
                     <TableRow
                       key={s.id}
@@ -420,12 +555,15 @@ export default function PartnerStudents() {
                           onCheckedChange={(c) => handleSelectRow(s.id, c as boolean)}
                         />
                       </TableCell>
-                      <TableCell className="font-normal py-1">{s.full_name}</TableCell>
-                      <TableCell className="py-1">{s.degree_level}</TableCell>
-                      <TableCell className="py-1"><Badge variant="outline" className={stClass}>{label}</Badge></TableCell>
+                      <TableCell className="py-1">{s.wb_student_id || s.id.substring(0, 8)}</TableCell>
+                      <TableCell className="py-1">{contactPerson || "Partner"}</TableCell>
                       <TableCell className="text-[12px] text-muted-foreground py-1">
                         {new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                       </TableCell>
+                      <TableCell className="font-normal py-1">{s.full_name}</TableCell>
+                      <TableCell className="py-1">{s.email}</TableCell>
+                      <TableCell className="py-1">{s.phone}</TableCell>
+                      <TableCell className="py-1"><Badge variant="outline" className={stClass}>{label}</Badge></TableCell>
                       <TableCell className="text-right min-w-[80px] py-1" onClick={(e) => e.stopPropagation()}>
                         <div className="flex justify-end gap-1">
                           <Button variant="ghost" size="icon" onClick={() => handleDelete(s.id)} className="h-7 w-7 text-destructive hover:bg-destructive hover:text-destructive-foreground">
@@ -440,7 +578,6 @@ export default function PartnerStudents() {
             </Table>
           </div>
       )}
-
     </div>
   );
 }

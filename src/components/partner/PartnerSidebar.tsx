@@ -1,4 +1,7 @@
-import { LayoutDashboard, Users, Megaphone, UserCircle, Bell, GraduationCap, LogOut } from "lucide-react";
+import { 
+  LayoutDashboard, Users, UserCircle, Bell, Layers,
+  LogOut, FileText, Search, CreditCard, BookOpen, Home, ChevronDown, ChevronRight, FolderDown, ExternalLink 
+} from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -13,15 +16,26 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
   useSidebar,
 } from "@/components/ui/sidebar";
 
 const items = [
   { title: "Overview", url: "/partner-dashboard", icon: LayoutDashboard },
   { title: "Students", url: "/partner-dashboard/students", icon: Users },
-  { title: "Marketing Hub", url: "/partner-dashboard/marketing", icon: Megaphone },
+  { title: "Applications", url: "/partner-dashboard/applications", icon: FileText },
+  { title: "Search Programs", url: "/partner-dashboard/search-programs", icon: Search },
+  { title: "Documents", url: "/partner-dashboard/marketing", icon: FolderDown },
   { title: "Notifications", url: "/partner-dashboard/notifications", icon: Bell },
   { title: "My Profile", url: "/partner-dashboard/profile", icon: UserCircle },
+];
+
+const alliedSubItems = [
+  { title: "Flywire Payment", icon: CreditCard },
+  { title: "Whiteboard Test Preparation", icon: BookOpen },
+  { title: "Accommodation", icon: Home },
 ];
 
 export function PartnerSidebar() {
@@ -32,6 +46,46 @@ export function PartnerSidebar() {
   const location = useLocation();
   const currentPath = location.pathname;
   const [unreadCount, setUnreadCount] = useState(0);
+  const [alliedOpen, setAlliedOpen] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string>("");
+
+  const loadAvatar = async () => {
+    if (!user) return;
+    const localAvatar = localStorage.getItem(`partner_avatar_${user.id}`);
+    if (localAvatar) setAvatarUrl(localAvatar);
+
+    const { data } = await supabase
+      .from("profiles")
+      .select("avatar_url")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (data?.avatar_url) {
+      setAvatarUrl(data.avatar_url);
+      localStorage.setItem(`partner_avatar_${user.id}`, data.avatar_url);
+    }
+  };
+
+  useEffect(() => {
+    loadAvatar();
+    const handleUpdate = () => loadAvatar();
+    window.addEventListener("profile-updated", handleUpdate);
+
+    if (!user) return;
+    const channel = supabase
+      .channel(`partner-sidebar-avatar-${user.id}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "profiles", filter: `user_id=eq.${user.id}` },
+        () => loadAvatar()
+      )
+      .subscribe();
+
+    return () => {
+      window.removeEventListener("profile-updated", handleUpdate);
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id]);
 
   const loadUnreadCount = async () => {
     if (!user) {
@@ -78,13 +132,29 @@ export function PartnerSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r border-[#2d1b4e] bg-[#1a0f2e]">
-      {/* Sidebar Header containing logo */}
-      <div className="border-b border-[#2d1b4e] py-4 px-4 bg-[#1a0f2e] flex flex-col gap-1 flex-shrink-0">
-        <div className="flex items-center gap-2">
-          {!collapsed ? (
-            <img src="/logo-white.png" alt="Whiteboard Education" className="h-8 w-auto object-contain" />
+      {/* Sidebar Header containing centered logo covering 65-70% width */}
+      <div className="border-b border-[#2d1b4e] py-4 px-3 bg-[#1a0f2e] flex flex-col items-center justify-center gap-1 flex-shrink-0 min-h-[56px]">
+        <div className="flex items-center justify-center w-full">
+          {avatarUrl ? (
+            collapsed ? (
+              <img 
+                src={avatarUrl} 
+                alt="Logo" 
+                className="h-8 w-8 object-contain shrink-0 mx-auto" 
+              />
+            ) : (
+              <img 
+                src={avatarUrl} 
+                alt="Logo" 
+                className="w-[70%] max-h-12 object-contain shrink-0 mx-auto" 
+              />
+            )
           ) : (
-            <img src="/icon-white.jpg" alt="W Icon" className="h-8 w-8 object-contain" />
+            collapsed ? (
+              <img src="/icon-white.jpg" alt="W Icon" className="h-8 w-8 object-contain shrink-0 mx-auto" />
+            ) : (
+              <img src="/logo-white.png" alt="Whiteboard Education" className="w-[70%] max-h-12 object-contain shrink-0 mx-auto" />
+            )
           )}
         </div>
       </div>
@@ -126,6 +196,56 @@ export function PartnerSidebar() {
                 </SidebarMenuItem>
               ))}
 
+              {/* Allied Services Dropdown Menu Item */}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={() => setAlliedOpen(!alliedOpen)}
+                  className={`relative hover:bg-[#2d1b4e] transition-colors py-1.5 flex items-center w-full ${collapsed ? "justify-center" : "justify-between"}`}
+                >
+                  {!collapsed && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-[13px] text-[#d1bfe8] font-medium">Allied Services</span>
+                      {alliedOpen ? (
+                        <ChevronDown className="h-3.5 w-3.5 text-[#a38cbd]" />
+                      ) : (
+                        <ChevronRight className="h-3.5 w-3.5 text-[#a38cbd]" />
+                      )}
+                    </div>
+                  )}
+                  <Layers className="h-4 w-4 flex-shrink-0 text-[#a38cbd]" strokeWidth={2} />
+                </SidebarMenuButton>
+
+                {/* Sub-menu options when expanded */}
+                {!collapsed && alliedOpen && (
+                  <div className="pl-4 pr-1 py-1 space-y-1 bg-[#150b26]/50 rounded-lg my-1">
+                    {alliedSubItems.map((subItem) => (
+                      <div
+                        key={subItem.title}
+                        className="flex items-center justify-between px-2 py-1.5 text-[#d1bfe8] hover:text-white hover:bg-[#2d1b4e]/70 rounded cursor-pointer transition-colors text-[12px]"
+                      >
+                        <span className="font-normal text-[12px] truncate">{subItem.title}</span>
+                        <subItem.icon className="h-3.5 w-3.5 flex-shrink-0 text-[#a38cbd]" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </SidebarMenuItem>
+
+              {/* Divider */}
+              <div className="my-2 mx-2 border-t border-[#2d1b4e]" />
+
+              {/* Go to Website link */}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={() => window.open("/", "_blank")}
+                  className={`relative hover:bg-[#2d1b4e] transition-colors py-1.5 text-[#a38cbd] hover:text-[#d1bfe8] bg-transparent w-full flex items-center ${collapsed ? "justify-center" : "justify-between"}`}
+                >
+                  {!collapsed && <span className="text-[13px] font-medium">Go to Website</span>}
+                  <ExternalLink className="h-4 w-4 flex-shrink-0" />
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              {/* Sign Out */}
               <SidebarMenuItem>
                 <SidebarMenuButton 
                   onClick={handleSignOut} 

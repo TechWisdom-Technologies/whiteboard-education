@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Camera, Save, Loader2, Building2, User, Globe, Mail, Phone, Lock, KeyRound, ShieldCheck, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Camera, Save, Loader2, Building2, User, Globe, Mail, Phone, Lock, KeyRound, ShieldCheck, ArrowRight, CheckCircle2, Trash2, Plus, Video, UserCircle } from "lucide-react";
 import { toast } from "sonner";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 
@@ -35,7 +35,29 @@ export default function AdminSettings() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // Dummy state for system settings (since there is no site_settings table yet)
+  // Account Manager state (from platform_settings)
+  const [accountManager, setAccountManager] = useState({
+    name: "", email: "", phone: "", title: "",
+  });
+  const [savingManager, setSavingManager] = useState(false);
+
+  // Platform Tutorials state
+  interface Tutorial {
+    id?: string;
+    title: string;
+    description: string;
+    youtube_url: string;
+    sort_order: number;
+    is_active: boolean;
+  }
+  const [tutorials, setTutorials] = useState<Tutorial[]>([]);
+  const [newTutorial, setNewTutorial] = useState<Tutorial>({
+    title: "", description: "", youtube_url: "", sort_order: 0, is_active: true,
+  });
+  const [addingTutorial, setAddingTutorial] = useState(false);
+  const [savingTutorial, setSavingTutorial] = useState(false);
+
+  // System settings (legacy)
   const [systemSettings, setSystemSettings] = useState({
     companyName: "Whiteboard Education",
     contactEmail: "cambry.bd@gmail.com",
@@ -57,6 +79,23 @@ export default function AdminSettings() {
             display_name: profileData.display_name || "",
             avatar_url: profileData.avatar_url || "",
           });
+        }
+
+        // Fetch Account Manager settings
+        const { data: managerData } = await (supabase.from as any)('platform_settings')
+          .select('value')
+          .eq('key', 'account_manager')
+          .single();
+        if (managerData?.value) {
+          setAccountManager(managerData.value);
+        }
+
+        // Fetch Tutorials
+        const { data: tutorialsData } = await (supabase.from as any)('platform_tutorials')
+          .select('*')
+          .order('sort_order', { ascending: true });
+        if (tutorialsData) {
+          setTutorials(tutorialsData);
         }
       } catch { /* ignore */ }
       setLoading(false);
@@ -119,11 +158,76 @@ export default function AdminSettings() {
 
   const handleSaveSystem = async () => {
     setSavingSystem(true);
-    // Mock save delay
     setTimeout(() => {
       toast.success("System settings updated successfully!");
       setSavingSystem(false);
     }, 800);
+  };
+
+  const handleSaveAccountManager = async () => {
+    setSavingManager(true);
+    try {
+      const { error } = await (supabase.from as any)('platform_settings')
+        .upsert({ key: 'account_manager', value: accountManager, updated_at: new Date().toISOString() }, { onConflict: 'key' });
+      if (error) throw error;
+      toast.success("Account Manager details updated!");
+    } catch (err: any) {
+      toast.error("Failed to save: " + (err.message || "Unknown error"));
+    }
+    setSavingManager(false);
+  };
+
+  const handleAddTutorial = async () => {
+    if (!newTutorial.title || !newTutorial.youtube_url) {
+      toast.error("Title and YouTube URL are required");
+      return;
+    }
+    setSavingTutorial(true);
+    try {
+      const { data, error } = await (supabase.from as any)('platform_tutorials')
+        .insert({
+          title: newTutorial.title,
+          description: newTutorial.description,
+          youtube_url: newTutorial.youtube_url,
+          sort_order: tutorials.length,
+          is_active: true,
+        })
+        .select()
+        .single();
+      if (error) throw error;
+      setTutorials(prev => [...prev, data]);
+      setNewTutorial({ title: "", description: "", youtube_url: "", sort_order: 0, is_active: true });
+      setAddingTutorial(false);
+      toast.success("Tutorial added!");
+    } catch (err: any) {
+      toast.error("Failed to add tutorial: " + (err.message || "Unknown error"));
+    }
+    setSavingTutorial(false);
+  };
+
+  const handleDeleteTutorial = async (id: string) => {
+    if (!window.confirm("Delete this tutorial?")) return;
+    try {
+      const { error } = await (supabase.from as any)('platform_tutorials').delete().eq('id', id);
+      if (error) throw error;
+      setTutorials(prev => prev.filter(t => t.id !== id));
+      toast.success("Tutorial deleted");
+    } catch (err: any) {
+      toast.error("Failed to delete: " + (err.message || "Unknown error"));
+    }
+  };
+
+  const handleToggleTutorial = async (id: string, isActive: boolean) => {
+    try {
+      const { error } = await (supabase.from as any)('platform_tutorials')
+        .update({ is_active: isActive })
+        .eq('id', id);
+      if (error) throw error;
+      setTutorials(prev => prev.map(t => t.id === id ? { ...t, is_active: isActive } : t));
+      toast.success(isActive ? "Tutorial activated" : "Tutorial deactivated");
+    } catch (err: any) {
+      toast.error("Failed to update: " + (err.message || "Unknown error"));
+    }
   };
 
   // ─── Password Change Flow ───
@@ -223,9 +327,9 @@ export default function AdminSettings() {
               <CardContent className="space-y-6">
                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8">
                   <div className="relative group shrink-0">
-                    <Avatar className="h-28 w-28 border-4 border-background shadow-md">
-                      <AvatarImage src={profile.avatar_url} />
-                      <AvatarFallback className="text-sm font-semibold bg-[#2F4F97]/10 text-[#2F4F97]">{initials}</AvatarFallback>
+                    <Avatar className="h-28 w-28 border-4 border-background shadow-md rounded-full overflow-hidden shrink-0">
+                      <AvatarImage src={profile.avatar_url} className="object-cover w-full h-full rounded-full" />
+                      <AvatarFallback className="text-sm font-semibold bg-[#2F4F97]/10 text-[#2F4F97] rounded-full">{initials}</AvatarFallback>
                     </Avatar>
                     <button
                       onClick={() => fileInputRef.current?.click()}
@@ -369,56 +473,227 @@ export default function AdminSettings() {
             </Card>
           )}
 
-          {/* System Settings */}
+          {/* Platform Settings */}
           {activeTab === "platform" && (
-            <Card className="border-sidebar-border shadow-sm animate-fade-in">
-              <CardHeader className="pb-4 border-b border-gray-100 mb-6">
-                <CardTitle className="flex items-center gap-2 text-sm font-semibold text-[#1E293B]">
-                  Platform Settings
-                </CardTitle>
-                <CardDescription>Manage global contact information shown on the public site.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label className="text-[12px] font-medium text-gray-700 flex items-center gap-1.5">
-                      <Building2 className="h-3.5 w-3.5 text-gray-400" /> Company Name
-                    </Label>
-                    <Input 
-                      value={systemSettings.companyName} 
-                      onChange={(e) => setSystemSettings(p => ({ ...p, companyName: e.target.value }))}
-                      className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm"
-                    />
+            <div className="space-y-6">
+              {/* Account Manager Management */}
+              <Card className="border-sidebar-border shadow-sm animate-fade-in">
+                <CardHeader className="pb-4 border-b border-gray-100 mb-6">
+                  <CardTitle className="flex items-center gap-2 text-sm font-semibold text-[#1E293B]">
+                    <UserCircle className="h-4 w-4 text-[#2F4F97]" />
+                    Account Manager
+                  </CardTitle>
+                  <CardDescription>Manage the account manager contact details shown to partners on their dashboard.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-[12px] font-medium text-gray-700">Name</Label>
+                      <Input
+                        value={accountManager.name}
+                        onChange={(e) => setAccountManager(p => ({ ...p, name: e.target.value }))}
+                        placeholder="Account Manager Name"
+                        className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[12px] font-medium text-gray-700">Title / Role</Label>
+                      <Input
+                        value={accountManager.title}
+                        onChange={(e) => setAccountManager(p => ({ ...p, title: e.target.value }))}
+                        placeholder="e.g. Partner Relations Manager"
+                        className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[12px] font-medium text-gray-700 flex items-center gap-1.5">
+                        <Mail className="h-3.5 w-3.5 text-gray-400" /> Email
+                      </Label>
+                      <Input
+                        value={accountManager.email}
+                        onChange={(e) => setAccountManager(p => ({ ...p, email: e.target.value }))}
+                        placeholder="manager@whiteboard.edu"
+                        className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[12px] font-medium text-gray-700 flex items-center gap-1.5">
+                        <Phone className="h-3.5 w-3.5 text-gray-400" /> Phone
+                      </Label>
+                      <Input
+                        value={accountManager.phone}
+                        onChange={(e) => setAccountManager(p => ({ ...p, phone: e.target.value }))}
+                        placeholder="+60123456789"
+                        className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm"
+                      />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-[12px] font-medium text-gray-700 flex items-center gap-1.5">
-                      <Mail className="h-3.5 w-3.5 text-gray-400" /> Public Support Email
-                    </Label>
-                    <Input 
-                      value={systemSettings.contactEmail} 
-                      onChange={(e) => setSystemSettings(p => ({ ...p, contactEmail: e.target.value }))}
-                      className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm"
-                    />
+                  <div className="pt-4 border-t border-gray-100 flex justify-end">
+                    <Button onClick={handleSaveAccountManager} disabled={savingManager} className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white gap-2 font-medium text-[13px] h-10 px-6">
+                      {savingManager ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                      Save Account Manager
+                    </Button>
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-[12px] font-medium text-gray-700 flex items-center gap-1.5">
-                      <Phone className="h-3.5 w-3.5 text-gray-400" /> Main Phone Number
-                    </Label>
-                    <Input 
-                      value={systemSettings.phoneNumber} 
-                      onChange={(e) => setSystemSettings(p => ({ ...p, phoneNumber: e.target.value }))}
-                      className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm"
-                    />
+                </CardContent>
+              </Card>
+
+              {/* Platform Tutorials Management */}
+              <Card className="border-sidebar-border shadow-sm animate-fade-in">
+                <CardHeader className="pb-4 border-b border-gray-100 mb-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="flex items-center gap-2 text-sm font-semibold text-[#1E293B]">
+                        <Video className="h-4 w-4 text-[#2F4F97]" />
+                        Platform Tutorials
+                      </CardTitle>
+                      <CardDescription>Manage tutorial videos shown to partners. Embed YouTube videos by pasting the URL.</CardDescription>
+                    </div>
+                    <Button
+                      onClick={() => setAddingTutorial(!addingTutorial)}
+                      className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white gap-1.5 text-[13px] h-9 px-4"
+                    >
+                      <Plus className="h-4 w-4" /> Add Tutorial
+                    </Button>
                   </div>
-                </div>
-                <div className="pt-6 border-t border-gray-100 mt-8 flex justify-end">
-                  <Button onClick={handleSaveSystem} disabled={savingSystem} className="w-full sm:w-auto bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white gap-2 font-medium text-[13px] h-10 px-6">
-                    {savingSystem ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                    Update Settings
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Add Tutorial Form */}
+                  {addingTutorial && (
+                    <div className="bg-gray-50/50 rounded-xl border border-gray-100 p-4 space-y-3">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                          <Label className="text-[12px] font-medium text-gray-700">Title *</Label>
+                          <Input
+                            value={newTutorial.title}
+                            onChange={(e) => setNewTutorial(p => ({ ...p, title: e.target.value }))}
+                            placeholder="Tutorial title"
+                            className="h-9 text-[13px] bg-white border-gray-200"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-[12px] font-medium text-gray-700">YouTube URL *</Label>
+                          <Input
+                            value={newTutorial.youtube_url}
+                            onChange={(e) => setNewTutorial(p => ({ ...p, youtube_url: e.target.value }))}
+                            placeholder="https://www.youtube.com/watch?v=..."
+                            className="h-9 text-[13px] bg-white border-gray-200"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-[12px] font-medium text-gray-700">Description</Label>
+                        <Input
+                          value={newTutorial.description}
+                          onChange={(e) => setNewTutorial(p => ({ ...p, description: e.target.value }))}
+                          placeholder="Brief description of the tutorial"
+                          className="h-9 text-[13px] bg-white border-gray-200"
+                        />
+                      </div>
+                      <div className="flex justify-end gap-2 pt-2">
+                        <Button variant="outline" onClick={() => setAddingTutorial(false)} className="h-9 text-[13px]">
+                          Cancel
+                        </Button>
+                        <Button onClick={handleAddTutorial} disabled={savingTutorial} className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white h-9 text-[13px] gap-1.5 px-4">
+                          {savingTutorial ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />}
+                          Save Tutorial
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Tutorials List */}
+                  {tutorials.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <Video className="h-10 w-10 mx-auto mb-3 opacity-30" />
+                      <p className="text-[13px]">No tutorials added yet. Click "Add Tutorial" to get started.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {tutorials.map((t) => (
+                        <div key={t.id} className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${t.is_active ? 'bg-white border-gray-200' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
+                          <div className="h-10 w-10 rounded-lg bg-[#2F4F97]/10 flex items-center justify-center shrink-0">
+                            <Video className="h-5 w-5 text-[#2F4F97]" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[13px] font-medium text-[#1E293B] truncate">{t.title}</p>
+                            <p className="text-[11px] text-muted-foreground truncate">{t.youtube_url}</p>
+                          </div>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => handleToggleTutorial(t.id!, !t.is_active)}
+                              title={t.is_active ? "Deactivate" : "Activate"}
+                            >
+                              <span className={`h-2.5 w-2.5 rounded-full ${t.is_active ? 'bg-green-500' : 'bg-gray-300'}`} />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                              onClick={() => handleDeleteTutorial(t.id!)}
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* System Contact Settings */}
+              <Card className="border-sidebar-border shadow-sm animate-fade-in">
+                <CardHeader className="pb-4 border-b border-gray-100 mb-6">
+                  <CardTitle className="flex items-center gap-2 text-sm font-semibold text-[#1E293B]">
+                    System Contact Info
+                  </CardTitle>
+                  <CardDescription>Manage global contact information shown on the public site.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label className="text-[12px] font-medium text-gray-700 flex items-center gap-1.5">
+                        <Building2 className="h-3.5 w-3.5 text-gray-400" /> Company Name
+                      </Label>
+                      <Input
+                        value={systemSettings.companyName}
+                        onChange={(e) => setSystemSettings(p => ({ ...p, companyName: e.target.value }))}
+                        className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[12px] font-medium text-gray-700 flex items-center gap-1.5">
+                        <Mail className="h-3.5 w-3.5 text-gray-400" /> Public Support Email
+                      </Label>
+                      <Input
+                        value={systemSettings.contactEmail}
+                        onChange={(e) => setSystemSettings(p => ({ ...p, contactEmail: e.target.value }))}
+                        className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[12px] font-medium text-gray-700 flex items-center gap-1.5">
+                        <Phone className="h-3.5 w-3.5 text-gray-400" /> Main Phone Number
+                      </Label>
+                      <Input
+                        value={systemSettings.phoneNumber}
+                        onChange={(e) => setSystemSettings(p => ({ ...p, phoneNumber: e.target.value }))}
+                        className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm"
+                      />
+                    </div>
+                  </div>
+                  <div className="pt-6 border-t border-gray-100 mt-8 flex justify-end">
+                    <Button onClick={handleSaveSystem} disabled={savingSystem} className="w-full sm:w-auto bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white gap-2 font-medium text-[13px] h-10 px-6">
+                      {savingSystem ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                      Update Settings
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           )}
 
         </div>

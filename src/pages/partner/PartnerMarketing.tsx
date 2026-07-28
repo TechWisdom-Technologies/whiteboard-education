@@ -1,8 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Download, Copy, FileText, Image, BookOpen, Link2 } from "lucide-react";
+import { Download, FileText, Image, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 
 const marketingAssets = [
@@ -14,52 +13,10 @@ const marketingAssets = [
   { id: 6, title: "Student Testimonial Videos", type: "ZIP", size: "120 MB", icon: BookOpen, color: "text-[#2F4F97] bg-[#2F4F97]/10" },
 ];
 
-const REFERRAL_LINK = "https://your-uni.com/apply?ref=AGENCY123";
-
 export default function PartnerMarketing() {
-  const copyLink = () => {
-    navigator.clipboard.writeText(REFERRAL_LINK);
-    toast.success("Copied to clipboard!", { description: "Your referral link has been copied." });
-  };
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div>
-        <h1 className="text-[12px] font-normal">Marketing & Resource Hub</h1>
-        <p className="text-muted-foreground text-[12px]">Download marketing materials and track your referral link</p>
-      </div>
-
-      {/* Referral Link */}
-      <Card className="border-[#2F4F97]/30">
-        <CardContent className="p-6">
-          <div className="flex items-center gap-2 mb-3">
-            <Link2 className="h-5 w-5 text-[#2F4F97]" />
-            <h3 className="font-normal">Your Unique Referral Link</h3>
-          </div>
-          <p className="text-[12px] text-muted-foreground mb-4">Share this link to track organic leads from your network. All students who apply through this link will be automatically attributed to your agency.</p>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <Input value={REFERRAL_LINK} readOnly className="flex-1 font-mono text-[12px] bg-muted/50" />
-            <Button className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 gap-1.5 w-full sm:w-auto" onClick={copyLink}>
-              <Copy className="h-4 w-4" /> Copy
-            </Button>
-          </div>
-          <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="text-center p-3 bg-muted/50 rounded-xl">
-              <p className="text-[12px] font-normal">247</p>
-              <p className="text-[12px] text-muted-foreground">Total Clicks</p>
-            </div>
-            <div className="text-center p-3 bg-muted/50 rounded-xl">
-              <p className="text-[12px] font-normal">38</p>
-              <p className="text-[12px] text-muted-foreground">Applications</p>
-            </div>
-            <div className="text-center p-3 bg-muted/50 rounded-xl">
-              <p className="text-[12px] font-normal">15.4%</p>
-              <p className="text-[12px] text-muted-foreground">Conversion Rate</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Downloadable Assets */}
       <div>
         <h2 className="text-[12px] font-normal mb-4">Downloadable Assets</h2>

@@ -67,7 +67,7 @@ const CurrencySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded-xl p-0 hover:bg-[#F8FAFC]/50 transition-all border border-[#e8e8e8]">
+        <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 hover:bg-[#F8FAFC]/50 transition-all border border-[#e8e8e8]">
           <div className="relative">
             <RefreshCw className="h-[18px] w-[18px] text-[#2F4F97]" />
             <span className="absolute -bottom-1.5 -right-1.5 text-[9px] font-bold bg-[#2F4F97] text-white rounded-full w-[14px] h-[14px] flex items-center justify-center">
@@ -161,12 +161,21 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
       {/* Top Utility Bar - Not Sticky */}
       <div className="bg-[#1E293B] text-white py-2">
         <div className="container mx-auto flex justify-end gap-6 px-4 lg:px-8">
-          <Link 
-            to="/partner" 
-            className="text-[12px] font-semibold hover:text-gray-300 transition-colors flex items-center gap-1.5 tracking-wide pr-3"
-          >
-            <Handshake className="h-3 w-3" /> APPLY FOR PARTNERSHIP
-          </Link>
+          {hasRole("partner") ? (
+            <Link 
+              to="/partner-dashboard" 
+              className="text-[12px] font-semibold hover:text-gray-300 transition-colors flex items-center gap-1.5 tracking-wide pr-3"
+            >
+              <LayoutDashboard className="h-3 w-3" /> PARTNER DASHBOARD
+            </Link>
+          ) : (
+            <Link 
+              to="/partner" 
+              className="text-[12px] font-semibold hover:text-gray-300 transition-colors flex items-center gap-1.5 tracking-wide pr-3"
+            >
+              <Handshake className="h-3 w-3" /> APPLY FOR PARTNERSHIP
+            </Link>
+          )}
           {!user ? (
             <Link 
               to="/login" 
@@ -182,81 +191,93 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
         </div>
       </div>
 
-      <header className={`${disableSticky ? 'relative' : 'sticky top-0'} z-50 w-full bg-[#F8FAFC]`}>
-        <div className="bg-[#F8FAFC]">
+      <header className={`w-full bg-white transition-all duration-200 border-b border-[#cacdd4] ${!disableSticky ? "sticky top-0 z-50 shadow-sm" : ""}`}>
         <div className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-8">
-          {/* Brand - Left */}
-          <Link to="/" className="flex items-center gap-3 shrink-0 group">
-            <img src="/logo.png" alt="Whiteboard Education" className="h-6 md:h-8 w-auto object-contain" />
+          <Link to="/" className="flex items-center gap-3">
+            <img src="/logo.png" alt="Whiteboard Education" className="h-10 w-auto object-contain" />
           </Link>
 
-          {/* Desktop Nav - Right Aligned */}
-          <div className="hidden lg:flex items-center gap-1">
-            <nav className="flex items-center gap-1">
-              <NavItem to="/universities" icon={GraduationCap}>Universities</NavItem>
-              <NavItem to="/courses" icon={BookOpen}>Courses</NavItem>
-              <NavItem to="/language-centers" icon={Languages}>Language</NavItem>
+          {/* Desktop Nav */}
+          <div className="hidden lg:flex lg:items-center lg:gap-8">
+            <NavigationMenu>
+              <NavigationMenuList className="gap-2">
+                <NavigationMenuItem>
+                  <NavItem to="/universities" icon={GraduationCap}>Universities</NavItem>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavItem to="/courses" icon={BookOpen}>Courses</NavItem>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavItem to="/language-centers" icon={Languages}>Language Centers</NavItem>
+                </NavigationMenuItem>
 
-              {/* Resources & Tools Dropdown */}
-              <DropdownMenu modal={false}>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger 
                     className={cn(
-                      "h-10 text-[14px] font-poppins font-normal text-black hover:text-[#2F4F97] hover:bg-transparent gap-1.5 px-3 transition-colors",
-                      toolsActive && "text-[#2F4F97]",
+                      "h-10 text-[14px] font-poppins font-normal text-black hover:text-[#2F4F97] hover:bg-transparent gap-1.5 px-3 transition-colors bg-transparent",
+                      toolsActive && "text-[#2F4F97]"
                     )}
                   >
-                    <BookOpen className="h-3.5 w-3.5" /> Resources
-                    <ChevronDown className="h-3 w-3 opacity-50" />
+                    <Sparkles className="h-3.5 w-3.5" />
+                    <span>Resources & Tools</span>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="grid w-[600px] grid-cols-2 gap-3 p-4 bg-white rounded-2xl shadow-xl border border-gray-100">
+                      {resourceToolsLinks.map((tool) => (
+                        <Link
+                          key={tool.to}
+                          to={tool.to}
+                          className="group relative flex items-center gap-4 rounded-xl p-3 hover:bg-slate-50 transition-all duration-200 overflow-hidden border border-transparent hover:border-slate-100"
+                        >
+                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[#2F4F97]/10 text-[#2F4F97] group-hover:bg-[#2F4F97] group-hover:text-white transition-colors duration-200">
+                            <tool.icon className="h-6 w-6" />
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-semibold text-slate-900 group-hover:text-[#2F4F97] transition-colors">
+                              {tool.label}
+                            </span>
+                            <span className="text-xs text-slate-500 line-clamp-1">
+                              Explore our comprehensive {tool.label.toLowerCase()} resources and guide.
+                            </span>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavItem to="/contact" icon={Phone}>Contact Us</NavItem>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+
+            <CurrencySelector />
+
+            <div className="flex items-center gap-3 border-l pl-4 border-gray-200">
+              {!user ? (
+                <Link to="/login">
+                  <Button className="bg-[#2F4F97] hover:bg-[#1E3A70] text-white font-medium rounded-xl px-5 h-10 shadow-sm transition-all hover:shadow">
+                    Sign In
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" sideOffset={20} className="w-[520px] p-5 shadow-xl border-[#e8e8e8] border-t-[3px] border-t-[#2F4F97] rounded-t-none">
-                  <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest px-3 pb-3 mb-2 text-center">
-                    Resources
-                  </p>
-                  <div className="grid grid-cols-4 gap-3">
-                    {resourceToolsLinks.map((item) => (
-                      <Link
-                        key={item.to}
-                        to={item.to}
-                        className="relative aspect-square rounded-xl overflow-hidden group shadow-sm hover:shadow-md transition-shadow"
-                      >
-                        <img 
-                          src={item.bgImage} 
-                          alt={item.label} 
-                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#1E293B]/95 via-[#1E293B]/60 to-[#1E293B]/20" />
-                        <div className="absolute inset-0 p-2 flex flex-col items-center justify-center text-center">
-                          <item.icon className="h-6 w-6 text-[#2F4F97] mb-1.5" />
-                          <span className="text-[11px] font-bold text-white leading-tight">{item.label}</span>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <NavItem to="/contact" icon={Phone}>Contact</NavItem>
-              <CurrencySelector />
-
-              {user && (
-                <DropdownMenu modal={false}>
+                </Link>
+              ) : (
+                <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 hover:bg-transparent transition-all ml-1">
-                      <Avatar className="h-10 w-10 border-2 border-[#2F4F97]/30">
-                        <AvatarImage src={avatarUrl} alt={user?.email || "User avatar"} />
-                        <AvatarFallback className="bg-primary text-primary-foreground text-sm font-bold">
+                    <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 border border-gray-200 hover:border-[#2F4F97] transition-colors">
+                      <Avatar className="h-9 w-9">
+                        <AvatarImage src={avatarUrl} alt={user.email || ""} />
+                        <AvatarFallback className="bg-[#2F4F97] text-white text-xs font-bold">
                           {userInitial}
                         </AvatarFallback>
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 bg-white border-[#e8e8e8] shadow-md rounded-xl p-2 z-[100] mt-1">
-                    <div className="flex flex-col space-y-1 p-2 mb-2 border-b border-gray-100">
-                      <p className="text-sm font-medium leading-none truncate">{user.email}</p>
+                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <div className="flex flex-col space-y-1 p-2 border-b border-gray-100">
+                      <p className="text-sm font-medium leading-none text-slate-900 truncate">
+                        {user.email}
+                      </p>
                       <p className="text-[11px] text-muted-foreground uppercase tracking-widest mt-1">
                         {hasRole("admin") ? "Administrator" : hasRole("partner") ? "Partner" : "User"}
                       </p>
@@ -268,8 +289,8 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
                       </DropdownMenuItem>
                     )}
                     {hasRole("partner") && (
-                      <DropdownMenuItem onClick={() => navigate("/partner")} className="cursor-pointer rounded-lg py-2.5">
-                        <Handshake className="mr-2 h-4 w-4 text-[#2F4F97]" />
+                      <DropdownMenuItem onClick={() => navigate("/partner-dashboard")} className="cursor-pointer rounded-lg py-2.5">
+                        <LayoutDashboard className="mr-2 h-4 w-4 text-[#2F4F97]" />
                         <span>Partner Dashboard</span>
                       </DropdownMenuItem>
                     )}
@@ -281,7 +302,7 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
-            </nav>
+            </div>
           </div>
 
           {/* Mobile Hamburger - now visible on mobile */}
@@ -326,7 +347,6 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
                 </div>
               </SheetContent>
             </Sheet>
-          </div>
         </div>
     </header>
     {!hideBreadcrumbs && <GlobalBreadcrumbs />}

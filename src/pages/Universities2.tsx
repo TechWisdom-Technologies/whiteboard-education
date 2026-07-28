@@ -475,7 +475,7 @@ export default function Universities() {
                           {/* Middle: Info */}
                           <div className="min-w-0 flex flex-col justify-center space-y-4">
                             <Link to={`/universities/${generateSlug(u.name)}`}>
-                              <h3 className="font-medium hover:underline text-[17px] md:text-[18px] text-[#1E293B] leading-tight mb-1">
+                              <h3 className="font-medium hover:text-[#2F4F97] transition-colors text-[17px] md:text-[18px] text-[#1E293B] leading-tight mb-1">
                                 {u.name}
                               </h3>
                             </Link>

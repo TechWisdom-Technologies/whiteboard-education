@@ -1,40 +1,96 @@
+import { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { PartnerSidebar } from "@/components/partner/PartnerSidebar";
 import { NotificationCenter } from "@/components/partner/NotificationCenter";
 import { useAuth } from "@/hooks/useAuth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function PartnerLayout() {
   const { user } = useAuth();
   const location = useLocation();
+  const [avatarUrl, setAvatarUrl] = useState<string>("");
+  const [displayName, setDisplayName] = useState<string>("");
+
+  const loadProfile = async () => {
+    if (!user) return;
+    const localAvatar = localStorage.getItem(`partner_avatar_${user.id}`);
+    if (localAvatar) setAvatarUrl(localAvatar);
+
+    const { data } = await supabase
+      .from("profiles")
+      .select("avatar_url, display_name")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (data) {
+      if (data.avatar_url) {
+        setAvatarUrl(data.avatar_url);
+        localStorage.setItem(`partner_avatar_${user.id}`, data.avatar_url);
+      }
+      if (data.display_name) setDisplayName(data.display_name);
+    }
+  };
+
+  useEffect(() => {
+    loadProfile();
+
+    const handleUpdate = () => loadProfile();
+    window.addEventListener("profile-updated", handleUpdate);
+
+    if (!user) return;
+    const channel = supabase
+      .channel(`partner-layout-profile-${user.id}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "profiles", filter: `user_id=eq.${user.id}` },
+        () => loadProfile()
+      )
+      .subscribe();
+
+    return () => {
+      window.removeEventListener("profile-updated", handleUpdate);
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id]);
 
   const getPageTitle = () => {
     const path = location.pathname;
     if (path === "/partner-dashboard") return "Overview";
     if (path.includes("/partner-dashboard/students")) return "Students";
-    if (path.includes("/partner-dashboard/marketing")) return "Marketing Hub";
+    if (path.includes("/partner-dashboard/applications")) return "Applications";
+    if (path.includes("/partner-dashboard/search-programs")) return "Search Programs";
+    if (path.includes("/partner-dashboard/marketing")) return "Documents";
     if (path.includes("/partner-dashboard/notifications")) return "Notifications";
     if (path.includes("/partner-dashboard/profile")) return "My Profile";
     return "Partner Portal";
   };
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <div className="min-h-screen flex w-full">
         <PartnerSidebar />
         <div className="flex-1 flex flex-col">
           <header className="min-h-14 flex flex-wrap items-center border-b px-3 sm:px-4 py-2 gap-2 sm:gap-3 bg-background justify-between">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-              <SidebarTrigger />
               <span className="font-bold text-[15px] text-foreground tracking-tight ml-1">
                 {getPageTitle()}
               </span>
             </div>
             <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto justify-end">
-              <span className="text-[11px] text-muted-foreground truncate max-w-[200px] hidden sm:inline" title={user?.email || ""}>
-                {user?.email}
-                <span className="text-[#2F4F97] font-semibold ml-1">(Partner)</span>
-              </span>
+              <div className="flex items-center gap-2.5">
+                <Avatar className="h-9 w-9 border border-border shadow-sm rounded-full overflow-hidden shrink-0">
+                  <AvatarImage src={avatarUrl} alt={displayName || user?.email || "Avatar"} className="object-cover w-full h-full rounded-full" />
+                  <AvatarFallback className="bg-[#2F4F97]/10 text-[#2F4F97] text-xs font-bold rounded-full">
+                    {(displayName || user?.email || "P").charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-[11px] text-muted-foreground truncate max-w-[200px] hidden sm:inline" title={user?.email || ""}>
+                  {displayName || user?.email}
+                  <span className="text-[#2F4F97] font-semibold ml-1">(Partner)</span>
+                </span>
+              </div>
               <NotificationCenter />
             </div>
           </header>

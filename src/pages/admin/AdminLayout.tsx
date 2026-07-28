@@ -43,14 +43,13 @@ export default function AdminLayout() {
   };
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <div className="min-h-screen flex w-full">
         <AdminSidebar />
         <div className="flex-1 flex flex-col">
           <header className="min-h-[60px] flex flex-wrap items-center border-b border-gray-200/60 px-4 sm:px-6 py-2 gap-3 bg-white/80 backdrop-blur-md sticky top-0 z-10 justify-between shadow-sm">
             <div className="flex items-center gap-4 min-w-0">
-              <SidebarTrigger className="text-gray-500 hover:text-gray-900 transition-colors" />
-              <span className="font-extrabold text-[16px] text-gray-800 tracking-tight hidden md:block">
+              <span className="font-extrabold text-[16px] text-gray-800 tracking-tight">
                 {getPageTitle()}
               </span>
             </div>
@@ -67,9 +66,9 @@ export default function AdminLayout() {
                       {user?.email}
                     </span>
                   </div>
-                  <Avatar className="h-9 w-9 ring-2 ring-gray-100 transition-transform hover:scale-105 cursor-pointer shadow-sm">
-                    <AvatarImage src={profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`} alt="Avatar" />
-                    <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">
+                  <Avatar className="h-9 w-9 ring-2 ring-gray-100 transition-transform hover:scale-105 cursor-pointer shadow-sm rounded-full overflow-hidden shrink-0">
+                    <AvatarImage src={profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`} alt="Avatar" className="object-cover w-full h-full rounded-full" />
+                    <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold rounded-full">
                       {profile?.display_name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || "A"}
                     </AvatarFallback>
                   </Avatar>

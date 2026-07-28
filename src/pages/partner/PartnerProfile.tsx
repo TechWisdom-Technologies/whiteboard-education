@@ -64,22 +64,33 @@ export default function PartnerProfile() {
     if (!session || !user) return;
     const fetchData = async () => {
       try {
+        const localAvatar = localStorage.getItem(`partner_avatar_${user.id}`);
+        if (localAvatar) {
+          setProfile(prev => ({ ...prev, avatar_url: localAvatar }));
+        }
+
         const { data: partnerData } = await supabase
           .from("partner_registrations")
           .select("agency_name, contact_person, email, phone, country, annual_students, status, nid_document_url, trade_license_url, certificate_urls, admin_notes")
           .eq("user_id", user.id)
-          .single();
+          .maybeSingle();
         if (partnerData) setPartner(partnerData);
 
         const { data: profileData } = await supabase
           .from("profiles")
           .select("display_name, avatar_url")
           .eq("user_id", user.id)
-          .single();
-        if (profileData) setProfile({
-          display_name: profileData.display_name || "",
-          avatar_url: profileData.avatar_url || "",
-        });
+          .maybeSingle();
+
+        if (profileData) {
+          setProfile({
+            display_name: profileData.display_name || "",
+            avatar_url: profileData.avatar_url || localAvatar || "",
+          });
+          if (profileData.avatar_url) {
+            localStorage.setItem(`partner_avatar_${user.id}`, profileData.avatar_url);
+          }
+        }
       } catch { /* ignore */ }
       setLoading(false);
     };
@@ -112,8 +123,19 @@ export default function PartnerProfile() {
       if (uploadError) throw uploadError;
       const { data: urlData } = supabase.storage.from("partner-documents").getPublicUrl(path);
       const avatarUrl = urlData.publicUrl + `?t=${Date.now()}`;
-      await supabase.from("profiles").update({ avatar_url: avatarUrl }).eq("user_id", user.id);
+      
+      const { error: upsertErr } = await supabase
+        .from("profiles")
+        .upsert(
+          { user_id: user.id, avatar_url: avatarUrl, display_name: profile.display_name || "" },
+          { onConflict: "user_id" }
+        );
+
+      if (upsertErr) console.error("Profile upsert error:", upsertErr);
+
+      localStorage.setItem(`partner_avatar_${user.id}`, avatarUrl);
       setProfile(prev => ({ ...prev, avatar_url: avatarUrl }));
+      window.dispatchEvent(new Event("profile-updated"));
       toast.success("Profile picture updated!");
     } catch (err: any) {
       toast.error("Upload failed: " + (err.message || "Unknown error"));
@@ -125,7 +147,13 @@ export default function PartnerProfile() {
     if (!user) return;
     setSavingProfile(true);
     try {
-      await supabase.from("profiles").update({ display_name: profile.display_name }).eq("user_id", user.id);
+      await supabase
+        .from("profiles")
+        .upsert(
+          { user_id: user.id, display_name: profile.display_name, avatar_url: profile.avatar_url },
+          { onConflict: "user_id" }
+        );
+      window.dispatchEvent(new Event("profile-updated"));
       toast.success("Profile saved successfully!");
     } catch { toast.error("Failed to save profile"); }
     setSavingProfile(false);
@@ -254,11 +282,6 @@ export default function PartnerProfile() {
 
   return (
     <div className="space-y-6 animate-fade-in pb-10">
-      <div>
-        <h1 className="text-[12px] font-normal tracking-tight text-[#1E293B]">My Profile</h1>
-        <p className="text-muted-foreground text-[12px] mt-1">Manage your account, agency details, and security settings.</p>
-      </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* ────────── Left Column: Account Settings ────────── */}
         <div className="lg:col-span-1 space-y-6">
@@ -273,9 +296,9 @@ export default function PartnerProfile() {
             <CardContent className="pt-6 space-y-6">
               <div className="flex flex-col items-center text-center">
                 <div className="relative group mb-4">
-                  <Avatar className="h-24 w-24 border-4 border-background shadow-md">
-                    <AvatarImage src={profile.avatar_url} />
-                    <AvatarFallback className="text-[12px] font-normal bg-[#2F4F97]/10 text-[#2F4F97]">{initials}</AvatarFallback>
+                  <Avatar className="h-24 w-24 border-4 border-background shadow-md rounded-full overflow-hidden shrink-0">
+                    <AvatarImage src={profile.avatar_url} className="object-cover w-full h-full rounded-full" />
+                    <AvatarFallback className="text-[12px] font-normal bg-[#2F4F97]/10 text-[#2F4F97] rounded-full">{initials}</AvatarFallback>
                   </Avatar>
                   <button
                     onClick={() => fileInputRef.current?.click()}

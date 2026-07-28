@@ -278,7 +278,7 @@ export default function LanguageCentersPage() {
                           {/* Info block */}
                         <div className="min-w-0 flex flex-col justify-center space-y-4 md:col-span-1 lg:col-span-1">
                           <Link to={`/language-centers/${generateSlug(lc.name)}`}>
-                            <h3 className="font-medium hover:underline text-[17px] md:text-[18px] text-[#1E293B] leading-tight mb-1">
+                            <h3 className="font-medium hover:text-[#2F4F97] transition-colors text-[17px] md:text-[18px] text-[#1E293B] leading-tight mb-1">
                               {lc.name}
                             </h3>
                           </Link>

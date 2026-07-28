@@ -426,7 +426,7 @@ export default function Courses2() {
                           {/* Middle: Info */}
                           <div className="min-w-0 flex flex-col justify-center space-y-3 md:col-span-1 lg:col-span-1">
                             <Link to={`/courses/${generateSlug(c.title)}`}>
-                              <h3 className="font-semibold hover:underline text-[18px] md:text-[20px] text-[#1E293B] leading-tight mb-1">
+                              <h3 className="font-semibold hover:text-[#2F4F97] transition-colors text-[18px] md:text-[20px] text-[#1E293B] leading-tight mb-1">
                                 {c.title}
                               </h3>
                             </Link>

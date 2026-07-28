@@ -35,13 +35,13 @@ export function AdminSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border bg-sidebar-background">
-      {/* Sidebar Header containing logo */}
-      <div className="border-b border-sidebar-border/50 py-4 px-4 bg-sidebar-background flex flex-col gap-1 flex-shrink-0">
-        <div className="flex items-center gap-2">
+      {/* Sidebar Header containing centered logo covering 65-70% width */}
+      <div className="border-b border-sidebar-border/50 py-4 px-3 bg-sidebar-background flex flex-col items-center justify-center gap-1 flex-shrink-0 min-h-[56px]">
+        <div className="flex items-center justify-center w-full">
           {!collapsed ? (
-            <img src="/logo-white.png" alt="Whiteboard Education" className="h-8 w-auto object-contain" />
+            <img src="/logo-white.png" alt="Whiteboard Education" className="w-[70%] max-h-12 object-contain shrink-0 mx-auto" />
           ) : (
-            <img src="/icon-white.jpg" alt="W Icon" className="h-8 w-8 object-contain" />
+            <img src="/icon-white.jpg" alt="W Icon" className="h-8 w-8 object-contain shrink-0 mx-auto" />
           )}
         </div>
       </div>
