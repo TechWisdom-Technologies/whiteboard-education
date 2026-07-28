@@ -42,6 +42,8 @@ import AdminLanguageCenters from "./pages/admin/AdminLanguageCenters";
 import AdminBlogs from "./pages/admin/AdminBlogs";
 import AdminPartners from "./pages/admin/AdminPartners";
 import AdminPartnerProfile from "./pages/admin/AdminPartnerProfile";
+import AdminPartnerContent from "./pages/admin/AdminPartnerContent";
+import AdminEvents from "./pages/admin/AdminEvents";
 
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminStudents from "./pages/admin/AdminStudents";
@@ -194,6 +196,8 @@ const App = () => (
               <Route path="blogs" element={<AdminBlogs />} />
               <Route path="partners" element={<AdminPartners />} />
               <Route path="partners/:partnerId" element={<AdminPartnerProfile />} />
+              <Route path="partner-content" element={<AdminPartnerContent />} />
+              <Route path="events" element={<AdminEvents />} />
               <Route path="students" element={<AdminStudents />} />
               <Route path="students/:studentId" element={<StudentProfilePage mode="admin" />} />
               <Route path="leads" element={<AdminLeads />} />

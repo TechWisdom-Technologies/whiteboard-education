@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/sidebar";
 
 const items = [
-  { title: "Overview", url: "/partner-dashboard", icon: LayoutDashboard },
+  { title: "Dashboard", url: "/partner-dashboard", icon: LayoutDashboard },
   { title: "Students", url: "/partner-dashboard/students", icon: Users },
   { title: "Applications", url: "/partner-dashboard/applications", icon: FileText },
   { title: "Search Programs", url: "/partner-dashboard/search-programs", icon: Search },

@@ -2,7 +2,7 @@ import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { HeroSection } from "@/components/public/HeroSection";
 import { ServicesGrid } from "@/components/public/ServicesGrid";
-import { StatsBanner } from "@/components/public/StatsBanner";
+import { FeaturesSection } from "@/components/public/FeaturesSection";
 import { WhyMalaysiaSection } from "@/components/public/WhyMalaysiaSection";
 import { TestimonialsSection } from "@/components/public/TestimonialsSection";
 
@@ -25,8 +25,8 @@ const Index = () => {
         {/* 3. Informational Blocks ('Why Malaysia?') */}
         <WhyMalaysiaSection />
 
-        {/* 4. Statistics Banner */}
-        <StatsBanner />
+        {/* 4. Features Grid */}
+        <FeaturesSection />
 
         {/* 5. Testimonials/Student Stories */}
         <TestimonialsSection />

@@ -64,9 +64,9 @@ export function HeroSection() {
       <div className="absolute -bottom-1 left-0 w-full h-32 bg-gradient-to-t from-white to-transparent z-10" />
 
       <div className="container relative z-20 mx-auto px-4">
-        <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+        <div className="flex flex-col lg:flex-row items-stretch gap-16 lg:gap-24">
           {/* Left Side: Content */}
-          <div className="flex-1 text-center lg:text-left max-w-2xl lg:-mt-40 mx-auto lg:mx-0">
+          <div className="flex-1 self-center text-center lg:text-left max-w-2xl mx-auto lg:mx-0 lg:-mt-20 mb-20 lg:mb-24">
             <div className={`inline-flex items-center gap-2 px-4 py-2 mb-8 bg-white shadow-sm border border-gray-100 rounded-xl transition-all duration-700 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
               <img
                 src="https://flagcdn.com/w40/my.png"
@@ -128,8 +128,8 @@ export function HeroSection() {
             </div>
           </div>
 
-          <div className={`flex-1 relative hidden lg:block transition-all duration-1000 delay-300 ${loaded ? "opacity-100 translate-x-0" : "opacity-0 translate-x-20"}`}>
-            <div className="relative z-20 w-full max-w-[600px] ml-auto -mt-20">
+          <div className={`flex-1 self-end relative hidden lg:block transition-all duration-1000 delay-300 ${loaded ? "opacity-100 translate-x-0" : "opacity-0 translate-x-20"}`}>
+            <div className="relative z-20 w-full max-w-[600px] ml-auto">
               <div className="relative">
                 <img
                   src="/hero-student.png"
@@ -167,7 +167,7 @@ export function HeroSection() {
         <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-40">
           <path
             d="M0,60C200,110,400,110,600,60s400-50,600,0v60H0Z"
-            className="fill-white"
+            className="fill-[#F8FAFC]"
           />
         </svg>
       </div>

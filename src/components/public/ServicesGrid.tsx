@@ -32,13 +32,13 @@ export function ServicesGrid() {
   return (
     <section className="py-16 md:py-24 bg-[#F8FAFC] relative overflow-hidden">
       {/* Decorative Background Blob (Right side) */}
-      <div className="absolute top-0 right-0 w-[600px] h-full bg-[#E5EDFB] rounded-l-full blur-[120px] opacity-60 pointer-events-none" />
+      <div className="absolute top-40 right-0 w-[600px] h-full bg-[#E5EDFB] rounded-l-full blur-[120px] opacity-60 pointer-events-none" />
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-2xl md:text-[32px] font-bold text-[#1E293B] mb-3">
             How we can help you?
           </h2>
-          <p className="text-[#64748B] text-[13px] md:text-[14px]">
+          <p className="text-[#64748B] text-[13px] md:text-[16px]">
             Whiteboard Education provides comprehensive end-to-end support for your journey in Malaysia.
           </p>
         </div>

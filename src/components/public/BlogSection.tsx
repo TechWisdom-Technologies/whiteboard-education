@@ -26,8 +26,8 @@ export function BlogSection() {
       <div className="container mx-auto px-4 relative z-10">
         {/* Section header */}
         <div className="text-center mb-12">
-          <h2 className="text-2xl md:text-3xl font-semibold mb-2">Latest Articles</h2>
-          <p className="text-sm text-[#64748B] max-w-2xl mx-auto">
+          <h2 className="text-2xl md:text-[32px] font-bold text-[#1E293B] mb-3">Latest Articles</h2>
+          <p className="text-[13px] md:text-[16px] text-[#64748B] max-w-2xl mx-auto">
             Tips, guides, and insights to help you navigate your study abroad journey.
           </p>
         </div>

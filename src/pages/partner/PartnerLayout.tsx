@@ -57,7 +57,7 @@ export default function PartnerLayout() {
 
   const getPageTitle = () => {
     const path = location.pathname;
-    if (path === "/partner-dashboard") return "Overview";
+    if (path === "/partner-dashboard") return "Dashboard";
     if (path.includes("/partner-dashboard/students")) return "Students";
     if (path.includes("/partner-dashboard/applications")) return "Applications";
     if (path.includes("/partner-dashboard/search-programs")) return "Search Programs";

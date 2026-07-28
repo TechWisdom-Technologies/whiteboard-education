@@ -28,12 +28,12 @@ export function PreFooterCTA() {
             <span className="text-xs font-semibold tracking-wide uppercase">Intakes are open for 2026</span>
           </div>
           
-          <h2 className="text-2xl md:text-3xl font-semibold text-white mb-2 leading-tight">
+          <h2 className="text-2xl md:text-[32px] font-bold text-white mb-3 leading-tight">
             Ready to Start Your Malaysian <br />
             <span className="text-white">Academic Adventure?</span>
           </h2>
           
-          <p className="text-sm text-white mb-10 max-w-xl mx-auto leading-relaxed">
+          <p className="text-[13px] md:text-[16px] text-white/90 mb-10 max-w-xl mx-auto leading-relaxed">
             Get personalized guidance from our experts and secure your place at a world-class university today. We handle the paperwork, you focus on your future.
           </p>
           

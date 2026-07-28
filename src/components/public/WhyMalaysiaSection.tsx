@@ -42,7 +42,7 @@ export function WhyMalaysiaSection() {
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-2xl md:text-[32px] font-bold text-[#1E293B] mb-3">Why Study in Malaysia?</h2>
-          <p className="text-[13px] md:text-[14px] text-[#1E293B] max-w-2xl mx-auto">
+          <p className="text-[13px] md:text-[16px] text-[#64748B] max-w-2xl mx-auto">
             Discover why thousands of international students choose Malaysia as their preferred study destination every year.
           </p>
         </div>
