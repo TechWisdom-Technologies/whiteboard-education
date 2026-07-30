@@ -15,6 +15,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 import {
   ArrowLeft,
@@ -36,8 +37,12 @@ import {
   Pencil,
   X,
   Languages,
-  ShieldAlert,
   AlertTriangle,
+  Mail,
+  Phone,
+  Link2,
+  MapPin,
+  Trash2,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -813,209 +818,199 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
         }
       `}</style>
 
-      <div id="student-profile-print" className="space-y-8 animate-fade-in pb-12">
+      <div id="student-profile-print" className="space-y-6 animate-fade-in pb-12">
         {/* ── Header ─────────────────────────────────────────────────── */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4 no-print">
-          <Button
-            variant="default"
-            onClick={handleBack}
-            className="w-fit mb-4 bg-primary hover:bg-primary/90 text-white rounded-full h-7 px-3 text-[11px] font-medium transition-all shadow-sm"
-          >
-            <ArrowLeft className="h-3 w-3 mr-1.5" />
-            Back to Students
-          </Button>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 no-print mb-2">
+          <div className="flex items-center text-[#1E293B] font-semibold text-lg">
+             <Button variant="ghost" size="icon" onClick={handleBack} className="h-8 w-8 mr-2"><ArrowLeft className="h-4 w-4" /></Button>
+             Student Profile
+          </div>
         </div>
 
-        <Tabs defaultValue="profile" className="w-full space-y-8">
-          <TabsList className="grid w-full grid-cols-3 h-12 bg-muted/50 p-1 no-print">
-            <TabsTrigger value="profile" className="text-[13px] font-bold h-10 tracking-wide uppercase">1. Profile Details</TabsTrigger>
-            <TabsTrigger value="documents" className="text-[13px] font-bold h-10 tracking-wide uppercase">2. Documents</TabsTrigger>
-            <TabsTrigger value="applications" className="text-[13px] font-bold h-10 tracking-wide uppercase">3. Applications</TabsTrigger>
+        {/* Global Student Info Card */}
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 no-print mt-2">
+           <div className="flex items-center gap-4">
+             {student.passport_photo_url ? (
+               <img src={student.passport_photo_url} alt={student.full_name} className="w-[60px] h-[60px] rounded-full object-cover border border-gray-200" />
+             ) : (
+               <div className="w-[60px] h-[60px] rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-2xl border border-blue-200">
+                 {student.full_name.charAt(0)}
+               </div>
+             )}
+             <div className="flex flex-col gap-1">
+               <h2 className="text-xl font-bold text-[#1E293B] flex items-center gap-2">{student.full_name}
+                 <Badge variant="outline" className="text-[10px] font-normal bg-gray-50 h-5 px-1.5 text-gray-500 uppercase">{student.status}</Badge>
+               </h2>
+               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-gray-500">
+                 <div className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5 text-gray-400"/> {student.email}</div>
+                 <div className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 text-gray-400"/> {student.phone || "N/A"}</div>
+                 <div className="flex items-center gap-1.5"><User className="w-3.5 h-3.5 text-gray-400"/> {student.gender || "N/A"}</div>
+               </div>
+             </div>
+           </div>
+           <div className="flex items-center gap-2">
+             {student.status === 'document_upload' && mode === 'partner' && (
+               <Button 
+                 className="bg-green-600 hover:bg-green-700 text-white text-xs h-9"
+                 onClick={() => {
+                   if (confirm("Are you sure you want to submit this student's application to Whiteboard for review?")) {
+                     handleSaveStatusTracker('document_review');
+                   }
+                 }}
+               >
+                 Submit Application
+               </Button>
+             )}
+             <Button variant="outline" className="border-[#2F4F97] text-[#2F4F97] hover:bg-blue-50 text-xs h-9">
+                <Link2 className="w-4 h-4 mr-2" /> Student Platform Link
+             </Button>
+           </div>
+        </div>
+
+        <Tabs defaultValue="profile" className="w-full space-y-6">
+          <TabsList className="flex w-full h-12 bg-transparent border-b border-gray-200 p-0 no-print gap-8 rounded-none overflow-x-auto justify-start">
+            <TabsTrigger value="profile" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">1. Profile</TabsTrigger>
+            <TabsTrigger value="applications" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">2. Applications</TabsTrigger>
+            <TabsTrigger value="documents" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">3. Documents</TabsTrigger>
           </TabsList>
-
-          <div className="flex flex-col lg:flex-row gap-8">
-          {/* Left Column: Photo, Info & Actions */}
-          <div className="flex flex-col items-center lg:items-start gap-4 shrink-0 w-full lg:w-[180px]">
-            {/* Image */}
-            {student.passport_photo_url ? (
-              <img
-                src={student.passport_photo_url}
-                alt={student.full_name}
-                className="w-32 h-40 lg:w-[180px] lg:h-[216px] rounded-xl object-cover border border-[#2F4F97]/25 shadow-sm shrink-0 animate-fade-in"
-                style={{ aspectRatio: "591/709" }}
-              />
-            ) : (
-              <div 
-                className="w-32 h-40 lg:w-[180px] lg:h-[216px] rounded-xl border border-dashed border-border bg-muted/10 flex flex-col items-center justify-center shrink-0 text-muted-foreground/30 text-center"
-                style={{ aspectRatio: "591/709" }}
-              >
-                <User className="h-10 w-10 mb-2" />
-                <span className="text-xs leading-normal font-semibold">PASSPORT<br/>PHOTO</span>
-              </div>
-            )}
-            
-            {/* Info */}
-            <div className="flex flex-col items-center lg:items-start gap-1 w-full text-center lg:text-left">
-              <h1 className="text-xl lg:text-2xl font-bold text-[#1E293B] leading-tight">
-                {student.full_name}
-              </h1>
-            </div>
-
-            {/* Actions */}
-            <div className="flex flex-col w-full gap-2 mt-2 no-print">
-              <div className="flex w-full gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1 h-7 text-[11px] font-medium px-2"
-                  disabled={!profileComplete}
-                  onClick={handlePrint}
-                >
-                  <Download className="h-3 w-3 mr-1.5" />
-                  PDF
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1 h-7 text-[11px] font-medium px-2"
-                  disabled={!profileComplete}
-                  onClick={handlePrint}
-                >
-                  <Printer className="h-3 w-3 mr-1.5" />
-                  Print
-                </Button>
-              </div>
-              {!profileComplete && (
-                <p className="text-[10px] leading-tight text-muted-foreground text-center lg:text-left">
-                  Complete required fields & upload 6 docs to enable print/PDF.
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Right Column: Status Tracker */}
-          <div className="flex-1 min-w-0 max-w-full overflow-hidden no-print">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-2">
-              <h3 className="text-lg font-bold text-[#1E293B]">Application Progress</h3>
-              
-              {/* EMGS Info Badges */}
-              {(student.emgs_application_number || student.emgs_status_percentage !== undefined) && (
-                <div className="flex items-center gap-3 bg-indigo-50 border border-indigo-100 rounded-lg px-3 py-1.5">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">EMGS No.</span>
-                    <span className="text-xs font-semibold text-indigo-900">{student.emgs_application_number || 'N/A'}</span>
+          
+          <TabsContent value="applications" className="space-y-6 mt-0">
+             <Card className="border border-gray-200 shadow-sm overflow-hidden">
+               <CardContent className="p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-2 border-b border-gray-100 pb-4">
+                    <h3 className="text-sm font-bold text-[#1E293B] uppercase tracking-wide flex items-center gap-2"><MapPin className="w-4 h-4 text-[#2F4F97]" /> Application Progress</h3>
+                    {(student.emgs_application_number || student.emgs_status_percentage !== undefined) && (
+                      <div className="flex items-center gap-3 bg-indigo-50 border border-indigo-100 rounded-md px-3 py-1.5">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">EMGS No.</span>
+                          <span className="text-xs font-semibold text-indigo-900">{student.emgs_application_number || 'N/A'}</span>
+                        </div>
+                        <div className="w-px h-4 bg-indigo-200/50"></div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Status</span>
+                          <Badge variant="outline" className="bg-white border-indigo-200 text-indigo-700 h-5 px-1.5 text-[11px]">
+                            {student.emgs_status_percentage ?? 0}%
+                          </Badge>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <div className="w-px h-4 bg-indigo-200/50"></div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Status</span>
-                    <Badge variant="outline" className="bg-white border-indigo-200 text-indigo-700 h-5 px-1.5 text-[11px]">
-                      {student.emgs_status_percentage ?? 0}%
-                    </Badge>
-                  </div>
-                </div>
-              )}
-            </div>
-            <StatusTracker 
-              currentStatus={student.status} 
-              onStatusChange={handleSaveStatusTracker}
-              isUpdating={savingStatus}
-              isAdmin={mode === 'admin'}
-              fileOpenedAt={student.created_at}
-            />
-          </div>
-        </div>
+                  <StatusTracker 
+                    currentStatus={student.status} 
+                    onStatusChange={handleSaveStatusTracker}
+                    isUpdating={savingStatus}
+                    isAdmin={mode === 'admin'}
+                    fileOpenedAt={student.created_at}
+                  />
+               </CardContent>
+             </Card>
+          </TabsContent>
 
-        <TabsContent value="documents" className="space-y-6 mt-0">
-          {/* ── Horizontal Documents Section ─────────────────────────────── */}
-          <Card className="no-print">
-            <CardContent className="p-5 sm:p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="flex items-center gap-2 text-sm font-semibold text-[#1E293B]">
-                <FileCheck className="h-4 w-4 text-[#2F4F97]" />
-                Required Documents
-              </h3>
-              <Badge variant="secondary" className="text-xs">
-                {docCount}/{documentFields.length} Uploaded
-              </Badge>
-            </div>
-            
-            <div className="border rounded-md overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/30">
-                    <TableHead>Document Type</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {documentFields.map((doc) => {
-                    const url = (student as any)[doc.field] as string | undefined;
-                    const isUploading = uploading[doc.field];
-                    return (
-                      <TableRow key={doc.field}>
-                        <TableCell className="font-medium">
-                          <div className="flex items-center gap-2">
-                            <FileText className="h-4 w-4 text-muted-foreground/50" />
-                            {doc.label}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {url ? (
-                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 uppercase text-[10px] font-bold">Uploaded</Badge>
-                          ) : (
-                            <Badge variant="outline" className="bg-muted text-muted-foreground border-dashed uppercase text-[10px] font-bold">Missing</Badge>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            {url && (
-                              <a
-                                href={url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex h-8 w-8 items-center justify-center rounded-md border bg-white text-[#2F4F97] hover:bg-muted shadow-sm transition-colors"
-                                title="Preview Document"
-                              >
-                                <ExternalLink className="h-4 w-4" />
-                              </a>
-                            )}
-                            <input
-                              type="file"
-                              className="hidden"
-                              ref={(el) => { fileInputRefs.current[doc.field] = el; }}
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) handleUploadDoc(doc.field, file);
-                                e.target.value = "";
-                              }}
-                            />
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              title={url ? "Replace Document" : "Upload Document"}
-                              disabled={isUploading}
-                              onClick={() => fileInputRefs.current[doc.field]?.click()}
-                              className={`h-8 w-8 p-0 ${isUploading ? 'opacity-50' : 'text-muted-foreground hover:text-foreground'}`}
-                            >
-                              {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
-              </CardContent>
-            </Card>
+          <TabsContent value="documents" className="space-y-6 mt-0">
+             <Tabs defaultValue="your-documents" className="w-full">
+               <TabsList className="bg-transparent gap-8 p-0 h-10 border-b border-gray-200 w-full justify-start rounded-none mb-6 overflow-x-auto">
+                 <TabsTrigger value="your-documents" className="text-[13px] font-semibold h-10 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">Your Documents</TabsTrigger>
+                 <TabsTrigger value="whiteboard-documents" className="text-[13px] font-semibold h-10 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">Whiteboard Documents</TabsTrigger>
+               </TabsList>
+               
+               <TabsContent value="your-documents" className="mt-0">
+                  <Accordion type="multiple" className="space-y-3">
+                    {documentFields.map((doc) => {
+                      const url = (student as any)[doc.field] as string | undefined;
+                      const isUploading = uploading[doc.field];
+                      return (
+                        <AccordionItem key={doc.field} value={doc.field} className="border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm">
+                          <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-gray-50 [&[data-state=open]]:bg-gray-50">
+                            <div className="flex items-center justify-between w-full pr-4">
+                              <div className="flex items-center gap-3">
+                                <div className="h-8 w-8 rounded-full bg-blue-50 flex items-center justify-center border border-blue-100">
+                                  <FileText className="w-4 h-4 text-[#2F4F97]" />
+                                </div>
+                                <span className="font-semibold text-sm text-[#1E293B]">{doc.label}</span>
+                              </div>
+                              {url ? (
+                                <CheckCircle2 className="w-5 h-5 text-green-500" />
+                              ) : (
+                                <Badge variant="outline" className="text-[10px] font-normal uppercase bg-gray-50">Missing</Badge>
+                              )}
+                            </div>
+                          </AccordionTrigger>
+                          <AccordionContent className="px-4 py-4 bg-gray-50/50 border-t border-gray-100">
+                            <div className="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200 shadow-sm flex-wrap gap-4">
+                               <div className="flex items-center gap-3">
+                                  <div className="h-10 w-10 rounded-md bg-red-50 flex items-center justify-center border border-red-100">
+                                    <FileText className="w-5 h-5 text-red-500" />
+                                  </div>
+                                  <div>
+                                    <p className="font-medium text-sm text-[#1E293B]">{url ? 'Document Uploaded' : 'No Document'}</p>
+                                    <p className="text-xs text-gray-500">{url ? 'Click preview to view file' : 'Please upload a PDF/Image'}</p>
+                                  </div>
+                               </div>
+                               <div className="flex items-center gap-2">
+                                 {url && (
+                                   <a
+                                     href={url}
+                                     target="_blank"
+                                     rel="noopener noreferrer"
+                                     className="inline-flex h-9 items-center justify-center rounded-md border bg-white px-3 text-xs font-medium text-[#2F4F97] hover:bg-gray-50 shadow-sm transition-colors"
+                                     title="Preview Document"
+                                   >
+                                     Preview
+                                   </a>
+                                 )}
+                                 <input
+                                   type="file"
+                                   className="hidden"
+                                   ref={(el) => { fileInputRefs.current[doc.field] = el; }}
+                                   onChange={(e) => {
+                                     const file = e.target.files?.[0];
+                                     if (file) handleUploadDoc(doc.field, file);
+                                     e.target.value = "";
+                                   }}
+                                 />
+                                 <Button
+                                   type="button"
+                                   size="sm"
+                                   disabled={isUploading}
+                                   onClick={() => fileInputRefs.current[doc.field]?.click()}
+                                   className="h-9 px-3 bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white text-xs font-medium"
+                                 >
+                                   {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-2" />}
+                                   {url ? "Replace" : "Upload"}
+                                 </Button>
+                                 {url && (
+                                    <Button variant="outline" size="icon" className="h-9 w-9 text-red-500 hover:text-red-600 hover:bg-red-50 border-gray-200">
+                                      <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                 )}
+                               </div>
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      );
+                    })}
+                  </Accordion>
+               </TabsContent>
+               <TabsContent value="whiteboard-documents">
+                  <div className="text-center py-12 bg-white rounded-lg border border-gray-200 border-dashed">
+                     <p className="text-gray-500 text-sm">No Whiteboard documents available for this student.</p>
+                  </div>
+               </TabsContent>
+             </Tabs>
           </TabsContent>
 
           <TabsContent value="profile" className="space-y-6 mt-0">
+             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4 no-print">
+                 <div className="flex gap-2 p-0 flex-wrap">
+                   <div className="bg-[#2F4F97] text-white rounded-md px-4 py-1.5 text-xs font-medium border border-transparent shadow-sm cursor-pointer">Personal Information</div>
+                   <div className="bg-white text-gray-600 hover:bg-gray-50 rounded-md px-4 py-1.5 text-xs font-medium border border-gray-200 cursor-pointer">Academic Qualifications</div>
+                   <div className="bg-white text-gray-600 hover:bg-gray-50 rounded-md px-4 py-1.5 text-xs font-medium border border-gray-200 cursor-pointer">Work Experience</div>
+                   <div className="bg-white text-gray-600 hover:bg-gray-50 rounded-md px-4 py-1.5 text-xs font-medium border border-gray-200 cursor-pointer">Tests</div>
+                 </div>
+                 <Button variant="outline" size="sm" className="h-8 text-xs shrink-0 bg-white"><Pencil className="w-3.5 h-3.5 mr-1" /> Request Edit</Button>
+             </div>
             {/* ── Main Single Column Layout ──────────────────────────────── */}
-            <Card className="print:border-none print:shadow-none">
+            <Card className="print:border-none print:shadow-none border border-gray-200 shadow-sm">
               <CardContent className="p-6 sm:p-7 print:p-0">
                 {/* ── Section 1: Personal Information ──────────────── */}
                 <div className="flex items-center justify-between pb-4">

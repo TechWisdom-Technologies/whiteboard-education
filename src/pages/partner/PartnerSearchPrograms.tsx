@@ -21,7 +21,10 @@ import {
   BookOpen, 
   ChevronLeft, 
   ChevronRight,
-  Sparkles
+  Sparkles,
+  Zap,
+  CheckCircle2,
+  Calendar
 } from "lucide-react";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { toast } from "sonner";
@@ -109,6 +112,7 @@ export default function PartnerSearchPrograms() {
   const [level, setLevel] = useState("all");
   const [country, setCountry] = useState("Malaysia");
   const [studyArea, setStudyArea] = useState("all");
+  const [stateFilter, setStateFilter] = useState("all");
   const [duration, setDuration] = useState("");
   const [requirement, setRequirement] = useState("all");
   const [sortBy, setSortBy] = useState("best_match");
@@ -214,6 +218,7 @@ export default function PartnerSearchPrograms() {
     setLevel("all");
     setCountry("Malaysia");
     setStudyArea("all");
+    setStateFilter("all");
     setDuration("");
     setRequirement("all");
     setSortBy("best_match");
@@ -233,116 +238,143 @@ export default function PartnerSearchPrograms() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Top Filter Card */}
-      <Card className="border border-gray-200 shadow-sm bg-white">
-        <CardContent className="p-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-4">
-            <div className="lg:col-span-2 relative">
+      {/* Search Header */}
+      <div className="text-center py-6 md:py-10">
+        <h1 className="text-2xl md:text-3xl font-bold text-[#1E293B] mb-2">Explore over 10,000+ Programs</h1>
+        <p className="text-[#64748B]">Use our platform to search</p>
+      </div>
+
+      {/* Horizontal Search Bar */}
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm mx-auto max-w-6xl mb-6 relative z-10 transition-all">
+        <div className="flex flex-col md:flex-row items-center md:divide-x divide-gray-200">
+          
+          {/* Search Programs */}
+          <div className="flex-1 p-2 w-full border-b md:border-b-0 border-gray-200">
+            <div className="text-[10px] font-semibold text-gray-500 uppercase px-2 mb-1">Search Programs</div>
+            <div className="flex items-center px-2">
+              <Building2 className="w-4 h-4 text-[#2F4F97] mr-2 shrink-0" />
               <Input 
-                placeholder="Search by Program Title or University" 
+                placeholder="Search Program / University" 
                 value={searchQuery} 
                 onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }} 
-                className="h-10 text-[12px] pr-9 border-gray-200 focus:border-[#2F4F97]"
+                className="border-0 shadow-none h-8 px-0 text-sm focus-visible:ring-0 bg-transparent rounded-none"
               />
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             </div>
-            
-            <Select value={intake} onValueChange={(v) => { setIntake(v); setCurrentPage(1); }}>
-              <SelectTrigger className="h-10 text-[12px]">
-                <SelectValue placeholder="Intake Month" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Intakes</SelectItem>
-                {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map(m => (
-                  <SelectItem key={m} value={m}>{m}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={year} onValueChange={(v) => { setYear(v); setCurrentPage(1); }}>
-              <SelectTrigger className="h-10 text-[12px]">
-                <SelectValue placeholder="Year" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Years</SelectItem>
-                <SelectItem value="2024">2024</SelectItem>
-                <SelectItem value="2025">2025</SelectItem>
-                <SelectItem value="2026">2026</SelectItem>
-                <SelectItem value="2027">2027</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={level} onValueChange={(v) => { setLevel(v); setCurrentPage(1); }}>
-              <SelectTrigger className="h-10 text-[12px]">
-                <SelectValue placeholder="Program Level" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Levels</SelectItem>
-                <SelectItem value="Foundation / A-level">Foundation / A-level</SelectItem>
-                <SelectItem value="Diploma">Diploma</SelectItem>
-                <SelectItem value="Certificate">Certificate</SelectItem>
-                <SelectItem value="Advanced Diploma">Advanced Diploma</SelectItem>
-                <SelectItem value="Bachelor's Degree">Bachelor's Degree</SelectItem>
-                <SelectItem value="Master's Degree">Master's Degree</SelectItem>
-                <SelectItem value="Doctoral Degree (PhD)">Doctoral Degree (PhD)</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={country} onValueChange={(v) => { setCountry(v); setCurrentPage(1); }}>
-              <SelectTrigger className="h-10 text-[12px]">
-                <SelectValue placeholder="Country" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Malaysia">Malaysia</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={studyArea} onValueChange={(v) => { setStudyArea(v); setCurrentPage(1); }}>
-              <SelectTrigger className="h-10 text-[12px]">
-                <SelectValue placeholder="Study Area" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Areas</SelectItem>
-                <SelectItem value="Business & Management">Business & Management</SelectItem>
-                <SelectItem value="Engineering">Engineering</SelectItem>
-                <SelectItem value="Computer Science & IT">Computer Science & IT</SelectItem>
-                <SelectItem value="Medicine & Health">Medicine & Health</SelectItem>
-                <SelectItem value="Arts & Design">Arts & Design</SelectItem>
-                <SelectItem value="Natural Sciences">Natural Sciences</SelectItem>
-                <SelectItem value="Law">Law</SelectItem>
-                <SelectItem value="Social Sciences">Social Sciences</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Input 
-              placeholder="Duration (e.g. 3 years)" 
-              value={duration} 
-              onChange={(e) => { setDuration(e.target.value); setCurrentPage(1); }} 
-              className="h-10 text-[12px]"
-            />
-
-            <Select value={requirement} onValueChange={(v) => { setRequirement(v); setCurrentPage(1); }}>
-              <SelectTrigger className="h-10 text-[12px]">
-                <SelectValue placeholder="Requirements" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Requirements</SelectItem>
-                <SelectItem value="IELTS">IELTS</SelectItem>
-                <SelectItem value="TOEFL">TOEFL</SelectItem>
-                <SelectItem value="PTE">PTE</SelectItem>
-                <SelectItem value="Cambridge">Cambridge</SelectItem>
-                <SelectItem value="MUET">MUET</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
           
-          <div className="flex gap-2 justify-end pt-2 border-t border-gray-100">
-            <Button variant="outline" size="sm" onClick={handleReset} className="gap-1.5 text-xs text-gray-600">
-              <RotateCcw className="h-3.5 w-3.5" /> Reset Filters
-            </Button>
+          {/* Intake */}
+          <div className="flex-1 p-2 w-full border-b md:border-b-0 border-gray-200">
+            <div className="text-[10px] font-semibold text-gray-500 uppercase px-2 mb-1">Intake</div>
+            <div className="flex items-center px-2">
+              <Select value={intake} onValueChange={(v) => { setIntake(v); setCurrentPage(1); }}>
+                <SelectTrigger className="border-0 shadow-none h-8 px-0 text-sm focus:ring-0 w-full bg-transparent rounded-none [&>span]:flex [&>span]:items-center">
+                  <Calendar className="w-4 h-4 text-[#2F4F97] mr-2 shrink-0" />
+                  <SelectValue placeholder="All, Jan, Feb..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Intakes</SelectItem>
+                  {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map(m => (
+                    <SelectItem key={m} value={m}>{m}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+          
+          {/* Year */}
+          <div className="flex-1 md:w-32 md:flex-none p-2 w-full border-b md:border-b-0 border-gray-200">
+            <div className="text-[10px] font-semibold text-gray-500 uppercase px-2 mb-1">Year</div>
+            <div className="flex items-center px-2">
+              <Select value={year} onValueChange={(v) => { setYear(v); setCurrentPage(1); }}>
+                <SelectTrigger className="border-0 shadow-none h-8 px-0 text-sm focus:ring-0 w-full bg-transparent rounded-none [&>span]:flex [&>span]:items-center">
+                  <Calendar className="w-4 h-4 text-[#2F4F97] mr-2 shrink-0" />
+                  <SelectValue placeholder="2026" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Years</SelectItem>
+                  <SelectItem value="2024">2024</SelectItem>
+                  <SelectItem value="2025">2025</SelectItem>
+                  <SelectItem value="2026">2026</SelectItem>
+                  <SelectItem value="2027">2027</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Student's Nationality */}
+          <div className="flex-1 p-2 w-full border-b md:border-b-0 border-gray-200">
+            <div className="text-[10px] font-semibold text-gray-500 uppercase px-2 mb-1">Student's Nationality</div>
+            <div className="flex items-center px-2">
+              <Select value={country} onValueChange={(v) => { setCountry(v); setCurrentPage(1); }}>
+                <SelectTrigger className="border-0 shadow-none h-8 px-0 text-sm focus:ring-0 w-full bg-transparent rounded-none">
+                  <SelectValue placeholder="Select Country" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Malaysia">Malaysia</SelectItem>
+                  <SelectItem value="Bangladesh">Bangladesh</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Student's State */}
+          <div className="flex-1 p-2 w-full border-b md:border-b-0 border-gray-200">
+            <div className="text-[10px] font-semibold text-gray-500 uppercase px-2 mb-1">Student's State</div>
+            <div className="flex items-center px-2">
+              <Select value={stateFilter} onValueChange={(v) => { setStateFilter(v); setCurrentPage(1); }}>
+                <SelectTrigger className="border-0 shadow-none h-8 px-0 text-sm focus:ring-0 w-full bg-transparent rounded-none">
+                  <SelectValue placeholder="Select State" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All States</SelectItem>
+                  <SelectItem value="Business & Management">Dhaka</SelectItem>
+                  <SelectItem value="Engineering">Chittagong</SelectItem>
+                  <SelectItem value="Computer Science & IT">Sylhet</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Search Button */}
+          <div className="p-3 w-full md:w-auto flex justify-center">
+             <Button className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white w-full md:w-auto px-6 h-10">
+               Search <Search className="ml-2 h-4 w-4" />
+             </Button>
+          </div>
+        </div>
+        
+        {/* Advanced Search Dropdown Button */}
+        <div className="absolute -bottom-4 left-1/2 -translate-x-1/2">
+          <Button variant="outline" className="bg-white text-xs h-8 px-4 rounded-md shadow-sm border-gray-200 text-[#2F4F97] hover:text-[#2F4F97] hover:bg-gray-50">
+            Advanced Search +
+          </Button>
+        </div>
+      </div>
+
+      {/* Quick Filters */}
+      <div className="max-w-6xl mx-auto pt-6 pb-2">
+        <div className="flex items-center gap-2 mb-3">
+          <Zap className="w-4 h-4 text-[#2F4F97]" />
+          <span className="text-sm font-semibold text-[#2F4F97]">Quick Filters</span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {[
+            "Faster Offer TAT", "Scholarship Available", "High Offer Acceptance Rate",
+            "English Proficiency Exam Waiver", "Affordable University", "Co-op & Built-in Internships",
+            "High Job Demand", "No Tuition Deposit (US)", "Major City", "Eligible Non Collateral Loan",
+            "MBA Programs", "Russel Group Universities (UK)"
+          ].map(tag => (
+            <Badge key={tag} variant="outline" className="bg-white cursor-pointer hover:bg-gray-50 text-gray-600 font-normal py-1.5 px-3">
+              <CheckCircle2 className="w-3.5 h-3.5 mr-1.5 text-gray-400" />
+              {tag}
+            </Badge>
+          ))}
+          <Badge variant="outline" className="bg-white cursor-pointer hover:bg-gray-50 text-gray-600 font-normal py-1.5 px-3" onClick={handleReset}>
+             <RotateCcw className="w-3.5 h-3.5 mr-1.5 text-gray-400" />
+             Reset All Filters
+          </Badge>
+        </div>
+      </div>
 
       {/* Main Content Area */}
       <Card className="border border-gray-200 shadow-sm bg-white overflow-hidden">

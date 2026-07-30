@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Users, UserPlus, Loader2, Trash2, ArrowLeft } from "lucide-react";
+import { Users, UserPlus, Loader2, Trash2, ArrowLeft, ChevronRight, X, Search, Mail, Phone, Link2 } from "lucide-react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -192,11 +192,12 @@ export default function PartnerStudents() {
           date_of_birth: form.date_of_birth || null,
         }),
       });
-      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      const newStudent = data[0];
       toast.success("Student added successfully!");
       setAddOpen(false);
       setForm(emptyForm);
-      fetchStudents();
+      navigate(`/partner-dashboard/students/${newStudent.id}`);
     } catch (e: any) {
       toast.error(e.message || "Failed to add student");
     } finally { setSubmitting(false); }
@@ -286,8 +287,8 @@ export default function PartnerStudents() {
   };
 
   const filtered = students.filter(s => {
-    if (wbIdFilter && !String(s.wb_student_id || s.id).toLowerCase().includes(wbIdFilter.toLowerCase())) return false;
-    if (nameFilter && !s.full_name.toLowerCase().includes(nameFilter.toLowerCase())) return false;
+    if (wbIdFilter && wbIdFilter !== "all" && !String(s.wb_student_id || s.id).toLowerCase().includes(wbIdFilter.toLowerCase())) return false;
+    if (nameFilter && nameFilter !== "all" && !s.full_name.toLowerCase().includes(nameFilter.toLowerCase())) return false;
     
     if (dateFromFilter && new Date(s.created_at) < new Date(dateFromFilter)) return false;
     if (dateToFilter && new Date(s.created_at) > new Date(dateToFilter)) return false;
@@ -413,162 +414,168 @@ export default function PartnerStudents() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
-        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+      {/* Header Area */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center text-[#1E293B] font-semibold text-lg mb-0.5">
+            <ChevronRight className="w-4 h-4 mr-1 text-gray-400" /> Students
+          </div>
+          <p className="text-gray-500 text-[13px] ml-5">Manage your Students and their Profiles</p>
+        </div>
+        <div className="flex items-center gap-2">
           {selectedIds.length > 0 && (
-            <Button variant="destructive" onClick={handleBulkDelete} className="w-full sm:w-auto">
-              <Trash2 className="h-4 w-4 mr-2" /> Delete Selected ({selectedIds.length})
+            <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="text-xs h-9">
+              <Trash2 className="h-4 w-4 mr-2" /> Delete ({selectedIds.length})
             </Button>
           )}
-          <Button className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 w-full sm:w-auto" onClick={() => setAddOpen(true)}>
-            <UserPlus className="h-4 w-4 mr-2" />Add Student
+          <Button variant="outline" size="sm" className="border-[#2F4F97] text-[#2F4F97] hover:bg-blue-50 text-xs h-9 px-4">
+            Archived Students
+          </Button>
+          <Button size="sm" className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 text-xs h-9 px-4" onClick={() => setAddOpen(true)}>
+            Register New Student +
           </Button>
         </div>
       </div>
 
-      {/* Advanced Filters */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            <div>
-              <Label className="text-[12px]">WB Student ID</Label>
-              <Input placeholder="Enter ID" value={wbIdFilter} onChange={e => setWbIdFilter(e.target.value)} className="h-8 mt-1 text-[12px]" />
-            </div>
-            <div>
-              <Label className="text-[12px]">Student Name</Label>
-              <Input placeholder="Enter name" value={nameFilter} onChange={e => setNameFilter(e.target.value)} className="h-8 mt-1 text-[12px]" />
-            </div>
-            <div>
-              <Label className="text-[12px]">Date Created (From)</Label>
-              <Input type="date" value={dateFromFilter} onChange={e => setDateFromFilter(e.target.value)} className="h-8 mt-1 text-[12px]" />
-            </div>
-            <div>
-              <Label className="text-[12px]">Date Created (To)</Label>
-              <Input type="date" value={dateToFilter} onChange={e => setDateToFilter(e.target.value)} className="h-8 mt-1 text-[12px]" />
-            </div>
-            <div>
-              <Label className="text-[12px]">Country</Label>
-              <Select value={countryFilter} onValueChange={setCountryFilter}>
-                <SelectTrigger className="h-8 mt-1 text-[12px]"><SelectValue placeholder="All Countries" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Countries</SelectItem>
-                  <SelectItem value="Malaysia">Malaysia</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label className="text-[12px]">Intake</Label>
-              <Select value={intakeFilter} onValueChange={setIntakeFilter}>
-                <SelectTrigger className="h-8 mt-1 text-[12px]"><SelectValue placeholder="All Intakes" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Intakes</SelectItem>
-                  {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map(m => (
-                    <SelectItem key={m} value={m}>{m}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label className="text-[12px]">Year</Label>
-              <Select value={yearFilter} onValueChange={setYearFilter}>
-                <SelectTrigger className="h-8 mt-1 text-[12px]"><SelectValue placeholder="All Years" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Years</SelectItem>
-                  <SelectItem value="2024">2024</SelectItem>
-                  <SelectItem value="2025">2025</SelectItem>
-                  <SelectItem value="2026">2026</SelectItem>
-                  <SelectItem value="2027">2027</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label className="text-[12px]">Status</Label>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="h-8 mt-1 text-[12px]"><SelectValue placeholder="All Statuses" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="received_at_wb">Received Application at WB</SelectItem>
-                  <SelectItem value="in_progress">Application in Progress</SelectItem>
-                  <SelectItem value="on_hold_intake">Application on Hold – Intake yet to open</SelectItem>
-                  <SelectItem value="on_hold_wb">Application on Hold – WB team</SelectItem>
-                  <SelectItem value="on_hold_uni">Application on Hold – University</SelectItem>
-                  <SelectItem value="submitted">Application Submitted</SelectItem>
-                  <SelectItem value="offer">Get Offer</SelectItem>
-                  <SelectItem value="emgs">EMGS Approval Pending</SelectItem>
-                  <SelectItem value="visa">Ready for Visa Application</SelectItem>
-                  <SelectItem value="rejected">Rejected by University</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 mt-4 justify-end">
-            <Button variant="outline" size="sm" onClick={resetFilters}>Reset</Button>
-            <Button size="sm" className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90">Search</Button>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Unified Filter Bar */}
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-x-auto">
+        <div className="flex items-center p-2 gap-2 min-w-max">
+           <Select value={wbIdFilter} onValueChange={setWbIdFilter}>
+             <SelectTrigger className="w-[140px] border-0 shadow-none bg-gray-50 text-xs h-9 focus:ring-0"><SelectValue placeholder="Assigned To" /></SelectTrigger>
+             <SelectContent><SelectItem value="all">All</SelectItem></SelectContent>
+           </Select>
+           
+           <div className="flex items-center gap-1 bg-gray-50 rounded-md px-3 h-9 text-xs text-[#1E293B] border-transparent font-medium min-w-max">
+             <span className="text-gray-400 font-normal mr-1">Date:</span> All Dates <X className="w-3.5 h-3.5 ml-2 cursor-pointer text-gray-400 hover:text-gray-600" onClick={() => { setDateFromFilter(""); setDateToFilter(""); }}/>
+           </div>
+           
+           <Select value={countryFilter} onValueChange={setCountryFilter}>
+             <SelectTrigger className="w-[120px] border-0 shadow-none bg-gray-50 text-xs h-9 focus:ring-0"><SelectValue placeholder="Country" /></SelectTrigger>
+             <SelectContent>
+                <SelectItem value="all">All Countries</SelectItem>
+                <SelectItem value="Malaysia">Malaysia</SelectItem>
+             </SelectContent>
+           </Select>
+
+           <Select value={intakeFilter} onValueChange={setIntakeFilter}>
+             <SelectTrigger className="w-[100px] border-0 shadow-none bg-gray-50 text-xs h-9 focus:ring-0"><SelectValue placeholder="Intake" /></SelectTrigger>
+             <SelectContent>
+                <SelectItem value="all">All Intakes</SelectItem>
+                {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map(m => (
+                  <SelectItem key={m} value={m}>{m}</SelectItem>
+                ))}
+             </SelectContent>
+           </Select>
+
+           <Select value={yearFilter} onValueChange={setYearFilter}>
+             <SelectTrigger className="w-[90px] border-0 shadow-none bg-gray-50 text-xs h-9 focus:ring-0"><SelectValue placeholder="Year" /></SelectTrigger>
+             <SelectContent>
+                <SelectItem value="all">All Years</SelectItem>
+                <SelectItem value="2024">2024</SelectItem>
+                <SelectItem value="2025">2025</SelectItem>
+                <SelectItem value="2026">2026</SelectItem>
+             </SelectContent>
+           </Select>
+
+           <Select value={statusFilter} onValueChange={setStatusFilter}>
+             <SelectTrigger className="w-[140px] border-0 shadow-none bg-gray-50 text-xs h-9 focus:ring-0"><SelectValue placeholder="Status" /></SelectTrigger>
+             <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="submitted">App. Submitted</SelectItem>
+                <SelectItem value="in_progress">App. Incomplete</SelectItem>
+             </SelectContent>
+           </Select>
+           
+           <div className="relative flex-1 min-w-[200px]">
+             <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+             <Input 
+               placeholder="Search by keyword" 
+               value={nameFilter}
+               onChange={(e) => setNameFilter(e.target.value)}
+               className="pl-9 h-9 border-0 shadow-none text-xs bg-gray-50 focus-visible:ring-0 w-full rounded-md" 
+             />
+           </div>
+           
+           <Button className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white h-9 px-6 text-xs shrink-0 rounded-md">Search</Button>
+        </div>
+      </div>
 
       {/* Students Table */}
       {filtered.length === 0 ? (
-        <div className="p-12 text-center text-muted-foreground border rounded-xl bg-card">
-          <Users className="h-12 w-12 mx-auto mb-4 opacity-30" />
-          <p className="text-[12px] font-normal">No students found</p>
-          <p className="text-[12px]">Try adjusting your filters or add a new student</p>
+        <div className="p-12 text-center text-muted-foreground border border-gray-100 rounded-xl bg-white shadow-sm">
+          <Users className="h-12 w-12 mx-auto mb-4 opacity-30 text-[#2F4F97]" />
+          <p className="text-[13px] font-medium text-gray-700">No students found</p>
+          <p className="text-[12px] text-gray-500">Try adjusting your filters or add a new student</p>
         </div>
       ) : (
-        <div className="rounded-xl border bg-card overflow-x-auto">
+        <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-x-auto">
           <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[40px] text-center px-0">
+              <TableHeader className="bg-gray-50/50">
+                <TableRow className="border-gray-100 hover:bg-transparent">
+                  <TableHead className="w-[40px] text-center px-4">
                     <Checkbox 
                       checked={filtered.length > 0 && selectedIds.length === filtered.length}
                       onCheckedChange={handleSelectAll}
                     />
                   </TableHead>
-                  <TableHead>WB ID</TableHead>
-                  <TableHead>Created By</TableHead>
-                  <TableHead>Created on</TableHead>
-                  <TableHead>Student Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Phone Number</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Action</TableHead>
+                  <TableHead className="text-[11px] font-semibold text-gray-500 uppercase">Created By</TableHead>
+                  <TableHead className="text-[11px] font-semibold text-gray-500 uppercase">Created on</TableHead>
+                  <TableHead className="text-[11px] font-semibold text-gray-500 uppercase">Student Name</TableHead>
+                  <TableHead className="text-[11px] font-semibold text-gray-500 uppercase">Email</TableHead>
+                  <TableHead className="text-[11px] font-semibold text-gray-500 uppercase">Phone Number</TableHead>
+                  <TableHead className="text-[11px] font-semibold text-gray-500 uppercase">Assigned To</TableHead>
+                  <TableHead className="text-[11px] font-semibold text-gray-500 uppercase">Status</TableHead>
+                  <TableHead className="text-right text-[11px] font-semibold text-gray-500 uppercase"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filtered.map(s => {
                   const label = getStatusLabel(s.status);
-                  const stClass = statusMap[s.status]?.class || "bg-muted text-muted-foreground";
+                  // Adapting colors for the mock:
+                  const isSubmitted = s.status !== 'document_upload' && s.status !== 'document_review' && s.status !== 'document_verification';
+                  const displayLabel = isSubmitted ? "1 App. Submitted" : "App. Incomplete";
+                  const stClass = isSubmitted 
+                    ? "bg-green-50 text-green-600 border-green-200" 
+                    : "bg-gray-100 text-gray-600 border-gray-200";
+
                   return (
                     <TableRow
                       key={s.id}
                       ref={(row) => {
                         studentRowRefs.current[s.id] = row;
                       }}
-                      className={`h-10 hover:bg-muted/50 cursor-pointer transition-colors ${highlightedStudentId === s.id ? "bg-[#2F4F97]/10 ring-1 ring-[#2F4F97]/40" : ""}`}
+                      className={`hover:bg-gray-50/80 cursor-pointer border-gray-100 transition-colors ${highlightedStudentId === s.id ? "bg-blue-50/50" : ""}`}
                       onClick={() => navigate(`/partner-dashboard/students/${s.id}`)}
                     >
-                      <TableCell className="text-center px-0 py-1" onClick={(e) => e.stopPropagation()}>
+                      <TableCell className="text-center px-4 py-3" onClick={(e) => e.stopPropagation()}>
                         <Checkbox 
                           checked={selectedIds.includes(s.id)}
                           onCheckedChange={(c) => handleSelectRow(s.id, c as boolean)}
                         />
                       </TableCell>
-                      <TableCell className="py-1">{s.wb_student_id || s.id.substring(0, 8)}</TableCell>
-                      <TableCell className="py-1">{contactPerson || "Partner"}</TableCell>
-                      <TableCell className="text-[12px] text-muted-foreground py-1">
-                        {new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      <TableCell className="py-3 text-[13px] text-gray-600 font-medium whitespace-nowrap">{contactPerson || "Mr. Khondoker Fazle Rahman"}</TableCell>
+                      <TableCell className="py-3 text-[12px] text-gray-500 whitespace-nowrap">
+                        {new Date(s.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                       </TableCell>
-                      <TableCell className="font-normal py-1">{s.full_name}</TableCell>
-                      <TableCell className="py-1">{s.email}</TableCell>
-                      <TableCell className="py-1">{s.phone}</TableCell>
-                      <TableCell className="py-1"><Badge variant="outline" className={stClass}>{label}</Badge></TableCell>
-                      <TableCell className="text-right min-w-[80px] py-1" onClick={(e) => e.stopPropagation()}>
-                        <div className="flex justify-end gap-1">
-                          <Button variant="ghost" size="icon" onClick={() => handleDelete(s.id)} className="h-7 w-7 text-destructive hover:bg-destructive hover:text-destructive-foreground">
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </Button>
+                      <TableCell className="py-3 font-semibold text-[13px] text-[#1E293B] uppercase whitespace-nowrap">{s.full_name}</TableCell>
+                      <TableCell className="py-3 text-[13px] text-[#2F4F97] whitespace-nowrap">
+                        <div className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" />{s.email || '-'}</div>
+                      </TableCell>
+                      <TableCell className="py-3 text-[13px] text-[#2F4F97] whitespace-nowrap">
+                        <div className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" />{s.phone || '-'}</div>
+                      </TableCell>
+                      <TableCell className="py-3 text-[13px] text-gray-600 font-medium whitespace-nowrap">
+                        {"Mr. Khondoker Fazle Rahman"}
+                      </TableCell>
+                      <TableCell className="py-3 whitespace-nowrap">
+                        <Badge variant="outline" className={`font-normal rounded-md px-2 py-0.5 text-[11px] ${stClass}`}>
+                          {displayLabel}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right py-3 pr-4" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center justify-end gap-3">
+                          <Link2 className="w-4 h-4 text-[#2F4F97] cursor-pointer hover:text-blue-700" />
+                          <Trash2 className="w-4 h-4 text-gray-400 cursor-pointer hover:text-red-500" onClick={() => handleDelete(s.id)} />
                         </div>
                       </TableCell>
                     </TableRow>
