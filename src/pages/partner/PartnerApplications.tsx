@@ -25,6 +25,7 @@ import { Search, RotateCcw, Plus, SlidersHorizontal, FileText, Calendar, Graduat
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { getStatusLabel } from "@/config/statusFlow";
 import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
 
 const statusColors: Record<string, string> = {
   document_upload: "bg-gray-100 text-gray-600",
@@ -82,6 +83,7 @@ interface Course {
 
 export default function PartnerApplications() {
   const { user, session } = useAuth();
+  const { toast } = useToast();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -154,7 +156,11 @@ export default function PartnerApplications() {
         } else {
           const errData = await appsRes.text();
           console.error("Failed to fetch applications:", errData);
-          toast.error("Failed to load applications. Database error: " + errData.substring(0, 50));
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to load applications. Database error: " + errData.substring(0, 50)
+          });
         }
 
         setApplications(appsData || []);
@@ -174,7 +180,7 @@ export default function PartnerApplications() {
           .select("id, title, intake_months");
 
         const coursesMap = (coursesData || []).reduce((acc, c) => {
-          acc[c.id] = c;
+          acc[c.id] = { ...c, intake_months: c.intake_months as string[] | null };
           return acc;
         }, {} as Record<string, Course>);
         setCourses(coursesMap);

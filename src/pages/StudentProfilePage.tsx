@@ -140,6 +140,8 @@ interface Student {
   guardian_relationship?: string;
   guardian_phone?: string;
   guardian_email?: string;
+  emgs_application_number?: string | null;
+  emgs_status_percentage?: number | null;
 }
 
 interface Application {
@@ -325,7 +327,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     setIsEditingGuardian(true);
   };
 
-  const handleSaveSection = async (section: "personal" | "academic" | "language" | "target") => {
+  const handleSaveSection = async (section: "personal" | "academic" | "language" | "target" | "guardian") => {
     if (!student || !session) return;
     
     let bodyToUpdate: Partial<Student> = {};

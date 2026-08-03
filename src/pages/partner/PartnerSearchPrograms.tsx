@@ -133,7 +133,7 @@ export default function PartnerSearchPrograms() {
           return acc;
         }, {} as Record<string, University>);
         setUniversities(univsMap);
-        setCourses(coursesData || []);
+        setCourses((coursesData as any) || []);
       } catch (error) {
         console.error("Error fetching data", error);
       } finally {
