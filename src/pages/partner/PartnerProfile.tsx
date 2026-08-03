@@ -11,7 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   Camera, Building2, Mail, Phone, Globe, Users, Loader2,
   User, Lock, KeyRound, ShieldCheck, ArrowRight, CheckCircle2, XCircle, Pencil, X,
-  Upload, FileCheck, FileText, ExternalLink, ClipboardList, Sparkles, Check, AlertCircle, Award
+  Upload, FileCheck, FileText, ExternalLink, ClipboardList, Sparkles, Check, AlertCircle, Award, Save
 } from "lucide-react";
 import { toast } from "sonner";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -73,7 +73,7 @@ export default function PartnerProfile() {
           .select("agency_name, contact_person, email, phone, country, annual_students, status, nid_document_url, trade_license_url, certificate_urls, admin_notes")
           .eq("user_id", user.id)
           .maybeSingle();
-        if (partnerData) setPartner(partnerData);
+        if (partnerData) setPartner(partnerData as unknown as PartnerData);
 
         const { data: profileData } = await supabase
           .from("profiles")
@@ -209,7 +209,7 @@ export default function PartnerProfile() {
     const result = await resetPassword(user.email);
     if (result.success) {
       setPwStep("code_sent");
-      toast.success("A 6-digit code has been sent to your email.");
+      toast.success("An 8-digit code has been sent to your email.");
     } else {
       toast.error(result.error || "Failed to send code.");
       setPwStep("idle");
@@ -217,8 +217,8 @@ export default function PartnerProfile() {
   };
 
   const handleVerifyCode = async () => {
-    if (!user?.email || otpCode.length < 6) {
-      toast.error("Please enter the 6-digit code.");
+    if (!user?.email || otpCode.length < 8) {
+      toast.error("Please enter the 8-digit code.");
       return;
     }
     setPwStep("verifying");
@@ -577,7 +577,7 @@ export default function PartnerProfile() {
                     <ShieldCheck className="h-5 w-5 text-emerald-600 shrink-0" />
                     <span>Your account is protected with email verification OTP for password updates.</span>
                   </div>
-                  <Button onClick={handleSendCode} variant="outline" className="w-full text-slate-800 border-slate-200 hover:bg-slate-50 hover:border-slate-300 gap-2 font-bold text-sm h-11 rounded-xl shadow-2xs">
+                  <Button onClick={handleSendCode} variant="outline" className="w-full text-slate-800 bg-white border-slate-200 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 focus:text-slate-900 active:text-slate-900 gap-2 font-bold text-sm h-11 rounded-xl shadow-2xs">
                     <KeyRound className="h-4 w-4 text-[#2F4F97]" />
                     Change Account Password
                   </Button>
@@ -594,23 +594,23 @@ export default function PartnerProfile() {
               {pwStep === "code_sent" && (
                 <div className="space-y-4 animate-fade-in">
                   <div className="p-3.5 rounded-xl bg-blue-50/70 border border-blue-200 text-xs text-blue-900 leading-relaxed font-medium">
-                    A 6-digit verification code has been sent to <span className="font-bold">{user?.email}</span>. Check your inbox.
+                    An 8-digit verification code has been sent to <span className="font-bold">{user?.email}</span>. Check your inbox.
                   </div>
                   <div className="space-y-2">
                     <Label className="text-xs font-bold text-slate-600 uppercase tracking-wider">Verification Code</Label>
                     <Input
                       value={otpCode}
-                      onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                      placeholder="• • • • • •"
-                      className="h-12 tracking-[0.5em] text-center font-bold text-lg bg-slate-50 border-slate-200 rounded-xl focus:bg-white focus:border-[#2F4F97]"
-                      maxLength={6}
+                      onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 8))}
+                      placeholder="• • • • • • • •"
+                      className="h-12 tracking-[0.25em] text-center font-bold text-lg bg-slate-50 border-slate-200 rounded-xl focus:bg-white focus:border-[#2F4F97] text-slate-800"
+                      maxLength={8}
                     />
                   </div>
                   <div className="flex gap-2.5 pt-1">
-                    <Button onClick={handleVerifyCode} disabled={otpCode.length < 6} className="flex-1 bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white font-bold text-sm h-11 rounded-xl">
+                    <Button onClick={handleVerifyCode} disabled={otpCode.length < 8} className="flex-1 bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white font-bold text-sm h-11 rounded-xl">
                       Verify Code
                     </Button>
-                    <Button variant="ghost" onClick={resetPwFlow} className="text-slate-500 font-semibold text-sm h-11 px-4 rounded-xl hover:bg-slate-100">Cancel</Button>
+                    <Button variant="ghost" onClick={resetPwFlow} className="text-slate-500 hover:text-slate-700 focus:text-slate-700 active:text-slate-700 font-semibold text-sm h-11 px-4 rounded-xl hover:bg-slate-100">Cancel</Button>
                   </div>
                 </div>
               )}

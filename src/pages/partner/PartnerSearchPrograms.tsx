@@ -12,19 +12,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Search, 
-  RotateCcw, 
-  GraduationCap, 
-  Building2, 
-  Info, 
-  BookOpen, 
-  ChevronLeft, 
+import {
+  Search,
+  RotateCcw,
+  GraduationCap,
+  Building2,
+  Info,
+  BookOpen,
+  ChevronLeft,
   ChevronRight,
   Sparkles,
-  Zap,
   CheckCircle2,
-  Calendar
+  Calendar,
+  UserPlus,
+  SlidersHorizontal,
+  X,
 } from "lucide-react";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { toast } from "sonner";
@@ -95,13 +97,13 @@ const PAID_OFFER_LETTER_UNIS = [
   "UTM University Malaysia",
   "UTeM University Malaysia",
   "UTM SPACE University Malaysia",
-  "Swinburne University of Technology Sarawak Campus"
+  "Swinburne University of Technology Sarawak Campus",
 ];
 
 export default function PartnerSearchPrograms() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  
+
   const [courses, setCourses] = useState<Course[]>([]);
   const [universities, setUniversities] = useState<Record<string, University>>({});
 
@@ -110,36 +112,27 @@ export default function PartnerSearchPrograms() {
   const [intake, setIntake] = useState("all");
   const [year, setYear] = useState("all");
   const [level, setLevel] = useState("all");
-  const [country, setCountry] = useState("Malaysia");
   const [studyArea, setStudyArea] = useState("all");
-  const [stateFilter, setStateFilter] = useState("all");
-  const [duration, setDuration] = useState("");
-  const [requirement, setRequirement] = useState("all");
   const [sortBy, setSortBy] = useState("best_match");
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
+  const itemsPerPage = 10;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        const [{ data: univsData }, { data: coursesData }] = await Promise.all([
+          supabase.from("universities").select("id, name, city, logo_url"),
+          supabase.from("courses").select("*"),
+        ]);
 
-        const { data: univsData } = await supabase
-          .from("universities")
-          .select("id, name, city, logo_url");
-        
         const univsMap = (univsData || []).reduce((acc, u) => {
           acc[u.id] = u;
           return acc;
         }, {} as Record<string, University>);
         setUniversities(univsMap);
-
-        const { data: coursesData } = await supabase
-          .from("courses")
-          .select("*");
-          
         setCourses(coursesData || []);
       } catch (error) {
         console.error("Error fetching data", error);
@@ -147,7 +140,6 @@ export default function PartnerSearchPrograms() {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
@@ -175,28 +167,19 @@ export default function PartnerSearchPrograms() {
         if (level === "Master's Degree") matchLevel = "Master";
         if (level === "Doctoral Degree (PhD)") matchLevel = "PhD";
         if (level === "Foundation / A-level") matchLevel = "Foundation";
-        
         if (!course.degree_level || !course.degree_level.includes(matchLevel)) return false;
       }
 
       if (studyArea !== "all") {
         const titleLower = course.title.toLowerCase();
         const areaLower = studyArea.toLowerCase();
-        if (!titleLower.includes(areaLower) && 
-            !(areaLower === 'medicine & health' && (titleLower.includes('medicine') || titleLower.includes('health') || titleLower.includes('nursing'))) &&
-            !(areaLower === 'computer science & it' && (titleLower.includes('computer') || titleLower.includes('software') || titleLower.includes('it') || titleLower.includes('information')))) {
+        if (
+          !titleLower.includes(areaLower) &&
+          !(areaLower === "medicine & health" && (titleLower.includes("medicine") || titleLower.includes("health") || titleLower.includes("nursing"))) &&
+          !(areaLower === "computer science & it" && (titleLower.includes("computer") || titleLower.includes("software") || titleLower.includes("it") || titleLower.includes("information")))
+        ) {
           return false;
         }
-      }
-
-      if (duration) {
-        if (!course.duration || !course.duration.toLowerCase().includes(duration.toLowerCase())) return false;
-      }
-
-      if (requirement !== "all") {
-        if (!course.entry_requirements) return false;
-        const reqStr = JSON.stringify(course.entry_requirements).toLowerCase();
-        if (!reqStr.includes(requirement.toLowerCase())) return false;
       }
 
       return true;
@@ -209,18 +192,14 @@ export default function PartnerSearchPrograms() {
     }
 
     return result;
-  }, [courses, universities, searchQuery, intake, level, studyArea, duration, requirement, sortBy]);
+  }, [courses, universities, searchQuery, intake, level, studyArea, sortBy]);
 
   const handleReset = () => {
     setSearchQuery("");
     setIntake("all");
     setYear("all");
     setLevel("all");
-    setCountry("Malaysia");
     setStudyArea("all");
-    setStateFilter("all");
-    setDuration("");
-    setRequirement("all");
     setSortBy("best_match");
     setCurrentPage(1);
   };
@@ -229,308 +208,311 @@ export default function PartnerSearchPrograms() {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-  
-  const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
 
-  if (loading) {
-    return <LoadingScreen />;
-  }
+  const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+  const hasActiveFilters = searchQuery || intake !== "all" || year !== "all" || level !== "all" || studyArea !== "all";
+
+  if (loading) return <LoadingScreen />;
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Search Header */}
-      <div className="text-center py-6 md:py-10">
-        <h1 className="text-2xl md:text-3xl font-bold text-[#1E293B] mb-2">Explore over 10,000+ Programs</h1>
-        <p className="text-[#64748B]">Use our platform to search</p>
+    <div className="animate-fade-in space-y-6">
+
+      {/* Page Header */}
+      <div>
+        <h1 className="text-2xl font-bold text-[#1E293B]">Search Programs</h1>
+        <p className="text-sm text-[#64748B] mt-0.5">Browse available programs and apply your students</p>
       </div>
 
-      {/* Horizontal Search Bar */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm mx-auto max-w-6xl mb-6 relative z-10 transition-all">
-        <div className="flex flex-col md:flex-row items-center md:divide-x divide-gray-200">
-          
-          {/* Search Programs */}
-          <div className="flex-1 p-2 w-full border-b md:border-b-0 border-gray-200">
-            <div className="text-[10px] font-semibold text-gray-500 uppercase px-2 mb-1">Search Programs</div>
-            <div className="flex items-center px-2">
-              <Building2 className="w-4 h-4 text-[#2F4F97] mr-2 shrink-0" />
-              <Input 
-                placeholder="Search Program / University" 
-                value={searchQuery} 
-                onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }} 
-                className="border-0 shadow-none h-8 px-0 text-sm focus-visible:ring-0 bg-transparent rounded-none"
-              />
+      <div className="flex gap-5 items-start">
+
+        {/* ─── Left Sidebar Filters ─── */}
+        <aside className="w-60 shrink-0 space-y-4 sticky top-4">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal className="h-4 w-4 text-[#2F4F97]" />
+                <span className="text-sm font-semibold text-[#1E293B]">Filters</span>
+              </div>
+              {hasActiveFilters && (
+                <button onClick={handleReset} className="text-xs text-[#2F4F97] hover:underline flex items-center gap-1">
+                  <RotateCcw className="h-3 w-3" /> Reset
+                </button>
+              )}
             </div>
-          </div>
-          
-          {/* Intake */}
-          <div className="flex-1 p-2 w-full border-b md:border-b-0 border-gray-200">
-            <div className="text-[10px] font-semibold text-gray-500 uppercase px-2 mb-1">Intake</div>
-            <div className="flex items-center px-2">
-              <Select value={intake} onValueChange={(v) => { setIntake(v); setCurrentPage(1); }}>
-                <SelectTrigger className="border-0 shadow-none h-8 px-0 text-sm focus:ring-0 w-full bg-transparent rounded-none [&>span]:flex [&>span]:items-center">
-                  <Calendar className="w-4 h-4 text-[#2F4F97] mr-2 shrink-0" />
-                  <SelectValue placeholder="All, Jan, Feb..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Intakes</SelectItem>
-                  {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map(m => (
-                    <SelectItem key={m} value={m}>{m}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          
-          {/* Year */}
-          <div className="flex-1 md:w-32 md:flex-none p-2 w-full border-b md:border-b-0 border-gray-200">
-            <div className="text-[10px] font-semibold text-gray-500 uppercase px-2 mb-1">Year</div>
-            <div className="flex items-center px-2">
-              <Select value={year} onValueChange={(v) => { setYear(v); setCurrentPage(1); }}>
-                <SelectTrigger className="border-0 shadow-none h-8 px-0 text-sm focus:ring-0 w-full bg-transparent rounded-none [&>span]:flex [&>span]:items-center">
-                  <Calendar className="w-4 h-4 text-[#2F4F97] mr-2 shrink-0" />
-                  <SelectValue placeholder="2026" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Years</SelectItem>
-                  <SelectItem value="2024">2024</SelectItem>
-                  <SelectItem value="2025">2025</SelectItem>
-                  <SelectItem value="2026">2026</SelectItem>
-                  <SelectItem value="2027">2027</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
 
-          {/* Student's Nationality */}
-          <div className="flex-1 p-2 w-full border-b md:border-b-0 border-gray-200">
-            <div className="text-[10px] font-semibold text-gray-500 uppercase px-2 mb-1">Student's Nationality</div>
-            <div className="flex items-center px-2">
-              <Select value={country} onValueChange={(v) => { setCountry(v); setCurrentPage(1); }}>
-                <SelectTrigger className="border-0 shadow-none h-8 px-0 text-sm focus:ring-0 w-full bg-transparent rounded-none">
-                  <SelectValue placeholder="Select Country" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Malaysia">Malaysia</SelectItem>
-                  <SelectItem value="Bangladesh">Bangladesh</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+            <div className="p-4 space-y-4">
 
-          {/* Student's State */}
-          <div className="flex-1 p-2 w-full border-b md:border-b-0 border-gray-200">
-            <div className="text-[10px] font-semibold text-gray-500 uppercase px-2 mb-1">Student's State</div>
-            <div className="flex items-center px-2">
-              <Select value={stateFilter} onValueChange={(v) => { setStateFilter(v); setCurrentPage(1); }}>
-                <SelectTrigger className="border-0 shadow-none h-8 px-0 text-sm focus:ring-0 w-full bg-transparent rounded-none">
-                  <SelectValue placeholder="Select State" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All States</SelectItem>
-                  <SelectItem value="Business & Management">Dhaka</SelectItem>
-                  <SelectItem value="Engineering">Chittagong</SelectItem>
-                  <SelectItem value="Computer Science & IT">Sylhet</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Search Button */}
-          <div className="p-3 w-full md:w-auto flex justify-center">
-             <Button className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white w-full md:w-auto px-6 h-10">
-               Search <Search className="ml-2 h-4 w-4" />
-             </Button>
-          </div>
-        </div>
-        
-        {/* Advanced Search Dropdown Button */}
-        <div className="absolute -bottom-4 left-1/2 -translate-x-1/2">
-          <Button variant="outline" className="bg-white text-xs h-8 px-4 rounded-md shadow-sm border-gray-200 text-[#2F4F97] hover:text-[#2F4F97] hover:bg-gray-50">
-            Advanced Search +
-          </Button>
-        </div>
-      </div>
-
-      {/* Quick Filters */}
-      <div className="max-w-6xl mx-auto pt-6 pb-2">
-        <div className="flex items-center gap-2 mb-3">
-          <Zap className="w-4 h-4 text-[#2F4F97]" />
-          <span className="text-sm font-semibold text-[#2F4F97]">Quick Filters</span>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {[
-            "Faster Offer TAT", "Scholarship Available", "High Offer Acceptance Rate",
-            "English Proficiency Exam Waiver", "Affordable University", "Co-op & Built-in Internships",
-            "High Job Demand", "No Tuition Deposit (US)", "Major City", "Eligible Non Collateral Loan",
-            "MBA Programs", "Russel Group Universities (UK)"
-          ].map(tag => (
-            <Badge key={tag} variant="outline" className="bg-white cursor-pointer hover:bg-gray-50 text-gray-600 font-normal py-1.5 px-3">
-              <CheckCircle2 className="w-3.5 h-3.5 mr-1.5 text-gray-400" />
-              {tag}
-            </Badge>
-          ))}
-          <Badge variant="outline" className="bg-white cursor-pointer hover:bg-gray-50 text-gray-600 font-normal py-1.5 px-3" onClick={handleReset}>
-             <RotateCcw className="w-3.5 h-3.5 mr-1.5 text-gray-400" />
-             Reset All Filters
-          </Badge>
-        </div>
-      </div>
-
-      {/* Main Content Area */}
-      <Card className="border border-gray-200 shadow-sm bg-white overflow-hidden">
-        {/* Results Header Bar */}
-        <div className="p-4 sm:p-5 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gray-50/50">
-          <div className="font-semibold text-sm text-[#1E293B] flex items-center gap-2">
-            Total Programs: <span className="text-[#2F4F97] font-bold">{filteredCourses.length}</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-gray-500 shrink-0">Sort By:</span>
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-[180px] h-8 text-xs border border-gray-300 rounded-lg bg-white">
-                <SelectValue placeholder="Sort By" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="best_match">Best Match (Default)</SelectItem>
-                <SelectItem value="tuition_low_high">Tuition Cost (Low to High)</SelectItem>
-                <SelectItem value="tuition_high_low">Tuition Cost (High to Low)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        {/* Results List */}
-        {filteredCourses.length === 0 ? (
-          <div className="text-center py-16 px-4">
-            <BookOpen className="h-10 w-10 mx-auto mb-3 text-gray-300" />
-            <p className="font-medium text-sm text-gray-700 mb-1">No programs found</p>
-            <p className="text-xs text-muted-foreground">Try adjusting your search criteria or resetting filters.</p>
-          </div>
-        ) : (
-          <div className="divide-y divide-gray-200">
-            {paginatedCourses.map((c) => {
-              const uni = universities[c.university_id];
-              const logoSrc = uni?.logo_url || (uni?.name ? UNIVERSITY_LOGOS[uni.name] : null);
-
-              return (
-                <div key={c.id} className="p-5 sm:p-6 hover:bg-muted/10 transition-colors">
-                  <div className="flex flex-col md:flex-row gap-5 items-start md:items-center justify-between">
-                    
-                    {/* Left: Logo */}
-                    <div className="w-24 md:w-36 h-20 shrink-0 flex items-center justify-center bg-gray-50 border rounded-xl overflow-hidden p-2">
-                      {logoSrc ? (
-                        <img
-                          src={logoSrc}
-                          alt={uni?.name || "University Logo"}
-                          className="max-w-full max-h-full object-contain"
-                        />
-                      ) : (
-                        <GraduationCap className="h-8 w-8 text-gray-300" />
-                      )}
-                    </div>
-
-                    {/* Middle: Details */}
-                    <div className="flex-1 min-w-0 space-y-2.5">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h3 className="font-semibold text-base text-[#1E293B] hover:text-[#2F4F97] transition-colors leading-tight">
-                          {c.title}
-                        </h3>
-                        {c.degree_level && (
-                          <Badge variant="secondary" className="bg-[#2F4F97]/10 text-[#2F4F97] border-transparent text-[11px]">
-                            {c.degree_level}
-                          </Badge>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-2 text-xs text-[#475569]">
-                        <Building2 className="h-4 w-4 text-[#475569] shrink-0" />
-                        <span className="font-medium truncate">{uni?.name || "Malaysian University"}</span>
-                      </div>
-
-                      <div className="flex items-start gap-2 text-xs text-[#475569] leading-normal flex-wrap">
-                        <Info className="h-4 w-4 text-[#475569] shrink-0 mt-0.5" />
-                        <span>
-                          <span className="font-semibold text-gray-900">
-                            {c.tuition_fee != null ? `MYR ${c.tuition_fee.toLocaleString()}/Year` : "Tuition N/A"}
-                          </span>
-                          {" "}•{" "}
-                          <span>{uni && PAID_OFFER_LETTER_UNIS.includes(uni.name) ? "Offer Letter Fees Applies" : "Free Offer Letter"}</span>
-                          {" "}•{" "}
-                          <span>{c.duration || "Duration N/A"}</span>
-                          {c.intake_months && c.intake_months.length > 0 && (
-                            <>
-                              {" "}•{" "}
-                              <span>Intakes: </span>
-                              {c.intake_months.map((intakeName: string, idx: number) => {
-                                const isActive = intakeName === getActiveIntake(c.intake_months);
-                                return (
-                                  <span key={idx}>
-                                    <span className={isActive ? "bg-[#EEF4FF] text-[#2F4F97] px-1.5 py-0.5 rounded font-semibold" : ""}>
-                                      {intakeName.substring(0, 3)}
-                                    </span>
-                                    {idx < (c.intake_months?.length || 0) - 1 ? " & " : ""}
-                                  </span>
-                                );
-                              })}
-                            </>
-                          )}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Right: Actions */}
-                    <div className="flex flex-row md:flex-col gap-2 shrink-0 w-full md:w-auto">
-                      <Button 
-                        className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white flex-1 md:flex-initial h-9 px-5 text-xs font-semibold rounded-lg"
-                        onClick={() => navigate('/partner-dashboard/students')}
-                      >
-                        Apply Now
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        className="flex-1 md:flex-initial h-9 px-5 text-xs font-semibold rounded-lg border-gray-200 hover:bg-gray-50"
-                        onClick={() => toast.info("Our support team will get back to you shortly!")}
-                      >
-                        Ask Us
-                      </Button>
-                    </div>
-
-                  </div>
+              {/* Search */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-gray-500">Search</label>
+                <div className="relative">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+                  <Input
+                    placeholder="Program or university…"
+                    value={searchQuery}
+                    onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                    className="h-8 text-sm border-gray-200 pl-8"
+                  />
+                  {searchQuery && (
+                    <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2">
+                      <X className="h-3.5 w-3.5 text-gray-400 hover:text-gray-600" />
+                    </button>
+                  )}
                 </div>
-              );
-            })}
-          </div>
-        )}
+              </div>
 
-        {/* Pagination Footer */}
-        {totalPages > 1 && (
-          <div className="p-4 border-t border-gray-200 bg-gray-50/50 flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">
-              Showing page {currentPage} of {totalPages} ({filteredCourses.length} total programs)
-            </span>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-8 text-xs gap-1"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              >
-                <ChevronLeft className="h-3.5 w-3.5" /> Previous
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-8 text-xs gap-1"
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              >
-                Next <ChevronRight className="h-3.5 w-3.5" />
-              </Button>
+              {/* Degree Level */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-gray-500">Degree Level</label>
+                <Select value={level} onValueChange={(v) => { setLevel(v); setCurrentPage(1); }}>
+                  <SelectTrigger className="h-8 text-sm border-gray-200">
+                    <SelectValue placeholder="All Levels" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Levels</SelectItem>
+                    <SelectItem value="Foundation / A-level">Foundation / A-Level</SelectItem>
+                    <SelectItem value="Diploma">Diploma</SelectItem>
+                    <SelectItem value="Bachelor's Degree">Bachelor's Degree</SelectItem>
+                    <SelectItem value="Master's Degree">Master's Degree</SelectItem>
+                    <SelectItem value="Doctoral Degree (PhD)">PhD / Doctorate</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Study Area */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-gray-500">Study Area</label>
+                <Select value={studyArea} onValueChange={(v) => { setStudyArea(v); setCurrentPage(1); }}>
+                  <SelectTrigger className="h-8 text-sm border-gray-200">
+                    <SelectValue placeholder="All Areas" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Areas</SelectItem>
+                    <SelectItem value="Business & Management">Business & Management</SelectItem>
+                    <SelectItem value="Engineering">Engineering</SelectItem>
+                    <SelectItem value="Computer Science & IT">Computer Science & IT</SelectItem>
+                    <SelectItem value="Medicine & Health">Medicine & Health</SelectItem>
+                    <SelectItem value="Architecture">Architecture</SelectItem>
+                    <SelectItem value="Law">Law</SelectItem>
+                    <SelectItem value="Education">Education</SelectItem>
+                    <SelectItem value="Arts">Arts & Design</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Intake Month */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-gray-500">Intake Month</label>
+                <Select value={intake} onValueChange={(v) => { setIntake(v); setCurrentPage(1); }}>
+                  <SelectTrigger className="h-8 text-sm border-gray-200">
+                    <SelectValue placeholder="All Intakes" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Intakes</SelectItem>
+                    {['January','February','March','April','May','June','July','August','September','October','November','December'].map(m => (
+                      <SelectItem key={m} value={m}>{m}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Year */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-gray-500">Year</label>
+                <Select value={year} onValueChange={(v) => { setYear(v); setCurrentPage(1); }}>
+                  <SelectTrigger className="h-8 text-sm border-gray-200">
+                    <SelectValue placeholder="All Years" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Years</SelectItem>
+                    <SelectItem value="2025">2025</SelectItem>
+                    <SelectItem value="2026">2026</SelectItem>
+                    <SelectItem value="2027">2027</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
             </div>
           </div>
-        )}
-      </Card>
+
+          {/* Quick tags */}
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Sparkles className="h-3.5 w-3.5 text-[#2F4F97]" />
+              <span className="text-xs font-semibold text-[#2F4F97]">Quick Filters</span>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              {[
+                "Scholarship Available",
+                "Affordable University",
+                "English Waiver",
+                "MBA Programs",
+                "High Acceptance Rate",
+              ].map(tag => (
+                <button
+                  key={tag}
+                  className="flex items-center gap-2 text-xs text-gray-600 hover:text-[#2F4F97] py-1 px-2 rounded-lg hover:bg-[#2F4F97]/5 transition-colors text-left"
+                  onClick={() => toast.info(`Filter "${tag}" coming soon!`)}
+                >
+                  <CheckCircle2 className="h-3.5 w-3.5 text-gray-300 shrink-0" />
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
+        </aside>
+
+        {/* ─── Right: Results ─── */}
+        <div className="flex-1 min-w-0 space-y-4">
+
+          {/* Results bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <p className="text-sm text-gray-600">
+              <span className="font-semibold text-[#1E293B]">{filteredCourses.length}</span> programs found
+            </p>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-500 shrink-0">Sort:</span>
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-[180px] h-8 text-xs border-gray-200">
+                  <SelectValue placeholder="Sort By" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="best_match">Best Match</SelectItem>
+                  <SelectItem value="tuition_low_high">Tuition: Low → High</SelectItem>
+                  <SelectItem value="tuition_high_low">Tuition: High → Low</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Course Cards */}
+          <Card className="border border-gray-200 shadow-sm bg-white overflow-hidden">
+            {filteredCourses.length === 0 ? (
+              <div className="text-center py-16 px-4">
+                <BookOpen className="h-10 w-10 mx-auto mb-3 text-gray-300" />
+                <p className="font-medium text-sm text-gray-700 mb-1">No programs found</p>
+                <p className="text-xs text-muted-foreground mb-4">Try adjusting your filters.</p>
+                <Button variant="outline" size="sm" onClick={handleReset} className="gap-1.5">
+                  <RotateCcw className="h-3.5 w-3.5" /> Reset Filters
+                </Button>
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-100">
+                {paginatedCourses.map((c) => {
+                  const uni = universities[c.university_id];
+                  const logoSrc = uni?.logo_url || (uni?.name ? UNIVERSITY_LOGOS[uni.name] : null);
+
+                  return (
+                    <div key={c.id} className="p-5 hover:bg-blue-50/30 transition-colors group">
+                      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+
+                        {/* Logo */}
+                        <div className="w-20 h-16 shrink-0 flex items-center justify-center bg-gray-50 border border-gray-100 rounded-xl overflow-hidden p-1.5">
+                          {logoSrc ? (
+                            <img src={logoSrc} alt={uni?.name || "Logo"} className="max-w-full max-h-full object-contain" />
+                          ) : (
+                            <GraduationCap className="h-7 w-7 text-gray-300" />
+                          )}
+                        </div>
+
+                        {/* Details */}
+                        <div className="flex-1 min-w-0 space-y-2">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h3 className="font-semibold text-sm text-[#1E293B] group-hover:text-[#2F4F97] transition-colors leading-tight">
+                              {c.title}
+                            </h3>
+                            {c.degree_level && (
+                              <Badge variant="secondary" className="bg-[#2F4F97]/10 text-[#2F4F97] border-transparent text-[10px]">
+                                {c.degree_level}
+                              </Badge>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-1.5 text-xs text-[#475569]">
+                            <Building2 className="h-3.5 w-3.5 shrink-0" />
+                            <span className="font-medium truncate">{uni?.name || "Malaysian University"}</span>
+                            {uni?.city && <span className="text-gray-400">· {uni.city}</span>}
+                          </div>
+
+                          <div className="flex items-start gap-1.5 text-xs text-[#475569] leading-normal flex-wrap">
+                            <Info className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                            <span>
+                              <span className="font-semibold text-gray-800">
+                                {c.tuition_fee != null ? `MYR ${c.tuition_fee.toLocaleString()}/yr` : "Tuition N/A"}
+                              </span>
+                              {" · "}
+                              <span>{uni && PAID_OFFER_LETTER_UNIS.includes(uni.name) ? "Offer Letter Fee" : "Free Offer Letter"}</span>
+                              {" · "}
+                              <span>{c.duration || "Duration N/A"}</span>
+                              {c.intake_months && c.intake_months.length > 0 && (
+                                <>
+                                  {" · Intakes: "}
+                                  {(c.intake_months as string[]).map((intakeName, idx) => {
+                                    const isActive = intakeName === getActiveIntake(c.intake_months);
+                                    return (
+                                      <span key={idx}>
+                                        <span className={isActive ? "bg-[#EEF4FF] text-[#2F4F97] px-1.5 py-0.5 rounded font-semibold" : ""}>
+                                          {intakeName.substring(0, 3)}
+                                        </span>
+                                        {idx < (c.intake_months?.length || 0) - 1 ? " & " : ""}
+                                      </span>
+                                    );
+                                  })}
+                                </>
+                              )}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex flex-row md:flex-col gap-2 shrink-0 w-full md:w-auto">
+                          <Button
+                            className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white flex-1 md:flex-initial h-9 px-4 text-xs font-semibold rounded-lg gap-1.5"
+                            onClick={() => navigate(`/partner-dashboard/apply?courseId=${c.id}`)}
+                          >
+                            <UserPlus className="h-3.5 w-3.5" />
+                            Apply for Student
+                          </Button>
+                          <Button
+                            variant="outline"
+                            className="flex-1 md:flex-initial h-9 px-4 text-xs font-semibold rounded-lg border-gray-200 hover:bg-gray-50"
+                            onClick={() => toast.info("Our support team will get back to you shortly!")}
+                          >
+                            Ask Us
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="p-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">
+                  Page {currentPage} of {totalPages} · {filteredCourses.length} programs
+                </span>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" className="h-8 text-xs gap-1"
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5" /> Previous
+                  </Button>
+                  <Button variant="outline" size="sm" className="h-8 text-xs gap-1"
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  >
+                    Next <ChevronRight className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              </div>
+            )}
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

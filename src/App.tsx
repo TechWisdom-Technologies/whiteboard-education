@@ -56,6 +56,7 @@ import PartnerProfile from "./pages/partner/PartnerProfile";
 import PartnerNotifications from "./pages/partner/PartnerNotifications";
 import PartnerApplications from "./pages/partner/PartnerApplications";
 import PartnerSearchPrograms from "./pages/partner/PartnerSearchPrograms";
+import PartnerApplyPage from "./pages/partner/PartnerApplyPage";
 import StudentProfilePage from "./pages/StudentProfilePage";
 import { CourseCompareProvider } from "./contexts/CourseCompareContext";
 import { CourseCompareFAB } from "./components/public/CourseCompareFAB";
@@ -160,6 +161,7 @@ const App = () => (
               <Route path="students/:studentId" element={<StudentProfilePage mode="partner" />} />
               <Route path="applications" element={<PartnerApplications />} />
               <Route path="search-programs" element={<PartnerSearchPrograms />} />
+              <Route path="apply" element={<PartnerApplyPage />} />
               <Route path="marketing" element={<PartnerMarketing />} />
               <Route path="notifications" element={<PartnerNotifications />} />
               <Route path="profile" element={<PartnerProfile />} />

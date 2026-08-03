@@ -43,6 +43,7 @@ import {
   Link2,
   MapPin,
   Trash2,
+  ShieldAlert,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
