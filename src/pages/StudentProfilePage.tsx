@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,7 @@ import {
   MapPin,
   Trash2,
   ShieldAlert,
+  Search,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -181,8 +182,10 @@ function InfoRow({ label, value }: { label: string; value: string | number | nul
 // ─── Component ──────────────────────────────────────────────────────────────
 
 export default function StudentProfilePage({ mode }: { mode: "admin" | "partner" }) {
-  const { studentId } = useParams<{ studentId: string }>();
+  const { studentId } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const defaultTab = searchParams.get("tab") || "profile";
   const { session, user } = useAuth();
 
   const [student, setStudent] = useState<Student | null>(null);
@@ -868,7 +871,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
            </div>
         </div>
 
-        <Tabs defaultValue="profile" className="w-full space-y-6">
+        <Tabs defaultValue={defaultTab} className="w-full space-y-6">
           <TabsList className="flex w-full h-12 bg-transparent border-b border-gray-200 p-0 no-print gap-8 rounded-none overflow-x-auto justify-start">
             <TabsTrigger value="profile" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">1. Profile</TabsTrigger>
             <TabsTrigger value="applications" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">2. Applications</TabsTrigger>
@@ -877,32 +880,61 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
           
           <TabsContent value="applications" className="space-y-6 mt-0">
              <Card className="border border-gray-200 shadow-sm overflow-hidden">
-               <CardContent className="p-6">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-2 border-b border-gray-100 pb-4">
-                    <h3 className="text-sm font-bold text-[#1E293B] uppercase tracking-wide flex items-center gap-2"><MapPin className="w-4 h-4 text-[#2F4F97]" /> Application Progress</h3>
-                    {(student.emgs_application_number || student.emgs_status_percentage !== undefined) && (
-                      <div className="flex items-center gap-3 bg-indigo-50 border border-indigo-100 rounded-md px-3 py-1.5">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">EMGS No.</span>
-                          <span className="text-xs font-semibold text-indigo-900">{student.emgs_application_number || 'N/A'}</span>
-                        </div>
-                        <div className="w-px h-4 bg-indigo-200/50"></div>
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Status</span>
-                          <Badge variant="outline" className="bg-white border-indigo-200 text-indigo-700 h-5 px-1.5 text-[11px]">
-                            {student.emgs_status_percentage ?? 0}%
-                          </Badge>
-                        </div>
+               <CardContent className="p-0">
+                 {applications.length === 0 ? (
+                    <div className="text-center py-12">
+                      <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
+                        <FileText className="h-5 w-5 text-gray-400" />
                       </div>
-                    )}
-                  </div>
-                  <StatusTracker 
-                    currentStatus={student.status} 
-                    onStatusChange={handleSaveStatusTracker}
-                    isUpdating={savingStatus}
-                    isAdmin={mode === 'admin'}
-                    fileOpenedAt={student.created_at}
-                  />
+                      <p className="text-gray-500 font-medium">No applications found for this student.</p>
+                      {mode === "partner" && (
+                        <Button
+                          variant="outline"
+                          className="mt-4 gap-2"
+                          onClick={() => navigate('/partner-dashboard/search-programs')}
+                        >
+                          <Search className="w-4 h-4" /> Browse Programs
+                        </Button>
+                      )}
+                    </div>
+                 ) : (
+                    <div className="w-full overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow className="bg-gray-50 hover:bg-gray-50">
+                            <TableHead className="text-xs font-semibold text-gray-500 w-[120px]">App ID</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 min-w-[150px]">University</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 min-w-[150px]">Program</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 w-[120px]">Status</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 w-[100px]">Created On</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {applications.map((app) => (
+                            <TableRow key={app.id}>
+                              <TableCell className="font-mono text-xs font-semibold text-[#2F4F97]">
+                                {app.application_code}
+                              </TableCell>
+                              <TableCell className="text-xs text-gray-600 break-words whitespace-normal leading-tight">
+                                {app.universities?.name || "—"}
+                              </TableCell>
+                              <TableCell className="text-xs text-gray-600 break-words whitespace-normal leading-tight">
+                                {app.courses?.title || "—"}
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant="outline" className={`${statusColors[app.status] || "bg-gray-100 text-gray-800"} text-[10px] px-2 border-transparent`}>
+                                  {getStatusLabel(app.status)}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="text-xs text-gray-500 whitespace-nowrap">
+                                {new Date(app.created_at).toLocaleDateString()}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                 )}
                </CardContent>
              </Card>
           </TabsContent>

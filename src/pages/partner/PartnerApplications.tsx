@@ -46,6 +46,9 @@ const statusColors: Record<string, string> = {
   on_hold: "bg-amber-500/10 text-amber-600",
 };
 
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
 interface Student {
   id: string;
   full_name: string;
@@ -108,21 +111,23 @@ export default function PartnerApplications() {
       try {
         setLoading(true);
 
-        const { data: partnerData } = await supabase
-          .from("partner_registrations")
-          .select("contact_person")
-          .eq("user_id", user.id)
-          .limit(1)
-          .single();
+        const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}` };
 
-        if (partnerData) {
-          setPartnerName(partnerData.contact_person);
+        // Fetch partner details
+        const partnerRes = await fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?select=contact_person&user_id=eq.${user.id}&limit=1`, { headers });
+        if (partnerRes.ok) {
+          const partnerData = await partnerRes.json();
+          if (partnerData.length > 0) {
+            setPartnerName(partnerData[0].contact_person);
+          }
         }
 
-        const { data: studentsData } = await supabase
-          .from("students")
-          .select("*")
-          .eq("partner_id", user.id);
+        // Fetch students
+        const studentsRes = await fetch(`${SUPABASE_URL}/rest/v1/students?select=*&partner_id=eq.${user.id}`, { headers });
+        let studentsData: Student[] = [];
+        if (studentsRes.ok) {
+          studentsData = await studentsRes.json();
+        }
 
         if (!studentsData || studentsData.length === 0) {
           setLoading(false);
@@ -137,11 +142,20 @@ export default function PartnerApplications() {
 
         const studentIds = studentsData.map((s) => s.id);
 
-        const { data: appsData } = await supabase
-          .from("student_applications")
-          .select("id, student_id, university_id, course_id, application_code, status, emgs_application_number, emgs_status_percentage, admin_notes, created_at")
-          .in("student_id", studentIds)
-          .order("created_at", { ascending: false });
+        // Fetch applications
+        const appsRes = await fetch(
+          `${SUPABASE_URL}/rest/v1/student_applications?select=*&student_id=in.(${studentIds.join(",")})&order=created_at.desc`,
+          { headers }
+        );
+        
+        let appsData: Application[] = [];
+        if (appsRes.ok) {
+          appsData = await appsRes.json();
+        } else {
+          const errData = await appsRes.text();
+          console.error("Failed to fetch applications:", errData);
+          toast.error("Failed to load applications. Database error: " + errData.substring(0, 50));
+        }
 
         setApplications(appsData || []);
 
@@ -249,7 +263,7 @@ export default function PartnerApplications() {
   }
 
   return (
-    <div className="animate-fade-in space-y-0">
+    <div className="animate-fade-in space-y-0 min-w-0 w-full">
 
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
@@ -284,164 +298,123 @@ export default function PartnerApplications() {
         </div>
       </div>
 
-      <div className="flex gap-5 items-start">
+      {/* Top Horizontal Filters */}
+      {sidebarOpen && (
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-4 mb-4">
+          <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+            <span className="text-sm font-semibold text-[#1E293B]">Filters</span>
+            {hasActiveFilters && (
+              <button onClick={handleReset} className="text-xs text-[#2F4F97] hover:underline flex items-center gap-1">
+                <RotateCcw className="h-3 w-3" /> Reset Filters
+              </button>
+            )}
+          </div>
 
-        {/* Sidebar Filters */}
-        {sidebarOpen && (
-          <aside className="w-64 shrink-0 space-y-4 sticky top-4">
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-              <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-                <span className="text-sm font-semibold text-[#1E293B]">Filters</span>
-                {hasActiveFilters && (
-                  <button onClick={handleReset} className="text-xs text-[#2F4F97] hover:underline flex items-center gap-1">
-                    <RotateCcw className="h-3 w-3" /> Reset
-                  </button>
-                )}
-              </div>
-
-              <div className="p-4 space-y-4">
-
-                {/* App Code */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
-                    <Hash className="h-3.5 w-3.5" /> App ID
-                  </label>
-                  <Input
-                    placeholder="e.g. APP-123456"
-                    value={appCode}
-                    onChange={(e) => setAppCode(e.target.value)}
-                    className="h-8 text-sm border-gray-200"
-                  />
-                </div>
-
-                {/* WB Student ID */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
-                    <User className="h-3.5 w-3.5" /> WB Student ID
-                  </label>
-                  <Input
-                    placeholder="Search WB ID"
-                    value={wbStudentId}
-                    onChange={(e) => setWbStudentId(e.target.value)}
-                    className="h-8 text-sm border-gray-200"
-                  />
-                </div>
-
-                {/* Student Name */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
-                    <User className="h-3.5 w-3.5" /> Student Name
-                  </label>
-                  <Input
-                    placeholder="Search name"
-                    value={studentName}
-                    onChange={(e) => setStudentName(e.target.value)}
-                    className="h-8 text-sm border-gray-200"
-                  />
-                </div>
-
-                {/* Program Name */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
-                    <GraduationCap className="h-3.5 w-3.5" /> Program
-                  </label>
-                  <Input
-                    placeholder="Search program"
-                    value={programName}
-                    onChange={(e) => setProgramName(e.target.value)}
-                    className="h-8 text-sm border-gray-200"
-                  />
-                </div>
-
-                {/* Intake */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
-                    <Calendar className="h-3.5 w-3.5" /> Intake Month
-                  </label>
-                  <Select value={intake} onValueChange={setIntake}>
-                    <SelectTrigger className="h-8 text-sm border-gray-200">
-                      <SelectValue placeholder="All Intakes" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Intakes</SelectItem>
-                      {['January','February','March','April','May','June','July','August','September','October','November','December'].map(m => (
-                        <SelectItem key={m} value={m}>{m}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Year */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
-                    <Calendar className="h-3.5 w-3.5" /> Year
-                  </label>
-                  <Select value={year} onValueChange={setYear}>
-                    <SelectTrigger className="h-8 text-sm border-gray-200">
-                      <SelectValue placeholder="All Years" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Years</SelectItem>
-                      <SelectItem value="2024">2024</SelectItem>
-                      <SelectItem value="2025">2025</SelectItem>
-                      <SelectItem value="2026">2026</SelectItem>
-                      <SelectItem value="2027">2027</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Status */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
-                    <FileText className="h-3.5 w-3.5" /> Status
-                  </label>
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="h-8 text-sm border-gray-200">
-                      <SelectValue placeholder="All Statuses" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Statuses</SelectItem>
-                      <SelectItem value="received_wb">Received at WB</SelectItem>
-                      <SelectItem value="in_progress">In Progress</SelectItem>
-                      <SelectItem value="on_hold">On Hold</SelectItem>
-                      <SelectItem value="submitted">Application Submitted</SelectItem>
-                      <SelectItem value="get_offer">Offer Received</SelectItem>
-                      <SelectItem value="emgs_pending">EMGS Pending</SelectItem>
-                      <SelectItem value="visa_ready">Visa Ready</SelectItem>
-                      <SelectItem value="rejected">Rejected</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Date Range */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
-                    <Calendar className="h-3.5 w-3.5" /> Date Range
-                  </label>
-                  <Input
-                    type="date"
-                    value={dateFrom}
-                    onChange={(e) => setDateFrom(e.target.value)}
-                    className="h-8 text-xs border-gray-200"
-                    placeholder="From"
-                  />
-                  <Input
-                    type="date"
-                    value={dateTo}
-                    onChange={(e) => setDateTo(e.target.value)}
-                    className="h-8 text-xs border-gray-200"
-                    placeholder="To"
-                  />
-                </div>
-
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-3">
+            {/* App Code */}
+            <div className="space-y-1.5 xl:col-span-1">
+              <label className="text-xs font-medium text-gray-500">App ID</label>
+              <Input
+                placeholder="e.g. APP-123"
+                value={appCode}
+                onChange={(e) => setAppCode(e.target.value)}
+                className="h-8 text-xs border-gray-200"
+              />
             </div>
-          </aside>
-        )}
 
-        {/* Applications Table */}
-        <div className="flex-1 min-w-0">
-          <Card className="border border-gray-200 shadow-sm overflow-hidden">
+            {/* WB Student ID */}
+            <div className="space-y-1.5 xl:col-span-1">
+              <label className="text-xs font-medium text-gray-500">WB ID</label>
+              <Input
+                placeholder="Search WB ID"
+                value={wbStudentId}
+                onChange={(e) => setWbStudentId(e.target.value)}
+                className="h-8 text-xs border-gray-200"
+              />
+            </div>
+
+            {/* Student Name */}
+            <div className="space-y-1.5 xl:col-span-1">
+              <label className="text-xs font-medium text-gray-500">Name</label>
+              <Input
+                placeholder="Search name"
+                value={studentName}
+                onChange={(e) => setStudentName(e.target.value)}
+                className="h-8 text-xs border-gray-200"
+              />
+            </div>
+
+            {/* Program Name */}
+            <div className="space-y-1.5 xl:col-span-2">
+              <label className="text-xs font-medium text-gray-500">Program</label>
+              <Input
+                placeholder="Search program"
+                value={programName}
+                onChange={(e) => setProgramName(e.target.value)}
+                className="h-8 text-xs border-gray-200"
+              />
+            </div>
+
+            {/* Intake */}
+            <div className="space-y-1.5 xl:col-span-1">
+              <label className="text-xs font-medium text-gray-500">Intake</label>
+              <Select value={intake} onValueChange={setIntake}>
+                <SelectTrigger className="h-8 text-xs border-gray-200">
+                  <SelectValue placeholder="All" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  {['January','February','March','April','May','June','July','August','September','October','November','December'].map(m => (
+                    <SelectItem key={m} value={m}>{m.substring(0, 3)}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Year */}
+            <div className="space-y-1.5 xl:col-span-1">
+              <label className="text-xs font-medium text-gray-500">Year</label>
+              <Select value={year} onValueChange={setYear}>
+                <SelectTrigger className="h-8 text-xs border-gray-200">
+                  <SelectValue placeholder="All" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="2024">2024</SelectItem>
+                  <SelectItem value="2025">2025</SelectItem>
+                  <SelectItem value="2026">2026</SelectItem>
+                  <SelectItem value="2027">2027</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Status */}
+            <div className="space-y-1.5 xl:col-span-1">
+              <label className="text-xs font-medium text-gray-500">Status</label>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="h-8 text-xs border-gray-200">
+                  <SelectValue placeholder="All" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="received_wb">Received</SelectItem>
+                  <SelectItem value="in_progress">In Progress</SelectItem>
+                  <SelectItem value="on_hold">On Hold</SelectItem>
+                  <SelectItem value="submitted">Submitted</SelectItem>
+                  <SelectItem value="get_offer">Offer</SelectItem>
+                  <SelectItem value="emgs_pending">EMGS</SelectItem>
+                  <SelectItem value="visa_ready">Visa</SelectItem>
+                  <SelectItem value="rejected">Rejected</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Applications Table */}
+      <div className="w-full min-w-0">
+          <Card className="w-full border border-gray-200 shadow-sm overflow-hidden">
             {filteredApplications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 px-8 text-center">
                 <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mb-4">
@@ -470,20 +443,20 @@ export default function PartnerApplications() {
                 )}
               </div>
             ) : (
-              <CardContent className="p-0">
-                <div className="overflow-x-auto">
+              <CardContent className="p-0 w-full overflow-hidden">
+                <div className="w-full overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-gray-50/80 hover:bg-gray-50/80">
-                        <TableHead className="text-xs font-semibold text-gray-500 whitespace-nowrap">App ID</TableHead>
-                        <TableHead className="text-xs font-semibold text-gray-500 whitespace-nowrap">WB ID</TableHead>
-                        <TableHead className="text-xs font-semibold text-gray-500 whitespace-nowrap">Created On</TableHead>
-                        <TableHead className="text-xs font-semibold text-gray-500 whitespace-nowrap">Student Name</TableHead>
-                        <TableHead className="text-xs font-semibold text-gray-500 whitespace-nowrap">University</TableHead>
-                        <TableHead className="text-xs font-semibold text-gray-500 whitespace-nowrap">Program</TableHead>
-                        <TableHead className="text-xs font-semibold text-gray-500 whitespace-nowrap">Intake</TableHead>
-                        <TableHead className="text-xs font-semibold text-gray-500 whitespace-nowrap">Created By</TableHead>
-                        <TableHead className="text-xs font-semibold text-gray-500 whitespace-nowrap">Status</TableHead>
+                        <TableHead className="text-xs font-semibold text-gray-500 whitespace-nowrap w-[100px]">App ID</TableHead>
+                        <TableHead className="text-xs font-semibold text-gray-500 whitespace-nowrap w-[90px]">WB ID</TableHead>
+                        <TableHead className="text-xs font-semibold text-gray-500 whitespace-nowrap w-[100px]">Created On</TableHead>
+                        <TableHead className="text-xs font-semibold text-gray-500 min-w-[120px]">Student Name</TableHead>
+                        <TableHead className="text-xs font-semibold text-gray-500 min-w-[140px]">University</TableHead>
+                        <TableHead className="text-xs font-semibold text-gray-500 min-w-[140px]">Program</TableHead>
+                        <TableHead className="text-xs font-semibold text-gray-500 whitespace-nowrap w-[80px]">Intake</TableHead>
+                        <TableHead className="text-xs font-semibold text-gray-500 min-w-[100px]">Created By</TableHead>
+                        <TableHead className="text-xs font-semibold text-gray-500 whitespace-nowrap w-[120px]">Status</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -494,7 +467,15 @@ export default function PartnerApplications() {
                         const badgeClass = statusColors[app.status] || "bg-gray-100 text-gray-800";
 
                         return (
-                          <TableRow key={app.id} className="hover:bg-gray-50/50 border-b border-gray-100">
+                          <TableRow 
+                            key={app.id} 
+                            className="hover:bg-gray-50/80 cursor-pointer border-b border-gray-100 transition-colors"
+                            onClick={() => {
+                              if (student) {
+                                navigate(`/partner-dashboard/students/${student.id}?tab=applications`);
+                              }
+                            }}
+                          >
                             <TableCell className="font-mono text-xs font-semibold text-[#2F4F97] whitespace-nowrap">
                               {app.application_code}
                             </TableCell>
@@ -504,13 +485,13 @@ export default function PartnerApplications() {
                             <TableCell className="text-xs text-gray-500 whitespace-nowrap">
                               {format(new Date(app.created_at), "MMM dd, yyyy")}
                             </TableCell>
-                            <TableCell className="text-sm font-medium text-gray-800 whitespace-nowrap">
+                            <TableCell className="text-sm font-medium text-gray-800 break-words whitespace-normal leading-tight">
                               {student?.full_name || "—"}
                             </TableCell>
-                            <TableCell className="text-xs text-gray-600 max-w-[160px] truncate" title={university?.name}>
+                            <TableCell className="text-xs text-gray-600 break-words whitespace-normal leading-tight">
                               {university?.name || "—"}
                             </TableCell>
-                            <TableCell className="text-xs text-gray-600 max-w-[180px] truncate" title={course?.title}>
+                            <TableCell className="text-xs text-gray-600 break-words whitespace-normal leading-tight">
                               {course?.title || "—"}
                             </TableCell>
                             <TableCell className="text-xs text-gray-500 whitespace-nowrap">
@@ -518,7 +499,7 @@ export default function PartnerApplications() {
                                 ? course.intake_months[0]
                                 : "—"}
                             </TableCell>
-                            <TableCell className="text-xs text-gray-600 whitespace-nowrap">
+                            <TableCell className="text-xs text-gray-600 break-words whitespace-normal leading-tight">
                               {partnerName}
                             </TableCell>
                             <TableCell>
@@ -536,7 +517,6 @@ export default function PartnerApplications() {
             )}
           </Card>
         </div>
-      </div>
     </div>
   );
 }

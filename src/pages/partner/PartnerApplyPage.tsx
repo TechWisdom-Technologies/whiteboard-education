@@ -161,7 +161,7 @@ export default function PartnerApplyPage() {
 
         // Fetch partner's students using explicit token (mirroring PartnerStudents)
         const res = await fetch(
-          `${SUPABASE_URL}/rest/v1/students?select=id,full_name,email,phone,nationality,status,wb_student_id,degree_level,major&partner_id=eq.${user.id}&order=full_name`,
+          `${SUPABASE_URL}/rest/v1/students?select=*&partner_id=eq.${user.id}&order=full_name`,
           { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}` } }
         );
         
@@ -210,17 +210,27 @@ export default function PartnerApplyPage() {
     try {
       const appCode = generateAppCode();
 
-      const { error } = await supabase.from("student_applications" as any).insert({
-        student_id: selectedStudentId,
-        university_id: course.university_id || null,
-        course_id: course.id,
-        application_code: appCode,
-        status: "document_upload",
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/student_applications`, {
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${session.access_token}`,
+          "Content-Type": "application/json",
+          Prefer: "return=representation",
+        },
+        body: JSON.stringify({
+          student_id: selectedStudentId,
+          university_id: course.university_id || null,
+          course_id: course.id,
+          application_code: appCode,
+          status: "document_upload",
+        })
       });
 
-      if (error) {
-        console.error(error);
-        toast.error("Failed to submit application. Please try again.");
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.error("Supabase Insert Error:", errorData);
+        toast.error(`Error: ${errorData.message || errorData.details || "Failed to submit application"}`);
         return;
       }
 

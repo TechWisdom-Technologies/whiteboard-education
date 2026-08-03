@@ -223,150 +223,141 @@ export default function PartnerSearchPrograms() {
         <p className="text-sm text-[#64748B] mt-0.5">Browse available programs and apply your students</p>
       </div>
 
-      <div className="flex gap-5 items-start">
+      {/* ─── Top Horizontal Filters ─── */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <SlidersHorizontal className="h-4 w-4 text-[#2F4F97]" />
+            <span className="text-sm font-semibold text-[#1E293B]">Filters</span>
+          </div>
+          {hasActiveFilters && (
+            <button onClick={handleReset} className="text-xs text-[#2F4F97] hover:underline flex items-center gap-1">
+              <RotateCcw className="h-3 w-3" /> Reset Filters
+            </button>
+          )}
+        </div>
 
-        {/* ─── Left Sidebar Filters ─── */}
-        <aside className="w-60 shrink-0 space-y-4 sticky top-4">
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <SlidersHorizontal className="h-4 w-4 text-[#2F4F97]" />
-                <span className="text-sm font-semibold text-[#1E293B]">Filters</span>
-              </div>
-              {hasActiveFilters && (
-                <button onClick={handleReset} className="text-xs text-[#2F4F97] hover:underline flex items-center gap-1">
-                  <RotateCcw className="h-3 w-3" /> Reset
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          {/* Search */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-gray-500">Search</label>
+            <div className="relative">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+              <Input
+                placeholder="Program or university…"
+                value={searchQuery}
+                onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                className="h-9 text-sm border-gray-200 pl-8"
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2">
+                  <X className="h-3.5 w-3.5 text-gray-400 hover:text-gray-600" />
                 </button>
               )}
             </div>
-
-            <div className="p-4 space-y-4">
-
-              {/* Search */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-gray-500">Search</label>
-                <div className="relative">
-                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-                  <Input
-                    placeholder="Program or university…"
-                    value={searchQuery}
-                    onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-                    className="h-8 text-sm border-gray-200 pl-8"
-                  />
-                  {searchQuery && (
-                    <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2">
-                      <X className="h-3.5 w-3.5 text-gray-400 hover:text-gray-600" />
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {/* Degree Level */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-gray-500">Degree Level</label>
-                <Select value={level} onValueChange={(v) => { setLevel(v); setCurrentPage(1); }}>
-                  <SelectTrigger className="h-8 text-sm border-gray-200">
-                    <SelectValue placeholder="All Levels" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Levels</SelectItem>
-                    <SelectItem value="Foundation / A-level">Foundation / A-Level</SelectItem>
-                    <SelectItem value="Diploma">Diploma</SelectItem>
-                    <SelectItem value="Bachelor's Degree">Bachelor's Degree</SelectItem>
-                    <SelectItem value="Master's Degree">Master's Degree</SelectItem>
-                    <SelectItem value="Doctoral Degree (PhD)">PhD / Doctorate</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Study Area */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-gray-500">Study Area</label>
-                <Select value={studyArea} onValueChange={(v) => { setStudyArea(v); setCurrentPage(1); }}>
-                  <SelectTrigger className="h-8 text-sm border-gray-200">
-                    <SelectValue placeholder="All Areas" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Areas</SelectItem>
-                    <SelectItem value="Business & Management">Business & Management</SelectItem>
-                    <SelectItem value="Engineering">Engineering</SelectItem>
-                    <SelectItem value="Computer Science & IT">Computer Science & IT</SelectItem>
-                    <SelectItem value="Medicine & Health">Medicine & Health</SelectItem>
-                    <SelectItem value="Architecture">Architecture</SelectItem>
-                    <SelectItem value="Law">Law</SelectItem>
-                    <SelectItem value="Education">Education</SelectItem>
-                    <SelectItem value="Arts">Arts & Design</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Intake Month */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-gray-500">Intake Month</label>
-                <Select value={intake} onValueChange={(v) => { setIntake(v); setCurrentPage(1); }}>
-                  <SelectTrigger className="h-8 text-sm border-gray-200">
-                    <SelectValue placeholder="All Intakes" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Intakes</SelectItem>
-                    {['January','February','March','April','May','June','July','August','September','October','November','December'].map(m => (
-                      <SelectItem key={m} value={m}>{m}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Year */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-gray-500">Year</label>
-                <Select value={year} onValueChange={(v) => { setYear(v); setCurrentPage(1); }}>
-                  <SelectTrigger className="h-8 text-sm border-gray-200">
-                    <SelectValue placeholder="All Years" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Years</SelectItem>
-                    <SelectItem value="2025">2025</SelectItem>
-                    <SelectItem value="2026">2026</SelectItem>
-                    <SelectItem value="2027">2027</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-            </div>
           </div>
 
-          {/* Quick tags */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <Sparkles className="h-3.5 w-3.5 text-[#2F4F97]" />
-              <span className="text-xs font-semibold text-[#2F4F97]">Quick Filters</span>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              {[
-                "Scholarship Available",
-                "Affordable University",
-                "English Waiver",
-                "MBA Programs",
-                "High Acceptance Rate",
-              ].map(tag => (
-                <button
-                  key={tag}
-                  className="flex items-center gap-2 text-xs text-gray-600 hover:text-[#2F4F97] py-1 px-2 rounded-lg hover:bg-[#2F4F97]/5 transition-colors text-left"
-                  onClick={() => toast.info(`Filter "${tag}" coming soon!`)}
-                >
-                  <CheckCircle2 className="h-3.5 w-3.5 text-gray-300 shrink-0" />
-                  {tag}
-                </button>
-              ))}
-            </div>
+          {/* Degree Level */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-gray-500">Degree Level</label>
+            <Select value={level} onValueChange={(v) => { setLevel(v); setCurrentPage(1); }}>
+              <SelectTrigger className="h-9 text-sm border-gray-200">
+                <SelectValue placeholder="All Levels" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Levels</SelectItem>
+                <SelectItem value="Foundation / A-level">Foundation / A-Level</SelectItem>
+                <SelectItem value="Diploma">Diploma</SelectItem>
+                <SelectItem value="Bachelor's Degree">Bachelor's Degree</SelectItem>
+                <SelectItem value="Master's Degree">Master's Degree</SelectItem>
+                <SelectItem value="Doctoral Degree (PhD)">PhD / Doctorate</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-        </aside>
 
-        {/* ─── Right: Results ─── */}
-        <div className="flex-1 min-w-0 space-y-4">
+          {/* Study Area */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-gray-500">Study Area</label>
+            <Select value={studyArea} onValueChange={(v) => { setStudyArea(v); setCurrentPage(1); }}>
+              <SelectTrigger className="h-9 text-sm border-gray-200">
+                <SelectValue placeholder="All Areas" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Areas</SelectItem>
+                <SelectItem value="Business & Management">Business & Management</SelectItem>
+                <SelectItem value="Engineering">Engineering</SelectItem>
+                <SelectItem value="Computer Science & IT">Computer Science & IT</SelectItem>
+                <SelectItem value="Medicine & Health">Medicine & Health</SelectItem>
+                <SelectItem value="Architecture">Architecture</SelectItem>
+                <SelectItem value="Law">Law</SelectItem>
+                <SelectItem value="Education">Education</SelectItem>
+                <SelectItem value="Arts">Arts & Design</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-          {/* Results bar */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          {/* Intake Month */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-gray-500">Intake Month</label>
+            <Select value={intake} onValueChange={(v) => { setIntake(v); setCurrentPage(1); }}>
+              <SelectTrigger className="h-9 text-sm border-gray-200">
+                <SelectValue placeholder="All Intakes" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Intakes</SelectItem>
+                {['January','February','March','April','May','June','July','August','September','October','November','December'].map(m => (
+                  <SelectItem key={m} value={m}>{m}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Year */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-gray-500">Year</label>
+            <Select value={year} onValueChange={(v) => { setYear(v); setCurrentPage(1); }}>
+              <SelectTrigger className="h-9 text-sm border-gray-200">
+                <SelectValue placeholder="All Years" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Years</SelectItem>
+                <SelectItem value="2025">2025</SelectItem>
+                <SelectItem value="2026">2026</SelectItem>
+                <SelectItem value="2027">2027</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Quick tags */}
+        <div className="pt-2 border-t border-gray-100 flex flex-wrap items-center gap-2">
+          <span className="flex items-center gap-1.5 text-xs font-semibold text-[#2F4F97] mr-2">
+            <Sparkles className="h-3.5 w-3.5" />
+            Quick Filters:
+          </span>
+          {[
+            "Scholarship Available",
+            "Affordable University",
+            "English Waiver",
+            "MBA Programs",
+            "High Acceptance Rate",
+          ].map(tag => (
+            <button
+              key={tag}
+              className="flex items-center gap-1.5 text-[11px] font-medium text-gray-600 hover:text-[#2F4F97] py-1 px-2.5 rounded-full border border-gray-200 hover:border-[#2F4F97]/30 hover:bg-[#2F4F97]/5 transition-colors"
+              onClick={() => toast.info(`Filter "${tag}" coming soon!`)}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ─── Results ─── */}
+      <div className="space-y-4">
+
+        {/* Results bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <p className="text-sm text-gray-600">
               <span className="font-semibold text-[#1E293B]">{filteredCourses.length}</span> programs found
             </p>
@@ -512,7 +503,6 @@ export default function PartnerSearchPrograms() {
             )}
           </Card>
         </div>
-      </div>
     </div>
   );
 }
