@@ -133,7 +133,7 @@ export function PartnerSidebar() {
   return (
     <Sidebar collapsible="icon" className="border-r border-[#2d1b4e] bg-[#1a0f2e]">
       {/* Sidebar Header containing centered logo covering 65-70% width */}
-      <div className="border-b border-[#2d1b4e] py-4 px-3 bg-[#1a0f2e] flex flex-col items-center justify-center gap-1 flex-shrink-0 min-h-[56px]">
+      <div className="border-b border-[#2d1b4e] px-3 bg-[#1a0f2e] flex flex-col items-center justify-center gap-1 flex-shrink-0 h-[60px]">
         <div className="flex items-center justify-center w-full">
           {avatarUrl ? (
             collapsed ? (

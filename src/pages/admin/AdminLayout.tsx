@@ -47,7 +47,7 @@ export default function AdminLayout() {
       <div className="min-h-screen flex w-full">
         <AdminSidebar />
         <div className="flex-1 flex flex-col">
-          <header className="min-h-[60px] flex flex-wrap items-center border-b border-gray-200/60 px-4 sm:px-6 py-2 gap-3 bg-white/80 backdrop-blur-md sticky top-0 z-10 justify-between shadow-sm">
+          <header className="h-[60px] flex items-center border-b border-gray-200/60 px-4 sm:px-6 gap-3 bg-white/80 backdrop-blur-md sticky top-0 z-10 justify-between shadow-sm">
             <div className="flex items-center gap-4 min-w-0">
               <span className="font-extrabold text-[16px] text-gray-800 tracking-tight">
                 {getPageTitle()}
