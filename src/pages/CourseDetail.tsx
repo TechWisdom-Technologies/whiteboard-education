@@ -177,7 +177,7 @@ ${window.location.href}`;
   // We should just let it be empty instead of showing dummy data.
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col">
       <MegaMenu disableSticky={isScrolledPastHero} />
 
       <div className="w-full flex-1 flex flex-col">
@@ -225,20 +225,20 @@ ${window.location.href}`;
                   
                   {/* Mobile Buttons */}
                   <div className="flex md:hidden flex-row gap-3 w-full justify-center">
-                    <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] hover:text-white rounded-[20px] border-none font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
+                    <Button className="rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
                       Apply Now
                     </Button>
-                    <Button variant="outline" className="bg-white text-[#2F4F97] border-2 border-[#2F4F97] hover:bg-[#EEF4FF] hover:text-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate("/contact")}>
+                    <Button variant="outline" className="hover:text-[#2F4F97] rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate("/contact")}>
                       Ask Us
                     </Button>
                   </div>
 
                   {/* Desktop Buttons */}
                   <div className="hidden md:flex flex-row gap-3 w-auto justify-end">
-                    <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] hover:text-white rounded-[20px] border-none font-semibold px-10 h-14 text-[15px]" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
+                    <Button className="rounded-[20px] font-semibold px-10 h-14 text-[15px]" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
                       Apply Now
                     </Button>
-                    <Button variant="outline" className="bg-white text-[#2F4F97] border-2 border-[#2F4F97] hover:bg-[#EEF4FF] hover:text-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold px-10 h-14 text-[15px]" onClick={() => navigate("/contact")}>
+                    <Button variant="outline" className="hover:text-[#2F4F97] rounded-[20px] font-semibold px-10 h-14 text-[15px]" onClick={() => navigate("/contact")}>
                       Ask Us
                     </Button>
                   </div>
@@ -271,20 +271,20 @@ ${window.location.href}`;
             <div className={`flex items-center transition-all duration-300 shrink-0 ${isScrolledPastHero ? 'gap-2 pl-3 opacity-100 translate-x-0 w-auto' : 'opacity-0 translate-x-4 pointer-events-none w-0 overflow-hidden m-0 p-0'}`}>
               {/* Mobile Buttons */}
               <div className="flex md:hidden items-center gap-2">
-                <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] hover:text-white rounded-[20px] border-none font-semibold px-5 h-10 text-[14px]" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
+                <Button className="rounded-[20px] font-semibold px-5 h-10 text-[14px]" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
                   Apply
                 </Button>
-                <Button variant="outline" className="bg-white text-[#2F4F97] border-2 border-[#2F4F97] hover:bg-[#EEF4FF] hover:text-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold h-10 w-12 p-0 flex items-center justify-center shrink-0" onClick={() => navigate("/contact")}>
+                <Button variant="outline" className="hover:text-[#2F4F97] rounded-[20px] font-semibold h-10 w-12 p-0 flex items-center justify-center shrink-0" onClick={() => navigate("/contact")}>
                   <span className="font-bold text-[16px]">?</span>
                 </Button>
               </div>
               
               {/* Desktop Buttons */}
               <div className="hidden md:flex items-center gap-2">
-                <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] hover:text-white rounded-[20px] border-none font-semibold px-6 h-10 text-[14px]" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
+                <Button className="rounded-[20px] font-semibold px-6 h-10 text-[14px]" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
                   Apply Now
                 </Button>
-                <Button variant="outline" className="bg-white text-[#2F4F97] border-2 border-[#2F4F97] hover:bg-[#EEF4FF] hover:text-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold px-6 h-10 text-[14px]" onClick={() => navigate("/contact")}>
+                <Button variant="outline" className="hover:text-[#2F4F97] rounded-[20px] font-semibold px-6 h-10 text-[14px]" onClick={() => navigate("/contact")}>
                   Ask Us
                 </Button>
               </div>
@@ -304,7 +304,7 @@ ${window.location.href}`;
                   <Button 
                     variant="outline" 
                     size="sm"
-                    className="shrink-0 rounded-xl md:px-3 px-2 border-gray-300 text-gray-700 hover:bg-gray-50 font-normal h-10 md:h-8 text-xs shadow-none bg-white flex items-center gap-1.5" 
+                    className="shrink-0 rounded-xl md:px-3 px-2 border-gray-300 text-gray-700 font-normal h-10 md:h-8 text-xs flex items-center gap-1.5" 
                     onClick={handleCopy}
                   >
                     {copied ? <Check className="w-5 h-5 md:w-3.5 md:h-3.5 text-green-600" /> : <Copy className="w-5 h-5 md:w-3.5 md:h-3.5" />}
@@ -493,7 +493,7 @@ ${window.location.href}`;
                 <h2 className="text-[20px] font-medium md:font-semibold text-center md:text-left text-[#1A2C5B] max-w-md relative z-10 leading-tight">
                   Would you like to apply to {uni?.name} ?
                 </h2>
-                <Button variant="outline" className="relative z-10 bg-transparent border-2 border-[#2F4F97] text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white h-[52px] md:h-14 px-8 rounded-xl font-bold text-[14px] md:text-base transition-colors shadow-none w-full md:w-auto" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
+                <Button variant="outline" className="relative z-10 bg-transparent hover:bg-[#2F4F97] h-[52px] md:h-14 px-8 rounded-xl font-bold text-[14px] md:text-base transition-colors w-full md:w-auto" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
                   Apply now
                 </Button>
               </div>

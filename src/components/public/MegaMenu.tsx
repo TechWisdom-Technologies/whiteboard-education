@@ -67,7 +67,7 @@ const CurrencySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 hover:bg-[#F8FAFC]/50 transition-all border border-[#e8e8e8]">
+        <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 hover:bg-[#F8FAFC]/50 transition-all border-[#e8e8e8]">
           <div className="relative">
             <RefreshCw className="h-[18px] w-[18px] text-[#2F4F97]" />
             <span className="absolute -bottom-1.5 -right-1.5 text-[9px] font-bold bg-[#2F4F97] text-white rounded-full w-[14px] h-[14px] flex items-center justify-center">
@@ -293,7 +293,7 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
           {/* Mobile Hamburger - now visible on mobile */}
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="lg:hidden ml-auto text-[#2F4F97] hover:bg-[#2F4F97]/10 hover:text-[#2F4F97] transition-colors rounded-xl">
+              <Button variant="ghost" size="icon" className="lg:hidden ml-auto hover:text-[#2F4F97] transition-colors rounded-xl">
                 <Menu className="h-6 w-6 stroke-[3]" />
               </Button>
             </SheetTrigger>

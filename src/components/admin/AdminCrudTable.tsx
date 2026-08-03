@@ -874,7 +874,7 @@ export default function AdminCrudTable({
             variant="ghost" 
             size="icon"
             onClick={() => setDialogOpen(false)} 
-            className="h-8 w-8 rounded-full bg-[#2F4F97]/10 text-[#2F4F97] hover:bg-[#2F4F97]/20 transition-colors"
+            className="h-8 w-8 rounded-full bg-[#2F4F97]/10 hover:bg-[#2F4F97]/20 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -896,7 +896,7 @@ export default function AdminCrudTable({
               <Button variant="outline" onClick={() => setDialogOpen(false)} className="h-10 px-6">
                 Cancel
               </Button>
-              <Button className="h-10 px-6 bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white" onClick={handleSave}>
+              <Button className="h-10 px-6" onClick={handleSave}>
                 {editingRow ? "Update" : "Save"}
               </Button>
             </div>
@@ -952,21 +952,21 @@ export default function AdminCrudTable({
                 </AlertDialogContent>
               </AlertDialog>
             )}
-            <Button variant="outline" onClick={handleDownloadTemplate} className="h-9 text-[12px] px-3 bg-white shadow-sm whitespace-nowrap hover:bg-[#FF7A00] hover:text-white hover:border-[#FF7A00] group transition-all gap-1.5">
+            <Button variant="outline" onClick={handleDownloadTemplate} className="h-9 text-[12px] px-3 shadow-sm whitespace-nowrap hover:bg-[#FF7A00] hover:border-[#FF7A00] group transition-all gap-1.5">
               <Download className="h-3.5 w-3.5 text-muted-foreground group-hover:text-white transition-colors" />Template
             </Button>
-            <Button variant="outline" onClick={handleExportExcel} className="h-9 text-[12px] px-3 bg-white shadow-sm whitespace-nowrap hover:bg-[#FF7A00] hover:text-white hover:border-[#FF7A00] group transition-all gap-1.5">
+            <Button variant="outline" onClick={handleExportExcel} className="h-9 text-[12px] px-3 shadow-sm whitespace-nowrap hover:bg-[#FF7A00] hover:border-[#FF7A00] group transition-all gap-1.5">
               <Download className="h-3.5 w-3.5 text-muted-foreground group-hover:text-white transition-colors" />Export
             </Button>
             <Button
               variant="outline"
               disabled={!onBulkUpsert || isImporting}
               onClick={() => fileInputRef.current?.click()}
-              className="h-9 text-[12px] px-3 bg-white shadow-sm whitespace-nowrap hover:bg-[#FF7A00] hover:text-white hover:border-[#FF7A00] group transition-all gap-1.5"
+              className="h-9 text-[12px] px-3 shadow-sm whitespace-nowrap hover:bg-[#FF7A00] hover:border-[#FF7A00] group transition-all gap-1.5"
             >
               <Upload className="h-3.5 w-3.5 text-muted-foreground group-hover:text-white transition-colors" />{isImporting ? "Importing..." : "Import"}
             </Button>
-            <Button onClick={openCreate} className="h-9 text-[12px] px-3 bg-[#2F4F97] hover:bg-[#FF7A00] text-white shadow-sm whitespace-nowrap transition-all gap-1.5">
+            <Button onClick={openCreate} className="h-9 text-[12px] px-3 hover:bg-[#FF7A00] shadow-sm whitespace-nowrap transition-all gap-1.5">
               <Plus className="h-3.5 w-3.5" />Add {singularize(title)}
             </Button>
           </div>

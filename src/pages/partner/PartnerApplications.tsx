@@ -284,7 +284,7 @@ export default function PartnerApplications() {
             variant="outline"
             size="sm"
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="h-9 gap-2 text-sm border-gray-300 text-gray-600"
+            className="h-9 gap-2 text-sm border-gray-300"
           >
             <SlidersHorizontal className="h-4 w-4" />
             Filters
@@ -296,7 +296,7 @@ export default function PartnerApplications() {
           </Button>
           <Button
             onClick={() => navigate('/partner-dashboard/search-programs')}
-            className="h-9 gap-2 bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white text-sm"
+            className="h-9 gap-2 text-sm"
           >
             <Plus className="h-4 w-4" />
             New Application
@@ -437,7 +437,7 @@ export default function PartnerApplications() {
                 {!hasActiveFilters && (
                   <Button
                     onClick={() => navigate('/partner-dashboard/search-programs')}
-                    className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white gap-2"
+                    className="gap-2"
                   >
                     <Search className="h-4 w-4" /> Browse Programs
                   </Button>

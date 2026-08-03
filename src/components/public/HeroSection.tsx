@@ -119,7 +119,7 @@ export function HeroSection() {
 
                 {/* Search Button */}
                 <Button
-                  className="h-12 w-14 md:w-16 bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] border-l border-transparent hover:border-[#2F4F97] rounded-none transition-all active:scale-95 shrink-0 px-0 flex items-center justify-center"
+                  className="h-12 w-14 md:w-16 hover:text-[#2F4F97] border-l rounded-none transition-all active:scale-95 shrink-0 px-0 flex items-center justify-center"
                   onClick={handleSearch}
                 >
                   <Search className="h-5 w-5 md:h-6 md:w-6" />

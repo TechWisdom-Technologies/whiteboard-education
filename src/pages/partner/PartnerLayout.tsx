@@ -78,20 +78,26 @@ export default function PartnerLayout() {
                 {getPageTitle()}
               </span>
             </div>
-            <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto justify-end">
-              <div className="flex items-center gap-2.5">
-                <Avatar className="h-9 w-9 border border-border shadow-sm rounded-full overflow-hidden shrink-0">
-                  <AvatarImage src={avatarUrl} alt={displayName || user?.email || "Avatar"} className="object-cover w-full h-full rounded-full" />
-                  <AvatarFallback className="bg-[#2F4F97]/10 text-[#2F4F97] text-xs font-bold rounded-full">
-                    {(displayName || user?.email || "P").charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-[11px] text-muted-foreground truncate max-w-[200px] hidden sm:inline" title={user?.email || ""}>
-                  {displayName || user?.email}
-                  <span className="text-[#2F4F97] font-semibold ml-1">(Partner)</span>
-                </span>
+            <div className="flex items-center gap-4 sm:gap-6 w-full sm:w-auto justify-end flex-1 sm:flex-none">
+              <div className="flex items-center gap-4">
+                <NotificationCenter />
+                <div className="flex items-center gap-3">
+                  <div className="hidden flex-col items-end sm:flex">
+                    <span className="text-[13px] font-bold text-gray-800 leading-tight">
+                      {displayName || "Partner"}
+                    </span>
+                    <span className="text-[11px] text-gray-500 truncate max-w-[160px] font-medium leading-tight">
+                      {user?.email}
+                    </span>
+                  </div>
+                  <Avatar className="h-9 w-9 ring-2 ring-gray-100 transition-transform hover:scale-105 cursor-pointer shadow-sm rounded-full overflow-hidden shrink-0">
+                    <AvatarImage src={avatarUrl} alt={displayName || user?.email || "Avatar"} className="object-cover w-full h-full rounded-full" />
+                    <AvatarFallback className="bg-[#2F4F97]/10 text-[#2F4F97] text-xs font-bold rounded-full">
+                      {(displayName || user?.email || "P").charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
               </div>
-              <NotificationCenter />
             </div>
           </header>
           <main className="flex-1 p-3 sm:p-6 bg-muted/20 overflow-x-hidden">

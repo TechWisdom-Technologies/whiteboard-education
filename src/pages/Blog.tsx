@@ -132,7 +132,7 @@ export default function Blog() {
               <div className="flex items-center justify-center gap-2 mt-16">
                 <Button 
                   variant="outline" 
-                  className="h-10 border-gray-200 text-[#64748B] hover:text-[#1E293B] rounded-xl bg-white"
+                  className="h-10 text-[#64748B] hover:text-[#1E293B] rounded-xl"
                   disabled={currentPage === 1} 
                   onClick={() => {
                     setCurrentPage(currentPage - 1);
@@ -164,7 +164,7 @@ export default function Blog() {
 
                 <Button 
                   variant="outline" 
-                  className="h-10 border-gray-200 text-[#64748B] hover:text-[#1E293B] rounded-xl bg-white"
+                  className="h-10 text-[#64748B] hover:text-[#1E293B] rounded-xl"
                   disabled={currentPage === totalPages} 
                   onClick={() => {
                     setCurrentPage(currentPage + 1);

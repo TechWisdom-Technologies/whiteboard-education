@@ -182,7 +182,7 @@ export default function Housing() {
               <div className="hidden md:flex shrink-0 items-center gap-3">
                 <Button 
                   variant="outline" 
-                  className="h-10 border-gray-200 text-[#64748B] hover:text-[#1E293B] hover:bg-gray-50 rounded-xl bg-white"
+                  className="h-10 text-[#64748B] hover:text-[#1E293B] rounded-xl"
                   onClick={() => {
                     setDraftUniversity("All");
                     setDraftType("All");
@@ -197,7 +197,7 @@ export default function Housing() {
                   Reset
                 </Button>
                 <Button 
-                  className="h-10 bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white rounded-xl shadow-sm px-6"
+                  className="h-10 rounded-xl shadow-sm px-6"
                   onClick={() => {
                     setAppliedUniversity(draftUniversity);
                     setAppliedType(draftType);
@@ -256,7 +256,7 @@ export default function Housing() {
               <div className="flex md:hidden shrink-0 items-center gap-3 w-full mt-4 order-3">
                 <Button 
                   variant="outline" 
-                  className="h-10 flex-1 border-gray-200 text-[#64748B] hover:text-[#1E293B] hover:bg-gray-50 rounded-xl bg-white"
+                  className="h-10 flex-1 text-[#64748B] hover:text-[#1E293B] rounded-xl"
                   onClick={() => {
                     setDraftUniversity("All");
                     setDraftType("All");
@@ -272,7 +272,7 @@ export default function Housing() {
                   Reset
                 </Button>
                 <Button 
-                  className="h-10 flex-1 bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white rounded-xl shadow-sm"
+                  className="h-10 flex-1 rounded-xl shadow-sm"
                   onClick={() => {
                     setAppliedUniversity(draftUniversity);
                     setAppliedType(draftType);
@@ -509,7 +509,7 @@ export default function Housing() {
                   <div className="flex items-center justify-center gap-2 mt-12 mb-4">
                     <Button 
                       variant="outline" 
-                      className="h-10 border-gray-200 text-[#64748B] hover:text-[#1E293B] rounded-xl bg-white"
+                      className="h-10 text-[#64748B] hover:text-[#1E293B] rounded-xl"
                       disabled={currentPage === 1} 
                       onClick={() => {
                         setCurrentPage(currentPage - 1);
@@ -555,7 +555,7 @@ export default function Housing() {
 
                     <Button 
                       variant="outline" 
-                      className="h-10 border-gray-200 text-[#64748B] hover:text-[#1E293B] rounded-xl bg-white"
+                      className="h-10 text-[#64748B] hover:text-[#1E293B] rounded-xl"
                       disabled={currentPage === totalPages} 
                       onClick={() => {
                         setCurrentPage(currentPage + 1);

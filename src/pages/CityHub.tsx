@@ -477,7 +477,7 @@ export default function CityHub() {
                   </div>
                 ))}
                 <Link to="/eligibility">
-                  <Button size="sm" className="w-full bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 mt-2 gap-1">
+                  <Button size="sm" className="w-full mt-2 gap-1">
                     Check Eligibility <ArrowRight className="h-3.5 w-3.5" />
                   </Button>
                 </Link>
@@ -501,7 +501,7 @@ export default function CityHub() {
               <Phone className="h-4 w-4 mr-2" /> Free Consultation
             </Button>
             <Link to="/universities">
-              <Button size="lg" variant="outline" className="border-[#1E293B]/30 text-[#1E293B] hover:bg-[#1E293B]/10 font-bold h-13 px-8">
+              <Button size="lg" variant="outline" className="border-[#1E293B]/30 hover:bg-[#1E293B]/10 font-bold h-13 px-8">
                 <Building className="h-4 w-4 mr-2" /> Explore Universities
               </Button>
             </Link>

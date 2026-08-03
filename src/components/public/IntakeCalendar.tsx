@@ -76,7 +76,7 @@ export function IntakeCalendar() {
                   <p className="text-xs text-muted-foreground mb-4">
                     Deadline: {new Date(d.deadline).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
                   </p>
-                  <Button variant="outline" size="sm" className="w-full gap-1.5 hover:bg-[#2F4F97]/10 hover:text-[#2F4F97] hover:border-[#2F4F97]/30 transition-colors" onClick={() => handleReminder(d)}>
+                  <Button variant="outline" size="sm" className="w-full gap-1.5 hover:text-[#2F4F97] transition-colors" onClick={() => handleReminder(d)}>
                     <Bell className="h-3.5 w-3.5" /> Set Reminder
                   </Button>
                 </CardContent>

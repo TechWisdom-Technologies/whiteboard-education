@@ -111,7 +111,7 @@ export default function HelpCenter() {
       <div className="sticky bottom-0 bg-background border-t py-4 z-40">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <p className="text-sm text-muted-foreground">Can't find your answer?</p>
-          <Button className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90" onClick={() => navigate("/contact")}>
+          <Button  onClick={() => navigate("/contact")}>
             <MessageCircle className="h-4 w-4 mr-2" /> Contact Support
           </Button>
         </div>

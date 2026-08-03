@@ -152,7 +152,7 @@ export function AccountManagerSection() {
             Manage account manager contacts displayed to partners on their dashboard. You can insert, update, or delete profiles.
           </CardDescription>
         </div>
-        <Button onClick={handleOpenAdd} className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white gap-1.5 h-9 text-[13px]">
+        <Button onClick={handleOpenAdd} className="gap-1.5 h-9 text-[13px]">
           <Plus className="h-4 w-4" /> Add Manager
         </Button>
       </CardHeader>
@@ -168,7 +168,7 @@ export function AccountManagerSection() {
             <p className="text-[12px] text-muted-foreground mt-1 max-w-sm mx-auto">
               Partners currently see "Account manager unassigned" on their portal. Add a contact profile to display here.
             </p>
-            <Button onClick={handleOpenAdd} variant="outline" className="mt-4 border-[#2F4F97] text-[#2F4F97] hover:bg-[#2F4F97]/5">
+            <Button onClick={handleOpenAdd} variant="outline" className="mt-4">
               <Plus className="h-4 w-4 mr-1.5" /> Add First Manager
             </Button>
           </div>
@@ -198,7 +198,7 @@ export function AccountManagerSection() {
                   </div>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
-                  <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(m)} className="h-8 w-8 text-slate-600 hover:text-[#2F4F97] hover:bg-slate-100">
+                  <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(m)} className="h-8 w-8 text-slate-600 hover:text-[#2F4F97]">
                     <Edit2 className="h-4 w-4" />
                   </Button>
                   <Button variant="ghost" size="icon" onClick={() => handleDelete(m.id)} className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive">
@@ -257,7 +257,7 @@ export function AccountManagerSection() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleSave} disabled={saving} className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white gap-1.5">
+            <Button onClick={handleSave} disabled={saving} className="gap-1.5">
               {saving && <Loader2 className="h-4 w-4 animate-spin" />} Save Contact
             </Button>
           </DialogFooter>
@@ -416,7 +416,7 @@ export function TutorialsSection() {
             Manage tutorial videos shown on the partner dashboard. You can insert, update, delete, or reorder videos.
           </CardDescription>
         </div>
-        <Button onClick={handleOpenAdd} className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white gap-1.5 h-9 text-[13px]">
+        <Button onClick={handleOpenAdd} className="gap-1.5 h-9 text-[13px]">
           <Plus className="h-4 w-4" /> Add Tutorial
         </Button>
       </CardHeader>
@@ -432,7 +432,7 @@ export function TutorialsSection() {
             <p className="text-[12px] text-muted-foreground mt-1 max-w-sm mx-auto">
               Add YouTube video links to guide partners on how to use the portal effectively.
             </p>
-            <Button onClick={handleOpenAdd} variant="outline" className="mt-4 border-[#2F4F97] text-[#2F4F97] hover:bg-[#2F4F97]/5">
+            <Button onClick={handleOpenAdd} variant="outline" className="mt-4">
               <Plus className="h-4 w-4 mr-1.5" /> Add First Tutorial
             </Button>
           </div>
@@ -464,7 +464,7 @@ export function TutorialsSection() {
                   >
                     {t.is_active ? 'Deactivate' : 'Activate'}
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(t)} className="h-8 w-8 text-slate-600 hover:text-[#2F4F97] hover:bg-slate-100">
+                  <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(t)} className="h-8 w-8 text-slate-600 hover:text-[#2F4F97]">
                     <Edit2 className="h-4 w-4" />
                   </Button>
                   <Button variant="ghost" size="icon" onClick={() => handleDelete(t.id!)} className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive">
@@ -534,7 +534,7 @@ export function TutorialsSection() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleSave} disabled={saving} className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white gap-1.5">
+            <Button onClick={handleSave} disabled={saving} className="gap-1.5">
               {saving && <Loader2 className="h-4 w-4 animate-spin" />} Save Tutorial
             </Button>
           </DialogFooter>

@@ -21,7 +21,9 @@ import {
   Briefcase,
   Globe,
   Users,
-  Building2
+  Building2,
+  FileText,
+  Search
 } from "lucide-react";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -36,16 +38,11 @@ export default function PartnerOverview() {
   const [partnerInfo, setPartnerInfo] = useState<any>(null);
   const [profile, setProfile] = useState<{ display_name: string; avatar_url: string }>({ display_name: "", avatar_url: "" });
   const [studentsData, setStudentsData] = useState<any[]>([]);
-  const [emgsData, setEmgsData] = useState<any[]>([]);
+  const [coursesCount, setCoursesCount] = useState(0);
+  const [applicationsCount, setApplicationsCount] = useState(0);
   const [webinars, setWebinars] = useState<any[]>([]);
   const [accountManager, setAccountManager] = useState<any>(null);
   const [tutorials, setTutorials] = useState<any[]>([]);
-
-  // Toggle states
-  const [isStudentsExpanded, setIsStudentsExpanded] = useState(true);
-  const [isOffersExpanded, setIsOffersExpanded] = useState(true);
-  const [isEmgsExpanded, setIsEmgsExpanded] = useState(true);
-  const [isVisaExpanded, setIsVisaExpanded] = useState(true);
 
   useEffect(() => {
     if (!user || !session) return;
@@ -109,18 +106,23 @@ export default function PartnerOverview() {
           setWebinars([]);
         }
 
-        // Fetch EMGS processing if students exist
+        // Fetch courses count
+        try {
+          const { count } = await supabase
+            .from("courses")
+            .select("*", { count: 'exact', head: true });
+          setCoursesCount(count || 0);
+        } catch (err) { console.error(err); }
+
+        // Fetch applications count
         if (students.length > 0) {
           const studentIds = students.map((s: any) => s.id);
           try {
-            const { data: emgsRes } = await supabase
-              .from("student_applications")
-              .select("id, emgs_status_percentage, student_id")
+            const { count } = await (supabase.from as any)("student_applications")
+              .select("*", { count: 'exact', head: true })
               .in("student_id", studentIds);
-            setEmgsData((emgsRes || []).filter((app: any) => Number(app.emgs_status_percentage) > 0));
-          } catch {
-            setEmgsData([]);
-          }
+            setApplicationsCount(count || 0);
+          } catch (err) { console.error(err); }
         }
 
         // Fetch platform settings and tutorials with fallbacks
@@ -133,7 +135,7 @@ export default function PartnerOverview() {
           if (amData?.value) {
             let val = amData.value;
             if (typeof val === 'string') {
-              try { val = JSON.parse(val); } catch (e) {}
+              try { val = JSON.parse(val); } catch (e) { console.error(e); }
             }
             setAccountManager(val);
           }
@@ -170,34 +172,6 @@ export default function PartnerOverview() {
 
   // Students Breakdown
   const totalStudentsCount = studentsData.length;
-  const wbStatuses = ['document_upload', 'document_review', 'document_verification'];
-  const submittedStatuses = ['university_selection', 'university_application', 'application_pending'];
-  
-  const receivedAtWbCount = studentsData.filter(s => wbStatuses.includes(s.status)).length;
-  const onHoldCount = studentsData.filter(s => s.status === 'on_hold').length;
-  const submittedCount = studentsData.filter(s => submittedStatuses.includes(s.status)).length;
-  const rejectedCount = studentsData.filter(s => s.status === 'rejected').length;
-
-  // Offers Breakdown
-  const conditionalCount = studentsData.filter(s => s.status === 'university_accepted').length;
-  const unconditionalCount = studentsData.filter(s => s.status === 'offer_letter_signed').length;
-  const totalOffersCount = conditionalCount + unconditionalCount;
-
-  // EMGS Breakdown
-  let emgs5 = 0, emgs15 = 0, emgs35 = 0, emgs70 = 0;
-  emgsData.forEach(item => {
-    const p = item.emgs_status_percentage || 0;
-    if (p > 0 && p <= 10) emgs5++;
-    else if (p > 10 && p <= 20) emgs15++;
-    else if (p > 20 && p <= 50) emgs35++;
-    else if (p > 50 && p <= 100) emgs70++;
-  });
-
-  // Visa Breakdown
-  const visaStatuses = ['val_issued', 'sev_application', 'sev_received'];
-  const visaTotalCount = studentsData.filter(s => visaStatuses.includes(s.status)).length;
-  const visaReceivedCount = studentsData.filter(s => s.status === 'sev_received').length;
-  const visaPendingCount = studentsData.filter(s => s.status === 'val_issued').length;
 
   // Utilities
   const extractYoutubeId = (url: string) => {
@@ -264,7 +238,7 @@ export default function PartnerOverview() {
                 <Button
                   size="sm"
                   onClick={() => navigate('/partner-dashboard/profile')}
-                  className="bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl px-3.5 py-1.5 h-8 text-xs font-semibold backdrop-blur-xs transition-all shadow-sm"
+                  className="bg-white/10 hover:bg-white/20 border-white/20 rounded-xl px-3.5 py-1.5 h-8 text-xs font-semibold backdrop-blur-xs transition-all shadow-sm"
                 >
                   Edit Profile
                 </Button>
@@ -302,156 +276,34 @@ export default function PartnerOverview() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Section 2: Total Students Summary */}
-        <Card className="bg-white border-[#2F4F97]/10 shadow-sm">
-          <CardHeader className="cursor-pointer hover:bg-slate-50 transition-colors pb-4" onClick={() => setIsStudentsExpanded(!isStudentsExpanded)}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <GraduationCap className="w-5 h-5 text-[#2F4F97]" />
-                <CardTitle className="text-base text-[#2F4F97]">
-                  Total Students – <span className="font-bold underline hover:text-[#1e3a75] transition-colors" onClick={(e) => { e.stopPropagation(); navigate('/partner-dashboard/students'); }}>{totalStudentsCount}</span>
-                </CardTitle>
-              </div>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-[#2F4F97]">
-                {isStudentsExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-              </Button>
+            <div className="bg-white border-[#2F4F97]/10 shadow-sm rounded-xl p-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+          
+          <div className="flex flex-col items-center justify-center p-4 cursor-pointer hover:bg-slate-50 transition-colors rounded-xl group" onClick={() => navigate('/partner-dashboard/students')}>
+            <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+              <Users className="w-6 h-6 text-[#2F4F97]" />
             </div>
-          </CardHeader>
-          {isStudentsExpanded && (
-            <CardContent className="pt-0 pb-4 border-t border-slate-100">
-              <div className="grid grid-cols-2 gap-3 mt-4">
-                <div className="p-3 bg-slate-50 rounded-lg border border-slate-100 cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => navigate('/partner-dashboard/students')}>
-                  <p className="text-xs text-muted-foreground font-medium">All Applications</p>
-                  <p className="text-xl font-bold text-[#2F4F97]">{totalStudentsCount}</p>
-                </div>
-                <div className="p-3 bg-slate-50 rounded-lg border border-slate-100 cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => navigate('/partner-dashboard/students?status=document_upload')}>
-                  <p className="text-xs text-muted-foreground font-medium">Received at WB</p>
-                  <p className="text-xl font-bold text-[#2F4F97]">{receivedAtWbCount}</p>
-                </div>
-                <div className="p-3 bg-slate-50 rounded-lg border border-slate-100 cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => navigate('/partner-dashboard/students?status=university_selection')}>
-                  <p className="text-xs text-muted-foreground font-medium">Submitted</p>
-                  <p className="text-xl font-bold text-[#2F4F97]">{submittedCount}</p>
-                </div>
-                <div className="p-3 bg-slate-50 rounded-lg border border-slate-100 cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => navigate('/partner-dashboard/students?status=on_hold')}>
-                  <p className="text-xs text-muted-foreground font-medium">On Hold</p>
-                  <p className="text-xl font-bold text-amber-600">{onHoldCount}</p>
-                </div>
-                <div className="p-3 bg-slate-50 rounded-lg border border-slate-100 cursor-pointer hover:bg-slate-100 transition-colors col-span-2" onClick={() => navigate('/partner-dashboard/students?status=rejected')}>
-                  <p className="text-xs text-muted-foreground font-medium">Rejected</p>
-                  <p className="text-xl font-bold text-red-600">{rejectedCount}</p>
-                </div>
-              </div>
-            </CardContent>
-          )}
-        </Card>
+            <p className="text-3xl font-bold text-[#2F4F97]">{totalStudentsCount}</p>
+            <p className="text-sm text-slate-500 font-medium mt-1">Total Students</p>
+          </div>
 
-        {/* Section 3: Offers */}
-        <Card className="bg-white border-[#2F4F97]/10 shadow-sm">
-          <CardHeader className="cursor-pointer hover:bg-slate-50 transition-colors pb-4" onClick={() => setIsOffersExpanded(!isOffersExpanded)}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Briefcase className="w-5 h-5 text-[#2F4F97]" />
-                <CardTitle className="text-base text-[#2F4F97]">
-                  Offers – <span className="font-bold underline hover:text-[#1e3a75] transition-colors" onClick={(e) => { e.stopPropagation(); navigate('/partner-dashboard/applications'); }}>{totalOffersCount}</span>
-                </CardTitle>
-              </div>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-[#2F4F97]">
-                {isOffersExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-              </Button>
+          <div className="flex flex-col items-center justify-center p-4 cursor-pointer hover:bg-slate-50 transition-colors rounded-xl group" onClick={() => navigate('/partner-dashboard/applications')}>
+            <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+              <FileText className="w-6 h-6 text-emerald-600" />
             </div>
-          </CardHeader>
-          {isOffersExpanded && (
-            <CardContent className="pt-0 pb-4 border-t border-slate-100">
-              <div className="grid grid-cols-2 gap-3 mt-4">
-                <div className="p-3 bg-blue-50/50 rounded-lg border border-blue-100 cursor-pointer hover:bg-blue-50 transition-colors" onClick={() => navigate('/partner-dashboard/applications?status=university_accepted')}>
-                  <p className="text-xs text-blue-700 font-medium">Conditional</p>
-                  <p className="text-2xl font-bold text-[#2F4F97]">{conditionalCount}</p>
-                </div>
-                <div className="p-3 bg-green-50/50 rounded-lg border border-green-100 cursor-pointer hover:bg-green-50 transition-colors" onClick={() => navigate('/partner-dashboard/applications?status=offer_letter_signed')}>
-                  <p className="text-xs text-green-700 font-medium">Unconditional</p>
-                  <p className="text-2xl font-bold text-green-700">{unconditionalCount}</p>
-                </div>
-              </div>
-            </CardContent>
-          )}
-        </Card>
+            <p className="text-3xl font-bold text-[#2F4F97]">{applicationsCount}</p>
+            <p className="text-sm text-slate-500 font-medium mt-1">Applications</p>
+          </div>
 
-        {/* Section 4: EMGS Processing */}
-        <Card className="bg-white border-[#2F4F97]/10 shadow-sm">
-          <CardHeader className="cursor-pointer hover:bg-slate-50 transition-colors pb-4" onClick={() => setIsEmgsExpanded(!isEmgsExpanded)}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Building className="w-5 h-5 text-[#2F4F97]" />
-                <CardTitle className="text-base text-[#2F4F97]">EMGS Processing</CardTitle>
-              </div>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-[#2F4F97]">
-                {isEmgsExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-              </Button>
+          <div className="flex flex-col items-center justify-center p-4 cursor-pointer hover:bg-slate-50 transition-colors rounded-xl group" onClick={() => navigate('/partner-dashboard/search-programs')}>
+            <div className="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+              <Search className="w-6 h-6 text-amber-600" />
             </div>
-          </CardHeader>
-          {isEmgsExpanded && (
-            <CardContent className="pt-0 pb-4 border-t border-slate-100">
-              <div className="grid grid-cols-4 gap-2 mt-4">
-                <div className="flex flex-col items-center justify-center p-3 bg-slate-50 rounded-lg border border-slate-100">
-                  <p className="text-2xl font-bold text-[#2F4F97]">{emgs5}</p>
-                  <p className="text-[10px] text-muted-foreground font-semibold mt-1">5%</p>
-                </div>
-                <div className="flex flex-col items-center justify-center p-3 bg-slate-50 rounded-lg border border-slate-100">
-                  <p className="text-2xl font-bold text-[#2F4F97]">{emgs15}</p>
-                  <p className="text-[10px] text-muted-foreground font-semibold mt-1">15%</p>
-                </div>
-                <div className="flex flex-col items-center justify-center p-3 bg-slate-50 rounded-lg border border-slate-100">
-                  <p className="text-2xl font-bold text-[#2F4F97]">{emgs35}</p>
-                  <p className="text-[10px] text-muted-foreground font-semibold mt-1">35%</p>
-                </div>
-                <div className="flex flex-col items-center justify-center p-3 bg-slate-50 rounded-lg border border-slate-100">
-                  <p className="text-2xl font-bold text-[#2F4F97]">{emgs70}</p>
-                  <p className="text-[10px] text-muted-foreground font-semibold mt-1">70%</p>
-                </div>
-              </div>
-            </CardContent>
-          )}
-        </Card>
+            <p className="text-3xl font-bold text-[#2F4F97]">{coursesCount}</p>
+            <p className="text-sm text-slate-500 font-medium mt-1">Search Programs</p>
+          </div>
 
-        {/* Section 5: Visa Application */}
-        <Card className="bg-white border-[#2F4F97]/10 shadow-sm">
-          <CardHeader className="cursor-pointer hover:bg-slate-50 transition-colors pb-4" onClick={() => setIsVisaExpanded(!isVisaExpanded)}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Briefcase className="w-5 h-5 text-[#2F4F97]" />
-                <CardTitle className="text-base text-[#2F4F97]">
-                  Visa Application – {visaTotalCount}
-                </CardTitle>
-              </div>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-[#2F4F97]">
-                {isVisaExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-              </Button>
-            </div>
-          </CardHeader>
-          {isVisaExpanded && (
-            <CardContent className="pt-0 pb-4 border-t border-slate-100">
-              <div className="grid grid-cols-2 gap-3 mt-4">
-                <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
-                  <p className="text-xs text-muted-foreground font-medium">Visa Received</p>
-                  <p className="text-lg font-bold text-green-700">{visaReceivedCount}</p>
-                </div>
-                <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
-                  <p className="text-xs text-muted-foreground font-medium">Visa Rejected</p>
-                  <p className="text-lg font-bold text-red-600">0</p>
-                </div>
-                <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
-                  <p className="text-xs text-muted-foreground font-medium">Deferrals</p>
-                  <p className="text-lg font-bold text-amber-600">{onHoldCount}</p>
-                </div>
-                <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
-                  <p className="text-xs text-muted-foreground font-medium text-nowrap truncate">Pending From Partner</p>
-                  <p className="text-lg font-bold text-[#2F4F97]">{visaPendingCount}</p>
-                </div>
-              </div>
-            </CardContent>
-          )}
-        </Card>
+        </div>
       </div>
 
       {/* Section 6: Bottom Section (3 cards) */}

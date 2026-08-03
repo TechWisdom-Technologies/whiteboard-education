@@ -55,7 +55,7 @@ export default function Events() {
                       <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{ev.time}</span>
                     </div>
                     {ev.spots_left > 0 && <p className="text-xs text-[#2F4F97] font-semibold">{ev.spots_left} spots left</p>}
-                    <Button size="sm" className="w-full bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90" onClick={() => navigate("/contact")}>Register</Button>
+                    <Button size="sm" className="w-full" onClick={() => navigate("/contact")}>Register</Button>
                   </CardContent>
                 </Card>
               );

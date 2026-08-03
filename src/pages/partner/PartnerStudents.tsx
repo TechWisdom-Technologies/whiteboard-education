@@ -319,7 +319,7 @@ export default function PartnerStudents() {
             variant="ghost" 
             size="icon"
             onClick={() => setAddOpen(false)} 
-            className="h-8 w-8 rounded-full bg-[#2F4F97]/10 text-[#2F4F97] hover:bg-[#2F4F97]/20 transition-colors flex-shrink-0"
+            className="h-8 w-8 rounded-full bg-[#2F4F97]/10 hover:bg-[#2F4F97]/20 transition-colors flex-shrink-0"
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -401,7 +401,7 @@ export default function PartnerStudents() {
               <Button variant="outline" onClick={() => setAddOpen(false)} className="h-10 px-6">
                 Cancel
               </Button>
-              <Button className="h-10 px-6 bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white" onClick={handleAdd} disabled={submitting}>
+              <Button className="h-10 px-6" onClick={handleAdd} disabled={submitting}>
                 {submitting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UserPlus className="h-4 w-4 mr-2" />}
                 Save Student
               </Button>
@@ -428,10 +428,10 @@ export default function PartnerStudents() {
               <Trash2 className="h-4 w-4 mr-2" /> Delete ({selectedIds.length})
             </Button>
           )}
-          <Button variant="outline" size="sm" className="border-[#2F4F97] text-[#2F4F97] hover:bg-blue-50 text-xs h-9 px-4">
+          <Button variant="outline" size="sm" className="text-xs h-9 px-4">
             Archived Students
           </Button>
-          <Button size="sm" className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 text-xs h-9 px-4" onClick={() => setAddOpen(true)}>
+          <Button size="sm" className="text-xs h-9 px-4" onClick={() => setAddOpen(true)}>
             Register New Student +
           </Button>
         </div>
@@ -496,7 +496,7 @@ export default function PartnerStudents() {
              />
            </div>
            
-           <Button className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white h-9 px-6 text-xs shrink-0 rounded-md">Search</Button>
+           <Button className="h-9 px-6 text-xs shrink-0 rounded-md">Search</Button>
         </div>
       </div>
 

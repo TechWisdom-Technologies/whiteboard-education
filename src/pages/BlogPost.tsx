@@ -48,7 +48,7 @@ export default function BlogPost() {
             <BookOpen className="h-16 w-16 text-[#999999] mx-auto" />
             <h1 className="text-2xl font-semibold text-[#1E293B]">Article Not Found</h1>
             <Link to="/blog">
-              <Button style={{ backgroundColor: "#2F4F97", color: "#1E293B" }} className="font-semibold border border-[#2F4F97]">Browse All Articles</Button>
+              <Button style={{ backgroundColor: "#2F4F97", color: "#1E293B" }} className="font-semibold">Browse All Articles</Button>
             </Link>
           </div>
         </div>

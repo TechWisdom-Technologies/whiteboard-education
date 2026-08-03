@@ -24,7 +24,7 @@ interface PartnerRegistration {
   annual_students: number;
   nid_document_url: string;
   trade_license_url: string;
-  certificate_urls: string[];
+  certificate_urls: any[];
   status: string;
   admin_notes: string;
   created_at: string;
@@ -242,7 +242,7 @@ export default function AdminPartners() {
             </TableHeader>
             <TableBody>
               {filtered.map((reg) => {
-                const docCount = (reg.nid_document_url ? 1 : 0) + (reg.trade_license_url ? 1 : 0) + ((reg.certificate_urls as string[])?.length || 0);
+                const docCount = (reg.nid_document_url ? 1 : 0) + (reg.trade_license_url ? 1 : 0) + ((reg.certificate_urls as any[])?.length || 0);
                 return (
                   <TableRow key={reg.id} className="h-10 hover:bg-muted/50 transition-colors">
                     <TableCell className="text-center px-0 py-1">

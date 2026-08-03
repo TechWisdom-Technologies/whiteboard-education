@@ -356,7 +356,7 @@ export default function UniversityDetail() {
   const stepIcons = [FileText, CheckCircle, HomeIcon, Car, MapPinCheck];
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col">
       <MegaMenu disableSticky />
 
       {/* ═══ HERO: Big Logo + Name + Buttons ═══ */}
@@ -395,20 +395,20 @@ export default function UniversityDetail() {
                 
                 {/* Mobile Buttons */}
                 <div className="flex md:hidden flex-row gap-3 w-full justify-center">
-                  <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] hover:text-white rounded-[20px] border-none font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
+                  <Button className="rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
                     Apply Now
                   </Button>
-                  <Button variant="outline" className="bg-white text-[#2F4F97] border-2 border-[#2F4F97] hover:bg-[#EEF4FF] hover:text-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate("/contact")}>
+                  <Button variant="outline" className="hover:text-[#2F4F97] rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate("/contact")}>
                     Ask Us
                   </Button>
                 </div>
 
                 {/* Desktop Buttons */}
                 <div className="hidden md:flex flex-row gap-3 w-auto justify-end">
-                  <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] hover:text-white rounded-[20px] border-none font-semibold px-10 h-14 text-[15px]" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
+                  <Button className="rounded-[20px] font-semibold px-10 h-14 text-[15px]" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
                     Apply Now
                   </Button>
-                  <Button variant="outline" className="bg-white text-[#2F4F97] border-2 border-[#2F4F97] hover:bg-[#EEF4FF] hover:text-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold px-10 h-14 text-[15px]" onClick={() => navigate("/contact")}>
+                  <Button variant="outline" className="hover:text-[#2F4F97] rounded-[20px] font-semibold px-10 h-14 text-[15px]" onClick={() => navigate("/contact")}>
                     Ask Us
                   </Button>
                 </div>
@@ -438,20 +438,20 @@ export default function UniversityDetail() {
           <div className={`flex items-center transition-all duration-300 shrink-0 ${isScrolled ? 'gap-2 pl-3 opacity-100 translate-x-0 w-auto' : 'opacity-0 translate-x-4 pointer-events-none w-0 overflow-hidden m-0 p-0'}`}>
             {/* Mobile Buttons */}
             <div className="flex md:hidden items-center gap-2">
-              <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] hover:text-white rounded-[20px] border-none font-semibold px-5 h-10 text-[14px]" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
+              <Button className="rounded-[20px] font-semibold px-5 h-10 text-[14px]" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
                 Apply
               </Button>
-              <Button variant="outline" className="bg-white text-[#2F4F97] border-2 border-[#2F4F97] hover:bg-[#EEF4FF] hover:text-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold h-10 w-12 p-0 flex items-center justify-center shrink-0" onClick={() => navigate("/contact")}>
+              <Button variant="outline" className="hover:text-[#2F4F97] rounded-[20px] font-semibold h-10 w-12 p-0 flex items-center justify-center shrink-0" onClick={() => navigate("/contact")}>
                 <span className="font-bold text-[16px]">?</span>
               </Button>
             </div>
             
             {/* Desktop Buttons */}
             <div className="hidden md:flex items-center gap-2">
-              <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] hover:text-white rounded-[20px] border-none font-semibold px-6 h-10 text-[14px]" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
+              <Button className="rounded-[20px] font-semibold px-6 h-10 text-[14px]" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
                 Apply Now
               </Button>
-              <Button variant="outline" className="bg-white text-[#2F4F97] border-2 border-[#2F4F97] hover:bg-[#EEF4FF] hover:text-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold px-6 h-10 text-[14px]" onClick={() => navigate("/contact")}>
+              <Button variant="outline" className="hover:text-[#2F4F97] rounded-[20px] font-semibold px-6 h-10 text-[14px]" onClick={() => navigate("/contact")}>
                 Ask Us
               </Button>
             </div>
@@ -797,14 +797,14 @@ export default function UniversityDetail() {
                   {/* Actions Row */}
                   <div className="flex gap-2 justify-end w-full pt-2">
                     <Button 
-                      className="w-full md:w-auto h-11 px-8 rounded-[20px] bg-[#2F4F97] text-white hover:bg-[#243E79] border-2 border-gray-900 font-bold shadow-none"
+                      className="w-full md:w-auto h-11 px-8 rounded-[20px] font-bold"
                       onClick={() => { setCSearch(tempSearch); setCLevel(tempLevel); setCCategory(tempCategory); setCPage(1); }}
                     >
                       Apply
                     </Button>
                     <Button 
                       variant="outline"
-                      className="w-full md:w-auto h-11 px-8 rounded-[20px] bg-white text-[#2F4F97] border-2 border-gray-900 hover:bg-gray-50 font-bold shadow-none"
+                      className="w-full md:w-auto h-11 px-8 rounded-[20px] font-bold"
                       onClick={() => { setTempSearch(""); setTempLevel("all"); setTempCategory("all"); setCSearch(""); setCLevel("all"); setCCategory("all"); setCPage(1); }}
                     >
                       Reset
@@ -895,10 +895,10 @@ export default function UniversityDetail() {
                         >
                           <Layers className="h-4 w-4" />
                         </Button>
-                        <Button className="flex-1 md:w-full bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-2 border-gray-900 shadow-none font-bold h-11" onClick={e => { e.preventDefault(); navigate(`/apply?courseId=${c.id}`); }}>
+                        <Button className="flex-1 md:w-full rounded-[20px] font-bold h-11" onClick={e => { e.preventDefault(); navigate(`/apply?courseId=${c.id}`); }}>
                           Apply Now
                         </Button>
-                        <Button variant="outline" className="flex-1 md:w-full bg-white text-[#2F4F97] border-2 border-gray-900 shadow-none rounded-[20px] font-bold h-11 hover:bg-gray-50" onClick={e => { e.preventDefault(); navigate("/contact"); }}>
+                        <Button variant="outline" className="flex-1 md:w-full rounded-[20px] font-bold h-11" onClick={e => { e.preventDefault(); navigate("/contact"); }}>
                           Ask Us
                         </Button>
                       </div>
@@ -909,7 +909,7 @@ export default function UniversityDetail() {
             </div>
             {totalP > 1 && (
               <div className="flex items-center justify-center gap-1.5 md:gap-2 mt-8 flex-wrap">
-                <Button variant="outline" size="sm" className="bg-white" disabled={cPage <= 1} onClick={() => setCPage(cPage - 1)}>Prev</Button>
+                <Button variant="outline" size="sm"  disabled={cPage <= 1} onClick={() => setCPage(cPage - 1)}>Prev</Button>
                 {Array.from({ length: totalP }, (_, i) => i + 1)
                   .filter(p => {
                     if (totalP <= 5) return true;
@@ -921,7 +921,7 @@ export default function UniversityDetail() {
                   <Button key={p} variant={p === cPage ? "default" : "outline"} size="sm"
                     className={p === cPage ? "bg-[#2F4F97] text-white hover:bg-[#243E79] border-[#2F4F97]" : "bg-white text-gray-700"} onClick={() => setCPage(p)}>{p}</Button>
                 ))}
-                <Button variant="outline" size="sm" className="bg-white" disabled={cPage >= totalP} onClick={() => setCPage(cPage + 1)}>Next</Button>
+                <Button variant="outline" size="sm"  disabled={cPage >= totalP} onClick={() => setCPage(cPage + 1)}>Next</Button>
               </div>
             )}
           </div>
@@ -1154,7 +1154,7 @@ export default function UniversityDetail() {
         <div className="w-full max-w-[1000px] mx-auto px-4 text-center">
           <h2 className="text-xl font-semibold text-white mb-2">Ready to Start Your Journey?</h2>
           <p className="text-white/90 text-sm mb-6">Fill in your details and our counsellors will guide you - completely free.</p>
-          <Button size="lg" className="bg-[#1E293B] text-white hover:bg-[#1E293B]/90 font-bold px-10 h-12" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>Start Your Application</Button>
+          <Button size="lg" className="font-bold px-10 h-12" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>Start Your Application</Button>
         </div>
       </section>
 

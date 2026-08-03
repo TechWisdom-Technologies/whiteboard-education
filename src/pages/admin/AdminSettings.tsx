@@ -265,7 +265,7 @@ export default function AdminSettings() {
                   </div>
                 </div>
                 <div className="pt-6 border-t border-gray-100 mt-8 flex justify-end">
-                  <Button onClick={handleSaveProfile} disabled={savingProfile} className="w-full sm:w-auto bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white gap-2 font-medium text-[13px] h-10 px-6">
+                  <Button onClick={handleSaveProfile} disabled={savingProfile} className="w-full sm:w-auto gap-2 font-medium text-[13px] h-10 px-6">
                     {savingProfile ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                     Save Profile
                   </Button>
@@ -290,7 +290,7 @@ export default function AdminSettings() {
                       <p className="text-[13px] font-medium text-[#1E293B]">Change Password</p>
                       <p className="text-[12px] text-gray-500">To change your password, we'll send a 6-digit verification code to <span className="font-medium text-[#1E293B]">{user?.email}</span>.</p>
                     </div>
-                    <Button onClick={handleSendCode} className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 gap-2 font-medium text-[13px] h-10 shrink-0 px-6">
+                    <Button onClick={handleSendCode} className="gap-2 font-medium text-[13px] h-10 shrink-0 px-6">
                       <KeyRound className="h-4 w-4" />
                       Send Code
                     </Button>
@@ -321,10 +321,10 @@ export default function AdminSettings() {
                       />
                     </div>
                     <div className="flex gap-3 pt-2">
-                      <Button onClick={handleVerifyCode} disabled={otpCode.length < 6} className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white gap-2 font-medium text-[13px] h-10 px-6 flex-1">
+                      <Button onClick={handleVerifyCode} disabled={otpCode.length < 6} className="gap-2 font-medium text-[13px] h-10 px-6 flex-1">
                         Verify Code <ArrowRight className="h-4 w-4 ml-1" />
                       </Button>
-                      <Button variant="outline" onClick={resetPwFlow} className="text-gray-600 text-[13px] h-10 px-6 bg-white shadow-sm hover:bg-gray-50">Cancel</Button>
+                      <Button variant="outline" onClick={resetPwFlow} className="text-[13px] h-10 px-6 shadow-sm">Cancel</Button>
                     </div>
                   </div>
                 )}
@@ -351,10 +351,10 @@ export default function AdminSettings() {
                       <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat new password" className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm" />
                     </div>
                     <div className="flex gap-3 pt-4">
-                      <Button onClick={handleUpdatePw} className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 gap-2 font-medium text-[13px] h-10 px-6 flex-1">
+                      <Button onClick={handleUpdatePw} className="gap-2 font-medium text-[13px] h-10 px-6 flex-1">
                         <Save className="h-4 w-4" /> Update Password
                       </Button>
-                      <Button variant="outline" onClick={resetPwFlow} className="text-gray-600 text-[13px] h-10 px-6 bg-white shadow-sm hover:bg-gray-50">Cancel</Button>
+                      <Button variant="outline" onClick={resetPwFlow} className="text-[13px] h-10 px-6 shadow-sm">Cancel</Button>
                     </div>
                   </div>
                 )}
@@ -420,7 +420,7 @@ export default function AdminSettings() {
                     </div>
                   </div>
                   <div className="pt-6 border-t border-gray-100 mt-8 flex justify-end">
-                    <Button onClick={handleSaveSystem} disabled={savingSystem} className="w-full sm:w-auto bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white gap-2 font-medium text-[13px] h-10 px-6">
+                    <Button onClick={handleSaveSystem} disabled={savingSystem} className="w-full sm:w-auto gap-2 font-medium text-[13px] h-10 px-6">
                       {savingSystem ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                       Update Settings
                     </Button>

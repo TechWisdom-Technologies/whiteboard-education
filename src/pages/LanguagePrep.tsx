@@ -41,7 +41,7 @@ export default function LanguagePrep() {
             <BookOpen className="h-12 w-12 mx-auto mb-4 text-[#2F4F97]" />
             <h1 className="text-4xl font-extrabold mb-3">IELTS & TOEFL Preparation</h1>
             <p className="text-primary-foreground/70 max-w-xl mx-auto mb-8">Get the score you need with expert tutoring and unlimited practice tests.</p>
-            <Button size="lg" className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90">
+            <Button size="lg" >
               <Zap className="h-4 w-4 mr-2" /> Take a Free Mock Test
             </Button>
           </div>
@@ -105,7 +105,7 @@ export default function LanguagePrep() {
           <div className="container mx-auto px-4 text-center">
             <h3 className="text-xl font-bold mb-3">Not sure about your current level?</h3>
             <p className="text-muted-foreground mb-6">Take our free 15-minute diagnostic test and get an estimated IELTS band score.</p>
-            <Button size="lg" className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90">Take Free Mock Test</Button>
+            <Button size="lg" >Take Free Mock Test</Button>
           </div>
         </section>
       </main>

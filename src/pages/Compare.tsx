@@ -282,7 +282,7 @@ export default function Compare() {
                       ) : "-";
                     }},
                     { label: "Action", icon: ExternalLink, render: (uni: any) => (
-                      <Button asChild size="sm" className="w-full h-auto min-h-[32px] py-1.5 px-1 md:px-3 text-[9px] md:text-[11px] bg-white text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white border border-[#2F4F97]/20 shadow-sm transition-all rounded-lg group">
+                      <Button asChild size="sm" className="w-full h-auto min-h-[32px] py-1.5 px-1 md:px-3 text-[9px] md:text-[11px] hover:bg-[#2F4F97] shadow-sm transition-all rounded-lg group">
                         <Link to={`/universities/${generateSlug(uni.name)}`} className="flex items-center justify-center gap-1">
                           <span className="whitespace-normal text-center leading-tight">Go to university detail</span>
                           <ArrowRight className="w-2.5 h-2.5 md:w-3 md:h-3 shrink-0 transition-transform group-hover:translate-x-0.5" />

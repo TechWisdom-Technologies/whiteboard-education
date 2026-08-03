@@ -536,7 +536,7 @@ export default function Universities() {
                         {/* Right: Buttons */}
                         <div className="w-full md:col-span-2 lg:col-span-1 flex flex-col gap-3 mt-4 lg:mt-2">
                           <Button
-                            className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent h-9 px-3 font-bold"
+                            className="rounded-[20px] h-9 px-3 font-bold"
                             style={{
                               fontFamily: "Poppins, sans-serif",
                             }}
@@ -547,7 +547,7 @@ export default function Universities() {
                           <Link to={`/universities/${generateSlug(u.name)}`} className="block">
                             <Button
                               variant="outline"
-                              className="bg-[#EEF4FF] text-[#2F4F97] border-[#2F4F97]/20 h-9 px-3 font-bold w-full hover:bg-[#EEF4FF]/80"
+                              className="bg-[#EEF4FF] h-9 px-3 font-bold w-full hover:bg-[#EEF4FF]/80"
                               style={{
                                 fontFamily: "Poppins, sans-serif",
                               }}

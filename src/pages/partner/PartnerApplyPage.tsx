@@ -256,7 +256,7 @@ export default function PartnerApplyPage() {
         <GraduationCap className="h-12 w-12 text-gray-300 mb-4" />
         <h2 className="text-lg font-semibold text-gray-700 mb-2">No program selected</h2>
         <p className="text-sm text-gray-500 mb-5">Please go back to Search Programs and select a program first.</p>
-        <Button onClick={() => navigate("/partner-dashboard/search-programs")} className="bg-[#2F4F97] text-white gap-2">
+        <Button onClick={() => navigate("/partner-dashboard/search-programs")} className="gap-2">
           <ArrowLeft className="h-4 w-4" /> Go to Search Programs
         </Button>
       </div>
@@ -353,7 +353,7 @@ export default function PartnerApplyPage() {
           <Button
             variant="outline"
             size="sm"
-            className="gap-1.5 text-[#2F4F97] border-[#2F4F97]/30 hover:bg-[#2F4F97]/5 h-8 text-xs"
+            className="gap-1.5 border-[#2F4F97]/30 h-8 text-xs"
             onClick={() => navigate("/partner-dashboard/students")}
           >
             <UserPlus className="h-3.5 w-3.5" />
@@ -385,7 +385,7 @@ export default function PartnerApplyPage() {
               </p>
               <Button
                 onClick={() => navigate("/partner-dashboard/students")}
-                className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white gap-2"
+                className="gap-2"
               >
                 <UserPlus className="h-4 w-4" />
                 Add Your First Student
@@ -496,7 +496,7 @@ export default function PartnerApplyPage() {
             <Button
               onClick={handleSubmit}
               disabled={applying || !selectedStudentId}
-              className="h-9 bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white gap-2 text-sm min-w-[160px]"
+              className="h-9 gap-2 text-sm min-w-[160px]"
             >
               {applying ? (
                 <>

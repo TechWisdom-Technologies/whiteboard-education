@@ -91,7 +91,7 @@ export default function LanguageCenterDetail() {
   const faqs = Array.isArray(lc.faqs) ? lc.faqs : [];
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col">
       <MegaMenu disableSticky />
 
       {/* ═══ HERO: Logo + Name + Location + Buttons ═══ */}
@@ -152,10 +152,10 @@ export default function LanguageCenterDetail() {
                 
                 {/* Mobile Buttons */}
                 <div className="flex md:hidden flex-row gap-3 w-full justify-center">
-                  <Button className="bg-[#2F4F97] text-white hover:bg-[#243E79] hover:text-white rounded-[20px] border-2 border-gray-900 shadow-none font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate(`/apply?centerId=${lc.id}`)}>
+                  <Button className="rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate(`/apply?centerId=${lc.id}`)}>
                     Apply Now
                   </Button>
-                  <Button variant="outline" className="bg-white text-[#2F4F97] border-2 border-gray-900 shadow-none hover:bg-gray-50 rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate("/contact")}>
+                  <Button variant="outline" className="rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate("/contact")}>
                     Ask Us
                   </Button>
                 </div>
@@ -163,14 +163,14 @@ export default function LanguageCenterDetail() {
                 {/* Desktop Buttons */}
                 <div className="hidden md:flex flex-row gap-3 w-auto justify-end">
                   <Button
-                    className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-2 border-gray-900 shadow-none font-bold px-8 h-12"
+                    className="rounded-[20px] font-bold px-8 h-12"
                     onClick={() => navigate(`/apply?centerId=${lc.id}`)}
                   >
                     Apply Now
                   </Button>
                   <Button
                     variant="outline"
-                    className="bg-white text-[#2F4F97] hover:bg-gray-50 border-2 border-gray-900 rounded-[20px] shadow-none font-bold px-8 h-12"
+                    className="rounded-[20px] font-bold px-8 h-12"
                     onClick={() => navigate("/contact")}
                   >
                     Ask Us
@@ -218,14 +218,14 @@ export default function LanguageCenterDetail() {
             className={`hidden md:flex items-center gap-2 transition-all duration-300 ${isScrolled ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none"}`}
           >
             <Button
-              className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-2 border-gray-900 shadow-none font-bold px-6 h-10"
+              className="rounded-[20px] font-bold px-6 h-10"
               onClick={() => navigate(`/apply?centerId=${lc.id}`)}
             >
               Apply Now
             </Button>
             <Button
               variant="outline"
-              className="bg-white text-[#2F4F97] hover:bg-gray-50 border-2 border-gray-900 rounded-[20px] shadow-none font-bold px-6 h-10"
+              className="rounded-[20px] font-bold px-6 h-10"
               onClick={() => navigate("/contact")}
             >
               Ask Us
@@ -237,14 +237,14 @@ export default function LanguageCenterDetail() {
             className={`flex md:hidden items-center gap-2 transition-all duration-300 ${isScrolled ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none"}`}
           >
             <Button
-              className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-2 border-gray-900 shadow-none font-bold px-4 h-10 text-[13px]"
+              className="rounded-[20px] font-bold px-4 h-10 text-[13px]"
               onClick={() => navigate(`/apply?centerId=${lc.id}`)}
             >
               Apply Now
             </Button>
             <Button
               variant="outline"
-              className="bg-white text-[#2F4F97] hover:bg-gray-50 border-2 border-gray-900 rounded-[20px] shadow-none font-bold px-4 h-10 flex items-center justify-center text-lg min-w-[50px]"
+              className="rounded-[20px] font-bold px-4 h-10 flex items-center justify-center text-lg min-w-[50px]"
               onClick={() => navigate("/contact")}
             >
               ?
@@ -486,7 +486,7 @@ export default function LanguageCenterDetail() {
             <div className="relative z-10 shrink-0 w-full md:w-auto">
               <Button
                 size="lg"
-                className="w-full md:w-auto bg-transparent text-[#1A2C5B] hover:bg-[#EEF4FF] border-2 border-[#1A2C5B] rounded-[20px] shadow-none font-bold px-10 h-12"
+                className="w-full md:w-auto bg-transparent text-[#1A2C5B] border-[#1A2C5B] rounded-[20px] font-bold px-10 h-12"
                 onClick={() => navigate(`/apply?centerId=${lc.id}`)}
               >
                 Register Now

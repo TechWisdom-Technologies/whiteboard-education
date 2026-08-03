@@ -42,7 +42,7 @@ export function ResourcesSection() {
                 <Badge variant="outline" className={`${typeColors[r.type]} mb-3`}>{r.type}</Badge>
                 <h3 className="font-bold text-sm mb-2">{r.title}</h3>
                 <p className="text-xs text-muted-foreground mb-4">{r.description}</p>
-                <Button variant="outline" className="w-full gap-1.5 group-hover:bg-[#2F4F97]/10 group-hover:text-[#2F4F97] group-hover:border-[#2F4F97]/30 transition-colors" onClick={() => setDownloadItem(r)}>
+                <Button variant="outline" className="w-full gap-1.5 transition-colors" onClick={() => setDownloadItem(r)}>
                   <Download className="h-3.5 w-3.5" /> Download Free
                 </Button>
               </CardContent>
@@ -62,7 +62,7 @@ export function ResourcesSection() {
                   <p className="font-bold text-sm">{downloadItem.title}</p>
                 </div>
                 <Input type="email" placeholder="your@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
-                <Button className="w-full text-white hover:opacity-90" style={{ backgroundColor: "#2F4F97", color: "#1E293B" }} onClick={handleDownload} disabled={!email}>
+                <Button className="w-full hover:opacity-90" style={{ backgroundColor: "#2F4F97", color: "#1E293B" }} onClick={handleDownload} disabled={!email}>
                   Send to My Email <ArrowRight className="h-4 w-4 ml-1" />
                 </Button>
               </div>

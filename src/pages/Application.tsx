@@ -325,7 +325,7 @@ export default function Application() {
                   </div>
 
                   <div className="flex justify-end pt-6">
-                    <Button onClick={() => validateStep1() && setStep(2)} className="bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97]">
+                    <Button onClick={() => validateStep1() && setStep(2)} className="hover:text-[#2F4F97]">
                       Next <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
@@ -359,7 +359,7 @@ export default function Application() {
                     <Button variant="outline" onClick={() => setStep(1)}>
                       <ArrowLeft className="mr-2 h-4 w-4" /> Back
                     </Button>
-                    <Button onClick={() => validateStep2() && setStep(3)} className="bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97]">
+                    <Button onClick={() => validateStep2() && setStep(3)} className="hover:text-[#2F4F97]">
                       Next <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
@@ -421,7 +421,7 @@ export default function Application() {
                       <Button variant="outline" onClick={() => setStep(2)} disabled={submitting}>
                         <ArrowLeft className="mr-2 h-4 w-4" /> Back
                       </Button>
-                      <Button onClick={handleSubmit} disabled={submitting} className="bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97] font-bold px-8">
+                      <Button onClick={handleSubmit} disabled={submitting} className="hover:text-[#2F4F97] font-bold px-8">
                         {uploading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                         {uploading ? "Uploading Docs..." : submitting ? "Submitting..." : "Submit Application"}
                       </Button>

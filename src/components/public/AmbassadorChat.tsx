@@ -123,7 +123,7 @@ export function AmbassadorChat() {
               <div className="px-4 pb-2">
                 <div className="flex gap-2 overflow-x-auto pb-2">
                   {selectedAmbassador.icebreakers.map((q) => (
-                    <Button key={q} variant="outline" size="sm" className="flex-shrink-0 text-xs hover:bg-[#2F4F97]/10 hover:text-[#2F4F97] hover:border-[#2F4F97]/30 transition-colors" onClick={() => sendMessage(q)}>
+                    <Button key={q} variant="outline" size="sm" className="flex-shrink-0 text-xs hover:text-[#2F4F97] transition-colors" onClick={() => sendMessage(q)}>
                       {q}
                     </Button>
                   ))}
@@ -139,7 +139,7 @@ export function AmbassadorChat() {
                   onKeyDown={(e) => e.key === "Enter" && sendMessage(input)}
                   className="flex-1"
                 />
-                <Button size="icon" className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90" onClick={() => sendMessage(input)} disabled={!input.trim()}>
+                <Button size="icon"  onClick={() => sendMessage(input)} disabled={!input.trim()}>
                   <Send className="h-4 w-4" />
                 </Button>
               </div>

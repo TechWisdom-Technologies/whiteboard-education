@@ -458,7 +458,7 @@ export default function PartnerSearchPrograms() {
                         {/* Actions */}
                         <div className="flex flex-row md:flex-col gap-2 shrink-0 w-full md:w-auto">
                           <Button
-                            className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white flex-1 md:flex-initial h-9 px-4 text-xs font-semibold rounded-lg gap-1.5"
+                            className="flex-1 md:flex-initial h-9 px-4 text-xs font-semibold rounded-lg gap-1.5"
                             onClick={() => navigate(`/partner-dashboard/apply?courseId=${c.id}`)}
                           >
                             <UserPlus className="h-3.5 w-3.5" />
@@ -466,7 +466,7 @@ export default function PartnerSearchPrograms() {
                           </Button>
                           <Button
                             variant="outline"
-                            className="flex-1 md:flex-initial h-9 px-4 text-xs font-semibold rounded-lg border-gray-200 hover:bg-gray-50"
+                            className="flex-1 md:flex-initial h-9 px-4 text-xs font-semibold rounded-lg"
                             onClick={() => toast.info("Our support team will get back to you shortly!")}
                           >
                             Ask Us

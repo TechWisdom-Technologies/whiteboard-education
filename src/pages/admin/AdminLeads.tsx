@@ -107,7 +107,7 @@ export default function AdminLeads() {
                   variant="ghost" 
                   size="icon"
                   onClick={() => setDetailOpen(false)} 
-                  className="h-8 w-8 rounded-full bg-[#2F4F97]/10 text-[#2F4F97] hover:bg-[#2F4F97]/20 transition-colors flex-shrink-0"
+                  className="h-8 w-8 rounded-full bg-[#2F4F97]/10 hover:bg-[#2F4F97]/20 transition-colors flex-shrink-0"
                 >
                   <ArrowLeft className="h-4 w-4" />
                 </Button>

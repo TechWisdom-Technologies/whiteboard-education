@@ -82,7 +82,7 @@ export function ReminderModal({ open, onOpenChange, universityName, intakeLabel,
                 <Label htmlFor="rem-email">Email *</Label>
                 <Input id="rem-email" type="email" placeholder="you@example.com" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} required maxLength={255} />
               </div>
-              <Button type="submit" disabled={loading} className="w-full bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 h-11 font-bold">
+              <Button type="submit" disabled={loading} className="w-full h-11 font-bold">
                 {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Bell className="h-4 w-4 mr-2" />}
                 Submit Reminder Request
               </Button>

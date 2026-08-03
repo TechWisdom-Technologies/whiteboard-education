@@ -85,7 +85,7 @@ export function StatusTracker({
               size="sm" 
               onClick={handleNextStep}
               disabled={isUpdating}
-              className="bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white shadow-sm shrink-0 whitespace-nowrap text-xs px-4 h-7"
+              className="shadow-sm shrink-0 whitespace-nowrap text-xs px-4 h-7"
             >
               {isUpdating ? <Loader2 className="h-3 w-3 animate-spin mr-2" /> : null}
               Advance to Next Step
@@ -112,7 +112,7 @@ export function StatusTracker({
               variant="outline" 
               size="sm" 
               onClick={() => onStatusChange?.('document_upload')}
-              className="mt-4 bg-white"
+              className="mt-4"
             >
               Restart Flow
             </Button>

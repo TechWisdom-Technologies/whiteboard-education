@@ -346,14 +346,14 @@ export default function Courses2() {
                   {/* Apply/Reset Buttons */}
                   <div className="flex items-center gap-3 px-5 pb-5 bg-white">
                     <Button 
-                      className="flex-1 font-bold h-11 text-sm bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97]"
+                      className="flex-1 font-bold h-11 text-sm hover:text-[#2F4F97]"
                       onClick={applyFilters}
                     >
                       Apply Filter
                     </Button>
                     <Button 
                       variant="outline"
-                      className="flex-1 font-bold h-11 text-sm border-gray-200 text-[#1E293B] hover:bg-gray-50"
+                      className="flex-1 font-bold h-11 text-sm"
                       onClick={resetFilters}
                     >
                       Reset Filter
@@ -484,7 +484,7 @@ export default function Courses2() {
                           {/* Right: Buttons */}
                           <div className="w-full md:col-span-2 lg:col-span-1 flex flex-col gap-3 mt-4 lg:mt-2">
                             <Button
-                              className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent w-full h-10 font-bold hover: border"
+                              className="rounded-[20px] w-full h-10 font-bold hover:"
                               onClick={() => navigate(`/apply?courseId=${c.id}`)}
                             >
 
@@ -492,7 +492,7 @@ export default function Courses2() {
                             </Button>
                             <Link to={`/courses/${generateSlug(c.title)}`} className="block w-full">
                               <Button
-                                className="bg-white w-full h-10 font-bold hover:bg-gray-50"
+                                className="w-full h-10 font-bold"
                               >
 
 

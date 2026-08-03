@@ -49,7 +49,7 @@ interface PartnerRegistration {
   annual_students: number | null;
   nid_document_url: string | null;
   trade_license_url: string | null;
-  certificate_urls: string[] | null;
+  certificate_urls: any[] | null;
   status: string;
   admin_notes: string | null;
   created_at: string;
@@ -209,10 +209,13 @@ export default function AdminPartnerProfile() {
   const docs = [
     { label: "National ID / Passport", url: partner.nid_document_url },
     { label: "Trade License", url: partner.trade_license_url },
-    ...(partner.certificate_urls || []).map((url, i) => ({
-      label: `Certificate ${i + 1}`,
-      url,
-    })),
+    ...(partner.certificate_urls || []).map((item, i) => {
+      const isObj = typeof item === 'object' && item !== null;
+      return {
+        label: isObj ? (item as any).name : `Certificate ${i + 1}`,
+        url: isObj ? (item as any).url : (item as string),
+      };
+    }),
   ];
 
   return (
@@ -274,7 +277,7 @@ export default function AdminPartnerProfile() {
                   </Select>
                   <Button
                     size="sm"
-                    className="h-8 bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-normal"
+                    className="h-8 font-normal"
                     onClick={handleSaveStatusAndNotes}
                     disabled={savingStatus || (currentStatus === partner.status && adminNotes === partner.admin_notes)}
                   >

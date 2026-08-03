@@ -508,14 +508,14 @@ export default function Courses() {
                 {/* Apply/Reset Buttons */}
                 <div className="flex items-center gap-3 px-5 pb-5 bg-white">
                   <Button 
-                    className="flex-1 font-bold h-11 text-sm bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97]"
+                    className="flex-1 font-bold h-11 text-sm hover:text-[#2F4F97]"
                     onClick={applyFilters}
                   >
                     Apply Filter
                   </Button>
                   <Button 
                     variant="outline"
-                    className="flex-1 font-bold h-11 text-sm border-gray-200 text-[#1E293B] hover:bg-[#2F4F97] hover:text-white transition-colors"
+                    className="flex-1 font-bold h-11 text-sm hover:bg-[#2F4F97] transition-colors"
                     onClick={resetFilters}
                   >
                     Reset Filter
@@ -687,7 +687,7 @@ export default function Courses() {
                           {/* Right: Buttons */}
                           <div className="flex flex-row lg:flex-col gap-2 md:gap-3 mt-1 lg:mt-0 shrink-0 lg:w-[140px]">
                             <Button
-                              className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-xl border-2 border-[#1E293B] h-10 px-3 text-[13px] font-medium w-[110px] lg:w-full"
+                              className="rounded-xl border-[#1E293B] h-10 px-3 text-[13px] font-medium w-[110px] lg:w-full"
                               onClick={() => navigate(`/apply?courseId=${c.id}`)}
                             >
                               Apply Now
@@ -695,7 +695,7 @@ export default function Courses() {
                             <Link to={`/courses/${generateSlug(c.title)}`} className="block">
                               <Button
                                 variant="outline"
-                                className="bg-white text-[#2F4F97] hover:text-[#2F4F97] border-2 border-[#1E293B] rounded-xl h-10 px-3 text-[13px] font-medium w-[110px] lg:w-full hover:bg-gray-50"
+                                className="hover:text-[#2F4F97] border-[#1E293B] rounded-xl h-10 px-3 text-[13px] font-medium w-[110px] lg:w-full"
                               >
                                 Ask Us
                               </Button>

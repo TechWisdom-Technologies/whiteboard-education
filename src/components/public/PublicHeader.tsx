@@ -50,7 +50,7 @@ export function PublicHeader() {
             <Button variant="outline" size="sm" className="hidden lg:inline-flex">Admin</Button>
           </Link>
           <Link to="/partner-dashboard">
-            <Button size="sm" className="hidden lg:inline-flex bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90">Partner Portal</Button>
+            <Button size="sm" className="hidden lg:inline-flex">Partner Portal</Button>
           </Link>
           <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -74,7 +74,7 @@ export function PublicHeader() {
           <div className="flex flex-col gap-2 pt-2">
             <Link to="/login" onClick={() => setMobileOpen(false)}><Button variant="ghost" size="sm" className="w-full justify-start gap-1.5"><LogIn className="h-4 w-4" />Sign In</Button></Link>
             <Link to="/admin" onClick={() => setMobileOpen(false)}><Button variant="outline" size="sm" className="w-full">Admin</Button></Link>
-            <Link to="/partner-dashboard" onClick={() => setMobileOpen(false)}><Button size="sm" className="w-full bg-[#2F4F97] text-white">Partner Portal</Button></Link>
+            <Link to="/partner-dashboard" onClick={() => setMobileOpen(false)}><Button size="sm" className="w-full">Partner Portal</Button></Link>
           </div>
         </div>
       )}

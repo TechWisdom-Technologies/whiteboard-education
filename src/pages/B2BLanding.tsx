@@ -89,12 +89,12 @@ export default function B2BLanding() {
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Link to="/partner/register" className="w-full sm:w-auto">
-                  <Button className="w-full sm:w-auto bg-[#2F4F97] text-white hover:bg-[#e08e00] font-semibold text-sm rounded-2xl h-11 px-6 group shadow-lg shadow-[#2F4F97]/20 transition-all hover:shadow-[#2F4F97]/40 hover:-translate-y-0.5">
+                  <Button className="w-full sm:w-auto font-semibold text-sm rounded-2xl h-11 px-6 group transition-all">
                     Register as a partner <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
                   </Button>
                 </Link>
                 <Link to="/login" className="w-full sm:w-auto">
-                  <Button variant="outline" className="w-full sm:w-auto border-[#1E293B] text-[#1E293B] font-semibold text-sm rounded-2xl h-11 px-6 transition-all hover:-translate-y-0.5">
+                  <Button variant="outline" className="w-full sm:w-auto border-[#1E293B] font-semibold text-sm rounded-2xl h-11 px-6 transition-all">
                     Login as partner
                   </Button>
                 </Link>
@@ -231,12 +231,12 @@ export default function B2BLanding() {
               <p className="text-sm text-gray-300 mb-10 max-w-xl mx-auto leading-relaxed">Join our growing network of international agencies and start placing students into Malaysia's top universities.</p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link to="/partner/register" className="w-full sm:w-auto">
-                  <Button className="w-full sm:w-auto bg-[#2F4F97] text-white hover:bg-[#e08e00] font-semibold text-sm rounded-2xl h-11 px-6 group shadow-lg shadow-[#2F4F97]/20 transition-all hover:shadow-[#2F4F97]/40 hover:-translate-y-0.5">
+                  <Button className="w-full sm:w-auto font-semibold text-sm rounded-2xl h-11 px-6 group transition-all">
                     Register as a partner <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
                   </Button>
                 </Link>
                 <Link to="/login" className="w-full sm:w-auto">
-                  <Button variant="outline" className="w-full sm:w-auto border-white/20 text-white hover:bg-white hover:text-[#1E293B] font-semibold text-sm rounded-2xl h-11 px-6 bg-white/5 backdrop-blur-sm transition-all hover:-translate-y-0.5">
+                  <Button variant="outline" className="w-full sm:w-auto border-white/20 hover:text-[#1E293B] font-semibold text-sm rounded-2xl h-11 px-6 bg-white/5 backdrop-blur-sm transition-all">
                     Login as partner
                   </Button>
                 </Link>

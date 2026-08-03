@@ -57,7 +57,7 @@ export function LeadBanner({ onVisibilityChange }: LeadBannerProps) {
               <Button size="sm" className="gap-1.5" style={{ backgroundColor: "#2F4F97", color: "#1E293B", borderRadius: "5px" }} onClick={() => setEmailOpen(true)}>
                 <Download className="h-3.5 w-3.5" /> Download PDF
               </Button>
-              <Button variant="ghost" size="icon" className="text-white/60 hover:text-white h-8 w-8" onClick={dismiss}>
+              <Button variant="ghost" size="icon" className="text-white/60 h-8 w-8" onClick={dismiss}>
                 <X className="h-4 w-4" />
               </Button>
             </div>

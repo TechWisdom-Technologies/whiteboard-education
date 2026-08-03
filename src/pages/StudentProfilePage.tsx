@@ -857,7 +857,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
            <div className="flex items-center gap-2">
              {student.status === 'document_upload' && mode === 'partner' && (
                <Button 
-                 className="bg-green-600 hover:bg-green-700 text-white text-xs h-9"
+                 className="bg-green-600 hover:bg-green-700 text-xs h-9"
                  onClick={() => {
                    if (confirm("Are you sure you want to submit this student's application to Whiteboard for review?")) {
                      handleSaveStatusTracker('document_review');
@@ -867,7 +867,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                  Submit Application
                </Button>
              )}
-             <Button variant="outline" className="border-[#2F4F97] text-[#2F4F97] hover:bg-blue-50 text-xs h-9">
+             <Button variant="outline" className="text-xs h-9">
                 <Link2 className="w-4 h-4 mr-2" /> Student Platform Link
              </Button>
            </div>
@@ -1008,13 +1008,13 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                                    size="sm"
                                    disabled={isUploading}
                                    onClick={() => fileInputRefs.current[doc.field]?.click()}
-                                   className="h-9 px-3 bg-[#2F4F97] hover:bg-[#2F4F97]/90 text-white text-xs font-medium"
+                                   className="h-9 px-3 text-xs font-medium"
                                  >
                                    {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-2" />}
                                    {url ? "Replace" : "Upload"}
                                  </Button>
                                  {url && (
-                                    <Button variant="outline" size="icon" className="h-9 w-9 text-red-500 hover:text-red-600 hover:bg-red-50 border-gray-200">
+                                    <Button variant="outline" size="icon" className="h-9 w-9 text-red-500 hover:text-red-600 hover:bg-red-50">
                                       <Trash2 className="w-4 h-4" />
                                     </Button>
                                  )}
@@ -1042,7 +1042,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                    <div className="bg-white text-gray-600 hover:bg-gray-50 rounded-md px-4 py-1.5 text-xs font-medium border border-gray-200 cursor-pointer">Work Experience</div>
                    <div className="bg-white text-gray-600 hover:bg-gray-50 rounded-md px-4 py-1.5 text-xs font-medium border border-gray-200 cursor-pointer">Tests</div>
                  </div>
-                 <Button variant="outline" size="sm" className="h-8 text-xs shrink-0 bg-white"><Pencil className="w-3.5 h-3.5 mr-1" /> Request Edit</Button>
+                 <Button variant="outline" size="sm" className="h-8 text-xs shrink-0"><Pencil className="w-3.5 h-3.5 mr-1" /> Request Edit</Button>
              </div>
             {/* ── Main Single Column Layout ──────────────────────────────── */}
             <Card className="print:border-none print:shadow-none border border-gray-200 shadow-sm">
@@ -1067,7 +1067,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                         </Button>
                         <Button
                           size="sm"
-                          className="h-8 text-xs bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-semibold"
+                          className="h-8 text-xs font-semibold"
                           onClick={() => handleSaveSection("personal")}
                         >
                           <Save className="h-3.5 w-3.5 mr-1" />
@@ -1253,7 +1253,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                           </Button>
                           <Button
                             size="sm"
-                            className="h-8 text-xs bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-semibold"
+                            className="h-8 text-xs font-semibold"
                             onClick={() => handleSaveSection("academic")}
                           >
                             <Save className="h-3.5 w-3.5 mr-1" />
@@ -1341,7 +1341,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                           </Button>
                           <Button
                             size="sm"
-                            className="h-8 text-xs bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-semibold"
+                            className="h-8 text-xs font-semibold"
                             onClick={() => handleSaveSection("language")}
                           >
                             <Save className="h-3.5 w-3.5 mr-1" />
@@ -1419,7 +1419,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                           </Button>
                           <Button
                             size="sm"
-                            className="h-8 text-xs bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-semibold"
+                            className="h-8 text-xs font-semibold"
                             onClick={() => handleSaveSection("target")}
                           >
                             <Save className="h-3.5 w-3.5 mr-1" />
@@ -1544,7 +1544,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                           </Button>
                           <Button
                             size="sm"
-                            className="h-8 text-xs bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-semibold"
+                            className="h-8 text-xs font-semibold"
                             onClick={() => handleSaveSection("guardian")}
                           >
                             <Save className="h-3.5 w-3.5 mr-1" />
@@ -1686,7 +1686,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                   <div className="flex justify-end">
                     <Button
                       size="sm"
-                      className="h-8 px-4 bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-medium text-xs shadow-sm"
+                      className="h-8 px-4 font-medium text-xs shadow-sm"
                       onClick={handleAddActivityNote}
                       disabled={savingStatus || !adminNotes.trim()}
                     >
@@ -1739,7 +1739,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                   University Applications
                 </h3>
                 {mode === "admin" && (
-                  <Button size="sm" className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-semibold h-8" onClick={() => setIsAppModalOpen(true)}>
+                  <Button size="sm" className="font-semibold h-8" onClick={() => setIsAppModalOpen(true)}>
                     + Add Application
                   </Button>
                 )}
@@ -1845,7 +1845,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
             <Button variant="outline" onClick={() => setIsAppModalOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleAddApplication} disabled={addingApp || !newAppForm.university_id || !newAppForm.course_id} className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90">
+            <Button onClick={handleAddApplication} disabled={addingApp || !newAppForm.university_id || !newAppForm.course_id} >
               {addingApp && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Create Application
             </Button>

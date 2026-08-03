@@ -186,7 +186,7 @@ export default function Contact() {
 
                 <Button 
                   type="submit" 
-                  className="w-full h-12 bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-bold text-[14px] rounded-xl transition-all flex items-center justify-center gap-2 mt-2"
+                  className="w-full h-12 font-bold text-[14px] rounded-xl transition-all flex items-center justify-center gap-2 mt-2"
                   disabled={loading}
                 >
                   {loading ? (

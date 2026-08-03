@@ -487,7 +487,7 @@ export default function PartnerRegistration() {
                 {step > 1 && (
                   <Button 
                     variant="outline"
-                    className="h-12 border-gray-200 text-gray-700 font-bold text-[14px] rounded-xl flex-1 max-w-[140px]"
+                    className="h-12 text-gray-700 font-bold text-[14px] rounded-xl flex-1 max-w-[140px]"
                     onClick={handleBack}
                     disabled={submitting}
                   >
@@ -497,7 +497,7 @@ export default function PartnerRegistration() {
 
                 {step < 3 ? (
                   <Button 
-                    className="flex-1 h-12 bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-bold text-[14px] rounded-xl transition-all flex items-center justify-center gap-2"
+                    className="flex-1 h-12 font-bold text-[14px] rounded-xl transition-all flex items-center justify-center gap-2"
                     onClick={handleNext}
                     disabled={submitting}
                   >
@@ -505,7 +505,7 @@ export default function PartnerRegistration() {
                   </Button>
                 ) : (
                   <Button 
-                    className="flex-1 h-12 bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 font-bold text-[14px] rounded-xl transition-all"
+                    className="flex-1 h-12 font-bold text-[14px] rounded-xl transition-all"
                     onClick={handleSubmit} 
                     disabled={submitting}
                   >

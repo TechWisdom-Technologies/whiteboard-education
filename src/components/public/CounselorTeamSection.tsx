@@ -19,7 +19,7 @@ export function CounselorTeamSection() {
               Our dedicated team of professionals is here to guide you through every step of your international education journey.
             </p>
           </div>
-          <Button variant="outline" className="rounded-xl border-[#1E293B] text-[#1E293B] hover:bg-[#1E293B] hover:text-white group">
+          <Button variant="outline" className="rounded-xl border-[#1E293B] hover:bg-[#1E293B] group">
             View All Team <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
           </Button>
         </div>

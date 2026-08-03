@@ -247,7 +247,7 @@ export default function CourseComparison() {
                     <td key={course.id} className="p-5 align-top">
                       <div className="flex flex-col gap-3">
                         <Button
-                          className="bg-[#2F4F97] text-white hover:bg-[#243E79] rounded-[20px] border-transparent w-full"
+                          className="rounded-[20px] w-full"
                           style={{
                             
                             
@@ -263,7 +263,7 @@ export default function CourseComparison() {
                         </Button>
                         <Button
                           variant="outline"
-                          className="bg-white w-full"
+                          className="w-full"
                           style={{
                             
                             
@@ -289,7 +289,7 @@ export default function CourseComparison() {
               <Button 
                 variant="outline" 
                 onClick={handlePrint}
-                className="rounded-full px-8 border-gray-300 text-gray-700 hover:bg-gray-50"
+                className="rounded-full px-8 border-gray-300 text-gray-700"
               >
                 Print this page
               </Button>

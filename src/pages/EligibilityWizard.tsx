@@ -511,7 +511,7 @@ export default function EligibilityWizard() {
                 <Button 
                   onClick={handleNext} 
                   disabled={!canNext()} 
-                  className="bg-[#2F4F97] text-white hover:bg-[#2F4F97]/90 rounded-xl font-bold h-10 md:h-12 px-5 md:px-8 text-sm md:text-base transition-all shadow-sm hover:shadow-md"
+                  className="rounded-xl font-bold h-10 md:h-12 px-5 md:px-8 text-sm md:text-base transition-all shadow-sm hover:shadow-md"
                 >
                   {step === totalSteps ? "Generate Matches" : "Next Step"} 
                   {step === totalSteps ? <Globe2 className="h-4 w-4 ml-2" /> : <ArrowRight className="h-4 w-4 ml-2" />}

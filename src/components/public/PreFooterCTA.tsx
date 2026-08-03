@@ -39,14 +39,14 @@ export function PreFooterCTA() {
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to="/contact" className="w-full sm:w-auto">
-              <Button className="w-full sm:w-auto bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] font-semibold text-sm rounded-2xl h-11 px-6 group shadow-lg shadow-[#2F4F97]/20 transition-all hover:shadow-[#2F4F97]/40 hover:-translate-y-0.5 border border-transparent hover:border-[#2F4F97]">
+              <Button className="w-full sm:w-auto hover:text-[#2F4F97] font-semibold text-sm rounded-2xl h-11 px-6 group transition-all">
                 Book Free Consultation
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
               </Button>
             </Link>
             
             <Link to="/universities" className="w-full sm:w-auto">
-              <Button variant="outline" className="w-full sm:w-auto border-white/20 text-white hover:bg-white hover:text-[#1E293B] font-semibold text-sm rounded-2xl h-11 px-6 bg-white/5 backdrop-blur-sm transition-all hover:-translate-y-0.5">
+              <Button variant="outline" className="w-full sm:w-auto border-white/20 hover:text-[#1E293B] font-semibold text-sm rounded-2xl h-11 px-6 bg-white/5 backdrop-blur-sm transition-all">
                 <GraduationCap className="mr-2 h-4 w-4" />
                 Explore Universities
               </Button>

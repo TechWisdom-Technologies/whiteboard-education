@@ -131,9 +131,9 @@ export function PartnerSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-[#2d1b4e] bg-[#1a0f2e]">
+    <Sidebar collapsible="icon" className="border-r border-slate-200 bg-[#F8FAFC]">
       {/* Sidebar Header containing centered logo covering 65-70% width */}
-      <div className="border-b border-[#2d1b4e] px-3 bg-[#1a0f2e] flex flex-col items-center justify-center gap-1 flex-shrink-0 h-[60px]">
+      <div className="border-b border-slate-200 px-3 bg-[#F8FAFC] flex flex-col items-center justify-center gap-1 flex-shrink-0 h-[60px]">
         <div className="flex items-center justify-center w-full">
           {avatarUrl ? (
             collapsed ? (
@@ -151,16 +151,16 @@ export function PartnerSidebar() {
             )
           ) : (
             collapsed ? (
-              <img src="/icon-white.jpg" alt="W Icon" className="h-8 w-8 object-contain shrink-0 mx-auto" />
+              <img src="/logo.png" alt="W Icon" className="h-8 w-8 object-contain shrink-0 mx-auto" />
             ) : (
-              <img src="/logo-white.png" alt="Whiteboard Education" className="w-[70%] max-h-12 object-contain shrink-0 mx-auto" />
+              <img src="/logo.png" alt="Whiteboard Education" className="w-[70%] max-h-12 object-contain shrink-0 mx-auto" />
             )
           )}
         </div>
       </div>
 
       {/* Sidebar Content containing shifted-down menu items */}
-      <SidebarContent className="bg-[#1a0f2e]">
+      <SidebarContent className="bg-[#F8FAFC]">
         <SidebarGroup className="pt-6">
           <SidebarGroupContent>
             <SidebarMenu>
@@ -170,17 +170,17 @@ export function PartnerSidebar() {
                     <NavLink
                       to={item.url}
                       end={item.url === "/partner-dashboard"}
-                      className={`relative hover:bg-[#2d1b4e] transition-colors py-1.5 flex items-center w-full ${collapsed ? "justify-center" : "justify-between"}`}
+                      className={`relative hover:bg-slate-100 transition-colors py-1.5 flex items-center w-full ${collapsed ? "justify-center" : "justify-between"}`}
                       activeClassName="bg-transparent text-white font-bold"
                     >
                       {({ isActive }) => (
                         <>
                           {isActive && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-3.5 w-[3px] bg-white rounded-r-sm" />
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-3.5 w-[3px] bg-[#2F4F97] rounded-r-sm" />
                           )}
                           {!collapsed && (
                             <div className="flex items-center gap-2">
-                              <span className={`text-[13px] ${isActive ? "text-white font-bold" : "text-[#d1bfe8] font-medium"}`}>{item.title}</span>
+                              <span className={`text-[13px] ${isActive ? "text-[#2F4F97] font-bold" : "text-slate-600 font-medium"}`}>{item.title}</span>
                               {item.title === "Notifications" && unreadCount > 0 && (
                                 <span className="h-[16px] min-w-[16px] px-1 rounded-xl bg-destructive text-destructive-foreground text-[9px] font-bold flex items-center justify-center">
                                   {unreadCount > 99 ? "99+" : unreadCount}
@@ -188,7 +188,7 @@ export function PartnerSidebar() {
                               )}
                             </div>
                           )}
-                          <item.icon className={`h-4 w-4 flex-shrink-0 ${isActive ? "text-white" : "text-[#a38cbd]"}`} strokeWidth={isActive ? 2.5 : 2} />
+                          <item.icon className={`h-4 w-4 flex-shrink-0 ${isActive ? "text-[#2F4F97]" : "text-slate-500"}`} strokeWidth={isActive ? 2.5 : 2} />
                         </>
                       )}
                     </NavLink>
@@ -200,31 +200,31 @@ export function PartnerSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   onClick={() => setAlliedOpen(!alliedOpen)}
-                  className={`relative hover:bg-[#2d1b4e] transition-colors py-1.5 flex items-center w-full ${collapsed ? "justify-center" : "justify-between"}`}
+                  className={`relative hover:bg-slate-100 transition-colors py-1.5 flex items-center w-full ${collapsed ? "justify-center" : "justify-between"}`}
                 >
                   {!collapsed && (
                     <div className="flex items-center gap-2">
-                      <span className="text-[13px] text-[#d1bfe8] font-medium">Allied Services</span>
+                      <span className="text-[13px] text-slate-600 font-medium">Allied Services</span>
                       {alliedOpen ? (
-                        <ChevronDown className="h-3.5 w-3.5 text-[#a38cbd]" />
+                        <ChevronDown className="h-3.5 w-3.5 text-slate-500" />
                       ) : (
-                        <ChevronRight className="h-3.5 w-3.5 text-[#a38cbd]" />
+                        <ChevronRight className="h-3.5 w-3.5 text-slate-500" />
                       )}
                     </div>
                   )}
-                  <Layers className="h-4 w-4 flex-shrink-0 text-[#a38cbd]" strokeWidth={2} />
+                  <Layers className="h-4 w-4 flex-shrink-0 text-slate-500" strokeWidth={2} />
                 </SidebarMenuButton>
 
                 {/* Sub-menu options when expanded */}
                 {!collapsed && alliedOpen && (
-                  <div className="pl-4 pr-1 py-1 space-y-1 bg-[#150b26]/50 rounded-lg my-1">
+                  <div className="pl-4 pr-1 py-1 space-y-1 bg-white border border-slate-100 rounded-lg my-1">
                     {alliedSubItems.map((subItem) => (
                       <div
                         key={subItem.title}
-                        className="flex items-center justify-between px-2 py-1.5 text-[#d1bfe8] hover:text-white hover:bg-[#2d1b4e]/70 rounded cursor-pointer transition-colors text-[12px]"
+                        className="flex items-center justify-between px-2 py-1.5 text-slate-600 hover:text-[#2F4F97] hover:bg-slate-50 rounded cursor-pointer transition-colors text-[12px]"
                       >
                         <span className="font-normal text-[12px] truncate">{subItem.title}</span>
-                        <subItem.icon className="h-3.5 w-3.5 flex-shrink-0 text-[#a38cbd]" />
+                        <subItem.icon className="h-3.5 w-3.5 flex-shrink-0 text-slate-500" />
                       </div>
                     ))}
                   </div>
@@ -232,13 +232,13 @@ export function PartnerSidebar() {
               </SidebarMenuItem>
 
               {/* Divider */}
-              <div className="my-2 mx-2 border-t border-[#2d1b4e]" />
+              <div className="my-2 mx-2 border-t border-slate-200" />
 
               {/* Go to Website link */}
               <SidebarMenuItem>
                 <SidebarMenuButton
                   onClick={() => window.open("/", "_blank")}
-                  className={`relative hover:bg-[#2d1b4e] transition-colors py-1.5 text-[#a38cbd] hover:text-[#d1bfe8] bg-transparent w-full flex items-center ${collapsed ? "justify-center" : "justify-between"}`}
+                  className={`relative hover:bg-slate-100 transition-colors py-1.5 text-slate-500 hover:text-slate-600 bg-transparent w-full flex items-center ${collapsed ? "justify-center" : "justify-between"}`}
                 >
                   {!collapsed && <span className="text-[13px] font-medium">Go to Website</span>}
                   <ExternalLink className="h-4 w-4 flex-shrink-0" />
@@ -249,7 +249,7 @@ export function PartnerSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton 
                   onClick={handleSignOut} 
-                  className={`relative hover:bg-[#2d1b4e] transition-colors py-1.5 text-red-400 hover:text-red-300 bg-transparent w-full flex items-center ${collapsed ? "justify-center" : "justify-between"}`}
+                  className={`relative hover:bg-slate-100 transition-colors py-1.5 text-red-500 hover:text-red-600 bg-transparent w-full flex items-center ${collapsed ? "justify-center" : "justify-between"}`}
                 >
                   {!collapsed && <span className="text-[13px] font-medium">Sign Out</span>}
                   <LogOut className="h-4 w-4 flex-shrink-0" />

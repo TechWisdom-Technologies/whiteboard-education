@@ -32,7 +32,7 @@ export default function PartnerMarketing() {
                 </div>
                 <h3 className="font-normal text-[12px] mb-1">{asset.title}</h3>
                 <p className="text-[12px] text-muted-foreground mb-4">{asset.size}</p>
-                <Button variant="outline" size="sm" className="w-full gap-1.5 group-hover:bg-[#2F4F97]/10 group-hover:text-[#2F4F97] group-hover:border-[#2F4F97]/30 transition-colors" onClick={() => toast.success(`${asset.title} downloaded!`)}>
+                <Button variant="outline" size="sm" className="w-full gap-1.5 transition-colors" onClick={() => toast.success(`${asset.title} downloaded!`)}>
                   <Download className="h-3.5 w-3.5" /> Download
                 </Button>
               </CardContent>
