@@ -1035,15 +1035,6 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
           </TabsContent>
 
           <TabsContent value="profile" className="space-y-6 mt-0">
-             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4 no-print">
-                 <div className="flex gap-2 p-0 flex-wrap">
-                   <div className="bg-[#2F4F97] text-white rounded-md px-4 py-1.5 text-xs font-medium border border-transparent shadow-sm cursor-pointer">Personal Information</div>
-                   <div className="bg-white text-gray-600 hover:bg-gray-50 rounded-md px-4 py-1.5 text-xs font-medium border border-gray-200 cursor-pointer">Academic Qualifications</div>
-                   <div className="bg-white text-gray-600 hover:bg-gray-50 rounded-md px-4 py-1.5 text-xs font-medium border border-gray-200 cursor-pointer">Work Experience</div>
-                   <div className="bg-white text-gray-600 hover:bg-gray-50 rounded-md px-4 py-1.5 text-xs font-medium border border-gray-200 cursor-pointer">Tests</div>
-                 </div>
-                 <Button variant="outline" size="sm" className="h-8 text-xs shrink-0"><Pencil className="w-3.5 h-3.5 mr-1" /> Request Edit</Button>
-             </div>
             {/* ── Main Single Column Layout ──────────────────────────────── */}
             <Card className="print:border-none print:shadow-none border border-gray-200 shadow-sm">
               <CardContent className="p-6 sm:p-7 print:p-0">

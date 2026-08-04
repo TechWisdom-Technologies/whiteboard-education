@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { 
   UserCircle, 
@@ -13,12 +14,12 @@ import {
   Plus, 
   Edit2, 
   Trash2, 
-  Save, 
   Loader2, 
   Video, 
   PlaySquare,
   CheckCircle2,
-  XCircle
+  XCircle,
+  Camera
 } from "lucide-react";
 
 interface AccountManager {
@@ -27,19 +28,23 @@ interface AccountManager {
   title: string;
   email: string;
   phone: string;
+  photo_url?: string;
 }
 
 export function AccountManagerSection() {
   const [managers, setManagers] = useState<AccountManager[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     name: "",
     title: "",
     email: "",
-    phone: ""
+    phone: "",
+    photo_url: ""
   });
 
   useEffect(() => {
@@ -96,9 +101,36 @@ export function AccountManagerSection() {
     }
   };
 
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("File too large. Max 2MB.");
+      return;
+    }
+    setUploadingPhoto(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const path = `account_managers/photo_${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from("partner-documents")
+        .upload(path, file, { upsert: true });
+      if (uploadError) throw uploadError;
+      const { data: urlData } = supabase.storage
+        .from("partner-documents")
+        .getPublicUrl(path);
+      setFormData(prev => ({ ...prev, photo_url: urlData.publicUrl + `?t=${Date.now()}` }));
+      toast.success("Photo uploaded!");
+    } catch (err: any) {
+      toast.error("Upload failed: " + (err.message || "Unknown error"));
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
   const handleOpenAdd = () => {
     setEditingId(null);
-    setFormData({ name: "", title: "", email: "", phone: "" });
+    setFormData({ name: "", title: "", email: "", phone: "", photo_url: "" });
     setIsDialogOpen(true);
   };
 
@@ -108,7 +140,8 @@ export function AccountManagerSection() {
       name: manager.name || "",
       title: manager.title || "",
       email: manager.email || "",
-      phone: manager.phone || ""
+      phone: manager.phone || "",
+      photo_url: manager.photo_url || ""
     });
     setIsDialogOpen(true);
   };
@@ -177,9 +210,12 @@ export function AccountManagerSection() {
             {managers.map((m) => (
               <div key={m.id} className="p-4 rounded-xl border border-gray-200 bg-white shadow-sm flex items-start justify-between gap-4 hover:border-[#2F4F97]/40 transition-colors">
                 <div className="flex items-start gap-3.5 min-w-0">
-                  <div className="w-11 h-11 rounded-full bg-[#2F4F97]/10 flex items-center justify-center text-[#2F4F97] font-bold text-base shrink-0">
-                    {m.name ? m.name.charAt(0).toUpperCase() : 'A'}
-                  </div>
+                  <Avatar className="w-12 h-12 rounded-full shrink-0 border-2 border-[#2F4F97]/20">
+                    <AvatarImage src={m.photo_url || ""} alt={m.name} className="object-cover" />
+                    <AvatarFallback className="bg-[#2F4F97]/10 text-[#2F4F97] font-bold text-base">
+                      {m.name ? m.name.charAt(0).toUpperCase() : 'A'}
+                    </AvatarFallback>
+                  </Avatar>
                   <div className="min-w-0">
                     <p className="text-[14px] font-bold text-[#1E293B] truncate">{m.name || "Unnamed Manager"}</p>
                     <p className="text-[12px] font-medium text-[#2F4F97] mt-0.5 truncate">{m.title || "Partner Relations"}</p>
@@ -212,33 +248,58 @@ export function AccountManagerSection() {
       </CardContent>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[450px]">
           <DialogHeader>
             <DialogTitle>{editingId ? "Edit Account Manager" : "Add Account Manager"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-3">
+            {/* Photo Upload */}
+            <div className="flex flex-col items-center gap-3 pb-2">
+              <div className="relative group cursor-pointer" onClick={() => photoInputRef.current?.click()}>
+                <Avatar className="w-20 h-20 rounded-full border-4 border-[#2F4F97]/20 shadow">
+                  <AvatarImage src={formData.photo_url || ""} alt="Manager photo" className="object-cover" />
+                  <AvatarFallback className="bg-[#2F4F97]/10 text-[#2F4F97] font-bold text-2xl">
+                    {formData.name ? formData.name.charAt(0).toUpperCase() : <UserCircle className="h-8 w-8" />}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                  {uploadingPhoto
+                    ? <Loader2 className="h-5 w-5 text-white animate-spin" />
+                    : <Camera className="h-5 w-5 text-white" />}
+                </div>
+              </div>
+              <input
+                ref={photoInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handlePhotoUpload}
+              />
+              <p className="text-[11px] text-muted-foreground">Click photo to upload (max 2MB)</p>
+            </div>
+
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name *</Label>
+              <Label htmlFor="am-name">Full Name *</Label>
               <Input
-                id="name"
+                id="am-name"
                 value={formData.name}
                 onChange={(e) => setFormData(p => ({ ...p, name: e.target.value }))}
                 placeholder="e.g. Sarah Jenkins"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="title">Job Title / Role</Label>
+              <Label htmlFor="am-title">Job Title / Role</Label>
               <Input
-                id="title"
+                id="am-title"
                 value={formData.title}
                 onChange={(e) => setFormData(p => ({ ...p, title: e.target.value }))}
                 placeholder="e.g. Senior Partner Relations Manager"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email Address *</Label>
+              <Label htmlFor="am-email">Email Address *</Label>
               <Input
-                id="email"
+                id="am-email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData(p => ({ ...p, email: e.target.value }))}
@@ -246,9 +307,9 @@ export function AccountManagerSection() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
+              <Label htmlFor="am-phone">Phone Number</Label>
               <Input
-                id="phone"
+                id="am-phone"
                 value={formData.phone}
                 onChange={(e) => setFormData(p => ({ ...p, phone: e.target.value }))}
                 placeholder="e.g. +60 12-345 6789"
@@ -257,7 +318,7 @@ export function AccountManagerSection() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleSave} disabled={saving} className="gap-1.5">
+            <Button onClick={handleSave} disabled={saving || uploadingPhoto} className="gap-1.5">
               {saving && <Loader2 className="h-4 w-4 animate-spin" />} Save Contact
             </Button>
           </DialogFooter>

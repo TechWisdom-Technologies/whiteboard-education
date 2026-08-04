@@ -13,6 +13,7 @@ export default function AdminEvents() {
     { key: "type", label: "Type", type: "select", options: ["Open Day", "Workshop", "Webinar", "Info Session"], showInTable: true },
     { key: "date", label: "Date", showInTable: true, placeholder: "2026-04-15" },
     { key: "time", label: "Time", showInTable: true, placeholder: "10:00 AM" },
+    { key: "meeting_link", label: "Meeting Link (Zoom / Google Meet)", showInTable: false, placeholder: "https://meet.google.com/... or https://zoom.us/j/..." },
     { key: "description", label: "Description", type: "textarea", showInTable: false },
     { key: "spots_left", label: "Spots Left", type: "number", showInTable: true },
     { key: "university_ids", label: "University IDs", type: "json_array", showInTable: false, placeholder: '["uuid-1","uuid-2"]' },

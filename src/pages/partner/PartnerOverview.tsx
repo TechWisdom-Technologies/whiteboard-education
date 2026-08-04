@@ -23,7 +23,9 @@ import {
   Users,
   Building2,
   FileText,
-  Search
+  Search,
+  ExternalLink,
+  Video
 } from "lucide-react";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -94,7 +96,7 @@ export default function PartnerOverview() {
         try {
           const { data: eventsData } = await supabase
             .from("events")
-            .select("id, title, date, time, description")
+            .select("id, title, date, time, description, meeting_link")
             .order("date", { ascending: true })
             .limit(3);
           const mappedEvents = (eventsData || []).map((e: any) => ({
@@ -320,16 +322,33 @@ export default function PartnerOverview() {
           <CardContent className="pt-4 flex-grow">
             {webinars.length > 0 ? (
               <div className="space-y-4">
-                {webinars.map((w: any) => (
-                  <div key={w.id} className="flex flex-col gap-1">
-                    <p className="text-sm font-semibold truncate" title={w.title}>{w.title}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(w.event_date).toLocaleDateString(undefined, {
-                        month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
-                      })}
-                    </p>
-                  </div>
-                ))}
+                {webinars.map((w: any) => {
+                  const d = w.date ? new Date(w.date) : null;
+                  const dayName = d ? d.toLocaleDateString(undefined, { weekday: 'long' }) : '';
+                  const dateStr = d ? d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+                  return (
+                    <div key={w.id} className="flex flex-col gap-1.5 p-3 rounded-lg bg-blue-50/60 border border-blue-100">
+                      <p className="text-sm font-semibold text-[#1E293B] truncate" title={w.title}>{w.title}</p>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Calendar className="w-3.5 h-3.5 text-[#2F4F97]" />
+                        <span>{dayName}{dayName && dateStr ? ', ' : ''}{dateStr}</span>
+                        {w.time && <span className="font-medium text-[#2F4F97]">· {w.time}</span>}
+                      </div>
+                      {w.meeting_link && (
+                        <a
+                          href={w.meeting_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 mt-1 text-xs font-semibold text-white bg-[#2F4F97] hover:bg-[#243d78] rounded-md px-3 py-1.5 transition-colors w-fit"
+                        >
+                          <Video className="w-3.5 h-3.5" />
+                          Join Webinar
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             ) : (
               <p className="text-sm text-muted-foreground text-center py-6">No upcoming webinars</p>
@@ -351,9 +370,12 @@ export default function PartnerOverview() {
                 {accountManager.map((am: any, idx: number) => (
                   <div key={idx} className={idx > 0 ? "pt-4 border-t border-slate-100 space-y-4" : "space-y-4"}>
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-full bg-[#2F4F97]/10 flex items-center justify-center text-[#2F4F97] font-bold">
-                        {am.name?.charAt(0) || 'A'}
-                      </div>
+                      <Avatar className="w-12 h-12 rounded-full shrink-0 border-2 border-[#2F4F97]/20">
+                        <AvatarImage src={am.photo_url || ""} alt={am.name} className="object-cover" />
+                        <AvatarFallback className="bg-[#2F4F97]/10 text-[#2F4F97] font-bold text-base">
+                          {am.name?.charAt(0) || 'A'}
+                        </AvatarFallback>
+                      </Avatar>
                       <div>
                         <p className="text-sm font-bold text-[#1E293B]">{am.name || 'N/A'}</p>
                         <p className="text-xs text-[#2F4F97] font-medium">{am.title || 'Account Manager'}</p>
@@ -379,9 +401,12 @@ export default function PartnerOverview() {
             ) : !Array.isArray(accountManager) && accountManager?.name ? (
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#2F4F97]/10 flex items-center justify-center text-[#2F4F97] font-bold">
-                    {accountManager.name?.charAt(0) || 'A'}
-                  </div>
+                  <Avatar className="w-12 h-12 rounded-full shrink-0 border-2 border-[#2F4F97]/20">
+                    <AvatarImage src={accountManager.photo_url || ""} alt={accountManager.name} className="object-cover" />
+                    <AvatarFallback className="bg-[#2F4F97]/10 text-[#2F4F97] font-bold text-base">
+                      {accountManager.name?.charAt(0) || 'A'}
+                    </AvatarFallback>
+                  </Avatar>
                   <div>
                     <p className="text-sm font-bold text-[#1E293B]">{accountManager.name || 'N/A'}</p>
                     <p className="text-xs text-[#2F4F97] font-medium">{accountManager.title || 'Account Manager'}</p>
