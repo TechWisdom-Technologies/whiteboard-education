@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Users, UserPlus, Loader2, Trash2, ArrowLeft, ChevronRight, X, Search, Mail, Phone, Link2 } from "lucide-react";
+import { Users, Loader2, Trash2, X, Search, Mail, Phone, Link2 } from "lucide-react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -85,22 +85,12 @@ const statusFilterMap: Record<string, string[]> = {
   rejected: ['rejected'],
 };
 
-const emptyForm = {
-  full_name: "", email: "", phone: "", passport_number: "", nationality: "",
-  nid_number: "", date_of_birth: "", gender: "", previous_institution: "", previous_degree: "",
-  major: "", gpa: "", ielts_score: "", language_test_name: "", target_university: "", target_course: "",
-  intake_month: "", degree_level: "Bachelor",
-};
-
 export default function PartnerStudents() {
   const { session, user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const [students, setStudents] = useState<Student[]>([]);
   const [contactPerson, setContactPerson] = useState<string>("");
   const [loading, setLoading] = useState(true);
-  const [addOpen, setAddOpen] = useState(false);
-  const [form, setForm] = useState(emptyForm);
-  const [submitting, setSubmitting] = useState(false);
   const [highlightedStudentId, setHighlightedStudentId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const navigate = useNavigate();
@@ -179,40 +169,6 @@ export default function PartnerStudents() {
     params.delete("studentId");
     setSearchParams(params, { replace: true });
   }, [searchParams, students, setSearchParams]);
-
-  const handleAdd = async () => {
-    if (!form.full_name || !form.email) {
-      toast.error("Name and email are required");
-      return;
-    }
-    setSubmitting(true);
-    try {
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/students`, {
-        method: "POST",
-        headers: {
-          apikey: SUPABASE_KEY,
-          Authorization: `Bearer ${session?.access_token}`,
-          "Content-Type": "application/json",
-          Prefer: "return=representation",
-        },
-        body: JSON.stringify({
-          ...form,
-          partner_id: user?.id,
-          gpa: form.gpa ? parseFloat(form.gpa) : 0,
-          ielts_score: form.ielts_score ? parseFloat(form.ielts_score) : 0,
-          date_of_birth: form.date_of_birth || null,
-        }),
-      });
-      const data = await res.json();
-      const newStudent = data[0];
-      toast.success("Student added successfully!");
-      setAddOpen(false);
-      setForm(emptyForm);
-      navigate(`/partner-dashboard/students/${newStudent.id}`);
-    } catch (e: any) {
-      toast.error(e.message || "Failed to add student");
-    } finally { setSubmitting(false); }
-  };
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -340,116 +296,17 @@ export default function PartnerStudents() {
 
   if (loading) return <LoadingScreen fullScreen />;
 
-  if (addOpen) {
-    return (
-      <div className="space-y-6 animate-fade-in pb-12">
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="ghost" 
-            size="icon"
-            onClick={() => setAddOpen(false)} 
-            className="h-8 w-8 rounded-full bg-[#2F4F97]/10 hover:bg-[#2F4F97]/20 transition-colors flex-shrink-0"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h2 className="text-sm font-semibold text-[#1E293B]">
-            Add New Student
-          </h2>
-        </div>
-        
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-          <div className="p-6 sm:p-8 space-y-6 max-w-4xl">
-            <h3 className="font-semibold text-sm text-gray-900 border-b pb-2">Personal Information</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div><Label className="text-xs">Full Name *</Label><Input value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))} placeholder="Full name" className="h-9 mt-1" /></div>
-              <div><Label className="text-xs">Email *</Label><Input value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} placeholder="email@example.com" className="h-9 mt-1" /></div>
-              <div><Label className="text-xs">Phone</Label><Input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="+880..." className="h-9 mt-1" /></div>
-              <div>
-                <Label className="text-xs">Gender</Label>
-                <Select value={form.gender} onValueChange={v => setForm(f => ({ ...f, gender: v }))}>
-                  <SelectTrigger className="h-9 mt-1"><SelectValue placeholder="Select" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Male">Male</SelectItem>
-                    <SelectItem value="Female">Female</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div><Label className="text-xs">Nationality</Label><Input value={form.nationality} onChange={e => setForm(f => ({ ...f, nationality: e.target.value }))} className="h-9 mt-1" /></div>
-              <div><Label className="text-xs">NID Number</Label><Input value={form.nid_number} onChange={e => setForm(f => ({ ...f, nid_number: e.target.value }))} placeholder="National ID" className="h-9 mt-1" /></div>
-              <div><Label className="text-xs">Passport Number</Label><Input value={form.passport_number} onChange={e => setForm(f => ({ ...f, passport_number: e.target.value }))} className="h-9 mt-1" /></div>
-              <div><Label className="text-xs">Date of Birth</Label><Input type="date" value={form.date_of_birth} onChange={e => setForm(f => ({ ...f, date_of_birth: e.target.value }))} className="h-9 mt-1" /></div>
-            </div>
 
-            <h3 className="font-semibold text-sm text-gray-900 border-b pb-2 pt-4">Academic Background</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div><Label className="text-xs">Degree Name</Label><Input value={form.previous_degree} onChange={e => setForm(f => ({ ...f, previous_degree: e.target.value }))} placeholder="e.g. HSC, Bachelor of Science" className="h-9 mt-1" /></div>
-              <div><Label className="text-xs">Institution</Label><Input value={form.previous_institution} onChange={e => setForm(f => ({ ...f, previous_institution: e.target.value }))} className="h-9 mt-1" /></div>
-              <div><Label className="text-xs">Major</Label><Input value={form.major} onChange={e => setForm(f => ({ ...f, major: e.target.value }))} placeholder="e.g. Computer Science" className="h-9 mt-1" /></div>
-              <div><Label className="text-xs">GPA / CGPA</Label><Input type="number" step="0.01" value={form.gpa} onChange={e => setForm(f => ({ ...f, gpa: e.target.value }))} className="h-9 mt-1" /></div>
-            </div>
-
-            <h3 className="font-semibold text-sm text-gray-900 border-b pb-2 pt-4">Language Proficiency</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div><Label className="text-xs">Test Name</Label><Input value={form.language_test_name} onChange={e => setForm(f => ({ ...f, language_test_name: e.target.value }))} placeholder="e.g. IELTS, TOEFL, Duolingo" className="h-9 mt-1" /></div>
-              <div><Label className="text-xs">Score</Label><Input type="number" step="0.5" value={form.ielts_score} onChange={e => setForm(f => ({ ...f, ielts_score: e.target.value }))} className="h-9 mt-1" /></div>
-            </div>
-
-            <h3 className="font-semibold text-sm text-gray-900 border-b pb-2 pt-4">Target Program</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <Label className="text-xs">Degree Level</Label>
-                <Select value={form.degree_level} onValueChange={v => setForm(f => ({ ...f, degree_level: v }))}>
-                  <SelectTrigger className="h-9 mt-1"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Foundation">Foundation</SelectItem>
-                    <SelectItem value="Diploma">Diploma</SelectItem>
-                    <SelectItem value="Bachelor">Bachelor</SelectItem>
-                    <SelectItem value="Master">Master</SelectItem>
-                    <SelectItem value="PhD">PhD</SelectItem>
-                    <SelectItem value="English Course">English Course</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div><Label className="text-xs">Course</Label><Input value={form.target_course} onChange={e => setForm(f => ({ ...f, target_course: e.target.value }))} className="h-9 mt-1" /></div>
-              <div><Label className="text-xs">University</Label><Input value={form.target_university} onChange={e => setForm(f => ({ ...f, target_university: e.target.value }))} className="h-9 mt-1" /></div>
-              <div>
-                <Label className="text-xs">Intake Month</Label>
-                <Select value={form.intake_month} onValueChange={v => setForm(f => ({ ...f, intake_month: v }))}>
-                  <SelectTrigger className="h-9 mt-1"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map(m => (
-                      <SelectItem key={m} value={m}>{m}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            
-            <div className="pt-6 border-t border-gray-100 flex items-center justify-end gap-3">
-              <Button variant="outline" onClick={() => setAddOpen(false)} className="h-10 px-6">
-                Cancel
-              </Button>
-              <Button className="h-10 px-6" onClick={handleAdd} disabled={submitting}>
-                {submitting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UserPlus className="h-4 w-4 mr-2" />}
-                Save Student
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header Area */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center text-[#1E293B] font-semibold text-lg mb-0.5">
-            <ChevronRight className="w-4 h-4 mr-1 text-gray-400" /> Students
-          </div>
-          <p className="text-gray-500 text-xs ml-5">Manage your Students and their Profiles</p>
+          <h1 className="text-[#1E293B] font-semibold text-lg mb-0.5">
+            Students
+          </h1>
+          <p className="text-gray-500 text-xs">Manage your Students and their Profiles</p>
         </div>
         <div className="flex items-center gap-2">
           {selectedIds.length > 0 && (
@@ -458,7 +315,7 @@ export default function PartnerStudents() {
             </Button>
           )}
 
-          <Button size="sm" className="text-xs h-9 px-4" onClick={() => setAddOpen(true)}>
+          <Button size="sm" className="text-xs h-9 px-4" onClick={() => navigate('/partner-dashboard/students/new')}>
             Register New Student +
           </Button>
         </div>
