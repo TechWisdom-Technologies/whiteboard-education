@@ -449,8 +449,12 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     setLoading(true);
     setError(null);
     try {
+      const isWbId = studentId.startsWith("WB-");
+      const queryField = isWbId ? "wb_student_id" : "id";
+      const queryValue = isWbId ? studentId.replace("WB-", "") : studentId;
+
       const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/students?id=eq.${studentId}&select=*`,
+        `${SUPABASE_URL}/rest/v1/students?${queryField}=eq.${queryValue}&select=*`,
         { headers }
       );
       if (!res.ok) throw new Error("Failed to fetch student");
@@ -481,7 +485,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
       
       promises.push(
         fetch(
-          `${SUPABASE_URL}/rest/v1/student_applications?student_id=eq.${studentId}&select=*,universities(name),courses(title,intake_months)`,
+          `${SUPABASE_URL}/rest/v1/student_applications?student_id=eq.${s.id}&select=*,universities(name),courses(title,intake_months)`,
           { headers }
         ).then(res => res.json()).then(data => {
           if (Array.isArray(data)) setApplications(data);
@@ -835,9 +839,9 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 no-print mt-2">
            <div className="flex items-center gap-4">
              {student.passport_photo_url ? (
-               <img src={student.passport_photo_url} alt={student.full_name} className="w-[60px] h-[60px] rounded-full object-cover border border-gray-200" />
+               <img src={student.passport_photo_url} alt={student.full_name} className="object-cover border border-gray-200 rounded-md shadow-sm" style={{ width: '35mm', height: '45mm' }} />
              ) : (
-               <div className="w-[60px] h-[60px] rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-2xl border border-blue-200">
+               <div className="bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-3xl border border-blue-200 rounded-md shadow-sm" style={{ width: '35mm', height: '45mm' }}>
                  {student.full_name.charAt(0)}
                </div>
              )}

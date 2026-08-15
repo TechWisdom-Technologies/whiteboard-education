@@ -589,8 +589,8 @@ export default function PartnerStudents() {
                       ref={(row) => {
                         studentRowRefs.current[s.id] = row;
                       }}
-                      className={`hover:bg-gray-50/80 cursor-pointer border-gray-100 transition-colors ${highlightedStudentId === s.id ? "bg-blue-50/50" : ""}`}
-                      onClick={() => navigate(`/partner-dashboard/students/${s.id}`)}
+                      className={`hover:bg-[#F1F5F9]/80 cursor-pointer border-gray-100 transition-colors ${highlightedStudentId === s.id ? "bg-blue-50/50" : ""}`}
+                      onClick={() => navigate(`/partner-dashboard/students/${s.wb_student_id ? `WB-${s.wb_student_id}` : s.id}`)}
                     >
                       <TableCell className="text-center px-4 py-3" onClick={(e) => e.stopPropagation()}>
                         <Checkbox 

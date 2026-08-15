@@ -305,7 +305,7 @@ export default function AdminStudents() {
                   <TableRow 
                     key={s.id} 
                     className="h-10 hover:bg-muted/50 cursor-pointer transition-colors"
-                    onClick={() => navigate(`/admin/students/${s.id}`)}
+                    onClick={() => navigate(`/admin/students/${s.wb_student_id ? `WB-${s.wb_student_id}` : s.id}`)}
                   >
                     <TableCell className="text-center px-0 py-1 text-xs" onClick={(e) => e.stopPropagation()}>
                       <Checkbox 
