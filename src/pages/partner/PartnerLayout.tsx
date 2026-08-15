@@ -100,7 +100,7 @@ export default function PartnerLayout() {
               </div>
             </div>
           </header>
-          <main className="flex-1 p-3 sm:p-6 bg-muted/20 overflow-x-hidden">
+          <main className="flex-1 p-3 sm:p-6 bg-muted/20 overflow-x-auto min-w-0">
             <Outlet />
           </main>
         </div>

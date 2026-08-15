@@ -269,7 +269,7 @@ export default function PartnerApplications() {
   }
 
   return (
-    <div className="animate-fade-in space-y-0 min-w-0 w-full">
+    <div className="animate-fade-in space-y-0 min-w-0">
 
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
@@ -316,7 +316,7 @@ export default function PartnerApplications() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-8 gap-3">
             {/* App Code */}
             <div className="space-y-1.5 xl:col-span-1">
               <label className="text-xs font-medium text-gray-500">App ID</label>
@@ -419,8 +419,8 @@ export default function PartnerApplications() {
       )}
 
       {/* Applications Table */}
-      <div className="w-full min-w-0">
-          <Card className="w-full border border-gray-200 shadow-sm overflow-hidden">
+      <div className="min-w-0">
+          <Card className="border border-gray-200 shadow-sm overflow-hidden">
             {filteredApplications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 px-8 text-center">
                 <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mb-4">
@@ -449,8 +449,7 @@ export default function PartnerApplications() {
                 )}
               </div>
             ) : (
-              <CardContent className="p-0 w-full overflow-hidden">
-                <div className="w-full overflow-x-auto">
+              <CardContent className="p-0 overflow-hidden">
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-gray-50/80 hover:bg-gray-50/80">
@@ -518,7 +517,6 @@ export default function PartnerApplications() {
                       })}
                     </TableBody>
                   </Table>
-                </div>
               </CardContent>
             )}
           </Card>

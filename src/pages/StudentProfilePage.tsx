@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -56,7 +56,7 @@ import { LoadingScreen } from "@/components/ui/loading-screen";
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-// ─── Status configuration ───────────────────────────────────────────────────
+// â”€â”€â”€ Status configuration â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const statusColors: Record<string, string> = {
   document_review: "bg-gray-100 text-gray-600",
@@ -89,7 +89,7 @@ const statusOptions = Object.entries(statusLabels).map(([value, label]) => ({
   label,
 }));
 
-// ─── Document fields ────────────────────────────────────────────────────────
+// â”€â”€â”€ Document fields â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const documentFields = [
   { field: "passport_photo_url", label: "Passport Photo" },
@@ -100,7 +100,7 @@ const documentFields = [
   { field: "recommendation_letter_url", label: "Recommendation Letter" },
 ] as const;
 
-// ─── Types ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface Student {
   id: string;
@@ -181,7 +181,7 @@ function InfoRow({ label, value }: { label: string; value: string | number | nul
   );
 }
 
-// ─── Component ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function StudentProfilePage({ mode }: { mode: "admin" | "partner" }) {
   const { studentId } = useParams();
@@ -441,7 +441,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     }
   };
 
-  // ── Fetch student data ──────────────────────────────────────────────────
+  // â”€â”€ Fetch student data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const fetchStudent = async () => {
     if (!session || !studentId) return;
@@ -530,7 +530,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, studentId]);
 
-  // ── Upload document ─────────────────────────────────────────────────────
+  // â”€â”€ Upload document â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const handleUploadDoc = async (field: string, file: File) => {
     if (!student || !session) return;
@@ -568,7 +568,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     }
   };
 
-  // ── Add Application ──────────────────────────────────────────────────────
+  // â”€â”€ Add Application â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const handleAddApplication = async () => {
     if (!newAppForm.university_id || !newAppForm.course_id || !student || !session) {
@@ -625,7 +625,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     }
   };
 
-  // ── Print / PDF ────────────────────────────────────────────────────────
+  // â”€â”€ Print / PDF â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const handleSaveStatusTracker = async (updatedStatus: string) => {
     if (!student || updatedStatus === student.status) return;
@@ -645,7 +645,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     }
   };
 
-  // ── Auto-Progression Logic ──────────────────────────────────────────────
+  // â”€â”€ Auto-Progression Logic â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   useEffect(() => {
     if (!student || mode !== "admin") return;
 
@@ -740,7 +740,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     }
   };
 
-  // ── Profile completeness ───────────────────────────────────────────────
+  // â”€â”€ Profile completeness â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const allDocsUploaded = student
     ? documentFields.every((d) => !!(student as any)[d.field])
@@ -769,7 +769,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     ? documentFields.filter((d) => !!(student as any)[d.field]).length
     : 0;
 
-  // ── Back navigation ────────────────────────────────────────────────────
+  // â”€â”€ Back navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const handleBack = () => {
     if (mode === "admin") {
@@ -779,7 +779,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     }
   };
 
-  // ── Print / PDF ────────────────────────────────────────────────────────
+  // â”€â”€ Print / PDF â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const handlePrint = () => {
     if (!student) return;
@@ -791,7 +791,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     document.title = originalTitle;
   };
 
-  // ── Loading & error states ─────────────────────────────────────────────
+  // â”€â”€ Loading & error states â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   if (loading) return <LoadingScreen fullScreen />;
 
@@ -810,7 +810,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     );
   }
 
-  // ── Render ─────────────────────────────────────────────────────────────
+  // â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   return (
     <>
@@ -825,7 +825,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
       `}</style>
 
       <div id="student-profile-print" className="space-y-6 animate-fade-in pb-12">
-        {/* ── Header ─────────────────────────────────────────────────── */}
+        {/* â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 no-print mb-2">
           <div className="flex items-center text-[#1E293B] font-semibold text-lg">
              <Button variant="ghost" size="icon" onClick={handleBack} className="h-8 w-8 mr-2"><ArrowLeft className="h-4 w-4" /></Button>
@@ -904,11 +904,11 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                       <Table>
                         <TableHeader>
                           <TableRow className="bg-gray-50 hover:bg-gray-50">
-                            <TableHead className="text-xs font-semibold text-gray-500 w-[120px]">App ID</TableHead>
-                            <TableHead className="text-xs font-semibold text-gray-500 min-w-[150px]">University</TableHead>
-                            <TableHead className="text-xs font-semibold text-gray-500 min-w-[150px]">Program</TableHead>
-                            <TableHead className="text-xs font-semibold text-gray-500 w-[120px]">Status</TableHead>
-                            <TableHead className="text-xs font-semibold text-gray-500 w-[100px]">Created On</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 w-[110px] whitespace-nowrap">App ID</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500">University</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500">Program</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 w-[130px] whitespace-nowrap">Status</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 w-[90px] whitespace-nowrap">Date</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -918,13 +918,13 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                                 {app.application_code}
                               </TableCell>
                               <TableCell className="text-xs text-gray-600 break-words whitespace-normal leading-tight">
-                                {app.universities?.name || "—"}
+                                {app.universities?.name || "â€”"}
                               </TableCell>
                               <TableCell className="text-xs text-gray-600 break-words whitespace-normal leading-tight">
-                                {app.courses?.title || "—"}
+                                {app.courses?.title || "â€”"}
                               </TableCell>
-                              <TableCell>
-                                <Badge variant="outline" className={`${statusColors[app.status] || "bg-gray-100 text-gray-800"} text-[10px] px-2 border-transparent`}>
+                              <TableCell className="whitespace-nowrap">
+                                <Badge variant="outline" className={`${statusColors[app.status] || "bg-gray-100 text-gray-800"} text-[10px] px-2 border-transparent whitespace-nowrap`}>
                                   {getStatusLabel(app.status)}
                                 </Badge>
                               </TableCell>
@@ -1035,10 +1035,10 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
           </TabsContent>
 
           <TabsContent value="profile" className="space-y-6 mt-0">
-            {/* ── Main Single Column Layout ──────────────────────────────── */}
+            {/* â”€â”€ Main Single Column Layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <Card className="print:border-none print:shadow-none border border-gray-200 shadow-sm">
               <CardContent className="p-6 sm:p-7 print:p-0">
-                {/* ── Section 1: Personal Information ──────────────── */}
+                {/* â”€â”€ Section 1: Personal Information â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <div className="flex items-center justify-between pb-4">
                   <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
                     <User className="h-4 w-4 text-[#2F4F97]" />
@@ -1223,7 +1223,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                   </div>
                 )}
 
-                {/* ── Section 2: Academic Background ──────────────── */}
+                {/* â”€â”€ Section 2: Academic Background â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
                   <div className="flex items-center justify-between pb-4">
                     <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
@@ -1311,7 +1311,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                   )}
                 </div>
 
-                {/* ── Section 3: Language Proficiency ──────────────── */}
+                {/* â”€â”€ Section 3: Language Proficiency â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
                   <div className="flex items-center justify-between pb-4">
                     <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
@@ -1389,7 +1389,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                   )}
                 </div>
 
-                {/* ── Section 4: Target Program ───────────────────── */}
+                {/* â”€â”€ Section 4: Target Program â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
                   <div className="flex items-center justify-between pb-4">
                     <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
@@ -1514,7 +1514,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                   )}
                 </div>
 
-                {/* ── Section 5: Emergency Contact / Guardian ───────────── */}
+                {/* â”€â”€ Section 5: Emergency Contact / Guardian â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
                   <div className="flex items-center justify-between pb-4">
                     <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
@@ -1601,7 +1601,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                   )}
                 </div>
 
-                {/* ── Section 6: Submitted By ─────────────────────── */}
+                {/* â”€â”€ Section 6: Submitted By â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
                   <div className="flex items-center justify-between pb-4">
                     <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
@@ -1695,7 +1695,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
           </Card>
         )}
 
-        {/* ── Print-Only Documents Checklist ──────────────────────────── */}
+        {/* â”€â”€ Print-Only Documents Checklist â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div className="hidden print:block pt-8 mt-8">
           <h3 className="text-[13px] font-bold text-[#1E293B] uppercase tracking-wide mb-5 flex items-center gap-2.5">
             <FileCheck className="h-4 w-4 text-[#2F4F97]" />
@@ -1721,73 +1721,6 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
         </div>
         </TabsContent>
         
-        <TabsContent value="applications" className="space-y-6 mt-0">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="flex items-center gap-2.5 text-[15px] font-bold text-[#1E293B]">
-                  <GraduationCap className="h-5 w-5 text-[#2F4F97]" />
-                  University Applications
-                </h3>
-                {mode === "admin" && (
-                  <Button size="sm" className="font-semibold h-8" onClick={() => setIsAppModalOpen(true)}>
-                    + Add Application
-                  </Button>
-                )}
-              </div>
-              
-              {applications.length === 0 ? (
-                <div className="text-center py-10">
-                  <div className="h-12 w-12 rounded-full bg-muted/20 flex items-center justify-center mx-auto mb-3">
-                    <Target className="h-6 w-6 text-muted-foreground/40" />
-                  </div>
-                  <h4 className="text-sm font-semibold text-[#1E293B]">No applications yet</h4>
-                  <p className="text-xs text-muted-foreground mt-1 max-w-[250px] mx-auto">
-                    {mode === "admin" ? "Create an application to track this student's progress." : "No applications have been created for this student."}
-                  </p>
-                </div>
-              ) : (
-                <div className="border rounded-md overflow-hidden">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="bg-muted/30">
-                        <TableHead>Code</TableHead>
-                        <TableHead>University</TableHead>
-                        <TableHead>Course</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Date Applied</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {applications.map(app => (
-                        <TableRow key={app.id} className="hover:bg-muted/20">
-                          <TableCell className="font-mono text-xs font-bold tracking-wider">{app.application_code}</TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-1.5 font-medium">
-                              <Building2 className="h-3.5 w-3.5 text-[#2F4F97]/60" />
-                              {app.universities?.name || "Unknown University"}
-                            </div>
-                          </TableCell>
-                          <TableCell className="font-semibold text-[#1E293B]">
-                            {app.courses?.title || "Unknown Course"}
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline" className={`text-[10px] uppercase font-bold px-2 py-0.5 h-5 ${statusColors[app.status]?.replace(/bg-[^\s]+/, '').replace(/border-[^\s]+/, '').trim() || 'text-gray-600'}`}>
-                              {statusLabels[app.status] || app.status.replace("_", " ")}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right text-xs text-muted-foreground font-medium">
-                            {new Date(app.created_at).toLocaleDateString("en-GB")}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
       </div>
 
