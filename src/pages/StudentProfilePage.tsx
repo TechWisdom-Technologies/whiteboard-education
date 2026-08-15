@@ -154,8 +154,9 @@ interface Application {
   admin_notes?: string;
   emgs_application_number?: string;
   emgs_status_percentage?: number;
+  partner_id?: string;
   universities?: { name: string };
-  courses?: { title: string };
+  courses?: { title: string; intake_months?: string[] };
 }
 
 interface Partner {
@@ -171,10 +172,10 @@ function InfoRow({ label, value }: { label: string; value: string | number | nul
   const isEmpty = value === null || value === undefined || value === "" || (typeof value === "number" && value === 0);
   return (
     <div className="flex flex-col gap-1.5 py-1">
-      <span className="text-[11px] font-medium text-muted-foreground/70 uppercase tracking-wider">
+      <span className="text-xs font-medium text-muted-foreground/70 uppercase tracking-wider">
         {label}
       </span>
-      <span className={`text-[13px] font-medium leading-snug ${isEmpty ? "text-amber-600/80 italic text-xs flex items-center gap-1 bg-amber-50/50 dark:bg-amber-950/10 px-2.5 py-1 rounded-2xl border border-amber-200/30 w-fit" : "text-[#1E293B]"}`}>
+      <span className={`text-sm font-medium leading-snug ${isEmpty ? "text-amber-600/80 italic text-xs flex items-center gap-1 bg-amber-50/50 dark:bg-amber-950/10 px-2.5 py-1 rounded-2xl border border-amber-200/30 w-fit" : "text-[#1E293B]"}`}>
         {isEmpty ? "Not provided" : value}
       </span>
     </div>
@@ -480,7 +481,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
       
       promises.push(
         fetch(
-          `${SUPABASE_URL}/rest/v1/student_applications?student_id=eq.${studentId}&select=*,universities(name),courses(title)`,
+          `${SUPABASE_URL}/rest/v1/student_applications?student_id=eq.${studentId}&select=*,universities(name),courses(title,intake_months)`,
           { headers }
         ).then(res => res.json()).then(data => {
           if (Array.isArray(data)) setApplications(data);
@@ -844,10 +845,10 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                <h2 className="text-xl font-bold text-[#1E293B] flex items-center gap-2">{student.full_name}
                  <Badge variant="outline" className="text-[10px] font-normal bg-gray-50 h-5 px-1.5 text-gray-500 uppercase">{student.status}</Badge>
                </h2>
-               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-gray-500">
-                 <div className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5 text-gray-400"/> {student.email}</div>
-                 <div className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 text-gray-400"/> {student.phone || "N/A"}</div>
-                 <div className="flex items-center gap-1.5"><User className="w-3.5 h-3.5 text-gray-400"/> {student.gender || "N/A"}</div>
+               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[14px] text-gray-600">
+                 <div className="flex items-center gap-1.5"><Mail className="w-4 h-4 text-gray-400"/> {student.email}</div>
+                 <div className="flex items-center gap-1.5"><Phone className="w-4 h-4 text-gray-400"/> {student.phone || "N/A"}</div>
+                 <div className="flex items-center gap-1.5"><User className="w-4 h-4 text-gray-400"/> {student.gender || "N/A"}</div>
                </div>
              </div>
            </div>
@@ -864,14 +865,12 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                  Submit Application
                </Button>
              )}
-             <Button variant="outline" className="text-xs h-9">
-                <Link2 className="w-4 h-4 mr-2" /> Student Platform Link
-             </Button>
+             {/* Student Platform Link Removed */}
            </div>
         </div>
 
         <Tabs defaultValue={defaultTab} className="w-full space-y-6">
-          <TabsList className="flex w-full h-12 bg-transparent border-b border-gray-200 p-0 no-print gap-8 rounded-none overflow-x-auto justify-start">
+          <TabsList className="flex w-full h-12 bg-transparent border-b border-gray-200 p-0 no-print gap-8 rounded-none justify-start">
             <TabsTrigger value="profile" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">1. Profile</TabsTrigger>
             <TabsTrigger value="applications" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">2. Applications</TabsTrigger>
             <TabsTrigger value="documents" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">3. Documents</TabsTrigger>
@@ -900,19 +899,24 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                     <div className="w-full overflow-x-auto">
                       <Table>
                         <TableHeader>
-                          <TableRow className="bg-gray-50 hover:bg-gray-50">
-                            <TableHead className="text-[13px] font-bold text-gray-900 w-[110px] whitespace-nowrap">App ID</TableHead>
-                            <TableHead className="text-[13px] font-bold text-gray-900">University</TableHead>
-                            <TableHead className="text-[13px] font-bold text-gray-900">Program</TableHead>
-                            <TableHead className="text-[13px] font-bold text-gray-900 w-[130px] whitespace-nowrap">Status</TableHead>
-                            <TableHead className="text-[13px] font-bold text-gray-900 w-[90px] whitespace-nowrap">Date</TableHead>
+                          <TableRow className="bg-gray-50/80 hover:bg-gray-50/80">
+                            <TableHead className="whitespace-nowrap w-[100px]">App ID</TableHead>
+                            <TableHead className="whitespace-nowrap w-[100px]">Date created</TableHead>
+                            <TableHead className="min-w-[140px]">University</TableHead>
+                            <TableHead className="min-w-[140px]">Program</TableHead>
+                            <TableHead className="whitespace-nowrap w-[80px]">Intake</TableHead>
+                            <TableHead className="min-w-[100px]">Created By</TableHead>
+                            <TableHead className="whitespace-nowrap w-[120px]">Status</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {applications.map((app) => (
                             <TableRow key={app.id}>
-                              <TableCell className="font-mono text-xs font-semibold text-[#2F4F97]">
+                              <TableCell className="font-mono text-xs font-semibold text-[#2F4F97] whitespace-nowrap">
                                 {app.application_code}
+                              </TableCell>
+                              <TableCell className="text-xs text-gray-900 whitespace-nowrap">
+                                {new Date(app.created_at).toLocaleDateString()}
                               </TableCell>
                               <TableCell className="text-xs text-gray-900 break-words whitespace-normal leading-tight">
                                 {app.universities?.name || "â€”"}
@@ -920,13 +924,16 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                               <TableCell className="text-xs text-gray-900 break-words whitespace-normal leading-tight">
                                 {app.courses?.title || "â€”"}
                               </TableCell>
+                              <TableCell className="text-xs text-gray-900 whitespace-nowrap">
+                                {app.courses?.intake_months?.[0] || "â€”"}
+                              </TableCell>
+                              <TableCell className="text-xs text-gray-900 whitespace-nowrap">
+                                {student?.partner_id === app.partner_id ? "Partner" : "Admin"}
+                              </TableCell>
                               <TableCell className="whitespace-nowrap">
                                 <Badge variant="outline" className={`${statusColors[app.status] || "bg-gray-100 text-gray-800"} text-[10px] px-2 border-transparent whitespace-nowrap`}>
                                   {getStatusLabel(app.status)}
                                 </Badge>
-                              </TableCell>
-                              <TableCell className="text-xs text-gray-900 whitespace-nowrap">
-                                {new Date(app.created_at).toLocaleDateString()}
                               </TableCell>
                             </TableRow>
                           ))}
@@ -940,7 +947,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
 
           <TabsContent value="documents" className="space-y-6 mt-0">
              <Tabs defaultValue="your-documents" className="w-full">
-               <TabsList className="bg-transparent gap-8 p-0 h-10 border-b border-gray-200 w-full justify-start rounded-none mb-6 overflow-x-auto">
+               <TabsList className="bg-transparent gap-8 p-0 h-10 border-b border-gray-200 w-full justify-start rounded-none mb-6">
                  <TabsTrigger value="your-documents" className="text-[13px] font-semibold h-10 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">Your Documents</TabsTrigger>
                  <TabsTrigger value="whiteboard-documents" className="text-[13px] font-semibold h-10 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">Whiteboard Documents</TabsTrigger>
                </TabsList>

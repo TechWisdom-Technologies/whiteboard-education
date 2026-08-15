@@ -398,14 +398,14 @@ export default function PartnerApplyPage() {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50/80 hover:bg-gray-50/80">
-                    <TableHead className="w-10 text-[13px] font-bold text-gray-900"></TableHead>
-                    <TableHead className="text-[13px] font-bold text-gray-900">Student Name</TableHead>
-                    <TableHead className="text-[13px] font-bold text-gray-900">WB ID</TableHead>
-                    <TableHead className="text-[13px] font-bold text-gray-900">Nationality</TableHead>
-                    <TableHead className="text-[13px] font-bold text-gray-900">Degree Level</TableHead>
-                    <TableHead className="text-[13px] font-bold text-gray-900">Major</TableHead>
-                    <TableHead className="text-[13px] font-bold text-gray-900">Status</TableHead>
-                    <TableHead className="text-[13px] font-bold text-gray-900"></TableHead>
+                    <TableHead className="w-10"></TableHead>
+                    <TableHead>Student Name</TableHead>
+                    <TableHead>WB ID</TableHead>
+                    <TableHead>Nationality</TableHead>
+                    <TableHead>Degree Level</TableHead>
+                    <TableHead>Major</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

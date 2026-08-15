@@ -437,14 +437,14 @@ export default function PartnerApplications() {
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-gray-50/80 hover:bg-gray-50/80">
-                        <TableHead className="text-[13px] font-bold text-gray-900 whitespace-nowrap w-[100px]">App ID</TableHead>
-                        <TableHead className="text-[13px] font-bold text-gray-900 whitespace-nowrap w-[100px]">Date created</TableHead>
-                        <TableHead className="text-[13px] font-bold text-gray-900 min-w-[120px]">Student Name</TableHead>
-                        <TableHead className="text-[13px] font-bold text-gray-900 min-w-[140px]">University</TableHead>
-                        <TableHead className="text-[13px] font-bold text-gray-900 min-w-[140px]">Program</TableHead>
-                        <TableHead className="text-[13px] font-bold text-gray-900 whitespace-nowrap w-[80px]">Intake</TableHead>
-                        <TableHead className="text-[13px] font-bold text-gray-900 min-w-[100px]">Created By</TableHead>
-                        <TableHead className="text-[13px] font-bold text-gray-900 whitespace-nowrap w-[120px]">Status</TableHead>
+                        <TableHead className="whitespace-nowrap w-[100px]">App ID</TableHead>
+                        <TableHead className="whitespace-nowrap w-[100px]">Date created</TableHead>
+                        <TableHead className="min-w-[120px]">Student Name</TableHead>
+                        <TableHead className="min-w-[140px]">University</TableHead>
+                        <TableHead className="min-w-[140px]">Program</TableHead>
+                        <TableHead className="whitespace-nowrap w-[80px]">Intake</TableHead>
+                        <TableHead className="min-w-[100px]">Created By</TableHead>
+                        <TableHead className="whitespace-nowrap w-[120px]">Status</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -470,7 +470,7 @@ export default function PartnerApplications() {
                             <TableCell className="text-xs text-gray-900 whitespace-nowrap">
                               {format(new Date(app.created_at), "MMM dd, yyyy")}
                             </TableCell>
-                            <TableCell className="text-sm font-medium text-gray-800 break-words whitespace-normal leading-tight">
+                            <TableCell className="text-sm font-normal text-gray-800 break-words whitespace-normal leading-tight">
                               {student?.full_name || "—"}
                             </TableCell>
                             <TableCell className="text-xs text-gray-900 break-words whitespace-normal leading-tight">

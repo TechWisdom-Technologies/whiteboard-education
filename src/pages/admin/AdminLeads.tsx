@@ -219,12 +219,12 @@ export default function AdminLeads() {
                         onCheckedChange={handleSelectAll}
                       />
                     </TableHead>
-                    <TableHead className="h-10 text-[13px] text-muted-foreground">Name</TableHead>
-                    <TableHead className="h-10 text-[13px] text-muted-foreground">Email</TableHead>
-                    <TableHead className="h-10 text-[13px] text-muted-foreground">Date</TableHead>
-                    <TableHead className="h-10 text-[13px] text-muted-foreground">Status</TableHead>
-                    <TableHead className="h-10 text-[13px] text-muted-foreground">Source</TableHead>
-                    <TableHead className="text-right h-10 text-[13px] text-muted-foreground">Actions</TableHead>
+                    <TableHead className="h-10">Name</TableHead>
+                    <TableHead className="h-10">Email</TableHead>
+                    <TableHead className="h-10">Date</TableHead>
+                    <TableHead className="h-10">Status</TableHead>
+                    <TableHead className="h-10">Source</TableHead>
+                    <TableHead className="text-right h-10">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

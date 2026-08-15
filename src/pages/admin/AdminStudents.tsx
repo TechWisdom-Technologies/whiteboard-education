@@ -38,6 +38,7 @@ const statusColors: Record<string, string> = {
 interface Student {
   id: string;
   partner_id: string;
+  wb_student_id?: number;
   full_name: string;
   email: string;
   phone: string;
@@ -99,7 +100,7 @@ export default function AdminStudents() {
     const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}` };
     try {
       const [studentsRes, partnersRes] = await Promise.all([
-        fetch(`${SUPABASE_URL}/rest/v1/students?select=id,partner_id,full_name,email,phone,passport_number,nationality,nid_number,date_of_birth,gender,previous_institution,previous_degree,major,gpa,ielts_score,language_test_name,target_university,target_course,intake_month,degree_level,status,admin_notes,passport_photo_url,passport_url,academic_transcript_url,ielts_certificate_url,personal_statement_url,recommendation_letter_url,other_documents,created_at&order=created_at.desc`, { headers }),
+        fetch(`${SUPABASE_URL}/rest/v1/students?select=id,partner_id,wb_student_id,full_name,email,phone,passport_number,nationality,nid_number,date_of_birth,gender,previous_institution,previous_degree,major,gpa,ielts_score,language_test_name,target_university,target_course,intake_month,degree_level,status,admin_notes,passport_photo_url,passport_url,academic_transcript_url,ielts_certificate_url,personal_statement_url,recommendation_letter_url,other_documents,created_at&order=created_at.desc`, { headers }),
         fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?select=id,agency_name,contact_person,email,phone,user_id`, { headers }),
       ]);
       if (studentsRes.ok) setStudents(await studentsRes.json());
@@ -210,9 +211,9 @@ export default function AdminStudents() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end gap-2 text-[12px]">
+      <div className="flex justify-end gap-2 text-xs">
         {selectedIds.length > 0 && (
-          <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-6 text-[12px] px-2 py-0">
+          <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-6 text-xs px-2 py-0">
             <Trash2 className="h-3 w-3 mr-1" /> Delete Selected ({selectedIds.length})
           </Button>
         )}
@@ -223,44 +224,53 @@ export default function AdminStudents() {
 
 
       {/* Filters */}
-      <div className="flex flex-wrap items-end gap-3 mb-4 bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-        {/* Search */}
-        <div className="space-y-1.5 flex-[2] min-w-[200px]">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input 
-              placeholder="Search students by name or email..." 
-              value={search} 
-              onChange={e => setSearch(e.target.value)} 
-              className="pl-9 bg-white shadow-sm border-slate-200 h-10 w-full focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200" 
-            />
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-4 mb-4">
+        <div className="flex flex-wrap items-end gap-3">
+          {/* Search */}
+          <div className="space-y-1.5 flex-[1.5] min-w-[200px]">
+            <label className="text-xs font-medium text-gray-500">Search</label>
+            <div className="relative">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+              <Input 
+                placeholder="Name or email..." 
+                value={search} 
+                onChange={e => setSearch(e.target.value)} 
+                className="pl-8 h-8 text-xs border-gray-200 w-full" 
+              />
+            </div>
           </div>
-        </div>
-        
-        {/* Select Filters */}
-        <div className="space-y-1.5 flex-1 min-w-[180px]">
-          <Select value={filterPartner} onValueChange={setFilterPartner}>
-            <SelectTrigger className="w-full bg-white shadow-sm border-slate-200 h-10 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200"><Filter className="h-4 w-4 mr-2 text-slate-400" /><SelectValue placeholder="All Partners" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Partners</SelectItem>
-              {partners.map(p => <SelectItem key={p.user_id} value={p.user_id}>{p.agency_name}</SelectItem>)}
-            </SelectContent>
-          </Select>
-        </div>
-        
-        <div className="space-y-1.5 flex-1 min-w-[150px]">
-          <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-full bg-white shadow-sm border-slate-200 h-10 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200"><SelectValue placeholder="All Statuses" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              {statusOptions.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
-            </SelectContent>
-          </Select>
-        </div>
+          
+          {/* Select Filters */}
+          <div className="space-y-1.5 flex-1 min-w-[150px]">
+            <label className="text-xs font-medium text-gray-500">Partner Agency</label>
+            <Select value={filterPartner} onValueChange={setFilterPartner}>
+              <SelectTrigger className="h-8 text-xs border-gray-200 w-full">
+                <SelectValue placeholder="All Partners" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Partners</SelectItem>
+                {partners.map(p => <SelectItem key={p.user_id} value={p.user_id}>{p.agency_name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="space-y-1.5 flex-1 min-w-[120px]">
+            <label className="text-xs font-medium text-gray-500">Status</label>
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger className="h-8 text-xs border-gray-200 w-full">
+                <SelectValue placeholder="All Statuses" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                {statusOptions.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
 
-        <div className="flex items-center gap-2 flex-1 min-w-[200px]">
-          <Button onClick={handleSearch} className="w-full gap-2 bg-[#2F4F97] hover:bg-white text-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97] transition-colors"><Search className="h-4 w-4" /> Search</Button>
-          <Button variant="outline" onClick={handleReset} className="w-full gap-2 border-gray-300">Clear</Button>
+          <div className="flex items-center gap-2 flex-1 min-w-[200px]">
+            <Button onClick={handleSearch} className="w-full gap-2 bg-[#2F4F97] hover:bg-white text-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97] transition-colors"><Search className="h-4 w-4" /> Search</Button>
+            <Button variant="outline" onClick={handleReset} className="w-full gap-2 border-gray-300">Clear</Button>
+          </div>
         </div>
       </div>
 
@@ -278,11 +288,12 @@ export default function AdminStudents() {
                     onCheckedChange={handleSelectAll}
                   />
                 </TableHead>
-                <TableHead>Student Name</TableHead>
-                <TableHead>Partner Agency</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Added</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="whitespace-nowrap min-w-[80px]">WB ID</TableHead>
+                <TableHead className="min-w-[120px]">Student Name</TableHead>
+                <TableHead className="min-w-[120px]">Partner Agency</TableHead>
+                <TableHead className="min-w-[100px]">Status</TableHead>
+                <TableHead className="min-w-[100px]">Added</TableHead>
+                <TableHead className="text-right min-w-[50px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -296,19 +307,20 @@ export default function AdminStudents() {
                     className="h-10 hover:bg-muted/50 cursor-pointer transition-colors"
                     onClick={() => navigate(`/admin/students/${s.id}`)}
                   >
-                    <TableCell className="text-center px-0 py-1" onClick={(e) => e.stopPropagation()}>
+                    <TableCell className="text-center px-0 py-1 text-xs" onClick={(e) => e.stopPropagation()}>
                       <Checkbox 
                         checked={selectedIds.includes(s.id)}
                         onCheckedChange={(c) => handleSelectRow(s.id, c as boolean)}
                       />
                     </TableCell>
-                    <TableCell className="font-normal py-1">{s.full_name}</TableCell>
-                    <TableCell className="text-[12px] py-1">{partner?.agency_name || "Unknown"}</TableCell>
-                    <TableCell className="py-1"><Badge variant="outline" className={statusColors[s.status] || "bg-muted text-muted-foreground"}>{label}</Badge></TableCell>
-                    <TableCell className="text-[12px] text-muted-foreground py-1">
+                    <TableCell className="text-xs font-mono py-1">{s.wb_student_id ? `WB-${s.wb_student_id}` : "—"}</TableCell>
+                    <TableCell className="text-xs font-normal py-1">{s.full_name}</TableCell>
+                    <TableCell className="text-xs py-1">{partner?.agency_name || "Unknown"}</TableCell>
+                    <TableCell className="text-xs py-1"><Badge variant="outline" className={statusColors[s.status] || "bg-muted text-muted-foreground"}>{label}</Badge></TableCell>
+                    <TableCell className="text-xs text-muted-foreground py-1">
                       {new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </TableCell>
-                    <TableCell className="text-right py-1" onClick={(e) => e.stopPropagation()}>
+                    <TableCell className="text-right py-1 text-xs" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-end gap-1">
                         <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={(e) => handleDelete(s.id, e)} title="Delete Student">
                           <Trash2 className="h-3.5 w-3.5" />

@@ -634,5 +634,15 @@
 .dashboard-theme .text-lg { font-size: 1.2rem; line-height: 1.75rem; }
 
 .dashboard-theme {
+  font-family: 'Poppins', sans-serif;
   font-size: 0.95rem;
+}
+
+.dashboard-theme * {
+  font-family: 'Poppins', sans-serif;
+}
+
+.dashboard-theme td,
+.dashboard-theme td * {
+  font-weight: 400 !important;
 }
