@@ -6,6 +6,15 @@ import { NotificationCenter } from "@/components/partner/NotificationCenter";
 import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown, LogOut } from "lucide-react";
 
 export default function PartnerLayout() {
   const { user } = useAuth();
@@ -55,51 +64,54 @@ export default function PartnerLayout() {
     };
   }, [user?.id]);
 
-  const getPageTitle = () => {
-    const path = location.pathname;
-    if (path === "/partner-dashboard") return "Dashboard";
-    if (path.includes("/partner-dashboard/students")) return "Students";
-    if (path.includes("/partner-dashboard/applications")) return "Applications";
-    if (path.includes("/partner-dashboard/search-programs")) return "Search Programs";
-    if (path.includes("/partner-dashboard/marketing")) return "Documents";
-    if (path.includes("/partner-dashboard/notifications")) return "Notifications";
-    if (path.includes("/partner-dashboard/profile")) return "My Profile";
-    return "Partner Portal";
-  };
 
   return (
     <SidebarProvider defaultOpen={false}>
-      <div className="min-h-screen flex w-full">
-        <PartnerSidebar />
-        <div className="flex-1 flex flex-col min-w-0">
-          <header className="h-[60px] flex items-center border-b px-3 sm:px-4 gap-2 sm:gap-3 bg-background sticky top-0 z-20 justify-between">
+      <div className="min-h-screen flex flex-col w-full dashboard-theme">
+        <header className="h-[60px] flex items-center bg-[#2F4F97] sticky top-0 z-30 w-full text-white shadow-sm">
+          <div className="w-[16rem] flex items-center justify-center bg-transparent h-full flex-shrink-0">
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="Logo" className="w-[70%] max-h-12 object-contain shrink-0 mx-auto" />
+            ) : (
+              <img src="/logo.png" alt="Whiteboard Education" className="w-[70%] max-h-12 object-contain shrink-0 mx-auto" />
+            )}
+          </div>
+          <div className="flex-1 flex items-center justify-between px-3 sm:px-4 min-w-0 h-full">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-              <span className="font-bold text-[15px] text-foreground tracking-tight ml-1">
-                {getPageTitle()}
-              </span>
             </div>
             <div className="flex items-center gap-4 sm:gap-6 w-full sm:w-auto justify-end flex-1 sm:flex-none">
               <div className="flex items-center gap-4">
                 <NotificationCenter />
                 <div className="flex items-center gap-3">
-                  <div className="hidden flex-col items-end sm:flex">
-                    <span className="text-[13px] font-bold text-gray-800 leading-tight">
-                      {displayName || "Partner"}
-                    </span>
-                    <span className="text-[11px] text-gray-500 truncate max-w-[160px] font-medium leading-tight">
-                      {user?.email}
-                    </span>
-                  </div>
-                  <Avatar className="h-9 w-9 ring-2 ring-gray-100 transition-transform hover:scale-105 cursor-pointer shadow-sm rounded-full overflow-hidden shrink-0">
-                    <AvatarImage src={avatarUrl} alt={displayName || user?.email || "Avatar"} className="object-cover w-full h-full rounded-full" />
-                    <AvatarFallback className="bg-[#2F4F97]/10 text-[#2F4F97] text-xs font-bold rounded-full">
-                      {(displayName || user?.email || "P").charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
+                      <span className="text-[14px] font-medium text-white hover:text-gray-200 transition-colors">
+                        Hello, {displayName || "Partner"}
+                      </span>
+                      <ChevronDown className="h-4 w-4 text-white/80" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                      <DropdownMenuLabel className="font-normal">
+                        <div className="flex flex-col space-y-1">
+                          <p className="text-sm font-medium leading-none">{displayName || "Partner"}</p>
+                          <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
+                          <p className="text-xs leading-none text-muted-foreground mt-1 capitalize">Role: Partner</p>
+                        </div>
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => supabase.auth.signOut()} className="text-red-600 cursor-pointer">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Log out
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             </div>
-          </header>
+          </div>
+        </header>
+        <div className="flex flex-1 w-full relative">
+          <PartnerSidebar />
           <main className="flex-1 p-3 sm:p-6 bg-muted/20 overflow-x-auto min-w-0">
             <Outlet />
           </main>

@@ -38,7 +38,7 @@
     --muted: 210 40% 96%;               /* slightly darker than bg */
     --muted-foreground: 215 16% 47%;    /* #64748B - Body Text */
 
-    --accent: 38 92% 50%;               /* #F59E0B - Accent */
+    --accent: 222 53% 39%;              /* #2F4F97 - Accent (changed from orange) */
     --accent-foreground: 0 0% 100%;    
 
     --destructive: 0 72% 51%;
@@ -621,4 +621,18 @@
   max-width: 100%;
   border-radius: var(--radius);
   margin: 1.5rem 0;
+}
+
+/* Dashboard specific overrides */
+.dashboard-theme {
+  --radius: 0.5rem;
+}
+
+.dashboard-theme .text-xs { font-size: 0.85rem; line-height: 1.25rem; }
+.dashboard-theme .text-sm { font-size: 0.95rem; line-height: 1.4rem; }
+.dashboard-theme .text-base { font-size: 1.05rem; line-height: 1.5rem; }
+.dashboard-theme .text-lg { font-size: 1.2rem; line-height: 1.75rem; }
+
+.dashboard-theme {
+  font-size: 0.95rem;
 }

@@ -226,8 +226,8 @@ export function AdminNotificationCenter() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
+        <Button variant="ghost" size="icon" className="relative text-white hover:bg-white/10">
+          <Bell className="h-6 w-6" />
           {unreadCount > 0 && (
             <span className="absolute -top-0.5 -right-0.5 h-[18px] min-w-[18px] rounded-xl bg-destructive px-1 text-[10px] font-bold text-destructive-foreground flex items-center justify-center">
               {unreadCount > 99 ? "99+" : unreadCount}

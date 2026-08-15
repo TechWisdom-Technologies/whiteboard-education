@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -582,16 +582,13 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
       const selectedUni = universities.find(u => u.id === newAppForm.university_id);
       
       // Generate short name
-      const words = selectedUni?.name?.replace(/[^a-zA-Z\s]/g, '').split(' ') || [];
-      const shortName = words.map((w: string) => w.charAt(0)).join('').toUpperCase().substring(0, 4) || 'UNI';
-      
-      // Generate date DDMM
-      const today = new Date();
-      const dd = String(today.getDate()).padStart(2, '0');
-      const mm = String(today.getMonth() + 1).padStart(2, '0');
-      
-      const randomSuffix = Math.floor(100 + Math.random() * 900);
-      const applicationCode = `WBU-${shortName}-${dd}${mm}-${randomSuffix}`;
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let code = "APP-";
+      for (let i = 0; i < 8; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      const applicationCode = code;
+
       
       const res = await fetch(`${SUPABASE_URL}/rest/v1/student_applications`, {
         method: "POST",
@@ -904,11 +901,11 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                       <Table>
                         <TableHeader>
                           <TableRow className="bg-gray-50 hover:bg-gray-50">
-                            <TableHead className="text-xs font-semibold text-gray-500 w-[110px] whitespace-nowrap">App ID</TableHead>
-                            <TableHead className="text-xs font-semibold text-gray-500">University</TableHead>
-                            <TableHead className="text-xs font-semibold text-gray-500">Program</TableHead>
-                            <TableHead className="text-xs font-semibold text-gray-500 w-[130px] whitespace-nowrap">Status</TableHead>
-                            <TableHead className="text-xs font-semibold text-gray-500 w-[90px] whitespace-nowrap">Date</TableHead>
+                            <TableHead className="text-[13px] font-bold text-gray-900 w-[110px] whitespace-nowrap">App ID</TableHead>
+                            <TableHead className="text-[13px] font-bold text-gray-900">University</TableHead>
+                            <TableHead className="text-[13px] font-bold text-gray-900">Program</TableHead>
+                            <TableHead className="text-[13px] font-bold text-gray-900 w-[130px] whitespace-nowrap">Status</TableHead>
+                            <TableHead className="text-[13px] font-bold text-gray-900 w-[90px] whitespace-nowrap">Date</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -917,10 +914,10 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                               <TableCell className="font-mono text-xs font-semibold text-[#2F4F97]">
                                 {app.application_code}
                               </TableCell>
-                              <TableCell className="text-xs text-gray-600 break-words whitespace-normal leading-tight">
+                              <TableCell className="text-xs text-gray-900 break-words whitespace-normal leading-tight">
                                 {app.universities?.name || "â€”"}
                               </TableCell>
-                              <TableCell className="text-xs text-gray-600 break-words whitespace-normal leading-tight">
+                              <TableCell className="text-xs text-gray-900 break-words whitespace-normal leading-tight">
                                 {app.courses?.title || "â€”"}
                               </TableCell>
                               <TableCell className="whitespace-nowrap">
@@ -928,7 +925,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                                   {getStatusLabel(app.status)}
                                 </Badge>
                               </TableCell>
-                              <TableCell className="text-xs text-gray-500 whitespace-nowrap">
+                              <TableCell className="text-xs text-gray-900 whitespace-nowrap">
                                 {new Date(app.created_at).toLocaleDateString()}
                               </TableCell>
                             </TableRow>

@@ -398,14 +398,14 @@ export default function PartnerApplyPage() {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50/80 hover:bg-gray-50/80">
-                    <TableHead className="w-10 text-xs font-semibold text-gray-500"></TableHead>
-                    <TableHead className="text-xs font-semibold text-gray-500">Student Name</TableHead>
-                    <TableHead className="text-xs font-semibold text-gray-500">WB ID</TableHead>
-                    <TableHead className="text-xs font-semibold text-gray-500">Nationality</TableHead>
-                    <TableHead className="text-xs font-semibold text-gray-500">Degree Level</TableHead>
-                    <TableHead className="text-xs font-semibold text-gray-500">Major</TableHead>
-                    <TableHead className="text-xs font-semibold text-gray-500">Status</TableHead>
-                    <TableHead className="text-xs font-semibold text-gray-500"></TableHead>
+                    <TableHead className="w-10 text-[13px] font-bold text-gray-900"></TableHead>
+                    <TableHead className="text-[13px] font-bold text-gray-900">Student Name</TableHead>
+                    <TableHead className="text-[13px] font-bold text-gray-900">WB ID</TableHead>
+                    <TableHead className="text-[13px] font-bold text-gray-900">Nationality</TableHead>
+                    <TableHead className="text-[13px] font-bold text-gray-900">Degree Level</TableHead>
+                    <TableHead className="text-[13px] font-bold text-gray-900">Major</TableHead>
+                    <TableHead className="text-[13px] font-bold text-gray-900">Status</TableHead>
+                    <TableHead className="text-[13px] font-bold text-gray-900"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -444,12 +444,12 @@ export default function PartnerApplyPage() {
                               <p className="text-xs text-gray-400">{student.email}</p>
                             </div>
                           </TableCell>
-                          <TableCell className="text-xs text-gray-500 font-mono">
+                          <TableCell className="text-xs text-gray-900 font-mono">
                             {student.wb_student_id ? `WB-${student.wb_student_id}` : "—"}
                           </TableCell>
-                          <TableCell className="text-xs text-gray-600">{student.nationality || "—"}</TableCell>
-                          <TableCell className="text-xs text-gray-600">{student.degree_level || "—"}</TableCell>
-                          <TableCell className="text-xs text-gray-600 max-w-[140px] truncate">{student.major || "—"}</TableCell>
+                          <TableCell className="text-xs text-gray-900">{student.nationality || "—"}</TableCell>
+                          <TableCell className="text-xs text-gray-900">{student.degree_level || "—"}</TableCell>
+                          <TableCell className="text-xs text-gray-900 max-w-[140px] truncate">{student.major || "—"}</TableCell>
                           <TableCell>
                             <Badge className={`${badgeClass} border-transparent text-[10px] px-2 py-0.5 whitespace-nowrap`}>
                               {getStatusLabel(student.status)}

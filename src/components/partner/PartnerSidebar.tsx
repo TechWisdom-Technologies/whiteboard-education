@@ -131,33 +131,8 @@ export function PartnerSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-slate-200 bg-[#F8FAFC]">
-      {/* Sidebar Header containing centered logo covering 65-70% width */}
-      <div className="border-b border-slate-200 px-3 bg-[#F8FAFC] flex flex-col items-center justify-center gap-1 flex-shrink-0 h-[60px]">
-        <div className="flex items-center justify-center w-full">
-          {avatarUrl ? (
-            collapsed ? (
-              <img 
-                src={avatarUrl} 
-                alt="Logo" 
-                className="h-8 w-8 object-contain shrink-0 mx-auto" 
-              />
-            ) : (
-              <img 
-                src={avatarUrl} 
-                alt="Logo" 
-                className="w-[70%] max-h-12 object-contain shrink-0 mx-auto" 
-              />
-            )
-          ) : (
-            collapsed ? (
-              <img src="/logo.png" alt="W Icon" className="h-8 w-8 object-contain shrink-0 mx-auto" />
-            ) : (
-              <img src="/logo.png" alt="Whiteboard Education" className="w-[70%] max-h-12 object-contain shrink-0 mx-auto" />
-            )
-          )}
-        </div>
-      </div>
+    <Sidebar collapsible="icon" className="border-r border-slate-200 bg-[#F8FAFC] !top-[60px] !h-[calc(100svh-60px)] z-20">
+
 
       {/* Sidebar Content containing shifted-down menu items */}
       <SidebarContent className="bg-[#F8FAFC]">

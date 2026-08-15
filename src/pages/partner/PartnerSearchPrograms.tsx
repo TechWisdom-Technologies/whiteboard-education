@@ -115,6 +115,15 @@ export default function PartnerSearchPrograms() {
   const [studyArea, setStudyArea] = useState("all");
   const [sortBy, setSortBy] = useState("best_match");
 
+  const [appliedFilters, setAppliedFilters] = useState({
+    searchQuery: "",
+    intake: "all",
+    year: "all",
+    level: "all",
+    studyArea: "all",
+    sortBy: "best_match"
+  });
+
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -147,8 +156,8 @@ export default function PartnerSearchPrograms() {
     let result = courses.filter((course) => {
       const university = universities[course.university_id];
 
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase();
+      if (appliedFilters.searchQuery) {
+        const q = appliedFilters.searchQuery.toLowerCase();
         if (
           !course.title.toLowerCase().includes(q) &&
           (!university || !university.name.toLowerCase().includes(q))
@@ -157,22 +166,22 @@ export default function PartnerSearchPrograms() {
         }
       }
 
-      if (intake !== "all") {
-        if (!course.intake_months || !course.intake_months.includes(intake)) return false;
+      if (appliedFilters.intake !== "all") {
+        if (!course.intake_months || !course.intake_months.includes(appliedFilters.intake)) return false;
       }
 
-      if (level !== "all") {
-        let matchLevel = level;
-        if (level === "Bachelor's Degree") matchLevel = "Bachelor";
-        if (level === "Master's Degree") matchLevel = "Master";
-        if (level === "Doctoral Degree (PhD)") matchLevel = "PhD";
-        if (level === "Foundation / A-level") matchLevel = "Foundation";
+      if (appliedFilters.level !== "all") {
+        let matchLevel = appliedFilters.level;
+        if (appliedFilters.level === "Bachelor's Degree") matchLevel = "Bachelor";
+        if (appliedFilters.level === "Master's Degree") matchLevel = "Master";
+        if (appliedFilters.level === "Doctoral Degree (PhD)") matchLevel = "PhD";
+        if (appliedFilters.level === "Foundation / A-level") matchLevel = "Foundation";
         if (!course.degree_level || !course.degree_level.includes(matchLevel)) return false;
       }
 
-      if (studyArea !== "all") {
+      if (appliedFilters.studyArea !== "all") {
         const titleLower = course.title.toLowerCase();
-        const areaLower = studyArea.toLowerCase();
+        const areaLower = appliedFilters.studyArea.toLowerCase();
         if (
           !titleLower.includes(areaLower) &&
           !(areaLower === "medicine & health" && (titleLower.includes("medicine") || titleLower.includes("health") || titleLower.includes("nursing"))) &&
@@ -185,14 +194,19 @@ export default function PartnerSearchPrograms() {
       return true;
     });
 
-    if (sortBy === "tuition_low_high") {
+    if (appliedFilters.sortBy === "tuition_low_high") {
       result.sort((a, b) => (a.tuition_fee || 0) - (b.tuition_fee || 0));
-    } else if (sortBy === "tuition_high_low") {
+    } else if (appliedFilters.sortBy === "tuition_high_low") {
       result.sort((a, b) => (b.tuition_fee || 0) - (a.tuition_fee || 0));
     }
 
     return result;
-  }, [courses, universities, searchQuery, intake, level, studyArea, sortBy]);
+  }, [courses, universities, appliedFilters]);
+
+  const handleSearch = () => {
+    setAppliedFilters({ searchQuery, intake, year, level, studyArea, sortBy });
+    setCurrentPage(1);
+  };
 
   const handleReset = () => {
     setSearchQuery("");
@@ -201,6 +215,9 @@ export default function PartnerSearchPrograms() {
     setLevel("all");
     setStudyArea("all");
     setSortBy("best_match");
+    setAppliedFilters({
+      searchQuery: "", intake: "all", year: "all", level: "all", studyArea: "all", sortBy: "best_match"
+    });
     setCurrentPage(1);
   };
 
@@ -210,7 +227,7 @@ export default function PartnerSearchPrograms() {
   );
 
   const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
-  const hasActiveFilters = searchQuery || intake !== "all" || year !== "all" || level !== "all" || studyArea !== "all";
+  const hasActiveFilters = appliedFilters.searchQuery || appliedFilters.intake !== "all" || appliedFilters.year !== "all" || appliedFilters.level !== "all" || appliedFilters.studyArea !== "all";
 
   if (loading) return <LoadingScreen />;
 
@@ -225,21 +242,9 @@ export default function PartnerSearchPrograms() {
 
       {/* ─── Top Horizontal Filters ─── */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <SlidersHorizontal className="h-4 w-4 text-[#2F4F97]" />
-            <span className="text-sm font-semibold text-[#1E293B]">Filters</span>
-          </div>
-          {hasActiveFilters && (
-            <button onClick={handleReset} className="text-xs text-[#2F4F97] hover:underline flex items-center gap-1">
-              <RotateCcw className="h-3 w-3" /> Reset Filters
-            </button>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="flex flex-wrap items-end gap-4">
           {/* Search */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 flex-1 min-w-[200px]">
             <label className="text-xs font-medium text-gray-500">Search</label>
             <div className="relative">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
@@ -258,7 +263,7 @@ export default function PartnerSearchPrograms() {
           </div>
 
           {/* Degree Level */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 flex-1 min-w-[150px]">
             <label className="text-xs font-medium text-gray-500">Degree Level</label>
             <Select value={level} onValueChange={(v) => { setLevel(v); setCurrentPage(1); }}>
               <SelectTrigger className="h-9 text-sm border-gray-200">
@@ -276,7 +281,7 @@ export default function PartnerSearchPrograms() {
           </div>
 
           {/* Study Area */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 flex-[1.5] min-w-[180px]">
             <label className="text-xs font-medium text-gray-500">Study Area</label>
             <Select value={studyArea} onValueChange={(v) => { setStudyArea(v); setCurrentPage(1); }}>
               <SelectTrigger className="h-9 text-sm border-gray-200">
@@ -326,6 +331,12 @@ export default function PartnerSearchPrograms() {
                 <SelectItem value="2027">2027</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2 flex-1 min-w-[200px]">
+            <Button onClick={handleSearch} className="w-full gap-2 bg-[#2F4F97] hover:bg-white text-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97] transition-colors"><Search className="h-4 w-4" /> Search</Button>
+            <Button variant="outline" onClick={handleReset} className="w-full gap-2 border-gray-300">Clear</Button>
           </div>
         </div>
 

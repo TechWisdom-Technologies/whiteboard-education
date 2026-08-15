@@ -88,6 +88,12 @@ export default function AdminStudents() {
   const [filterStatus, setFilterStatus] = useState("all");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
+  const [appliedFilters, setAppliedFilters] = useState({
+    search: "",
+    filterPartner: "all",
+    filterStatus: "all"
+  });
+
   const fetchData = async () => {
     if (!session) return;
     const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}` };
@@ -180,10 +186,21 @@ export default function AdminStudents() {
   };
 
 
+  const handleSearch = () => {
+    setAppliedFilters({ search, filterPartner, filterStatus });
+  };
+
+  const handleReset = () => {
+    setSearch("");
+    setFilterPartner("all");
+    setFilterStatus("all");
+    setAppliedFilters({ search: "", filterPartner: "all", filterStatus: "all" });
+  };
+
   const filtered = students.filter(s => {
-    const matchSearch = s.full_name.toLowerCase().includes(search.toLowerCase()) || s.email.toLowerCase().includes(search.toLowerCase());
-    const matchPartner = filterPartner === "all" || s.partner_id === filterPartner;
-    const matchStatus = filterStatus === "all" || s.status === filterStatus;
+    const matchSearch = s.full_name.toLowerCase().includes(appliedFilters.search.toLowerCase()) || s.email.toLowerCase().includes(appliedFilters.search.toLowerCase());
+    const matchPartner = appliedFilters.filterPartner === "all" || s.partner_id === appliedFilters.filterPartner;
+    const matchStatus = appliedFilters.filterStatus === "all" || s.status === appliedFilters.filterStatus;
     return matchSearch && matchPartner && matchStatus;
   });
 
@@ -206,34 +223,44 @@ export default function AdminStudents() {
 
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row justify-between gap-4 items-center mb-2">
-        {/* Left: Search */}
-        <div className="relative w-full sm:max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Search students by name or email..." 
-            value={search} 
-            onChange={e => setSearch(e.target.value)} 
-            className="pl-9 bg-white shadow-sm border-slate-200 h-10 w-full focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200" 
-          />
+      <div className="flex flex-wrap items-end gap-3 mb-4 bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+        {/* Search */}
+        <div className="space-y-1.5 flex-[2] min-w-[200px]">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input 
+              placeholder="Search students by name or email..." 
+              value={search} 
+              onChange={e => setSearch(e.target.value)} 
+              className="pl-9 bg-white shadow-sm border-slate-200 h-10 w-full focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200" 
+            />
+          </div>
         </div>
         
-        {/* Right: Select Filters */}
-        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+        {/* Select Filters */}
+        <div className="space-y-1.5 flex-1 min-w-[180px]">
           <Select value={filterPartner} onValueChange={setFilterPartner}>
-            <SelectTrigger className="w-full sm:w-[200px] bg-white shadow-sm border-slate-200 h-10 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200"><Filter className="h-4 w-4 mr-2 text-slate-400" /><SelectValue placeholder="All Partners" /></SelectTrigger>
+            <SelectTrigger className="w-full bg-white shadow-sm border-slate-200 h-10 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200"><Filter className="h-4 w-4 mr-2 text-slate-400" /><SelectValue placeholder="All Partners" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Partners</SelectItem>
               {partners.map(p => <SelectItem key={p.user_id} value={p.user_id}>{p.agency_name}</SelectItem>)}
             </SelectContent>
           </Select>
+        </div>
+        
+        <div className="space-y-1.5 flex-1 min-w-[150px]">
           <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-full sm:w-[200px] bg-white shadow-sm border-slate-200 h-10 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200"><SelectValue placeholder="All Statuses" /></SelectTrigger>
+            <SelectTrigger className="w-full bg-white shadow-sm border-slate-200 h-10 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200"><SelectValue placeholder="All Statuses" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>
               {statusOptions.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
             </SelectContent>
           </Select>
+        </div>
+
+        <div className="flex items-center gap-2 flex-1 min-w-[200px]">
+          <Button onClick={handleSearch} className="w-full gap-2 bg-[#2F4F97] hover:bg-white text-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97] transition-colors"><Search className="h-4 w-4" /> Search</Button>
+          <Button variant="outline" onClick={handleReset} className="w-full gap-2 border-gray-300">Clear</Button>
         </div>
       </div>
 

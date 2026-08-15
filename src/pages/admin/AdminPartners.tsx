@@ -231,13 +231,13 @@ export default function AdminPartners() {
                     onCheckedChange={handleSelectAll}
                   />
                 </TableHead>
-                <TableHead className="h-10 text-xs text-muted-foreground">Agency</TableHead>
-                <TableHead className="h-10 text-xs text-muted-foreground">Representative</TableHead>
-                <TableHead className="h-10 text-xs text-muted-foreground">Email</TableHead>
-                <TableHead className="w-[80px] h-10 text-xs text-muted-foreground">Status</TableHead>
-                <TableHead className="w-[100px] h-10 text-xs text-muted-foreground">Documents</TableHead>
-                <TableHead className="w-[120px] h-10 text-xs text-muted-foreground">Date</TableHead>
-                <TableHead className="text-right w-[80px] h-10 text-xs text-muted-foreground">Action</TableHead>
+                <TableHead className="h-10 text-[13px] text-muted-foreground">Agency</TableHead>
+                <TableHead className="h-10 text-[13px] text-muted-foreground">Representative</TableHead>
+                <TableHead className="h-10 text-[13px] text-muted-foreground">Email</TableHead>
+                <TableHead className="w-[80px] h-10 text-[13px] text-muted-foreground">Status</TableHead>
+                <TableHead className="w-[100px] h-10 text-[13px] text-muted-foreground">Documents</TableHead>
+                <TableHead className="w-[120px] h-10 text-[13px] text-muted-foreground">Date</TableHead>
+                <TableHead className="text-right w-[80px] h-10 text-[13px] text-muted-foreground">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

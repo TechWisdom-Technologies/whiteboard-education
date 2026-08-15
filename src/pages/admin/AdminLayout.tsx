@@ -6,6 +6,15 @@ import { AdminNotificationCenter } from "@/components/admin/AdminNotificationCen
 import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown, LogOut } from "lucide-react";
 
 export default function AdminLayout() {
   const location = useLocation();
@@ -27,51 +36,43 @@ export default function AdminLayout() {
     fetchProfile();
   }, [user]);
 
-  const getPageTitle = () => {
-    const path = location.pathname;
-    if (path === "/admin") return "Dashboard";
-    if (path.includes("/admin/universities")) return "Universities";
-    if (path.includes("/admin/courses")) return "Courses";
-    if (path.includes("/admin/accommodations")) return "Accommodations";
-    if (path.includes("/admin/language-centers")) return "Language Centers";
-    if (path.includes("/admin/blogs")) return "Blog Posts";
-    if (path.includes("/admin/partners")) return "B2B Partners";
-    if (path.includes("/admin/students")) return "Students";
-    if (path.includes("/admin/leads")) return "Leads";
-    if (path.includes("/admin/settings")) return "Settings";
-    return "Admin Panel";
-  };
+
 
   return (
     <SidebarProvider defaultOpen={false}>
-      <div className="min-h-screen flex w-full">
+      <div className="min-h-screen flex w-full dashboard-theme">
         <AdminSidebar />
         <div className="flex-1 flex flex-col">
-          <header className="h-[60px] flex items-center border-b border-gray-200/60 px-4 sm:px-6 gap-3 bg-white/80 backdrop-blur-md sticky top-0 z-10 justify-between shadow-sm">
+          <header className="h-[60px] flex items-center bg-[#2F4F97] text-white px-4 sm:px-6 gap-3 sticky top-0 z-10 justify-between shadow-sm">
             <div className="flex items-center gap-4 min-w-0">
-              <span className="font-extrabold text-[16px] text-gray-800 tracking-tight">
-                {getPageTitle()}
-              </span>
             </div>
             
             <div className="flex items-center gap-4 sm:gap-6 w-full sm:w-auto justify-end flex-1 sm:flex-none">
               <div className="flex items-center gap-4">
                 <AdminNotificationCenter />
                 <div className="flex items-center gap-3">
-                  <div className="hidden flex-col items-end sm:flex">
-                    <span className="text-[13px] font-bold text-gray-800 leading-tight">
-                      {profile?.display_name || (hasRole("admin") ? "Administrator" : "User")}
-                    </span>
-                    <span className="text-[11px] text-gray-500 truncate max-w-[160px] font-medium leading-tight">
-                      {user?.email}
-                    </span>
-                  </div>
-                  <Avatar className="h-9 w-9 ring-2 ring-gray-100 transition-transform hover:scale-105 cursor-pointer shadow-sm rounded-full overflow-hidden shrink-0">
-                    <AvatarImage src={profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`} alt="Avatar" className="object-cover w-full h-full rounded-full" />
-                    <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold rounded-full">
-                      {profile?.display_name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || "A"}
-                    </AvatarFallback>
-                  </Avatar>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
+                      <span className="text-[14px] font-medium text-white hover:text-gray-200 transition-colors">
+                        Hello, {profile?.display_name || "Admin"}
+                      </span>
+                      <ChevronDown className="h-4 w-4 text-white/80" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                      <DropdownMenuLabel className="font-normal">
+                        <div className="flex flex-col space-y-1">
+                          <p className="text-sm font-medium leading-none">{profile?.display_name || "Admin"}</p>
+                          <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
+                          <p className="text-xs leading-none text-muted-foreground mt-1 capitalize">Role: Admin</p>
+                        </div>
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => supabase.auth.signOut()} className="text-red-600 cursor-pointer">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Log out
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             </div>

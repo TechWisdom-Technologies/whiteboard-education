@@ -87,7 +87,6 @@ export default function PartnerApplications() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const [applications, setApplications] = useState<Application[]>([]);
   const [students, setStudents] = useState<Record<string, Student>>({});
@@ -96,7 +95,6 @@ export default function PartnerApplications() {
   const [partnerName, setPartnerName] = useState<string>("Unknown Partner");
 
   // Filter states
-  const [wbStudentId, setWbStudentId] = useState("");
   const [studentName, setStudentName] = useState("");
   const [programName, setProgramName] = useState("");
   const [appCode, setAppCode] = useState("");
@@ -105,6 +103,17 @@ export default function PartnerApplications() {
   const [intake, setIntake] = useState("all");
   const [year, setYear] = useState("all");
   const [statusFilter, setStatusFilter] = useState(searchParams.get("status") || "all");
+
+  const [appliedFilters, setAppliedFilters] = useState({
+    studentName: "",
+    programName: "",
+    appCode: "",
+    dateFrom: "",
+    dateTo: "",
+    intake: "all",
+    year: "all",
+    statusFilter: searchParams.get("status") || "all"
+  });
 
   useEffect(() => {
     if (!user || !session) return;
@@ -199,26 +208,25 @@ export default function PartnerApplications() {
       const student = students[app.student_id];
       const course = app.course_id ? courses[app.course_id] : null;
 
-      if (appCode && !app.application_code.toLowerCase().includes(appCode.toLowerCase())) return false;
-      if (wbStudentId && student && !student.wb_student_id.toLowerCase().includes(wbStudentId.toLowerCase())) return false;
-      if (studentName && student && !student.full_name.toLowerCase().includes(studentName.toLowerCase())) return false;
-      if (programName && course && !course.title.toLowerCase().includes(programName.toLowerCase())) return false;
+      if (appliedFilters.appCode && !app.application_code.toLowerCase().includes(appliedFilters.appCode.toLowerCase())) return false;
+      if (appliedFilters.studentName && student && !student.full_name.toLowerCase().includes(appliedFilters.studentName.toLowerCase())) return false;
+      if (appliedFilters.programName && course && !course.title.toLowerCase().includes(appliedFilters.programName.toLowerCase())) return false;
 
-      if (dateFrom && new Date(app.created_at) < new Date(dateFrom)) return false;
-      if (dateTo && new Date(app.created_at) > new Date(dateTo + 'T23:59:59')) return false;
+      if (appliedFilters.dateFrom && new Date(app.created_at) < new Date(appliedFilters.dateFrom)) return false;
+      if (appliedFilters.dateTo && new Date(app.created_at) > new Date(appliedFilters.dateTo + 'T23:59:59')) return false;
 
-      if (intake !== "all" && course && course.intake_months) {
-        if (!course.intake_months.includes(intake)) return false;
+      if (appliedFilters.intake !== "all" && course && course.intake_months) {
+        if (!course.intake_months.includes(appliedFilters.intake)) return false;
       }
 
-      if (year !== "all") {
+      if (appliedFilters.year !== "all") {
         const appYear = new Date(app.created_at).getFullYear().toString();
-        if (appYear !== year) return false;
+        if (appYear !== appliedFilters.year) return false;
       }
 
-      if (statusFilter !== "all") {
+      if (appliedFilters.statusFilter !== "all") {
         const s = app.status;
-        switch (statusFilter) {
+        switch (appliedFilters.statusFilter) {
           case "received_wb":
             if (!['document_upload', 'document_review', 'document_verification'].includes(s)) return false;
             break;
@@ -248,10 +256,13 @@ export default function PartnerApplications() {
 
       return true;
     });
-  }, [applications, students, courses, appCode, wbStudentId, studentName, programName, dateFrom, dateTo, intake, statusFilter, year]);
+  }, [applications, students, courses, appliedFilters]);
+
+  const handleSearch = () => {
+    setAppliedFilters({ studentName, programName, appCode, dateFrom, dateTo, intake, year, statusFilter });
+  };
 
   const handleReset = () => {
-    setWbStudentId("");
     setStudentName("");
     setProgramName("");
     setAppCode("");
@@ -260,19 +271,22 @@ export default function PartnerApplications() {
     setIntake("all");
     setYear("all");
     setStatusFilter("all");
+    setAppliedFilters({
+      studentName: "", programName: "", appCode: "", dateFrom: "", dateTo: "", intake: "all", year: "all", statusFilter: "all"
+    });
   };
 
-  const hasActiveFilters = wbStudentId || studentName || programName || appCode || dateFrom || dateTo || intake !== "all" || year !== "all" || statusFilter !== "all";
+  const hasActiveFilters = appliedFilters.studentName || appliedFilters.programName || appliedFilters.appCode || appliedFilters.dateFrom || appliedFilters.dateTo || appliedFilters.intake !== "all" || appliedFilters.year !== "all" || appliedFilters.statusFilter !== "all";
 
   if (loading) {
     return <LoadingScreen />;
   }
 
   return (
-    <div className="animate-fade-in space-y-0 min-w-0">
+    <div className="animate-fade-in space-y-6 min-w-0">
 
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-[#1E293B]">Applications</h1>
           <p className="text-sm text-[#64748B] mt-0.5">
@@ -280,20 +294,6 @@ export default function PartnerApplications() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="h-9 gap-2 text-sm border-gray-300"
-          >
-            <SlidersHorizontal className="h-4 w-4" />
-            Filters
-            {hasActiveFilters && (
-              <span className="bg-[#2F4F97] text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
-                {[wbStudentId, studentName, programName, appCode, dateFrom, dateTo, intake !== "all", year !== "all", statusFilter !== "all"].filter(Boolean).length}
-              </span>
-            )}
-          </Button>
           <Button
             onClick={() => navigate('/partner-dashboard/search-programs')}
             className="h-9 gap-2 text-sm"
@@ -305,20 +305,10 @@ export default function PartnerApplications() {
       </div>
 
       {/* Top Horizontal Filters */}
-      {sidebarOpen && (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-4 mb-4">
-          <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-            <span className="text-sm font-semibold text-[#1E293B]">Filters</span>
-            {hasActiveFilters && (
-              <button onClick={handleReset} className="text-xs text-[#2F4F97] hover:underline flex items-center gap-1">
-                <RotateCcw className="h-3 w-3" /> Reset Filters
-              </button>
-            )}
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-8 gap-3">
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-4">
+          <div className="flex flex-wrap items-end gap-3">
             {/* App Code */}
-            <div className="space-y-1.5 xl:col-span-1">
+            <div className="space-y-1.5 flex-1 min-w-[120px]">
               <label className="text-xs font-medium text-gray-500">App ID</label>
               <Input
                 placeholder="e.g. APP-123"
@@ -328,19 +318,9 @@ export default function PartnerApplications() {
               />
             </div>
 
-            {/* WB Student ID */}
-            <div className="space-y-1.5 xl:col-span-1">
-              <label className="text-xs font-medium text-gray-500">WB ID</label>
-              <Input
-                placeholder="Search WB ID"
-                value={wbStudentId}
-                onChange={(e) => setWbStudentId(e.target.value)}
-                className="h-8 text-xs border-gray-200"
-              />
-            </div>
 
             {/* Student Name */}
-            <div className="space-y-1.5 xl:col-span-1">
+            <div className="space-y-1.5 flex-1 min-w-[150px]">
               <label className="text-xs font-medium text-gray-500">Name</label>
               <Input
                 placeholder="Search name"
@@ -351,7 +331,7 @@ export default function PartnerApplications() {
             </div>
 
             {/* Program Name */}
-            <div className="space-y-1.5 xl:col-span-2">
+            <div className="space-y-1.5 flex-[1.5] min-w-[180px]">
               <label className="text-xs font-medium text-gray-500">Program</label>
               <Input
                 placeholder="Search program"
@@ -362,7 +342,7 @@ export default function PartnerApplications() {
             </div>
 
             {/* Intake */}
-            <div className="space-y-1.5 xl:col-span-1">
+            <div className="space-y-1.5 flex-1 min-w-[120px]">
               <label className="text-xs font-medium text-gray-500">Intake</label>
               <Select value={intake} onValueChange={setIntake}>
                 <SelectTrigger className="h-8 text-xs border-gray-200">
@@ -378,7 +358,7 @@ export default function PartnerApplications() {
             </div>
 
             {/* Year */}
-            <div className="space-y-1.5 xl:col-span-1">
+            <div className="space-y-1.5 flex-1 min-w-[100px]">
               <label className="text-xs font-medium text-gray-500">Year</label>
               <Select value={year} onValueChange={setYear}>
                 <SelectTrigger className="h-8 text-xs border-gray-200">
@@ -386,16 +366,16 @@ export default function PartnerApplications() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="2024">2024</SelectItem>
-                  <SelectItem value="2025">2025</SelectItem>
-                  <SelectItem value="2026">2026</SelectItem>
-                  <SelectItem value="2027">2027</SelectItem>
+                  {[...Array(10)].map((_, i) => {
+                    const y = (2026 + i).toString();
+                    return <SelectItem key={y} value={y}>{y}</SelectItem>;
+                  })}
                 </SelectContent>
               </Select>
             </div>
 
             {/* Status */}
-            <div className="space-y-1.5 xl:col-span-1">
+            <div className="space-y-1.5 flex-1 min-w-[140px]">
               <label className="text-xs font-medium text-gray-500">Status</label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="h-8 text-xs border-gray-200">
@@ -414,9 +394,13 @@ export default function PartnerApplications() {
                 </SelectContent>
               </Select>
             </div>
+
+            <div className="flex items-center gap-2 flex-1 min-w-[200px]">
+              <Button onClick={handleSearch} className="w-full gap-2 bg-[#2F4F97] hover:bg-white text-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97] transition-colors"><Search className="h-4 w-4" /> Search</Button>
+              <Button variant="outline" onClick={handleReset} className="w-full gap-2 border-gray-300">Clear</Button>
+            </div>
           </div>
         </div>
-      )}
 
       {/* Applications Table */}
       <div className="min-w-0">
@@ -453,15 +437,14 @@ export default function PartnerApplications() {
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-gray-50/80 hover:bg-gray-50/80">
-                        <TableHead className="text-xs font-semibold text-gray-500 whitespace-nowrap w-[100px]">App ID</TableHead>
-                        <TableHead className="text-xs font-semibold text-gray-500 whitespace-nowrap w-[90px]">WB ID</TableHead>
-                        <TableHead className="text-xs font-semibold text-gray-500 whitespace-nowrap w-[100px]">Created On</TableHead>
-                        <TableHead className="text-xs font-semibold text-gray-500 min-w-[120px]">Student Name</TableHead>
-                        <TableHead className="text-xs font-semibold text-gray-500 min-w-[140px]">University</TableHead>
-                        <TableHead className="text-xs font-semibold text-gray-500 min-w-[140px]">Program</TableHead>
-                        <TableHead className="text-xs font-semibold text-gray-500 whitespace-nowrap w-[80px]">Intake</TableHead>
-                        <TableHead className="text-xs font-semibold text-gray-500 min-w-[100px]">Created By</TableHead>
-                        <TableHead className="text-xs font-semibold text-gray-500 whitespace-nowrap w-[120px]">Status</TableHead>
+                        <TableHead className="text-[13px] font-bold text-gray-900 whitespace-nowrap w-[100px]">App ID</TableHead>
+                        <TableHead className="text-[13px] font-bold text-gray-900 whitespace-nowrap w-[100px]">Date created</TableHead>
+                        <TableHead className="text-[13px] font-bold text-gray-900 min-w-[120px]">Student Name</TableHead>
+                        <TableHead className="text-[13px] font-bold text-gray-900 min-w-[140px]">University</TableHead>
+                        <TableHead className="text-[13px] font-bold text-gray-900 min-w-[140px]">Program</TableHead>
+                        <TableHead className="text-[13px] font-bold text-gray-900 whitespace-nowrap w-[80px]">Intake</TableHead>
+                        <TableHead className="text-[13px] font-bold text-gray-900 min-w-[100px]">Created By</TableHead>
+                        <TableHead className="text-[13px] font-bold text-gray-900 whitespace-nowrap w-[120px]">Status</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -484,27 +467,24 @@ export default function PartnerApplications() {
                             <TableCell className="font-mono text-xs font-semibold text-[#2F4F97] whitespace-nowrap">
                               {app.application_code}
                             </TableCell>
-                            <TableCell className="text-xs text-gray-600 whitespace-nowrap">
-                              {student?.wb_student_id || "—"}
-                            </TableCell>
-                            <TableCell className="text-xs text-gray-500 whitespace-nowrap">
+                            <TableCell className="text-xs text-gray-900 whitespace-nowrap">
                               {format(new Date(app.created_at), "MMM dd, yyyy")}
                             </TableCell>
                             <TableCell className="text-sm font-medium text-gray-800 break-words whitespace-normal leading-tight">
                               {student?.full_name || "—"}
                             </TableCell>
-                            <TableCell className="text-xs text-gray-600 break-words whitespace-normal leading-tight">
+                            <TableCell className="text-xs text-gray-900 break-words whitespace-normal leading-tight">
                               {university?.name || "—"}
                             </TableCell>
-                            <TableCell className="text-xs text-gray-600 break-words whitespace-normal leading-tight">
+                            <TableCell className="text-xs text-gray-900 break-words whitespace-normal leading-tight">
                               {course?.title || "—"}
                             </TableCell>
-                            <TableCell className="text-xs text-gray-500 whitespace-nowrap">
+                            <TableCell className="text-xs text-gray-900 whitespace-nowrap">
                               {course?.intake_months && course.intake_months.length > 0
                                 ? course.intake_months[0]
                                 : "—"}
                             </TableCell>
-                            <TableCell className="text-xs text-gray-600 break-words whitespace-normal leading-tight">
+                            <TableCell className="text-xs text-gray-900 break-words whitespace-normal leading-tight">
                               {partnerName}
                             </TableCell>
                             <TableCell>

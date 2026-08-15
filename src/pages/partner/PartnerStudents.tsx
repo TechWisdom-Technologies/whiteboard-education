@@ -115,7 +115,18 @@ export default function PartnerStudents() {
   const [countryFilter, setCountryFilter] = useState("all");
   const [intakeFilter, setIntakeFilter] = useState("all");
   const [yearFilter, setYearFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState(searchParams.get("status") || "all");
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  const [appliedFilters, setAppliedFilters] = useState({
+    wbIdFilter: "all",
+    nameFilter: "",
+    dateFromFilter: "",
+    dateToFilter: "",
+    countryFilter: "all",
+    intakeFilter: "all",
+    yearFilter: "all",
+    statusFilter: searchParams.get("status") || "all"
+  });
 
   const fetchStudents = async () => {
     if (!session) return;
@@ -286,23 +297,41 @@ export default function PartnerStudents() {
     setStatusFilter("all");
   };
 
+  const handleSearch = () => {
+    setAppliedFilters({ wbIdFilter, nameFilter, dateFromFilter, dateToFilter, countryFilter, intakeFilter, yearFilter, statusFilter });
+  };
+
+  const handleReset = () => {
+    setWbIdFilter("all");
+    setNameFilter("");
+    setDateFromFilter("");
+    setDateToFilter("");
+    setCountryFilter("all");
+    setIntakeFilter("all");
+    setYearFilter("all");
+    setStatusFilter("all");
+    setAppliedFilters({
+      wbIdFilter: "all", nameFilter: "", dateFromFilter: "", dateToFilter: "", countryFilter: "all", intakeFilter: "all", yearFilter: "all", statusFilter: "all"
+    });
+  };
+
   const filtered = students.filter(s => {
-    if (wbIdFilter && wbIdFilter !== "all" && !String(s.wb_student_id || s.id).toLowerCase().includes(wbIdFilter.toLowerCase())) return false;
-    if (nameFilter && nameFilter !== "all" && !s.full_name.toLowerCase().includes(nameFilter.toLowerCase())) return false;
+    if (appliedFilters.wbIdFilter && appliedFilters.wbIdFilter !== "all" && !String(s.wb_student_id || s.id).toLowerCase().includes(appliedFilters.wbIdFilter.toLowerCase())) return false;
+    if (appliedFilters.nameFilter && appliedFilters.nameFilter !== "all" && !s.full_name.toLowerCase().includes(appliedFilters.nameFilter.toLowerCase())) return false;
     
-    if (dateFromFilter && new Date(s.created_at) < new Date(dateFromFilter)) return false;
-    if (dateToFilter && new Date(s.created_at) > new Date(dateToFilter)) return false;
+    if (appliedFilters.dateFromFilter && new Date(s.created_at) < new Date(appliedFilters.dateFromFilter)) return false;
+    if (appliedFilters.dateToFilter && new Date(s.created_at) > new Date(appliedFilters.dateToFilter)) return false;
     
-    if (countryFilter && countryFilter !== "all") {
-      if (countryFilter === "Malaysia" && !s.nationality?.toLowerCase().includes("malay")) return false;
+    if (appliedFilters.countryFilter && appliedFilters.countryFilter !== "all") {
+      if (appliedFilters.countryFilter === "Malaysia" && !s.nationality?.toLowerCase().includes("malay")) return false;
     }
     
-    if (intakeFilter && intakeFilter !== "all" && s.intake_month !== intakeFilter) return false;
+    if (appliedFilters.intakeFilter && appliedFilters.intakeFilter !== "all" && s.intake_month !== appliedFilters.intakeFilter) return false;
     
-    if (yearFilter && yearFilter !== "all" && new Date(s.created_at).getFullYear().toString() !== yearFilter) return false;
+    if (appliedFilters.yearFilter && appliedFilters.yearFilter !== "all" && new Date(s.created_at).getFullYear().toString() !== appliedFilters.yearFilter) return false;
     
-    if (statusFilter && statusFilter !== "all") {
-      const statuses = statusFilterMap[statusFilter];
+    if (appliedFilters.statusFilter && appliedFilters.statusFilter !== "all") {
+      const statuses = statusFilterMap[appliedFilters.statusFilter];
       if (statuses && !statuses.includes(s.status)) return false;
     }
     
@@ -486,7 +515,7 @@ export default function PartnerStudents() {
              </SelectContent>
            </Select>
            
-           <div className="relative flex-1 min-w-[200px]">
+           <div className="relative flex-[2] min-w-[200px]">
              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
              <Input 
                placeholder="Search by keyword" 
@@ -496,7 +525,10 @@ export default function PartnerStudents() {
              />
            </div>
            
-           <Button className="h-9 px-6 text-xs shrink-0 rounded-md">Search</Button>
+           <div className="flex items-center gap-1 shrink-0 ml-auto">
+             <Button onClick={handleSearch} className="h-9 px-6 text-xs rounded-md bg-[#2F4F97] hover:bg-white text-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97] transition-colors">Search</Button>
+             <Button variant="ghost" onClick={handleReset} className="h-9 px-4 text-xs rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100">Clear</Button>
+           </div>
         </div>
       </div>
 
@@ -518,14 +550,14 @@ export default function PartnerStudents() {
                       onCheckedChange={handleSelectAll}
                     />
                   </TableHead>
-                  <TableHead className="text-[11px] font-semibold text-gray-500 uppercase">Created By</TableHead>
-                  <TableHead className="text-[11px] font-semibold text-gray-500 uppercase">Created on</TableHead>
-                  <TableHead className="text-[11px] font-semibold text-gray-500 uppercase">Student Name</TableHead>
-                  <TableHead className="text-[11px] font-semibold text-gray-500 uppercase">Email</TableHead>
-                  <TableHead className="text-[11px] font-semibold text-gray-500 uppercase">Phone Number</TableHead>
-                  <TableHead className="text-[11px] font-semibold text-gray-500 uppercase">Assigned To</TableHead>
-                  <TableHead className="text-[11px] font-semibold text-gray-500 uppercase">Status</TableHead>
-                  <TableHead className="text-right text-[11px] font-semibold text-gray-500 uppercase"></TableHead>
+                  <TableHead className="text-[11px] font-bold text-gray-900 uppercase">Created By</TableHead>
+                  <TableHead className="text-[11px] font-bold text-gray-900 uppercase">Created on</TableHead>
+                  <TableHead className="text-[11px] font-bold text-gray-900 uppercase">Student Name</TableHead>
+                  <TableHead className="text-[11px] font-bold text-gray-900 uppercase">Email</TableHead>
+                  <TableHead className="text-[11px] font-bold text-gray-900 uppercase">Phone Number</TableHead>
+                  <TableHead className="text-[11px] font-bold text-gray-900 uppercase">Assigned To</TableHead>
+                  <TableHead className="text-[11px] font-bold text-gray-900 uppercase">Status</TableHead>
+                  <TableHead className="text-right text-[11px] font-bold text-gray-900 uppercase"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -553,8 +585,8 @@ export default function PartnerStudents() {
                           onCheckedChange={(c) => handleSelectRow(s.id, c as boolean)}
                         />
                       </TableCell>
-                      <TableCell className="py-3 text-[13px] text-gray-600 font-medium whitespace-nowrap">{contactPerson || "Mr. Khondoker Fazle Rahman"}</TableCell>
-                      <TableCell className="py-3 text-[12px] text-gray-500 whitespace-nowrap">
+                      <TableCell className="py-3 text-[13px] text-gray-900 font-medium whitespace-nowrap">{contactPerson || "Mr. Khondoker Fazle Rahman"}</TableCell>
+                      <TableCell className="py-3 text-[12px] text-gray-900 whitespace-nowrap">
                         {new Date(s.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                       </TableCell>
                       <TableCell className="py-3 font-semibold text-[13px] text-[#1E293B] uppercase whitespace-nowrap">{s.full_name}</TableCell>
@@ -564,7 +596,7 @@ export default function PartnerStudents() {
                       <TableCell className="py-3 text-[13px] text-[#2F4F97] whitespace-nowrap">
                         <div className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" />{s.phone || '-'}</div>
                       </TableCell>
-                      <TableCell className="py-3 text-[13px] text-gray-600 font-medium whitespace-nowrap">
+                      <TableCell className="py-3 text-[13px] text-gray-900 font-medium whitespace-nowrap">
                         {"Mr. Khondoker Fazle Rahman"}
                       </TableCell>
                       <TableCell className="py-3 whitespace-nowrap">
