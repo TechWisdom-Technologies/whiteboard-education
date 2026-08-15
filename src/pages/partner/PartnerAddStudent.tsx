@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, UserPlus, Loader2, GraduationCap, Globe, BookOpen, Languages, User, Mail, Phone, Calendar, CreditCard, CheckCircle2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { ArrowLeft, UserPlus, Loader2, GraduationCap, Languages, User, Mail, Phone, Calendar, CreditCard, CheckCircle2, AlertCircle, Save } from "lucide-react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -47,7 +48,7 @@ const educationLevels = [
 
 const streams = ["Science", "Commerce", "Humanities"];
 
-// ─── Language Tests (from EligibilityWizard) ───────────────
+// ─── Language Tests & Scores ───────────────────────────────
 const languageTests = [
   { id: "IELTS", label: "IELTS" },
   { id: "TOEFL", label: "TOEFL iBT" },
@@ -60,19 +61,21 @@ const languageTests = [
   { id: "MOI", label: "MOI (Medium of Instruction)" },
 ];
 
-const getScoreRange = (test: string): { min: number; max: number; step: number } => {
+const getTestScores = (test: string): string[] => {
   switch (test) {
-    case "IELTS": return { min: 0, max: 9, step: 0.5 };
-    case "TOEFL": return { min: 0, max: 120, step: 1 };
-    case "PTE": return { min: 10, max: 90, step: 1 };
-    case "Duolingo": return { min: 10, max: 160, step: 5 };
-    case "Cambridge": return { min: 100, max: 230, step: 1 };
-    case "Linguaskill": return { min: 82, max: 180, step: 1 };
-    case "OET": return { min: 0, max: 500, step: 10 };
-    case "MUET": return { min: 0, max: 800, step: 1 };
-    default: return { min: 0, max: 9, step: 0.5 };
+    case "IELTS": return ["4.0", "4.5", "5.0", "5.5", "6.0", "6.5", "7.0", "7.5", "8.0", "8.5", "9.0"];
+    case "TOEFL": return ["40-59", "60-70", "71-80", "81-90", "91-100", "101-110", "111-120"];
+    case "PTE": return ["30-39", "40-50", "51-60", "61-70", "71-80", "81-90"];
+    case "Duolingo": return ["60-75", "80-90", "95-105", "110-120", "125-135", "140-160"];
+    case "Cambridge": return ["140-159 (B1)", "160-169 (B2)", "170-179 (B2)", "180-199 (C1)", "200-230 (C2)"];
+    case "Linguaskill": return ["140-159 (B1)", "160-179 (B2)", "180+ (C1 or above)"];
+    case "OET": return ["C (200-290)", "C+ (300-340)", "B (350-440)", "A (450-500)"];
+    case "MUET": return ["Band 1.0", "Band 2.0", "Band 2.5", "Band 3.0", "Band 3.5", "Band 4.0", "Band 4.5", "Band 5.0", "Band 5+"];
+    default: return [];
   }
 };
+
+const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 
 // ─── Initial Form State ────────────────────────────────────
 const emptyForm = {
@@ -97,8 +100,93 @@ const emptyForm = {
 export default function PartnerAddStudent() {
   const { session, user } = useAuth();
   const navigate = useNavigate();
+  const { studentId: paramStudentId } = useParams();
+  const [searchParams] = useSearchParams();
+  const editId = paramStudentId || searchParams.get("edit") || searchParams.get("editId");
+  const isEditMode = Boolean(editId);
+
   const [form, setForm] = useState(emptyForm);
+  const [touchedEmail, setTouchedEmail] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [loadingStudent, setLoadingStudent] = useState(isEditMode);
+  const [existingStudent, setExistingStudent] = useState<any>(null);
+
+  // ─── Load Student for Edit Mode ────────────────────────
+  useEffect(() => {
+    if (!editId || !session) {
+      setLoadingStudent(false);
+      return;
+    }
+
+    const fetchStudentData = async () => {
+      setLoadingStudent(true);
+      try {
+        const isWb = editId.startsWith("WB-");
+        const filter = isWb
+          ? `wb_student_id=eq.${editId.replace("WB-", "")}`
+          : `id=eq.${editId}`;
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/students?${filter}&select=*`,
+          {
+            headers: {
+              apikey: SUPABASE_KEY,
+              Authorization: `Bearer ${session.access_token}`,
+            },
+          }
+        );
+        if (!res.ok) throw new Error("Failed to load student data");
+        const data = await res.json();
+        if (!data || data.length === 0) throw new Error("Student not found");
+        const s = data[0];
+        setExistingStudent(s);
+
+        const nameParts = (s.full_name || "").trim().split(/\s+/);
+        const firstName = nameParts.length > 1 ? nameParts.slice(0, -1).join(" ") : nameParts[0] || "";
+        const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : "";
+
+        let eduLevel = s.previous_degree || "";
+        if (eduLevel === "Bachelor") eduLevel = "Bachelors";
+        if (eduLevel === "Master") eduLevel = "Masters";
+        if (eduLevel === "PhD") eduLevel = "PHD";
+
+        let scoreStr = "";
+        if (s.language_test_name === "MOI" || s.english_test_type === "MOI") {
+          scoreStr = "MOI";
+        } else if (s.ielts_score && s.ielts_score > 0) {
+          scoreStr = s.ielts_score.toString();
+        } else if (s.english_test_score) {
+          scoreStr = s.english_test_score;
+        }
+
+        const isSSCHSC = eduLevel === "SSC" || eduLevel === "HSC";
+        const streamVal = s.stream || (isSSCHSC && ["Science", "Commerce", "Humanities"].includes(s.major) ? s.major : "");
+
+        setForm({
+          first_name: firstName,
+          last_name: lastName,
+          email: s.email || "",
+          phone: s.phone || "",
+          gender: s.gender || "",
+          nationality: s.nationality || "Bangladeshi",
+          passport_number: s.passport_number || "",
+          date_of_birth: s.date_of_birth ? s.date_of_birth.split("T")[0] : "",
+          education_level: eduLevel,
+          stream: streamVal,
+          program: s.program || (["Diploma", "Bachelors", "Masters"].includes(eduLevel) ? s.previous_degree || "" : ""),
+          major: s.major || "",
+          previous_institution: s.previous_institution || "",
+          gpa: s.gpa !== undefined && s.gpa !== null && s.gpa > 0 ? s.gpa.toString() : "",
+          language_test_name: s.language_test_name || s.english_test_type || "",
+          ielts_score: scoreStr,
+        });
+      } catch (err: any) {
+        toast.error(err.message || "Error loading student");
+      } finally {
+        setLoadingStudent(false);
+      }
+    };
+    fetchStudentData();
+  }, [editId, session]);
 
   // ─── Derived State ─────────────────────────────────────
   const isSSCOrHSC = form.education_level === "SSC" || form.education_level === "HSC";
@@ -109,60 +197,171 @@ export default function PartnerAddStudent() {
   const isMOI = form.language_test_name === "MOI";
   const gpaLabel = isSSCOrHSC ? "GPA" : "CGPA";
   const gpaMax = isSSCOrHSC ? 5.0 : 4.0;
+  const availableScores = getTestScores(form.language_test_name);
+
+  // Email format check
+  const emailInvalid = touchedEmail && form.email.length > 0 && !isValidEmail(form.email);
 
   // Count filled fields for completeness
   const filledFields = [
-    form.first_name, form.last_name, form.email, form.phone,
+    form.first_name, form.last_name, form.email && isValidEmail(form.email), form.phone,
     form.gender, form.nationality, form.passport_number, form.date_of_birth,
     form.education_level, form.previous_institution, form.gpa,
     form.language_test_name,
   ].filter(Boolean).length;
   const totalFields = 12;
 
+  const handleBack = () => {
+    if (isEditMode && existingStudent) {
+      const targetId = existingStudent.wb_student_id ? `WB-${existingStudent.wb_student_id}` : existingStudent.id;
+      const isFromAdmin = window.location.pathname.startsWith("/admin");
+      navigate(isFromAdmin ? `/admin/students/${targetId}` : `/partner-dashboard/students/${targetId}`);
+    } else {
+      const isFromAdmin = window.location.pathname.startsWith("/admin");
+      navigate(isFromAdmin ? "/admin/students" : "/partner-dashboard/students");
+    }
+  };
+
   const handleSubmit = async () => {
-    if (!form.first_name || !form.last_name || !form.email || !form.passport_number) {
-      toast.error("First Name, Last Name, Email and Passport Number are required");
+    const firstName = form.first_name.trim();
+    const lastName = form.last_name.trim();
+    const email = form.email.trim();
+    const passportNumber = form.passport_number.trim();
+
+    if (!firstName) {
+      toast.error("First Name is required");
       return;
     }
+    if (!lastName) {
+      toast.error("Last Name is required");
+      return;
+    }
+    if (!email) {
+      toast.error("Email is required");
+      return;
+    }
+    if (!isValidEmail(email)) {
+      toast.error("Please enter a valid email address (e.g. name@domain.com)");
+      return;
+    }
+    if (!passportNumber) {
+      toast.error("Passport Number is required");
+      return;
+    }
+
+    // Validate GPA if entered
+    if (form.gpa) {
+      const gpaNum = parseFloat(form.gpa);
+      if (isNaN(gpaNum) || gpaNum < 0 || gpaNum > gpaMax) {
+        toast.error(`Please enter a valid ${gpaLabel} between 0.00 and ${gpaMax.toFixed(2)}`);
+        return;
+      }
+    }
+
     setSubmitting(true);
     try {
-      const fullName = `${form.first_name} ${form.last_name}`.trim();
+      const fullName = `${firstName} ${lastName}`.trim();
       const previousDegree = form.education_level || "";
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/students`, {
-        method: "POST",
-        headers: {
-          apikey: SUPABASE_KEY,
-          Authorization: `Bearer ${session?.access_token}`,
-          "Content-Type": "application/json",
-          Prefer: "return=representation",
-        },
-        body: JSON.stringify({
+      
+      let numericScore = 0;
+      if (form.ielts_score && !isMOI) {
+        const parsed = parseFloat(form.ielts_score);
+        numericScore = isNaN(parsed) ? 0 : parsed;
+      }
+
+      const majorValue = (isSSCOrHSC ? form.stream : form.major).trim();
+
+      if (isEditMode && existingStudent) {
+        const updatePayload: Record<string, any> = {
           full_name: fullName,
-          email: form.email,
-          phone: form.phone,
+          email: email,
+          phone: form.phone.trim(),
           gender: form.gender,
           nationality: form.nationality,
-          passport_number: form.passport_number,
+          passport_number: passportNumber,
           date_of_birth: form.date_of_birth || null,
           previous_degree: previousDegree,
-          previous_institution: form.previous_institution,
-          major: form.major,
+          previous_institution: form.previous_institution.trim(),
+          major: majorValue,
           gpa: form.gpa ? parseFloat(form.gpa) : 0,
           language_test_name: form.language_test_name,
-          ielts_score: form.ielts_score ? parseFloat(form.ielts_score) : 0,
+          english_test_type: form.language_test_name,
+          ielts_score: numericScore,
+          english_test_score: isMOI ? "MOI" : form.ielts_score || "",
           degree_level: form.education_level === "Bachelors" ? "Bachelor" : form.education_level === "Masters" ? "Master" : form.education_level,
-          partner_id: user?.id,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.message || "Failed to save");
-      const newStudent = data[0];
-      toast.success("Student registered successfully!");
-      navigate(`/partner-dashboard/students/${newStudent.wb_student_id ? `WB-${newStudent.wb_student_id}` : newStudent.id}`);
+        };
+
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${existingStudent.id}`, {
+          method: "PATCH",
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${session?.access_token}`,
+            "Content-Type": "application/json",
+            Prefer: "return=representation",
+          },
+          body: JSON.stringify(updatePayload),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.message || "Failed to update student");
+        const updated = (data && data[0]) ? data[0] : existingStudent;
+        toast.success("Student profile updated successfully!");
+
+        const targetId = updated.wb_student_id ? `WB-${updated.wb_student_id}` : updated.id;
+        const isFromAdmin = window.location.pathname.startsWith("/admin");
+        if (isFromAdmin) {
+          navigate(`/admin/students/${targetId}`);
+        } else {
+          navigate(`/partner-dashboard/students/${targetId}`);
+        }
+      } else {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/students`, {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${session?.access_token}`,
+            "Content-Type": "application/json",
+            Prefer: "return=representation",
+          },
+          body: JSON.stringify({
+            full_name: fullName,
+            email: email,
+            phone: form.phone.trim(),
+            gender: form.gender,
+            nationality: form.nationality,
+            passport_number: passportNumber,
+            date_of_birth: form.date_of_birth || null,
+            previous_degree: previousDegree,
+            previous_institution: form.previous_institution.trim(),
+            major: majorValue,
+            gpa: form.gpa ? parseFloat(form.gpa) : 0,
+            language_test_name: form.language_test_name,
+            english_test_type: form.language_test_name,
+            ielts_score: numericScore,
+            english_test_score: isMOI ? "MOI" : form.ielts_score || "",
+            degree_level: form.education_level === "Bachelors" ? "Bachelor" : form.education_level === "Masters" ? "Master" : form.education_level,
+            partner_id: user?.id,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.message || "Failed to save student");
+        const newStudent = data[0];
+        toast.success("Student registered successfully!");
+        const targetId = newStudent.wb_student_id ? `WB-${newStudent.wb_student_id}` : newStudent.id;
+        const isFromAdmin = window.location.pathname.startsWith("/admin");
+        if (isFromAdmin) {
+          navigate(`/admin/students/${targetId}`);
+        } else {
+          navigate(`/partner-dashboard/students/${targetId}`);
+        }
+      }
     } catch (e: any) {
-      toast.error(e.message || "Failed to add student");
+      toast.error(e.message || (isEditMode ? "Failed to update student" : "Failed to add student"));
     } finally { setSubmitting(false); }
   };
+
+  if (loadingStudent) {
+    return <LoadingScreen fullScreen />;
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -171,13 +370,13 @@ export default function PartnerAddStudent() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => navigate("/partner-dashboard/students")}
+          onClick={handleBack}
           className="h-8 w-8 rounded-full bg-[#2F4F97]/10 hover:bg-[#2F4F97]/20 transition-colors flex-shrink-0"
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <h2 className="text-sm font-semibold text-[#1E293B]">
-          Register New Student
+          {isEditMode ? "Edit Student Profile" : "Register New Student"}
         </h2>
       </div>
 
@@ -198,19 +397,47 @@ export default function PartnerAddStudent() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label className="text-xs">First Name <span className="text-red-500">*</span></Label>
-                    <Input value={form.first_name} onChange={e => setForm(f => ({ ...f, first_name: e.target.value }))} placeholder="First name" className="h-9 mt-1" />
+                    <Input
+                      value={form.first_name}
+                      onChange={e => setForm(f => ({ ...f, first_name: e.target.value.replace(/[^a-zA-Z\s.'-]/g, "") }))}
+                      placeholder="First name"
+                      className="h-9 mt-1"
+                    />
                   </div>
                   <div>
                     <Label className="text-xs">Last Name <span className="text-red-500">*</span></Label>
-                    <Input value={form.last_name} onChange={e => setForm(f => ({ ...f, last_name: e.target.value }))} placeholder="Last name" className="h-9 mt-1" />
+                    <Input
+                      value={form.last_name}
+                      onChange={e => setForm(f => ({ ...f, last_name: e.target.value.replace(/[^a-zA-Z\s.'-]/g, "") }))}
+                      placeholder="Last name"
+                      className="h-9 mt-1"
+                    />
                   </div>
                   <div>
                     <Label className="text-xs">Email <span className="text-red-500">*</span></Label>
-                    <Input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} placeholder="email@example.com" className="h-9 mt-1" />
+                    <Input
+                      type="email"
+                      value={form.email}
+                      onChange={e => setForm(f => ({ ...f, email: e.target.value.trim() }))}
+                      onBlur={() => setTouchedEmail(true)}
+                      placeholder="email@example.com"
+                      className={`h-9 mt-1 ${emailInvalid ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                    />
+                    {emailInvalid && (
+                      <p className="text-[11px] text-red-500 mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" /> Please enter a valid email format
+                      </p>
+                    )}
                   </div>
                   <div>
                     <Label className="text-xs">Phone</Label>
-                    <Input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="+880..." className="h-9 mt-1" />
+                    <Input
+                      type="tel"
+                      value={form.phone}
+                      onChange={e => setForm(f => ({ ...f, phone: e.target.value.replace(/[^0-9+\-\s()]/g, "") }))}
+                      placeholder="+8801700000000"
+                      className="h-9 mt-1"
+                    />
                   </div>
                   <div>
                     <Label className="text-xs">Gender</Label>
@@ -236,11 +463,21 @@ export default function PartnerAddStudent() {
                   </div>
                   <div>
                     <Label className="text-xs">Passport Number <span className="text-red-500">*</span></Label>
-                    <Input value={form.passport_number} onChange={e => setForm(f => ({ ...f, passport_number: e.target.value }))} placeholder="Passport number" className="h-9 mt-1" />
+                    <Input
+                      value={form.passport_number}
+                      onChange={e => setForm(f => ({ ...f, passport_number: e.target.value.toUpperCase().replace(/[^A-Z0-9< -]/g, "") }))}
+                      placeholder="e.g. A01234567"
+                      className="h-9 mt-1 uppercase"
+                    />
                   </div>
                   <div>
                     <Label className="text-xs">Date of Birth</Label>
-                    <Input type="date" value={form.date_of_birth} onChange={e => setForm(f => ({ ...f, date_of_birth: e.target.value }))} className="h-9 mt-1" />
+                    <Input
+                      type="date"
+                      value={form.date_of_birth}
+                      onChange={e => setForm(f => ({ ...f, date_of_birth: e.target.value }))}
+                      className="h-9 mt-1"
+                    />
                   </div>
                 </div>
               </div>
@@ -266,9 +503,11 @@ export default function PartnerAddStudent() {
                     </Select>
                   </div>
                   <div>
-                    <Label className={`text-xs ${!streamEnabled ? "text-gray-300" : ""}`}>Stream</Label>
+                    <Label className={`text-xs ${!streamEnabled ? "text-gray-400" : ""}`}>Stream</Label>
                     <Select value={form.stream} onValueChange={v => setForm(f => ({ ...f, stream: v }))} disabled={!streamEnabled}>
-                      <SelectTrigger className={`h-9 mt-1 ${!streamEnabled ? "opacity-50 cursor-not-allowed" : ""}`}><SelectValue placeholder={streamEnabled ? "Select stream" : "N/A"} /></SelectTrigger>
+                      <SelectTrigger className={`h-9 mt-1 ${!streamEnabled ? "opacity-50 cursor-not-allowed bg-gray-50" : ""}`}>
+                        <SelectValue placeholder={streamEnabled ? "Select stream" : "N/A (Only for SSC/HSC)"} />
+                      </SelectTrigger>
                       <SelectContent>
                         {streams.map(s => (
                           <SelectItem key={s} value={s}>{s}</SelectItem>
@@ -277,41 +516,52 @@ export default function PartnerAddStudent() {
                     </Select>
                   </div>
                   <div>
-                    <Label className={`text-xs ${!programEnabled ? "text-gray-300" : ""}`}>Program</Label>
+                    <Label className={`text-xs ${!programEnabled ? "text-gray-400" : ""}`}>Program</Label>
                     <Input
                       value={form.program}
                       onChange={e => setForm(f => ({ ...f, program: e.target.value }))}
-                      placeholder={programEnabled ? "e.g. Computer Science" : "N/A"}
-                      className={`h-9 mt-1 ${!programEnabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                      placeholder={programEnabled ? "e.g. Bachelor of Science" : "N/A (Only for Diploma/Bachelors/Masters)"}
+                      className={`h-9 mt-1 ${!programEnabled ? "opacity-50 cursor-not-allowed bg-gray-50" : ""}`}
                       disabled={!programEnabled}
                     />
                   </div>
                   <div>
-                    <Label className={`text-xs ${!majorEnabled ? "text-gray-300" : ""}`}>Major</Label>
+                    <Label className={`text-xs ${!majorEnabled ? "text-gray-400" : ""}`}>Major</Label>
                     <Input
                       value={form.major}
                       onChange={e => setForm(f => ({ ...f, major: e.target.value }))}
-                      placeholder={majorEnabled ? "e.g. Software Engineering" : "N/A"}
-                      className={`h-9 mt-1 ${!majorEnabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                      placeholder={majorEnabled ? "e.g. Computer Science" : "N/A"}
+                      className={`h-9 mt-1 ${!majorEnabled ? "opacity-50 cursor-not-allowed bg-gray-50" : ""}`}
                       disabled={!majorEnabled}
                     />
                   </div>
                   <div>
                     <Label className="text-xs">Institution</Label>
-                    <Input value={form.previous_institution} onChange={e => setForm(f => ({ ...f, previous_institution: e.target.value }))} placeholder="Institution name" className="h-9 mt-1" />
+                    <Input
+                      value={form.previous_institution}
+                      onChange={e => setForm(f => ({ ...f, previous_institution: e.target.value }))}
+                      placeholder="Institution / College name"
+                      className="h-9 mt-1"
+                    />
                   </div>
                   <div>
-                    <Label className="text-xs">{gpaLabel} {form.education_level && <span className="text-gray-400 font-normal">(0.00 – {gpaMax.toFixed(2)})</span>}</Label>
+                    <Label className="text-xs">
+                      {gpaLabel} {form.education_level && <span className="text-gray-400 font-normal">(0.00 – {gpaMax.toFixed(2)})</span>}
+                    </Label>
                     <Input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      max={gpaMax}
+                      type="text"
+                      inputMode="decimal"
                       value={form.gpa}
                       onChange={e => {
-                        const val = e.target.value;
-                        if (val === "" || (parseFloat(val) >= 0 && parseFloat(val) <= gpaMax)) {
-                          setForm(f => ({ ...f, gpa: val }));
+                        const raw = e.target.value.replace(/[^0-9.]/g, "");
+                        const parts = raw.split(".");
+                        const formatted = parts.length > 2 ? `${parts[0]}.${parts.slice(1).join("")}` : raw;
+                        const decimalBounded = formatted.includes(".") 
+                          ? `${formatted.split(".")[0]}.${formatted.split(".")[1].slice(0, 2)}`
+                          : formatted;
+                        
+                        if (decimalBounded === "" || parseFloat(decimalBounded) <= gpaMax) {
+                          setForm(f => ({ ...f, gpa: decimalBounded }));
                         }
                       }}
                       placeholder={`0.00 – ${gpaMax.toFixed(2)}`}
@@ -332,7 +582,14 @@ export default function PartnerAddStudent() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label className="text-xs">Test</Label>
-                    <Select value={form.language_test_name} onValueChange={v => setForm(f => ({ ...f, language_test_name: v, ielts_score: v === "MOI" ? "" : f.ielts_score }))}>
+                    <Select
+                      value={form.language_test_name}
+                      onValueChange={v => setForm(f => ({
+                        ...f,
+                        language_test_name: v,
+                        ielts_score: v === "MOI" ? "MOI" : ""
+                      }))}
+                    >
                       <SelectTrigger className="h-9 mt-1"><SelectValue placeholder="Select test" /></SelectTrigger>
                       <SelectContent>
                         {languageTests.map(t => (
@@ -342,23 +599,36 @@ export default function PartnerAddStudent() {
                     </Select>
                   </div>
                   <div>
-                    <Label className={`text-xs ${isMOI || !form.language_test_name ? "text-gray-300" : ""}`}>
-                      Score {form.language_test_name && !isMOI && (() => {
-                        const range = getScoreRange(form.language_test_name);
-                        return <span className="text-gray-400 font-normal">({range.min} – {range.max})</span>;
-                      })()}
+                    <Label className={`text-xs ${isMOI || !form.language_test_name ? "text-gray-400" : ""}`}>
+                      Score {form.language_test_name && !isMOI && <span className="text-gray-400 font-normal">(Select Score)</span>}
                     </Label>
-                    <Input
-                      type="number"
-                      step={form.language_test_name ? getScoreRange(form.language_test_name).step : 0.5}
-                      min={form.language_test_name ? getScoreRange(form.language_test_name).min : 0}
-                      max={form.language_test_name ? getScoreRange(form.language_test_name).max : 9}
-                      value={form.ielts_score}
-                      onChange={e => setForm(f => ({ ...f, ielts_score: e.target.value }))}
-                      placeholder={isMOI ? "N/A" : "Score"}
-                      className={`h-9 mt-1 ${isMOI || !form.language_test_name ? "opacity-50 cursor-not-allowed" : ""}`}
-                      disabled={isMOI || !form.language_test_name}
-                    />
+                    {isMOI ? (
+                      <Input
+                        value="MOI (No Score Required)"
+                        disabled
+                        className="h-9 mt-1 opacity-50 cursor-not-allowed bg-gray-50 text-xs italic"
+                      />
+                    ) : availableScores.length > 0 ? (
+                      <Select
+                        value={form.ielts_score}
+                        onValueChange={v => setForm(f => ({ ...f, ielts_score: v }))}
+                        disabled={!form.language_test_name}
+                      >
+                        <SelectTrigger className="h-9 mt-1"><SelectValue placeholder="Select score" /></SelectTrigger>
+                        <SelectContent className="max-h-56">
+                          {availableScores.map(score => (
+                            <SelectItem key={score} value={score}>{score}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <Input
+                        value=""
+                        placeholder={form.language_test_name ? "N/A" : "Select a test first"}
+                        disabled
+                        className="h-9 mt-1 opacity-50 cursor-not-allowed bg-gray-50 text-xs"
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -367,12 +637,18 @@ export default function PartnerAddStudent() {
 
               {/* ── Action Buttons ── */}
               <div className="flex items-center justify-end gap-3">
-                <Button variant="outline" onClick={() => navigate("/partner-dashboard/students")} className="h-10 px-6">
+                <Button variant="outline" onClick={handleBack} className="h-10 px-6">
                   Cancel
                 </Button>
-                <Button className="h-10 px-6" onClick={handleSubmit} disabled={submitting}>
-                  {submitting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UserPlus className="h-4 w-4 mr-2" />}
-                  Save Student
+                <Button className="h-10 px-6 bg-[#2F4F97] hover:bg-[#243e78]" onClick={handleSubmit} disabled={submitting}>
+                  {submitting ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : isEditMode ? (
+                    <Save className="h-4 w-4 mr-2" />
+                  ) : (
+                    <UserPlus className="h-4 w-4 mr-2" />
+                  )}
+                  {isEditMode ? "Update Student" : "Save Student"}
                 </Button>
               </div>
 
@@ -484,7 +760,7 @@ export default function PartnerAddStudent() {
                         <span className="text-xs font-semibold text-gray-700">Score: {form.ielts_score}</span>
                       )}
                       {isMOI && (
-                        <span className="text-xs italic text-gray-400">No score required</span>
+                        <span className="text-xs italic text-gray-400">MOI (No score)</span>
                       )}
                     </div>
                   </div>
@@ -507,7 +783,7 @@ export default function PartnerAddStudent() {
                 </div>
                 <div className="mt-3 space-y-1.5">
                   {[
-                    { label: "Personal Info", done: !!(form.first_name && form.last_name && form.email) },
+                    { label: "Personal Info", done: !!(form.first_name && form.last_name && form.email && isValidEmail(form.email)) },
                     { label: "Passport", done: !!form.passport_number },
                     { label: "Education", done: !!form.education_level },
                     { label: "Language Test", done: !!form.language_test_name },

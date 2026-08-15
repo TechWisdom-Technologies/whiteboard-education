@@ -160,6 +160,7 @@ const App = () => (
               <Route index element={<PartnerOverview />} />
               <Route path="students" element={<PartnerStudents />} />
               <Route path="students/new" element={<PartnerAddStudent />} />
+              <Route path="students/:studentId/edit" element={<PartnerAddStudent />} />
               <Route path="students/:studentId" element={<StudentProfilePage mode="partner" />} />
               <Route path="applications" element={<PartnerApplications />} />
               <Route path="search-programs" element={<PartnerSearchPrograms />} />
@@ -203,6 +204,8 @@ const App = () => (
               <Route path="partner-content" element={<AdminPartnerContent />} />
               <Route path="events" element={<AdminEvents />} />
               <Route path="students" element={<AdminStudents />} />
+              <Route path="students/new" element={<PartnerAddStudent />} />
+              <Route path="students/:studentId/edit" element={<PartnerAddStudent />} />
               <Route path="students/:studentId" element={<StudentProfilePage mode="admin" />} />
               <Route path="leads" element={<AdminLeads />} />
               <Route path="settings" element={<AdminSettings />} />

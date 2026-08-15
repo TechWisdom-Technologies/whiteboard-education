@@ -15,7 +15,6 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 import {
   ArrowLeft,
@@ -45,6 +44,13 @@ import {
   Trash2,
   ShieldAlert,
   Search,
+  Image as ImageIcon,
+  Award,
+  Briefcase,
+  CalendarClock,
+  Info,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -105,6 +111,7 @@ const documentFields = [
 interface Student {
   id: string;
   partner_id: string;
+  wb_student_id?: number;
   full_name: string;
   email: string;
   phone: string;
@@ -131,7 +138,7 @@ interface Student {
   ielts_certificate_url: string;
   personal_statement_url: string;
   recommendation_letter_url: string;
-  other_documents: string[];
+  other_documents?: Record<string, any> | string[] | any;
   created_at: string;
   passport_expiry_date?: string;
   english_test_type?: string;
@@ -184,6 +191,27 @@ function InfoRow({ label, value }: { label: string; value: string | number | nul
 
 // â”€â”€â”€ Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
+
+const languageTestOptions = [
+  { id: "IELTS", label: "IELTS" },
+  { id: "TOEFL", label: "TOEFL iBT" },
+  { id: "PTE", label: "PTE Academic" },
+  { id: "Duolingo", label: "Duolingo" },
+  { id: "Cambridge", label: "Cambridge English" },
+  { id: "Linguaskill", label: "Linguaskill" },
+  { id: "OET", label: "OET" },
+  { id: "MUET", label: "MUET" },
+  { id: "MOI", label: "MOI (Medium of Instruction)" },
+];
+
+const academicDegreeLevels = [
+  { key: "ssc", shortLabel: "SSC", label: "SSC (Secondary School Certificate)" },
+  { key: "hsc", shortLabel: "HSC", label: "HSC (Higher Secondary Certificate)" },
+  { key: "bachelors", shortLabel: "Bachelors", label: "Bachelors Degree" },
+  { key: "masters", shortLabel: "Masters", label: "Masters Degree" },
+  { key: "phd", shortLabel: "PHD", label: "PHD (Doctorate)" },
+];
+
 export default function StudentProfilePage({ mode }: { mode: "admin" | "partner" }) {
   const { studentId } = useParams();
   const navigate = useNavigate();
@@ -223,182 +251,13 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     Authorization: `Bearer ${session?.access_token}`,
   };
 
-  // Inline editing states for each section
-  const [isEditingPersonal, setIsEditingPersonal] = useState(false);
-  const [isEditingAcademic, setIsEditingAcademic] = useState(false);
-  const [isEditingLanguage, setIsEditingLanguage] = useState(false);
-  const [isEditingTarget, setIsEditingTarget] = useState(false);
-  const [isEditingGuardian, setIsEditingGuardian] = useState(false);
-
-  // Edit form state
-  const [editForm, setEditForm] = useState({
-    // Personal Info
-    full_name: "",
-    email: "",
-    phone: "",
-    passport_number: "",
-    nationality: "",
-    nid_number: "",
-    date_of_birth: "",
-    gender: "",
-    // Academic Info
-    previous_institution: "",
-    previous_degree: "",
-    major: "",
-    gpa: "",
-    // Target Info
-    target_university: "",
-    target_course: "",
-    intake_month: "",
-    degree_level: "",
-    emgs_application_number: "",
-    emgs_status_percentage: "",
-    // New Fields
-    passport_expiry_date: "",
-    english_test_type: "",
-    english_test_score: "",
-    guardian_name: "",
-    guardian_relationship: "",
-    guardian_phone: "",
-    guardian_email: "",
-  });
-
-  const startEditingPersonal = () => {
+  const handleEditProfile = () => {
     if (!student) return;
-    setEditForm((prev) => ({
-      ...prev,
-      full_name: student.full_name || "",
-      email: student.email || "",
-      phone: student.phone || "",
-      passport_number: student.passport_number || "",
-      passport_expiry_date: student.passport_expiry_date || "",
-      nationality: student.nationality || "",
-      nid_number: student.nid_number || "",
-      date_of_birth: student.date_of_birth || "",
-      gender: student.gender || "",
-    }));
-    setIsEditingPersonal(true);
-  };
-
-  const startEditingAcademic = () => {
-    if (!student) return;
-    setEditForm((prev) => ({
-      ...prev,
-      previous_institution: student.previous_institution || "",
-      previous_degree: student.previous_degree || "",
-      major: student.major || "",
-      gpa: student.gpa !== undefined && student.gpa !== null ? student.gpa.toString() : "",
-    }));
-    setIsEditingAcademic(true);
-  };
-
-  const startEditingLanguage = () => {
-    if (!student) return;
-    setEditForm((prev) => ({
-      ...prev,
-      english_test_type: student.english_test_type || "",
-      english_test_score: student.english_test_score || "",
-    }));
-    setIsEditingLanguage(true);
-  };
-
-  const startEditingTarget = () => {
-    if (!student) return;
-    setEditForm((prev) => ({
-      ...prev,
-      target_university: student.target_university || "",
-      target_course: student.target_course || "",
-      intake_month: student.intake_month || "",
-      degree_level: student.degree_level || "",
-      emgs_application_number: student.emgs_application_number || "",
-      emgs_status_percentage: student.emgs_status_percentage?.toString() || "",
-    }));
-    setIsEditingTarget(true);
-  };
-
-  const startEditingGuardian = () => {
-    if (!student) return;
-    setEditForm((prev) => ({
-      ...prev,
-      guardian_name: student.guardian_name || "",
-      guardian_relationship: student.guardian_relationship || "",
-      guardian_phone: student.guardian_phone || "",
-      guardian_email: student.guardian_email || "",
-    }));
-    setIsEditingGuardian(true);
-  };
-
-  const handleSaveSection = async (section: "personal" | "academic" | "language" | "target" | "guardian") => {
-    if (!student || !session) return;
-    
-    let bodyToUpdate: Partial<Student> = {};
-    if (section === "personal") {
-      bodyToUpdate = {
-        full_name: editForm.full_name,
-        email: editForm.email,
-        phone: editForm.phone,
-        passport_number: editForm.passport_number,
-        passport_expiry_date: editForm.passport_expiry_date || null,
-        nationality: editForm.nationality,
-        nid_number: editForm.nid_number,
-        date_of_birth: editForm.date_of_birth || null,
-        gender: editForm.gender,
-      };
-    } else if (section === "academic") {
-      bodyToUpdate = {
-        previous_institution: editForm.previous_institution,
-        previous_degree: editForm.previous_degree,
-        major: editForm.major,
-        gpa: editForm.gpa ? parseFloat(editForm.gpa) : 0,
-      };
-    } else if (section === "language") {
-      bodyToUpdate = {
-        english_test_type: editForm.english_test_type,
-        english_test_score: editForm.english_test_score,
-      };
-    } else if (section === "target") {
-      bodyToUpdate = {
-        target_university: editForm.target_university,
-        target_course: editForm.target_course,
-        intake_month: editForm.intake_month,
-        degree_level: editForm.degree_level,
-        emgs_application_number: editForm.emgs_application_number,
-        emgs_status_percentage: editForm.emgs_status_percentage ? parseInt(editForm.emgs_status_percentage) : null,
-      };
-    } else if (section as string === "guardian") {
-      bodyToUpdate = {
-        guardian_name: editForm.guardian_name,
-        guardian_relationship: editForm.guardian_relationship,
-        guardian_phone: editForm.guardian_phone,
-        guardian_email: editForm.guardian_email,
-      };
-    }
-
-    try {
-      const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/students?id=eq.${student.id}`,
-        {
-          method: "PATCH",
-          headers: {
-            ...headers,
-            "Content-Type": "application/json",
-            Prefer: "return=minimal",
-          },
-          body: JSON.stringify(bodyToUpdate),
-        }
-      );
-      if (!res.ok) throw new Error("Failed to update student details");
-      
-      toast.success("Student details updated successfully!");
-      setStudent((prev) => (prev ? { ...prev, ...bodyToUpdate } : null));
-      
-      if (section === "personal") setIsEditingPersonal(false);
-      if (section === "academic") setIsEditingAcademic(false);
-      if (section === "language") setIsEditingLanguage(false);
-      if (section === "target") setIsEditingTarget(false);
-      if (section as string === "guardian") setIsEditingGuardian(false);
-    } catch (e: any) {
-      toast.error(e.message || "Failed to save details");
+    const targetId = student.wb_student_id ? `WB-${student.wb_student_id}` : student.id;
+    if (mode === "admin") {
+      navigate(`/admin/students/new?edit=${targetId}`);
+    } else {
+      navigate(`/partner-dashboard/students/new?edit=${targetId}`);
     }
   };
 
@@ -537,6 +396,18 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
 
   // â”€â”€ Upload document â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
+  const getDocUrl = (field: string): string | undefined => {
+    if (!student) return undefined;
+    if ((student as any)[field]) return (student as any)[field];
+    if (student.other_documents && typeof student.other_documents === "object" && !Array.isArray(student.other_documents)) {
+      return (student.other_documents as Record<string, string>)[field];
+    }
+    if (field === "transcript_bachelors" && student.academic_transcript_url) {
+      return student.academic_transcript_url;
+    }
+    return undefined;
+  };
+
   const handleUploadDoc = async (field: string, file: File) => {
     if (!student || !session) return;
     setUploading((p) => ({ ...p, [field]: true }));
@@ -550,7 +421,122 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
         data: { publicUrl },
       } = supabase.storage.from("student-documents").getPublicUrl(path);
 
-      // PATCH student record
+      const topLevelFields = [
+        "passport_photo_url",
+        "passport_url",
+        "academic_transcript_url",
+        "ielts_certificate_url",
+        "personal_statement_url",
+        "recommendation_letter_url",
+      ];
+
+      if (topLevelFields.includes(field)) {
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/students?id=eq.${student.id}`,
+          {
+            method: "PATCH",
+            headers: {
+              ...headers,
+              "Content-Type": "application/json",
+              Prefer: "return=minimal",
+            },
+            body: JSON.stringify({ [field]: publicUrl }),
+          }
+        );
+        if (!res.ok) throw new Error("Failed to update student record");
+        setStudent((prev) => (prev ? { ...prev, [field]: publicUrl } : null));
+      } else {
+        const currentOther = (typeof student.other_documents === "object" && student.other_documents !== null && !Array.isArray(student.other_documents))
+          ? student.other_documents
+          : {};
+        const updatedOther = { ...currentOther, [field]: publicUrl };
+
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/students?id=eq.${student.id}`,
+          {
+            method: "PATCH",
+            headers: {
+              ...headers,
+              "Content-Type": "application/json",
+              Prefer: "return=minimal",
+            },
+            body: JSON.stringify({ other_documents: updatedOther }),
+          }
+        );
+        if (!res.ok) throw new Error("Failed to update student record");
+        setStudent((prev) => (prev ? { ...prev, other_documents: updatedOther as any } : null));
+      }
+
+      toast.success("Document uploaded successfully!");
+    } catch (e: any) {
+      toast.error(e.message || "Upload failed");
+    } finally {
+      setUploading((p) => ({ ...p, [field]: false }));
+    }
+  };
+
+  const handleDeleteDoc = async (field: string) => {
+    if (!student || !session) return;
+    if (!confirm("Are you sure you want to delete this document?")) return;
+    setUploading((p) => ({ ...p, [field]: true }));
+    try {
+      const topLevelFields = [
+        "passport_photo_url",
+        "passport_url",
+        "academic_transcript_url",
+        "ielts_certificate_url",
+        "personal_statement_url",
+        "recommendation_letter_url",
+      ];
+
+      if (topLevelFields.includes(field)) {
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/students?id=eq.${student.id}`,
+          {
+            method: "PATCH",
+            headers: {
+              ...headers,
+              "Content-Type": "application/json",
+              Prefer: "return=minimal",
+            },
+            body: JSON.stringify({ [field]: null }),
+          }
+        );
+        if (!res.ok) throw new Error("Failed to delete document");
+        setStudent((prev) => (prev ? { ...prev, [field]: null } : null));
+      } else {
+        const currentOther = (typeof student.other_documents === "object" && student.other_documents !== null && !Array.isArray(student.other_documents))
+          ? { ...(student.other_documents as Record<string, any>) }
+          : {};
+        delete (currentOther as any)[field];
+
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/students?id=eq.${student.id}`,
+          {
+            method: "PATCH",
+            headers: {
+              ...headers,
+              "Content-Type": "application/json",
+              Prefer: "return=minimal",
+            },
+            body: JSON.stringify({ other_documents: currentOther }),
+          }
+        );
+        if (!res.ok) throw new Error("Failed to delete document");
+        setStudent((prev) => (prev ? { ...prev, other_documents: currentOther as any } : null));
+      }
+
+      toast.success("Document deleted successfully!");
+    } catch (e: any) {
+      toast.error(e.message || "Failed to delete document");
+    } finally {
+      setUploading((p) => ({ ...p, [field]: false }));
+    }
+  };
+
+  const handleUpdateLanguageTestType = async (testType: string) => {
+    if (!student || !session) return;
+    try {
       const res = await fetch(
         `${SUPABASE_URL}/rest/v1/students?id=eq.${student.id}`,
         {
@@ -560,16 +546,17 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
             "Content-Type": "application/json",
             Prefer: "return=minimal",
           },
-          body: JSON.stringify({ [field]: publicUrl }),
+          body: JSON.stringify({
+            language_test_name: testType,
+            english_test_type: testType,
+          }),
         }
       );
-      if (!res.ok) throw new Error("Failed to update student record");
-      toast.success("Document uploaded successfully!");
-      setStudent((prev) => (prev ? { ...prev, [field]: publicUrl } : null));
+      if (!res.ok) throw new Error("Failed to update test type");
+      setStudent(prev => prev ? { ...prev, language_test_name: testType, english_test_type: testType } : null);
+      toast.success(`Language test type set to ${testType}`);
     } catch (e: any) {
-      toast.error(e.message || "Upload failed");
-    } finally {
-      setUploading((p) => ({ ...p, [field]: false }));
+      toast.error(e.message || "Failed to update test type");
     }
   };
 
@@ -755,14 +742,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
         student.phone &&
         student.passport_number &&
         student.nationality &&
-        student.date_of_birth &&
-        student.gender &&
-        student.previous_institution &&
-        student.previous_degree &&
-        student.target_university &&
-        student.target_course &&
-        student.intake_month &&
-        student.degree_level
+        student.gender
       )
     : false;
 
@@ -787,8 +767,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     if (!student) return;
     const originalTitle = document.title;
     const passport = student.passport_number || "NoPassport";
-    const uni = student.target_university || "NoUniversity";
-    document.title = `${student.full_name}_${passport}_${uni}`;
+    document.title = `${student.full_name}_${passport}`;
     window.print();
     document.title = originalTitle;
   };
@@ -857,6 +836,15 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
              </div>
            </div>
            <div className="flex items-center gap-2">
+             <Button 
+               variant="outline"
+               size="sm"
+               className="h-9 px-3 text-xs font-semibold text-[#2F4F97] border-[#2F4F97]/30 hover:bg-[#2F4F97]/10 gap-1.5 shadow-sm"
+               onClick={handleEditProfile}
+             >
+               <Pencil className="w-3.5 h-3.5" />
+               Edit Profile
+             </Button>
              {student.status === 'document_upload' && mode === 'partner' && (
                <Button 
                  className="bg-green-600 hover:bg-green-700 text-xs h-9"
@@ -869,12 +857,11 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                  Submit Application
                </Button>
              )}
-             {/* Student Platform Link Removed */}
            </div>
         </div>
 
         <Tabs defaultValue={defaultTab} className="w-full space-y-6">
-          <TabsList className="flex w-full h-12 bg-transparent border-b border-gray-200 p-0 no-print gap-8 rounded-none justify-start">
+          <TabsList className="flex w-full h-12 bg-transparent p-0 no-print gap-8 rounded-none justify-start">
             <TabsTrigger value="profile" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">1. Profile</TabsTrigger>
             <TabsTrigger value="applications" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">2. Applications</TabsTrigger>
             <TabsTrigger value="documents" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">3. Documents</TabsTrigger>
@@ -923,13 +910,13 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                                 {new Date(app.created_at).toLocaleDateString()}
                               </TableCell>
                               <TableCell className="text-xs text-gray-900 break-words whitespace-normal leading-tight">
-                                {app.universities?.name || "â€”"}
+                                {app.universities?.name || "—"}
                               </TableCell>
                               <TableCell className="text-xs text-gray-900 break-words whitespace-normal leading-tight">
-                                {app.courses?.title || "â€”"}
+                                {app.courses?.title || "—"}
                               </TableCell>
                               <TableCell className="text-xs text-gray-900 whitespace-nowrap">
-                                {app.courses?.intake_months?.[0] || "â€”"}
+                                {app.courses?.intake_months?.[0] || "—"}
                               </TableCell>
                               <TableCell className="text-xs text-gray-900 whitespace-nowrap">
                                 {student?.partner_id === app.partner_id ? "Partner" : "Admin"}
@@ -950,243 +937,809 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
           </TabsContent>
 
           <TabsContent value="documents" className="space-y-6 mt-0">
-             <Tabs defaultValue="your-documents" className="w-full">
-               <TabsList className="bg-transparent gap-8 p-0 h-10 border-b border-gray-200 w-full justify-start rounded-none mb-6">
-                 <TabsTrigger value="your-documents" className="text-[13px] font-semibold h-10 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">Your Documents</TabsTrigger>
-                 <TabsTrigger value="whiteboard-documents" className="text-[13px] font-semibold h-10 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">Whiteboard Documents</TabsTrigger>
-               </TabsList>
-               
-               <TabsContent value="your-documents" className="mt-0">
-                  <Accordion type="multiple" className="space-y-3">
-                    {documentFields.map((doc) => {
-                      const url = (student as any)[doc.field] as string | undefined;
-                      const isUploading = uploading[doc.field];
-                      return (
-                        <AccordionItem key={doc.field} value={doc.field} className="border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm">
-                          <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-gray-50 [&[data-state=open]]:bg-gray-50">
-                            <div className="flex items-center justify-between w-full pr-4">
-                              <div className="flex items-center gap-3">
-                                <div className="h-8 w-8 rounded-full bg-blue-50 flex items-center justify-center border border-blue-100">
-                                  <FileText className="w-4 h-4 text-[#2F4F97]" />
+                    {/* 1. Identification & Passport Documents */}
+                    <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
+                      <div className="flex items-center gap-2 border-b border-gray-100 pb-3">
+                        <User className="w-4 h-4 text-[#2F4F97]" />
+                        <h3 className="font-semibold text-sm text-[#1E293B]">Identification & Passport</h3>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        {/* Passport Size Photo */}
+                        {(() => {
+                          const url = getDocUrl("passport_photo_url");
+                          const isUploading = uploading["passport_photo_url"];
+                          return (
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50/60 border border-gray-200/80 rounded-xl gap-4 hover:border-gray-300 transition-colors">
+                              <div className="flex items-start gap-3.5 min-w-0">
+                                <div className={`h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${url ? 'bg-blue-50 text-[#2F4F97] border border-blue-100' : 'bg-white text-gray-400 border border-gray-200'}`}>
+                                  <ImageIcon className="w-5 h-5" />
                                 </div>
-                                <span className="font-semibold text-sm text-[#1E293B]">{doc.label}</span>
+                                <div className="min-w-0 space-y-1.5">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <h4 className="font-semibold text-sm text-[#1E293B]">Passport Size Photo</h4>
+                                    {url ? (
+                                      <Badge variant="outline" className="text-[10px] font-normal bg-green-50 text-green-700 border-green-200">Uploaded</Badge>
+                                    ) : (
+                                      <Badge variant="outline" className="text-[10px] font-normal bg-gray-100 text-gray-600 border-gray-200">Required</Badge>
+                                    )}
+                                  </div>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    <span className="text-[11px] bg-blue-50 text-[#2F4F97] border border-blue-100 px-2 py-0.5 rounded-md font-medium">1. 35mm X 45mm</span>
+                                    <span className="text-[11px] bg-blue-50 text-[#2F4F97] border border-blue-100 px-2 py-0.5 rounded-md font-medium">2. Must be White Background</span>
+                                    <span className="text-[11px] bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded-md font-medium">3. Avoid white color dress</span>
+                                  </div>
+                                </div>
                               </div>
-                              {url ? (
-                                <CheckCircle2 className="w-5 h-5 text-green-500" />
-                              ) : (
-                                <Badge variant="outline" className="text-[10px] font-normal uppercase bg-gray-50">Missing</Badge>
+
+                              <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  className="hidden"
+                                  ref={(el) => { fileInputRefs.current["passport_photo_url"] = el; }}
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) handleUploadDoc("passport_photo_url", file);
+                                    e.target.value = "";
+                                  }}
+                                />
+                                {url && (
+                                  <a
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                                  >
+                                    Preview
+                                  </a>
+                                )}
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="outline"
+                                  disabled={isUploading}
+                                  onClick={() => fileInputRefs.current["passport_photo_url"]?.click()}
+                                  className="h-8 px-3 text-xs font-semibold text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                                >
+                                  {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
+                                  {url ? "Replace" : "Upload"}
+                                </Button>
+                                {url && (
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="icon"
+                                    disabled={isUploading}
+                                    onClick={() => handleDeleteDoc("passport_photo_url")}
+                                    className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 border-gray-200 shadow-sm"
+                                    title="Delete Document"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })()}
+
+                        {/* Full Passport Scan Copy */}
+                        {(() => {
+                          const url = getDocUrl("passport_url");
+                          const isUploading = uploading["passport_url"];
+                          return (
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50/60 border border-gray-200/80 rounded-xl gap-4 hover:border-gray-300 transition-colors">
+                              <div className="flex items-start gap-3.5 min-w-0">
+                                <div className={`h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${url ? 'bg-blue-50 text-[#2F4F97] border border-blue-100' : 'bg-white text-gray-400 border border-gray-200'}`}>
+                                  <FileText className="w-5 h-5" />
+                                </div>
+                                <div className="min-w-0 space-y-1">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <h4 className="font-semibold text-sm text-[#1E293B]">Full Passport Scan Copy</h4>
+                                    {url ? (
+                                      <Badge variant="outline" className="text-[10px] font-normal bg-green-50 text-green-700 border-green-200">Uploaded</Badge>
+                                    ) : (
+                                      <Badge variant="outline" className="text-[10px] font-normal bg-gray-100 text-gray-600 border-gray-200">Required</Badge>
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-gray-500 flex items-center gap-1.5">
+                                    <Info className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
+                                    Scan all the pages of your passport and make a pdf file
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                                <input
+                                  type="file"
+                                  accept=".pdf,image/*"
+                                  className="hidden"
+                                  ref={(el) => { fileInputRefs.current["passport_url"] = el; }}
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) handleUploadDoc("passport_url", file);
+                                    e.target.value = "";
+                                  }}
+                                />
+                                {url && (
+                                  <a
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                                  >
+                                    Preview
+                                  </a>
+                                )}
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="outline"
+                                  disabled={isUploading}
+                                  onClick={() => fileInputRefs.current["passport_url"]?.click()}
+                                  className="h-8 px-3 text-xs font-semibold text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                                >
+                                  {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
+                                  {url ? "Replace" : "Upload"}
+                                </Button>
+                                {url && (
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="icon"
+                                    disabled={isUploading}
+                                    onClick={() => handleDeleteDoc("passport_url")}
+                                    className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 border-gray-200 shadow-sm"
+                                    title="Delete Document"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })()}
+                      </div>
+                    </div>
+
+                    {/* 2. Academic Transcripts */}
+                    <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
+                      <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                        <div className="flex items-center gap-2">
+                          <GraduationCap className="w-4 h-4 text-[#2F4F97]" />
+                          <div>
+                            <h3 className="font-semibold text-sm text-[#1E293B]">Academic Transcript</h3>
+                            <p className="text-xs text-gray-500">Upload transcripts for each level of completed education</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2.5">
+                        {academicDegreeLevels.map((lvl) => {
+                          const docKey = `transcript_${lvl.key}`;
+                          const url = getDocUrl(docKey);
+                          const isUploading = uploading[docKey];
+
+                          return (
+                            <div key={docKey} className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-gray-50/60 border border-gray-200/80 rounded-xl gap-3 hover:border-gray-300 transition-colors">
+                              <div className="flex items-center gap-3 min-w-0">
+                                <div className={`h-9 w-9 rounded-lg flex items-center justify-center flex-shrink-0 ${url ? 'bg-blue-50 text-[#2F4F97] border border-blue-100' : 'bg-white text-gray-400 border border-gray-200'}`}>
+                                  <FileText className="w-4 h-4" />
+                                </div>
+                                <div className="min-w-0">
+                                  <div className="flex items-center gap-2">
+                                    <h4 className="font-semibold text-xs text-[#1E293B]">{lvl.label} - Transcript</h4>
+                                    {url ? (
+                                      <Badge variant="outline" className="text-[10px] font-normal bg-green-50 text-green-700 border-green-200">Uploaded</Badge>
+                                    ) : (
+                                      <Badge variant="outline" className="text-[10px] font-normal bg-gray-50 text-gray-400 border-gray-200">Optional / Pending</Badge>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                                <input
+                                  type="file"
+                                  accept=".pdf,image/*"
+                                  className="hidden"
+                                  ref={(el) => { fileInputRefs.current[docKey] = el; }}
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) handleUploadDoc(docKey, file);
+                                    e.target.value = "";
+                                  }}
+                                />
+                                {url && (
+                                  <a
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex h-7.5 items-center justify-center rounded-md border border-gray-200 bg-white px-2.5 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                                  >
+                                    Preview
+                                  </a>
+                                )}
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="outline"
+                                  disabled={isUploading}
+                                  onClick={() => fileInputRefs.current[docKey]?.click()}
+                                  className="h-7.5 px-2.5 text-xs font-semibold text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                                >
+                                  {isUploading ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Upload className="h-3 w-3 mr-1" />}
+                                  {url ? "Replace" : "Upload"}
+                                </Button>
+                                {url && (
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="icon"
+                                    disabled={isUploading}
+                                    onClick={() => handleDeleteDoc(docKey)}
+                                    className="h-7.5 w-7.5 text-red-500 hover:text-red-600 hover:bg-red-50 border-gray-200 shadow-sm"
+                                    title="Delete Document"
+                                  >
+                                    <Trash2 className="w-3 h-3" />
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* 3. Academic Certificate */}
+                    <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
+                      <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                        <div className="flex items-center gap-2">
+                          <Award className="w-4 h-4 text-[#2F4F97]" />
+                          <div>
+                            <h3 className="font-semibold text-sm text-[#1E293B]">Academic Certificate</h3>
+                            <p className="text-xs text-gray-500">Upload certificates / passing degrees for each completed level</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2.5">
+                        {academicDegreeLevels.map((lvl) => {
+                          const docKey = `certificate_${lvl.key}`;
+                          const url = getDocUrl(docKey);
+                          const isUploading = uploading[docKey];
+
+                          return (
+                            <div key={docKey} className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-gray-50/60 border border-gray-200/80 rounded-xl gap-3 hover:border-gray-300 transition-colors">
+                              <div className="flex items-center gap-3 min-w-0">
+                                <div className={`h-9 w-9 rounded-lg flex items-center justify-center flex-shrink-0 ${url ? 'bg-blue-50 text-[#2F4F97] border border-blue-100' : 'bg-white text-gray-400 border border-gray-200'}`}>
+                                  <Award className="w-4 h-4" />
+                                </div>
+                                <div className="min-w-0">
+                                  <div className="flex items-center gap-2">
+                                    <h4 className="font-semibold text-xs text-[#1E293B]">{lvl.label} - Certificate</h4>
+                                    {url ? (
+                                      <Badge variant="outline" className="text-[10px] font-normal bg-green-50 text-green-700 border-green-200">Uploaded</Badge>
+                                    ) : (
+                                      <Badge variant="outline" className="text-[10px] font-normal bg-gray-50 text-gray-400 border-gray-200">Optional / Pending</Badge>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                                <input
+                                  type="file"
+                                  accept=".pdf,image/*"
+                                  className="hidden"
+                                  ref={(el) => { fileInputRefs.current[docKey] = el; }}
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) handleUploadDoc(docKey, file);
+                                    e.target.value = "";
+                                  }}
+                                />
+                                {url && (
+                                  <a
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex h-7.5 items-center justify-center rounded-md border border-gray-200 bg-white px-2.5 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                                  >
+                                    Preview
+                                  </a>
+                                )}
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="outline"
+                                  disabled={isUploading}
+                                  onClick={() => fileInputRefs.current[docKey]?.click()}
+                                  className="h-7.5 px-2.5 text-xs font-semibold text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                                >
+                                  {isUploading ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Upload className="h-3 w-3 mr-1" />}
+                                  {url ? "Replace" : "Upload"}
+                                </Button>
+                                {url && (
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="icon"
+                                    disabled={isUploading}
+                                    onClick={() => handleDeleteDoc(docKey)}
+                                    className="h-7.5 w-7.5 text-red-500 hover:text-red-600 hover:bg-red-50 border-gray-200 shadow-sm"
+                                    title="Delete Document"
+                                  >
+                                    <Trash2 className="w-3 h-3" />
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* 4. Language Test Certificate */}
+                    <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-100 pb-3 gap-3">
+                        <div className="flex items-center gap-2">
+                          <Languages className="w-4 h-4 text-[#2F4F97]" />
+                          <div>
+                            <h3 className="font-semibold text-sm text-[#1E293B]">Language Test Certificate</h3>
+                            <p className="text-xs text-gray-500">Official language proficiency certificate or MOI letter</p>
+                          </div>
+                        </div>
+
+                        {/* Test Selection Dropdown */}
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-gray-500 whitespace-nowrap">Test:</span>
+                          <Select
+                            value={student?.language_test_name || student?.english_test_type || "IELTS"}
+                            onValueChange={(val) => handleUpdateLanguageTestType(val)}
+                          >
+                            <SelectTrigger className="h-8 w-44 text-xs font-semibold bg-gray-50 border-gray-200">
+                              <SelectValue placeholder="Select Test" />
+                            </SelectTrigger>
+                            <SelectContent className="max-h-60">
+                              {languageTestOptions.map((t) => (
+                                <SelectItem key={t.id} value={t.id} className="text-xs">
+                                  {t.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      {(() => {
+                        const testType = student?.language_test_name || student?.english_test_type || "IELTS";
+                        const isMOITest = testType === "MOI";
+                        const docTitle = isMOITest ? "MOI (Medium of Instruction) Letter" : `${testType} Certificate / Score Card`;
+                        const docDesc = isMOITest
+                          ? "Upload official institutional letter certifying previous education was conducted in English"
+                          : `Upload official ${testType} test result / certificate`;
+                        const url = getDocUrl("ielts_certificate_url");
+                        const isUploading = uploading["ielts_certificate_url"];
+
+                        return (
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50/60 border border-gray-200/80 rounded-xl gap-4 hover:border-gray-300 transition-colors">
+                            <div className="flex items-start gap-3.5 min-w-0">
+                              <div className={`h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${url ? 'bg-blue-50 text-[#2F4F97] border border-blue-100' : 'bg-white text-gray-400 border border-gray-200'}`}>
+                                <Languages className="w-5 h-5" />
+                              </div>
+                              <div className="min-w-0 space-y-1">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <h4 className="font-semibold text-sm text-[#1E293B]">{docTitle}</h4>
+                                  {url ? (
+                                    <Badge variant="outline" className="text-[10px] font-normal bg-green-50 text-green-700 border-green-200">Uploaded</Badge>
+                                  ) : (
+                                    <Badge variant="outline" className="text-[10px] font-normal bg-gray-100 text-gray-600 border-gray-200">Pending</Badge>
+                                  )}
+                                </div>
+                                <p className="text-xs text-gray-500">{docDesc}</p>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                              <input
+                                type="file"
+                                accept=".pdf,image/*"
+                                className="hidden"
+                                ref={(el) => { fileInputRefs.current["ielts_certificate_url"] = el; }}
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) handleUploadDoc("ielts_certificate_url", file);
+                                  e.target.value = "";
+                                }}
+                              />
+                              {url && (
+                                <a
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                                >
+                                  Preview
+                                </a>
+                              )}
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                disabled={isUploading}
+                                onClick={() => fileInputRefs.current["ielts_certificate_url"]?.click()}
+                                className="h-8 px-3 text-xs font-semibold text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                              >
+                                {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
+                                {url ? "Replace" : "Upload"}
+                              </Button>
+                              {url && (
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="icon"
+                                  disabled={isUploading}
+                                  onClick={() => handleDeleteDoc("ielts_certificate_url")}
+                                  className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 border-gray-200 shadow-sm"
+                                  title="Delete Document"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </Button>
                               )}
                             </div>
-                          </AccordionTrigger>
-                          <AccordionContent className="px-4 py-4 bg-gray-50/50 border-t border-gray-100">
-                            <div className="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200 shadow-sm flex-wrap gap-4">
-                               <div className="flex items-center gap-3">
-                                  <div className="h-10 w-10 rounded-md bg-red-50 flex items-center justify-center border border-red-100">
-                                    <FileText className="w-5 h-5 text-red-500" />
+                          </div>
+                        );
+                      })()}
+                    </div>
+
+                    {/* 5. Supporting Documents (SOP, Recommendation, Experience, Gap Evidence) */}
+                    <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
+                      <div className="flex items-center gap-2 border-b border-gray-100 pb-3">
+                        <FileCheck className="w-4 h-4 text-[#2F4F97]" />
+                        <div>
+                          <h3 className="font-semibold text-sm text-[#1E293B]">Supporting & Additional Documents</h3>
+                          <p className="text-xs text-gray-500">Statements, recommendation letters, experience proof & study gap evidence</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        {/* SOP */}
+                        {(() => {
+                          const url = getDocUrl("personal_statement_url");
+                          const isUploading = uploading["personal_statement_url"];
+                          return (
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50/60 border border-gray-200/80 rounded-xl gap-4 hover:border-gray-300 transition-colors">
+                              <div className="flex items-start gap-3.5 min-w-0">
+                                <div className={`h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${url ? 'bg-blue-50 text-[#2F4F97] border border-blue-100' : 'bg-white text-gray-400 border border-gray-200'}`}>
+                                  <FileText className="w-5 h-5" />
+                                </div>
+                                <div className="min-w-0 space-y-1">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <h4 className="font-semibold text-sm text-[#1E293B]">Statement of Purpose (SOP)</h4>
+                                    {url ? (
+                                      <Badge variant="outline" className="text-[10px] font-normal bg-green-50 text-green-700 border-green-200">Uploaded</Badge>
+                                    ) : (
+                                      <Badge variant="outline" className="text-[10px] font-normal bg-gray-50 text-gray-500 border-gray-200">Pending</Badge>
+                                    )}
                                   </div>
-                                  <div>
-                                    <p className="font-medium text-sm text-[#1E293B]">{url ? 'Document Uploaded' : 'No Document'}</p>
-                                    <p className="text-xs text-gray-500">{url ? 'Click preview to view file' : 'Please upload a PDF/Image'}</p>
-                                  </div>
-                               </div>
-                               <div className="flex items-center gap-2">
-                                 {url && (
-                                   <a
-                                     href={url}
-                                     target="_blank"
-                                     rel="noopener noreferrer"
-                                     className="inline-flex h-9 items-center justify-center rounded-md border bg-white px-3 text-xs font-medium text-[#2F4F97] hover:bg-gray-50 shadow-sm transition-colors"
-                                     title="Preview Document"
-                                   >
-                                     Preview
-                                   </a>
-                                 )}
-                                 <input
-                                   type="file"
-                                   className="hidden"
-                                   ref={(el) => { fileInputRefs.current[doc.field] = el; }}
-                                   onChange={(e) => {
-                                     const file = e.target.files?.[0];
-                                     if (file) handleUploadDoc(doc.field, file);
-                                     e.target.value = "";
-                                   }}
-                                 />
-                                 <Button
-                                   type="button"
-                                   size="sm"
-                                   disabled={isUploading}
-                                   onClick={() => fileInputRefs.current[doc.field]?.click()}
-                                   className="h-9 px-3 text-xs font-medium"
-                                 >
-                                   {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-2" />}
-                                   {url ? "Replace" : "Upload"}
-                                 </Button>
-                                 {url && (
-                                    <Button variant="outline" size="icon" className="h-9 w-9 text-red-500 hover:text-red-600 hover:bg-red-50">
-                                      <Trash2 className="w-4 h-4" />
-                                    </Button>
-                                 )}
-                               </div>
+                                  <p className="text-xs text-gray-500">Personal statement or essay explaining academic intent and motivation</p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                                <input
+                                  type="file"
+                                  accept=".pdf,.doc,.docx"
+                                  className="hidden"
+                                  ref={(el) => { fileInputRefs.current["personal_statement_url"] = el; }}
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) handleUploadDoc("personal_statement_url", file);
+                                    e.target.value = "";
+                                  }}
+                                />
+                                {url && (
+                                  <a
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                                  >
+                                    Preview
+                                  </a>
+                                )}
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="outline"
+                                  disabled={isUploading}
+                                  onClick={() => fileInputRefs.current["personal_statement_url"]?.click()}
+                                  className="h-8 px-3 text-xs font-semibold text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                                >
+                                  {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
+                                  {url ? "Replace" : "Upload"}
+                                </Button>
+                                {url && (
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="icon"
+                                    disabled={isUploading}
+                                    onClick={() => handleDeleteDoc("personal_statement_url")}
+                                    className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 border-gray-200 shadow-sm"
+                                    title="Delete Document"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </Button>
+                                )}
+                              </div>
                             </div>
-                          </AccordionContent>
-                        </AccordionItem>
-                      );
-                    })}
-                  </Accordion>
-               </TabsContent>
-               <TabsContent value="whiteboard-documents">
-                  <div className="text-center py-12 bg-white rounded-lg border border-gray-200 border-dashed">
-                     <p className="text-gray-500 text-sm">No Whiteboard documents available for this student.</p>
-                  </div>
-               </TabsContent>
-             </Tabs>
-          </TabsContent>
+                          );
+                        })()}
+
+                        {/* Recommendation Letter */}
+                        {(() => {
+                          const url = getDocUrl("recommendation_letter_url");
+                          const isUploading = uploading["recommendation_letter_url"];
+                          return (
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50/60 border border-gray-200/80 rounded-xl gap-4 hover:border-gray-300 transition-colors">
+                              <div className="flex items-start gap-3.5 min-w-0">
+                                <div className={`h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${url ? 'bg-blue-50 text-[#2F4F97] border border-blue-100' : 'bg-white text-gray-400 border border-gray-200'}`}>
+                                  <FileText className="w-5 h-5" />
+                                </div>
+                                <div className="min-w-0 space-y-1">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <h4 className="font-semibold text-sm text-[#1E293B]">Recommendation Letter</h4>
+                                    {url ? (
+                                      <Badge variant="outline" className="text-[10px] font-normal bg-green-50 text-green-700 border-green-200">Uploaded</Badge>
+                                    ) : (
+                                      <Badge variant="outline" className="text-[10px] font-normal bg-gray-50 text-gray-500 border-gray-200">Pending</Badge>
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-gray-500">Letter of recommendation from teacher, professor, or employer</p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                                <input
+                                  type="file"
+                                  accept=".pdf,.doc,.docx"
+                                  className="hidden"
+                                  ref={(el) => { fileInputRefs.current["recommendation_letter_url"] = el; }}
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) handleUploadDoc("recommendation_letter_url", file);
+                                    e.target.value = "";
+                                  }}
+                                />
+                                {url && (
+                                  <a
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                                  >
+                                    Preview
+                                  </a>
+                                )}
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="outline"
+                                  disabled={isUploading}
+                                  onClick={() => fileInputRefs.current["recommendation_letter_url"]?.click()}
+                                  className="h-8 px-3 text-xs font-semibold text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                                >
+                                  {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
+                                  {url ? "Replace" : "Upload"}
+                                </Button>
+                                {url && (
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="icon"
+                                    disabled={isUploading}
+                                    onClick={() => handleDeleteDoc("recommendation_letter_url")}
+                                    className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 border-gray-200 shadow-sm"
+                                    title="Delete Document"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })()}
+
+                        {/* Job Experience (If any) */}
+                        {(() => {
+                          const docKey = "job_experience_url";
+                          const url = getDocUrl(docKey);
+                          const isUploading = uploading[docKey];
+                          return (
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50/60 border border-gray-200/80 rounded-xl gap-4 hover:border-gray-300 transition-colors">
+                              <div className="flex items-start gap-3.5 min-w-0">
+                                <div className={`h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${url ? 'bg-blue-50 text-[#2F4F97] border border-blue-100' : 'bg-white text-gray-400 border border-gray-200'}`}>
+                                  <Briefcase className="w-5 h-5" />
+                                </div>
+                                <div className="min-w-0 space-y-1">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <h4 className="font-semibold text-sm text-[#1E293B]">Job Experience (If any)</h4>
+                                    <Badge variant="outline" className="text-[10px] font-normal bg-purple-50 text-purple-700 border-purple-200">Optional</Badge>
+                                    {url && (
+                                      <Badge variant="outline" className="text-[10px] font-normal bg-green-50 text-green-700 border-green-200">Uploaded</Badge>
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-gray-500">Employment certificates, appointment letters, or payslips (if applicable)</p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                                <input
+                                  type="file"
+                                  accept=".pdf,.doc,.docx,image/*"
+                                  className="hidden"
+                                  ref={(el) => { fileInputRefs.current[docKey] = el; }}
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) handleUploadDoc(docKey, file);
+                                    e.target.value = "";
+                                  }}
+                                />
+                                {url && (
+                                  <a
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                                  >
+                                    Preview
+                                  </a>
+                                )}
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="outline"
+                                  disabled={isUploading}
+                                  onClick={() => fileInputRefs.current[docKey]?.click()}
+                                  className="h-8 px-3 text-xs font-semibold text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                                >
+                                  {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
+                                  {url ? "Replace" : "Upload"}
+                                </Button>
+                                {url && (
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="icon"
+                                    disabled={isUploading}
+                                    onClick={() => handleDeleteDoc(docKey)}
+                                    className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 border-gray-200 shadow-sm"
+                                    title="Delete Document"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })()}
+
+                        {/* Study Gap Evidence Documents */}
+                        {(() => {
+                          const docKey = "study_gap_url";
+                          const url = getDocUrl(docKey);
+                          const isUploading = uploading[docKey];
+                          return (
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50/60 border border-gray-200/80 rounded-xl gap-4 hover:border-gray-300 transition-colors">
+                              <div className="flex items-start gap-3.5 min-w-0">
+                                <div className={`h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${url ? 'bg-blue-50 text-[#2F4F97] border border-blue-100' : 'bg-white text-gray-400 border border-gray-200'}`}>
+                                  <CalendarClock className="w-5 h-5" />
+                                </div>
+                                <div className="min-w-0 space-y-1">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <h4 className="font-semibold text-sm text-[#1E293B]">Study Gap Evidence Documents</h4>
+                                    <Badge variant="outline" className="text-[10px] font-normal bg-purple-50 text-purple-700 border-purple-200">Optional</Badge>
+                                    {url && (
+                                      <Badge variant="outline" className="text-[10px] font-normal bg-green-50 text-green-700 border-green-200">Uploaded</Badge>
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-gray-500">Official documents explaining study gap (e.g. employment, courses, medical certificate)</p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                                <input
+                                  type="file"
+                                  accept=".pdf,.doc,.docx,image/*"
+                                  className="hidden"
+                                  ref={(el) => { fileInputRefs.current[docKey] = el; }}
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) handleUploadDoc(docKey, file);
+                                    e.target.value = "";
+                                  }}
+                                />
+                                {url && (
+                                  <a
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                                  >
+                                    Preview
+                                  </a>
+                                )}
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="outline"
+                                  disabled={isUploading}
+                                  onClick={() => fileInputRefs.current[docKey]?.click()}
+                                  className="h-8 px-3 text-xs font-semibold text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                                >
+                                  {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
+                                  {url ? "Replace" : "Upload"}
+                                </Button>
+                                {url && (
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="icon"
+                                    disabled={isUploading}
+                                    onClick={() => handleDeleteDoc(docKey)}
+                                    className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 border-gray-200 shadow-sm"
+                                    title="Delete Document"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })()}
+                      </div>
+                    </div>
+           </TabsContent>
 
           <TabsContent value="profile" className="space-y-6 mt-0">
-            {/* â”€â”€ Main Single Column Layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* ── Main Single Column Layout ────────────────────────────── */}
             <Card className="print:border-none print:shadow-none border border-gray-200 shadow-sm">
-              <CardContent className="p-6 sm:p-7 print:p-0">
-                {/* â”€â”€ Section 1: Personal Information â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-                <div className="flex items-center justify-between pb-4">
-                  <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
-                    <User className="h-4 w-4 text-[#2F4F97]" />
-                    Personal Information
-                  </h3>
-                  <div className="no-print">
-                    {isEditingPersonal ? (
-                      <div className="flex gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 text-xs text-muted-foreground hover:text-foreground"
-                          onClick={() => setIsEditingPersonal(false)}
-                        >
-                          <X className="h-3.5 w-3.5 mr-1" />
-                          Cancel
-                        </Button>
-                        <Button
-                          size="sm"
-                          className="h-8 text-xs font-semibold"
-                          onClick={() => handleSaveSection("personal")}
-                        >
-                          <Save className="h-3.5 w-3.5 mr-1" />
-                          Save
-                        </Button>
-                      </div>
-                    ) : (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 text-xs text-muted-foreground hover:text-[#1E293B]"
-                        onClick={startEditingPersonal}
-                      >
-                        <Pencil className="h-3.5 w-3.5 mr-1" />
-                        Edit
-                      </Button>
-                    )}
+              <CardContent className="p-6 sm:p-7 print:p-0 space-y-6">
+                
+                {/* Profile Card Header with single Edit Profile button */}
+                <div className="flex items-center justify-between pb-3 border-b border-gray-100 no-print">
+                  <div>
+                    <h3 className="text-base font-bold text-[#1E293B]">Student Profile</h3>
+                    <p className="text-xs text-gray-500 mt-0.5">Personal, academic, and contact information</p>
                   </div>
+                  <Button
+                    size="sm"
+                    className="h-8 px-3.5 text-xs font-semibold bg-[#2F4F97] hover:bg-[#243e78] text-white shadow-sm gap-1.5"
+                    onClick={handleEditProfile}
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                    Edit Profile
+                  </Button>
                 </div>
-                {isEditingPersonal ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="space-y-1">
-                      <Label className="text-xs font-semibold text-muted-foreground">Full Name</Label>
-                      <Input
-                        value={editForm.full_name}
-                        onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
-                        placeholder="e.g. John Doe"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs font-semibold text-muted-foreground">Email</Label>
-                      <Input
-                        type="email"
-                        value={editForm.email}
-                        onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                        placeholder="e.g. john@example.com"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs font-semibold text-muted-foreground">Phone</Label>
-                      <Input
-                        value={editForm.phone}
-                        onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-                        placeholder="e.g. +60123456789"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs font-semibold text-muted-foreground">Passport No.</Label>
-                      <Input
-                        value={editForm.passport_number}
-                        onChange={(e) => setEditForm({ ...editForm, passport_number: e.target.value })}
-                        placeholder="Passport Number"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs font-semibold text-muted-foreground">Passport Expiry Date</Label>
-                      <Input
-                        type="date"
-                        value={editForm.passport_expiry_date || ""}
-                        onChange={(e) => setEditForm({ ...editForm, passport_expiry_date: e.target.value })}
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs font-semibold text-muted-foreground">Gender</Label>
-                      <Select
-                        value={editForm.gender}
-                        onValueChange={(val) => setEditForm({ ...editForm, gender: val })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Gender" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Male">Male</SelectItem>
-                          <SelectItem value="Female">Female</SelectItem>
-                          <SelectItem value="Other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs font-semibold text-muted-foreground">Nationality</Label>
-                      <Input
-                        value={editForm.nationality}
-                        onChange={(e) => setEditForm({ ...editForm, nationality: e.target.value })}
-                        placeholder="Nationality"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs font-semibold text-muted-foreground">NID Number</Label>
-                      <Input
-                        value={editForm.nid_number}
-                        onChange={(e) => setEditForm({ ...editForm, nid_number: e.target.value })}
-                        placeholder="NID Number"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs font-semibold text-muted-foreground">Passport Number</Label>
-                      <Input
-                        value={editForm.passport_number}
-                        onChange={(e) => setEditForm({ ...editForm, passport_number: e.target.value })}
-                        placeholder="Passport Number"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs font-semibold text-muted-foreground">Date of Birth</Label>
-                      <Input
-                        type="date"
-                        value={editForm.date_of_birth || ""}
-                        onChange={(e) => setEditForm({ ...editForm, date_of_birth: e.target.value })}
-                      />
-                    </div>
+
+                {/* ── Section 1: Personal Information ── */}
+                <div>
+                  <div className="flex items-center gap-2.5 pb-4">
+                    <User className="h-4 w-4 text-[#2F4F97]" />
+                    <h4 className="text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
+                      Personal Information
+                    </h4>
                   </div>
-                ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4">
                     <InfoRow label="Full Name" value={student.full_name} />
                     <InfoRow label="Email" value={student.email} />
                     <InfoRow label="Phone" value={student.phone} />
                     <InfoRow label="Gender" value={student.gender} />
                     <InfoRow label="Nationality" value={student.nationality} />
-                    <InfoRow label="NID Number" value={student.nid_number} />
                     <InfoRow label="Passport Number" value={student.passport_number} />
+                    <InfoRow label="NID Number" value={student.nid_number} />
                     
                     {/* Passport Expiry & Validation */}
                     <div className="flex flex-col gap-1.5 py-1">
@@ -1229,393 +1782,70 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                       }
                     />
                   </div>
-                )}
+                </div>
 
-                {/* â”€â”€ Section 2: Academic Background â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-                <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
-                  <div className="flex items-center justify-between pb-4">
-                    <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
-                      <GraduationCap className="h-4 w-4 text-[#2F4F97]" />
+                {/* ── Section 2: Academic Background ── */}
+                <div className="border-t border-border/30 pt-5 print:border-none">
+                  <div className="flex items-center gap-2.5 pb-4">
+                    <GraduationCap className="h-4 w-4 text-[#2F4F97]" />
+                    <h4 className="text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
                       Academic Background
-                    </h3>
-                    <div className="no-print">
-                      {isEditingAcademic ? (
-                        <div className="flex gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 text-xs text-muted-foreground hover:text-foreground"
-                            onClick={() => setIsEditingAcademic(false)}
-                          >
-                            <X className="h-3.5 w-3.5 mr-1" />
-                            Cancel
-                          </Button>
-                          <Button
-                            size="sm"
-                            className="h-8 text-xs font-semibold"
-                            onClick={() => handleSaveSection("academic")}
-                          >
-                            <Save className="h-3.5 w-3.5 mr-1" />
-                            Save
-                          </Button>
-                        </div>
-                      ) : (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 text-xs text-muted-foreground hover:text-[#1E293B]"
-                          onClick={startEditingAcademic}
-                        >
-                          <Pencil className="h-3.5 w-3.5 mr-1" />
-                          Edit
-                        </Button>
-                      )}
-                    </div>
+                    </h4>
                   </div>
-                  {isEditingAcademic ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                      <div className="space-y-1">
-                        <Label className="text-xs font-semibold text-muted-foreground">Degree Name</Label>
-                        <Input
-                          value={editForm.previous_degree}
-                          onChange={(e) => setEditForm({ ...editForm, previous_degree: e.target.value })}
-                          placeholder="e.g. High School Diploma"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <Label className="text-xs font-semibold text-muted-foreground">Institution</Label>
-                        <Input
-                          value={editForm.previous_institution}
-                          onChange={(e) => setEditForm({ ...editForm, previous_institution: e.target.value })}
-                          placeholder="Previous School / University"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <Label className="text-xs font-semibold text-muted-foreground">Major</Label>
-                        <Input
-                          value={editForm.major}
-                          onChange={(e) => setEditForm({ ...editForm, major: e.target.value })}
-                          placeholder="e.g. Computer Science"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <Label className="text-xs font-semibold text-muted-foreground">GPA / CGPA</Label>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          value={editForm.gpa}
-                          onChange={(e) => setEditForm({ ...editForm, gpa: e.target.value })}
-                          placeholder="e.g. 3.85"
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4">
-                      <InfoRow label="Degree Name" value={student.previous_degree} />
-                      <InfoRow label="Institution" value={student.previous_institution} />
-                      <InfoRow label="Major" value={student.major} />
-                      <InfoRow label="GPA / CGPA" value={student.gpa || null} />
-                    </div>
-                  )}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4">
+                    <InfoRow label="Level of Education" value={student.previous_degree} />
+                    <InfoRow label="Institution" value={student.previous_institution} />
+                    <InfoRow label="Major / Stream" value={student.major} />
+                    <InfoRow label="GPA / CGPA" value={student.gpa || null} />
+                  </div>
                 </div>
 
-                {/* â”€â”€ Section 3: Language Proficiency â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-                <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
-                  <div className="flex items-center justify-between pb-4">
-                    <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
-                      <Languages className="h-4 w-4 text-[#2F4F97]" />
+                {/* ── Section 3: Language Proficiency ── */}
+                <div className="border-t border-border/30 pt-5 print:border-none">
+                  <div className="flex items-center gap-2.5 pb-4">
+                    <Languages className="h-4 w-4 text-[#2F4F97]" />
+                    <h4 className="text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
                       Language Proficiency
-                    </h3>
-                    <div className="no-print">
-                      {isEditingLanguage ? (
-                        <div className="flex gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 text-xs text-muted-foreground hover:text-foreground"
-                            onClick={() => setIsEditingLanguage(false)}
-                          >
-                            <X className="h-3.5 w-3.5 mr-1" />
-                            Cancel
-                          </Button>
-                          <Button
-                            size="sm"
-                            className="h-8 text-xs font-semibold"
-                            onClick={() => handleSaveSection("language")}
-                          >
-                            <Save className="h-3.5 w-3.5 mr-1" />
-                            Save
-                          </Button>
-                        </div>
-                      ) : (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 text-xs text-muted-foreground hover:text-[#1E293B]"
-                          onClick={startEditingLanguage}
-                        >
-                          <Pencil className="h-3.5 w-3.5 mr-1" />
-                          Edit
-                        </Button>
-                      )}
-                    </div>
+                    </h4>
                   </div>
-                  {isEditingLanguage ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <Label className="text-xs font-semibold text-muted-foreground">Test Type / Medium</Label>
-                        <Select
-                          value={editForm.english_test_type}
-                          onValueChange={(val) => setEditForm({ ...editForm, english_test_type: val })}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="e.g. IELTS, MOI" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="IELTS">IELTS</SelectItem>
-                            <SelectItem value="TOEFL">TOEFL</SelectItem>
-                            <SelectItem value="Duolingo">Duolingo</SelectItem>
-                            <SelectItem value="MOI">MOI (Medium of Instruction)</SelectItem>
-                            <SelectItem value="Other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-1">
-                        <Label className="text-xs font-semibold text-muted-foreground">Score / Status</Label>
-                        <Input
-                          value={editForm.english_test_score}
-                          onChange={(e) => setEditForm({ ...editForm, english_test_score: e.target.value })}
-                          placeholder="e.g. 6.5 or 'Approved'"
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4">
-                      <InfoRow label="Proficiency Type" value={student.english_test_type} />
-                      <InfoRow label="Score / Status" value={student.english_test_score} />
-                    </div>
-                  )}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4">
+                    <InfoRow label="Proficiency Test" value={student.language_test_name || student.english_test_type} />
+                    <InfoRow
+                      label="Score / Status"
+                      value={
+                        (student.language_test_name === "MOI" || student.english_test_type === "MOI")
+                          ? "MOI (No Score Required)"
+                          : (student.ielts_score ? student.ielts_score.toString() : student.english_test_score)
+                      }
+                    />
+                  </div>
                 </div>
 
-                {/* â”€â”€ Section 4: Target Program â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-                <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
-                  <div className="flex items-center justify-between pb-4">
-                    <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
-                      <Target className="h-4 w-4 text-[#2F4F97]" />
-                      Target Program
-                    </h3>
-                    <div className="no-print">
-                      {isEditingTarget ? (
-                        <div className="flex gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 text-xs text-muted-foreground hover:text-foreground"
-                            onClick={() => setIsEditingTarget(false)}
-                          >
-                            <X className="h-3.5 w-3.5 mr-1" />
-                            Cancel
-                          </Button>
-                          <Button
-                            size="sm"
-                            className="h-8 text-xs font-semibold"
-                            onClick={() => handleSaveSection("target")}
-                          >
-                            <Save className="h-3.5 w-3.5 mr-1" />
-                            Save
-                          </Button>
-                        </div>
-                      ) : (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 text-xs text-muted-foreground hover:text-[#1E293B]"
-                          onClick={startEditingTarget}
-                        >
-                          <Pencil className="h-3.5 w-3.5 mr-1" />
-                          Edit
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                  {isEditingTarget ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                      <div className="space-y-1">
-                        <Label className="text-xs font-semibold text-muted-foreground">Degree Level</Label>
-                        <Select
-                          value={editForm.degree_level}
-                          onValueChange={(val) => setEditForm({ ...editForm, degree_level: val })}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Degree Level" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Foundation">Foundation</SelectItem>
-                            <SelectItem value="Diploma">Diploma</SelectItem>
-                            <SelectItem value="Bachelor">Bachelor</SelectItem>
-                            <SelectItem value="Master">Master</SelectItem>
-                            <SelectItem value="PhD">PhD</SelectItem>
-                            <SelectItem value="English Course">English Course</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-1">
-                        <Label className="text-xs font-semibold text-muted-foreground">Preferred Program</Label>
-                        <Input
-                          value={editForm.target_course}
-                          onChange={(e) => setEditForm({ ...editForm, target_course: e.target.value })}
-                          placeholder="Target Course"
-                        />
-                      </div>
-                      {/* Target University is deprecated and hidden. Applications tab handles this. */}
-                      <div className="space-y-1">
-                        <Label className="text-xs font-semibold text-muted-foreground">Preferred Intake</Label>
-                        <Input
-                          value={editForm.intake_month}
-                          onChange={(e) => setEditForm({ ...editForm, intake_month: e.target.value })}
-                          placeholder="e.g. September 2026"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <Label className="text-xs font-semibold text-muted-foreground">EMGS Application No.</Label>
-                        <Input
-                          value={editForm.emgs_application_number}
-                          onChange={(e) => setEditForm({ ...editForm, emgs_application_number: e.target.value })}
-                          placeholder="e.g. E123456789"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <Label className="text-xs font-semibold text-muted-foreground">EMGS Status %</Label>
-                        <Input
-                          type="number"
-                          min="0"
-                          max="100"
-                          value={editForm.emgs_status_percentage}
-                          onChange={(e) => setEditForm({ ...editForm, emgs_status_percentage: e.target.value })}
-                          placeholder="e.g. 35"
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-5">
-                      <InfoRow label="Degree Level" value={student.degree_level} />
-                      <InfoRow label="Preferred Program" value={student.target_course} />
-                      <InfoRow label="Preferred Intake" value={student.intake_month} />
-                      
-                      <div className="col-span-1 sm:col-span-2 lg:col-span-3 h-px bg-border/40 my-1"></div>
-                      
-                      <InfoRow label="Primary Target Institution" value={applications.length > 0 ? applications[0].universities?.name : "No Applications"} />
-                      <div className="flex flex-col gap-1.5 py-1">
-                        <span className="text-[11px] font-medium text-muted-foreground/70 uppercase tracking-wider">
-                          Offer Status
-                        </span>
-                        <span className="text-[13px] font-bold text-[#1E293B]">
-                          {applications.length > 0 ? getStatusLabel(applications[0].status) : "N/A"}
-                        </span>
-                      </div>
-                      
-                      <div className="col-span-1 sm:col-span-2 lg:col-span-3 h-px bg-border/40 my-1"></div>
-
-                      <InfoRow label="EMGS Application No." value={student.emgs_application_number} />
-                      <InfoRow label="EMGS Status %" value={student.emgs_status_percentage !== undefined && student.emgs_status_percentage !== null ? `${student.emgs_status_percentage}%` : null} />
-                    </div>
-                  )}
-                </div>
-
-                {/* â”€â”€ Section 5: Emergency Contact / Guardian â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-                <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
-                  <div className="flex items-center justify-between pb-4">
-                    <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
+                {/* ── Section 4: Emergency Contact / Guardian ── */}
+                {(student.guardian_name || student.guardian_phone || student.guardian_email || student.guardian_relationship) && (
+                  <div className="border-t border-border/30 pt-5 print:border-none">
+                    <div className="flex items-center gap-2.5 pb-4">
                       <ShieldAlert className="h-4 w-4 text-[#2F4F97]" />
-                      Emergency Contact
-                    </h3>
-                    <div className="no-print">
-                      {isEditingGuardian ? (
-                        <div className="flex gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 text-xs text-muted-foreground hover:text-foreground"
-                            onClick={() => setIsEditingGuardian(false)}
-                          >
-                            <X className="h-3.5 w-3.5 mr-1" />
-                            Cancel
-                          </Button>
-                          <Button
-                            size="sm"
-                            className="h-8 text-xs font-semibold"
-                            onClick={() => handleSaveSection("guardian")}
-                          >
-                            <Save className="h-3.5 w-3.5 mr-1" />
-                            Save
-                          </Button>
-                        </div>
-                      ) : (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 text-xs text-muted-foreground hover:text-[#1E293B]"
-                          onClick={startEditingGuardian}
-                        >
-                          <Pencil className="h-3.5 w-3.5 mr-1" />
-                          Edit
-                        </Button>
-                      )}
+                      <h4 className="text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
+                        Emergency Contact
+                      </h4>
                     </div>
-                  </div>
-                  {isEditingGuardian ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                      <div className="space-y-1">
-                        <Label className="text-xs font-semibold text-muted-foreground">Guardian Name</Label>
-                        <Input
-                          value={editForm.guardian_name}
-                          onChange={(e) => setEditForm({ ...editForm, guardian_name: e.target.value })}
-                          placeholder="e.g. Jane Doe"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <Label className="text-xs font-semibold text-muted-foreground">Relationship</Label>
-                        <Input
-                          value={editForm.guardian_relationship}
-                          onChange={(e) => setEditForm({ ...editForm, guardian_relationship: e.target.value })}
-                          placeholder="e.g. Mother"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <Label className="text-xs font-semibold text-muted-foreground">Phone Number</Label>
-                        <Input
-                          value={editForm.guardian_phone}
-                          onChange={(e) => setEditForm({ ...editForm, guardian_phone: e.target.value })}
-                          placeholder="e.g. +60123456789"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <Label className="text-xs font-semibold text-muted-foreground">Email Address</Label>
-                        <Input
-                          type="email"
-                          value={editForm.guardian_email}
-                          onChange={(e) => setEditForm({ ...editForm, guardian_email: e.target.value })}
-                          placeholder="e.g. jane@example.com"
-                        />
-                      </div>
-                    </div>
-                  ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4">
                       <InfoRow label="Guardian Name" value={student.guardian_name} />
                       <InfoRow label="Relationship" value={student.guardian_relationship} />
                       <InfoRow label="Phone" value={student.guardian_phone} />
                       <InfoRow label="Email" value={student.guardian_email} />
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
 
-                {/* â”€â”€ Section 6: Submitted By â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-                <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
-                  <div className="flex items-center justify-between pb-4">
-                    <h3 className="flex items-center gap-2.5 text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
-                      <Building2 className="h-4 w-4 text-[#2F4F97]" />
+                {/* ── Section 5: Submitted By ── */}
+                <div className="border-t border-border/30 pt-5 print:border-none">
+                  <div className="flex items-center gap-2.5 pb-4">
+                    <Building2 className="h-4 w-4 text-[#2F4F97]" />
+                    <h4 className="text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
                       Submitted By
-                    </h3>
+                    </h4>
                   </div>
                   {partner ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4">
@@ -1628,8 +1858,9 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                     <p className="text-sm text-muted-foreground">Partner information not available</p>
                   )}
                 </div>
+
               </CardContent>
-        </Card>
+            </Card>
 
         {/* Admin Activity Stream (Admin only) - Moved to bottom */}
         {mode === "admin" && (
