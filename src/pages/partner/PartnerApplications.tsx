@@ -68,6 +68,8 @@ interface Application {
   emgs_status_percentage: number | null;
   admin_notes: string | null;
   created_at: string;
+  universities?: { name: string } | null;
+  courses?: { title: string; intake_months: string[] | null } | null;
 }
 
 interface University {
@@ -155,7 +157,7 @@ export default function PartnerApplications() {
 
         // Fetch applications
         const appsRes = await fetch(
-          `${SUPABASE_URL}/rest/v1/student_applications?select=*&student_id=in.(${studentIds.join(",")})&order=created_at.desc`,
+          `${SUPABASE_URL}/rest/v1/student_applications?select=*,universities(name),courses(title,intake_months)&student_id=in.(${studentIds.join(",")})&order=created_at.desc`,
           { headers }
         );
         
@@ -174,25 +176,6 @@ export default function PartnerApplications() {
 
         setApplications(appsData || []);
 
-        const { data: univsData } = await supabase
-          .from("universities")
-          .select("id, name");
-
-        const univsMap = (univsData || []).reduce((acc, u) => {
-          acc[u.id] = u;
-          return acc;
-        }, {} as Record<string, University>);
-        setUniversities(univsMap);
-
-        const { data: coursesData } = await supabase
-          .from("courses")
-          .select("id, title, intake_months");
-
-        const coursesMap = (coursesData || []).reduce((acc, c) => {
-          acc[c.id] = { ...c, intake_months: c.intake_months as string[] | null };
-          return acc;
-        }, {} as Record<string, Course>);
-        setCourses(coursesMap);
       } catch (error) {
         console.error("Error fetching data", error);
       } finally {
@@ -206,7 +189,7 @@ export default function PartnerApplications() {
   const filteredApplications = useMemo(() => {
     return applications.filter((app) => {
       const student = students[app.student_id];
-      const course = app.course_id ? courses[app.course_id] : null;
+      const course = app.courses;
 
       if (appliedFilters.appCode && !app.application_code.toLowerCase().includes(appliedFilters.appCode.toLowerCase())) return false;
       if (appliedFilters.studentName && student && !student.full_name.toLowerCase().includes(appliedFilters.studentName.toLowerCase())) return false;
@@ -256,7 +239,7 @@ export default function PartnerApplications() {
 
       return true;
     });
-  }, [applications, students, courses, appliedFilters]);
+  }, [applications, students, appliedFilters]);
 
   const handleSearch = () => {
     setAppliedFilters({ studentName, programName, appCode, dateFrom, dateTo, intake, year, statusFilter });
@@ -443,15 +426,14 @@ export default function PartnerApplications() {
                         <TableHead className="min-w-[140px]">University</TableHead>
                         <TableHead className="min-w-[140px]">Program</TableHead>
                         <TableHead className="whitespace-nowrap w-[80px]">Intake</TableHead>
-                        <TableHead className="min-w-[100px]">Created By</TableHead>
                         <TableHead className="whitespace-nowrap w-[120px]">Status</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {filteredApplications.map((app) => {
                         const student = students[app.student_id];
-                        const university = app.university_id ? universities[app.university_id] : null;
-                        const course = app.course_id ? courses[app.course_id] : null;
+                        const universityName = app.universities?.name;
+                        const course = app.courses;
                         const badgeClass = statusColors[app.status] || "bg-gray-100 text-gray-800";
 
                         return (
@@ -474,18 +456,13 @@ export default function PartnerApplications() {
                               {student?.full_name || "—"}
                             </TableCell>
                             <TableCell className="text-xs text-gray-900 break-words whitespace-normal leading-tight">
-                              {university?.name || "—"}
+                              {universityName || "—"}
                             </TableCell>
                             <TableCell className="text-xs text-gray-900 break-words whitespace-normal leading-tight">
                               {course?.title || "—"}
                             </TableCell>
                             <TableCell className="text-xs text-gray-900 whitespace-nowrap">
-                              {course?.intake_months && course.intake_months.length > 0
-                                ? course.intake_months[0]
-                                : "—"}
-                            </TableCell>
-                            <TableCell className="text-xs text-gray-900 break-words whitespace-normal leading-tight">
-                              {partnerName}
+                              {course?.intake_months?.[0] || "—"}
                             </TableCell>
                             <TableCell>
                               <Badge className={`${badgeClass} hover:${badgeClass} border-transparent whitespace-nowrap text-[11px] px-2 py-0.5`}>

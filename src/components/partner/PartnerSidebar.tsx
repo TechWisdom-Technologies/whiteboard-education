@@ -12,13 +12,8 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubItem,
-  SidebarMenuSubButton,
   useSidebar,
 } from "@/components/ui/sidebar";
 
@@ -133,73 +128,88 @@ export function PartnerSidebar() {
   return (
     <Sidebar collapsible="icon" className="border-r border-slate-200 bg-[#F8FAFC] !top-[60px] !h-[calc(100svh-60px)] z-20">
 
-
-      {/* Sidebar Content containing shifted-down menu items */}
       <SidebarContent className="bg-[#F8FAFC]">
-        <SidebarGroup className="pt-6">
+        <SidebarGroup className={`pt-5 ${collapsed ? "px-1.5" : "px-3"}`}>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+            <SidebarMenu className="gap-0.5">
+              {items.map((item) => {
+                const isItemActive =
+                  item.url === "/partner-dashboard"
+                    ? currentPath === "/partner-dashboard"
+                    : currentPath.startsWith(item.url);
+
+                return (
+                  <SidebarMenuItem key={item.title}>
                     <NavLink
                       to={item.url}
                       end={item.url === "/partner-dashboard"}
-                      className={`relative hover:bg-slate-100 transition-colors py-1.5 flex items-center w-full ${collapsed ? "justify-center" : "justify-between"}`}
-                      activeClassName="bg-transparent text-white font-bold"
+                      className="block"
                     >
-                      {({ isActive }) => (
-                        <>
-                          {isActive && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-3.5 w-[3px] bg-[#2F4F97] rounded-r-sm" />
-                          )}
-                          {!collapsed && (
-                            <div className="flex items-center gap-2">
-                              <span className={`text-[13px] ${isActive ? "text-[#2F4F97] font-bold" : "text-slate-600 font-medium"}`}>{item.title}</span>
-                              {item.title === "Notifications" && unreadCount > 0 && (
-                                <span className="h-[16px] min-w-[16px] px-1 rounded-xl bg-destructive text-destructive-foreground text-[9px] font-bold flex items-center justify-center">
-                                  {unreadCount > 99 ? "99+" : unreadCount}
-                                </span>
-                              )}
-                            </div>
-                          )}
-                          <item.icon className={`h-4 w-4 flex-shrink-0 ${isActive ? "text-[#2F4F97]" : "text-slate-500"}`} strokeWidth={isActive ? 2.5 : 2} />
-                        </>
-                      )}
+                      <div
+                        className={`
+                          flex items-center rounded-lg transition-colors duration-150 cursor-pointer
+                          ${collapsed ? "justify-center p-2" : "gap-3 px-3 py-2.5"}
+                          ${isItemActive
+                            ? "bg-[#2F4F97] text-white"
+                            : "text-slate-800 hover:bg-slate-100 hover:text-black"
+                          }
+                        `}
+                      >
+                        <item.icon
+                          className={`h-5 w-5 flex-shrink-0 ${isItemActive ? "text-white" : "text-slate-600"}`}
+                          strokeWidth={isItemActive ? 2.2 : 1.8}
+                        />
+                        {!collapsed && (
+                          <span className={`text-[15px] leading-5 ${isItemActive ? "font-semibold" : "font-medium"}`}>
+                            {item.title}
+                          </span>
+                        )}
+                        {!collapsed && item.title === "Notifications" && unreadCount > 0 && (
+                          <span
+                            className={`ml-auto h-5 min-w-[20px] px-1.5 rounded-full text-[10px] font-bold flex items-center justify-center ${
+                              isItemActive
+                                ? "bg-white/90 text-[#2F4F97]"
+                                : "bg-red-500 text-white"
+                            }`}
+                          >
+                            {unreadCount > 99 ? "99+" : unreadCount}
+                          </span>
+                        )}
+                      </div>
                     </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+                  </SidebarMenuItem>
+                );
+              })}
 
-              {/* Allied Services Dropdown Menu Item */}
+              {/* Allied Services Dropdown */}
               <SidebarMenuItem>
-                <SidebarMenuButton
+                <div
                   onClick={() => setAlliedOpen(!alliedOpen)}
-                  className={`relative hover:bg-slate-100 transition-colors py-1.5 flex items-center w-full ${collapsed ? "justify-center" : "justify-between"}`}
+                  className={`flex items-center rounded-lg text-slate-800 hover:bg-slate-100 hover:text-black transition-colors duration-150 cursor-pointer ${collapsed ? "justify-center p-2" : "gap-3 px-3 py-2.5"}`}
                 >
+                  <Layers className="h-5 w-5 flex-shrink-0 text-slate-600" strokeWidth={1.8} />
                   {!collapsed && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-[13px] text-slate-600 font-medium">Allied Services</span>
+                    <>
+                      <span className="text-[15px] leading-5 font-medium">Allied Services</span>
                       {alliedOpen ? (
-                        <ChevronDown className="h-3.5 w-3.5 text-slate-500" />
+                        <ChevronDown className="ml-auto h-4 w-4 text-slate-500" />
                       ) : (
-                        <ChevronRight className="h-3.5 w-3.5 text-slate-500" />
+                        <ChevronRight className="ml-auto h-4 w-4 text-slate-500" />
                       )}
-                    </div>
+                    </>
                   )}
-                  <Layers className="h-4 w-4 flex-shrink-0 text-slate-500" strokeWidth={2} />
-                </SidebarMenuButton>
+                </div>
 
-                {/* Sub-menu options when expanded */}
+                {/* Sub-menu */}
                 {!collapsed && alliedOpen && (
-                  <div className="pl-4 pr-1 py-1 space-y-1 bg-white border border-slate-100 rounded-lg my-1">
+                  <div className="mt-1 ml-4 pl-3 border-l-2 border-slate-200 space-y-0.5">
                     {alliedSubItems.map((subItem) => (
                       <div
                         key={subItem.title}
-                        className="flex items-center justify-between px-2 py-1.5 text-slate-600 hover:text-[#2F4F97] hover:bg-slate-50 rounded cursor-pointer transition-colors text-[12px]"
+                        className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-slate-500 hover:text-[#2F4F97] hover:bg-blue-50/70 cursor-pointer transition-colors duration-150"
                       >
-                        <span className="font-normal text-[12px] truncate">{subItem.title}</span>
-                        <subItem.icon className="h-3.5 w-3.5 flex-shrink-0 text-slate-500" />
+                        <subItem.icon className="h-4 w-4 flex-shrink-0" strokeWidth={1.8} />
+                        <span className="text-[13px] font-medium">{subItem.title}</span>
                       </div>
                     ))}
                   </div>
@@ -207,30 +217,30 @@ export function PartnerSidebar() {
               </SidebarMenuItem>
 
               {/* Divider */}
-              <div className="my-2 mx-2 border-t border-slate-200" />
+              <div className="my-2 border-t border-slate-200" />
 
-              {/* Go to Website link */}
+              {/* Go to Website */}
               <SidebarMenuItem>
-                <SidebarMenuButton
+                <div
                   onClick={() => window.open("/", "_blank")}
-                  className={`relative hover:bg-slate-100 transition-colors py-1.5 text-slate-500 hover:text-slate-600 bg-transparent w-full flex items-center ${collapsed ? "justify-center" : "justify-between"}`}
+                  className={`flex items-center rounded-lg text-slate-800 hover:bg-slate-100 hover:text-black transition-colors duration-150 cursor-pointer ${collapsed ? "justify-center p-2" : "gap-3 px-3 py-2.5"}`}
                 >
-                  {!collapsed && <span className="text-[13px] font-medium">Go to Website</span>}
-                  <ExternalLink className="h-4 w-4 flex-shrink-0" />
-                </SidebarMenuButton>
+                  <ExternalLink className="h-5 w-5 flex-shrink-0 text-slate-600" strokeWidth={1.8} />
+                  {!collapsed && <span className="text-[15px] leading-5 font-medium">Go to Website</span>}
+                </div>
               </SidebarMenuItem>
 
               {/* Sign Out */}
               <SidebarMenuItem>
-                <SidebarMenuButton 
-                  onClick={handleSignOut} 
-                  className={`relative hover:bg-slate-100 transition-colors py-1.5 text-red-500 hover:text-red-600 bg-transparent w-full flex items-center ${collapsed ? "justify-center" : "justify-between"}`}
+                <div
+                  onClick={handleSignOut}
+                  className={`flex items-center rounded-lg text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors duration-150 cursor-pointer ${collapsed ? "justify-center p-2" : "gap-3 px-3 py-2.5"}`}
                 >
-                  {!collapsed && <span className="text-[13px] font-medium">Sign Out</span>}
-                  <LogOut className="h-4 w-4 flex-shrink-0" />
-                </SidebarMenuButton>
+                  <LogOut className="h-5 w-5 flex-shrink-0" strokeWidth={1.8} />
+                  {!collapsed && <span className="text-[15px] leading-5 font-medium">Sign Out</span>}
+                </div>
               </SidebarMenuItem>
-              
+
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

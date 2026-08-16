@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Bell, CheckCheck, Circle, Filter } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+import { Bell, CheckCheck, CalendarDays, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { LoadingScreen } from "@/components/ui/loading-screen";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, isWithinInterval, startOfDay, endOfDay, parseISO, differenceInHours, format } from "date-fns";
 
 interface Notification {
   id: string;
@@ -21,18 +20,17 @@ interface Notification {
   created_at: string;
 }
 
-const typeBadge: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  success: { label: "Success", variant: "default" },
-  warning: { label: "Action Needed", variant: "destructive" },
-  info: { label: "Info", variant: "secondary" },
-};
+
+type ReadFilter = "all" | "read" | "unread";
 
 export default function PartnerNotifications() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<string>("all");
+  const [readFilter, setReadFilter] = useState<ReadFilter>("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
 
   const fetchNotifications = async () => {
     if (!user) return;
@@ -111,67 +109,151 @@ export default function PartnerNotifications() {
     navigate("/partner-dashboard/notifications");
   };
 
-  const filtered = filter === "all" ? notifications : notifications.filter((n) => (filter === "unread" ? !n.read : n.type === filter));
+  const clearDateFilter = () => {
+    setDateFrom("");
+    setDateTo("");
+  };
+
+  const hasDateFilter = dateFrom || dateTo;
+
+  // Apply filters
+  const filtered = notifications.filter((n) => {
+    // Read/unread filter
+    if (readFilter === "unread" && n.read) return false;
+    if (readFilter === "read" && !n.read) return false;
+
+    // Date range filter
+    if (dateFrom || dateTo) {
+      const notifDate = parseISO(n.created_at);
+      if (dateFrom && dateTo) {
+        if (!isWithinInterval(notifDate, { start: startOfDay(parseISO(dateFrom)), end: endOfDay(parseISO(dateTo)) })) return false;
+      } else if (dateFrom) {
+        if (notifDate < startOfDay(parseISO(dateFrom))) return false;
+      } else if (dateTo) {
+        if (notifDate > endOfDay(parseISO(dateTo))) return false;
+      }
+    }
+
+    return true;
+  });
+
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
-        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-          <Select value={filter} onValueChange={setFilter}>
-            <SelectTrigger className="w-full sm:w-[150px]">
-              <Filter className="h-4 w-4 mr-1" />
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="unread">Unread</SelectItem>
-              <SelectItem value="success">Success</SelectItem>
-              <SelectItem value="warning">Warnings</SelectItem>
-              <SelectItem value="info">Info</SelectItem>
-            </SelectContent>
-          </Select>
-          {unreadCount > 0 && (
-            <Button variant="outline" size="sm" onClick={markAllRead} className="w-full sm:w-auto">
-              <CheckCheck className="h-4 w-4 mr-1" /> Mark all read
-            </Button>
+    <div className="space-y-5 animate-fade-in max-w-4xl mx-auto">
+      {/* Filters Row */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+        {/* Read / Unread / All toggle */}
+        <div className="flex items-center rounded-lg border border-slate-200 bg-white p-0.5 gap-0.5">
+          {(["all", "unread", "read"] as ReadFilter[]).map((val) => (
+            <button
+              key={val}
+              onClick={() => setReadFilter(val)}
+              className={`px-4 py-1.5 rounded-md text-[14px] font-medium transition-colors capitalize ${
+                readFilter === val
+                  ? "bg-[#2F4F97] text-white shadow-sm"
+                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+              }`}
+            >
+              {val}
+              {val === "unread" && unreadCount > 0 && (
+                <span className={`ml-1.5 inline-flex items-center justify-center h-5 min-w-[20px] px-1 rounded-full text-[10px] font-bold ${
+                  readFilter === "unread" ? "bg-white/90 text-[#2F4F97]" : "bg-red-500 text-white"
+                }`}>
+                  {unreadCount}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Date range filters */}
+        <div className="flex items-center gap-2 flex-wrap ml-auto">
+          <div className="flex items-center gap-1.5">
+            <CalendarDays className="h-4 w-4 text-slate-400" />
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              className="border border-slate-200 rounded-lg px-3 py-1.5 text-[14px] text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#2F4F97]/20 focus:border-[#2F4F97]"
+              placeholder="From"
+            />
+            <span className="text-slate-400 text-[13px]">to</span>
+            <input
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              className="border border-slate-200 rounded-lg px-3 py-1.5 text-[14px] text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#2F4F97]/20 focus:border-[#2F4F97]"
+              placeholder="To"
+            />
+          </div>
+          {hasDateFilter && (
+            <button
+              onClick={clearDateFilter}
+              className="flex items-center gap-1 text-[13px] text-slate-500 hover:text-red-500 transition-colors"
+            >
+              <X className="h-3.5 w-3.5" />
+              Clear dates
+            </button>
           )}
         </div>
+
+        {/* Mark all read */}
+        {unreadCount > 0 && (
+          <Button variant="outline" size="sm" onClick={markAllRead} className="text-[14px] h-9">
+            <CheckCheck className="h-4 w-4 mr-1.5" /> Mark all read
+          </Button>
+        )}
       </div>
 
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-[12px]">Activity Feed</CardTitle>
+      {/* Notifications Card */}
+      <Card className="overflow-hidden border-slate-200 shadow-sm">
+        <CardHeader className="pb-3 px-5 pt-4 bg-[#2F4F97]">
+          <CardTitle className="text-[17px] font-semibold text-white">All Notifications</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           {loading ? (
             <LoadingScreen label="Loading notifications" sublabel="Checking your activity feed" className="py-10" />
           ) : filtered.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <Bell className="h-10 w-10 mx-auto mb-3 opacity-30" />
-              <p className="font-normal">No notifications yet</p>
-              <p className="text-[12px]">Status updates for your students will appear here</p>
+            <div className="text-center py-14 text-muted-foreground">
+              <Bell className="h-12 w-12 mx-auto mb-3 opacity-25" />
+              <p className="text-[16px] font-medium text-slate-500">No notifications found</p>
+              <p className="text-[14px] text-slate-400 mt-1">
+                {readFilter !== "all" || hasDateFilter
+                  ? "Try adjusting your filters"
+                  : "Status updates for your students will appear here"}
+              </p>
             </div>
           ) : (
-            <div className="divide-y">
+            <div className="divide-y divide-slate-100 max-h-[750px] overflow-y-auto">
               {filtered.map((n) => {
-                const badge = typeBadge[n.type] || typeBadge.info;
+                const createdDate = new Date(n.created_at);
+                const hoursAgo = differenceInHours(new Date(), createdDate);
+                const timeDisplay = hoursAgo >= 24
+                  ? format(createdDate, "dd MMM yyyy, hh:mm a")
+                  : formatDistanceToNow(createdDate, { addSuffix: true });
+
                 return (
                   <div
                     key={n.id}
-                    className={`p-4 flex items-start gap-3 transition-colors hover:bg-muted/30 cursor-pointer ${!n.read ? "bg-muted/20" : ""}`}
+                    className={`px-5 py-4 flex items-start gap-3.5 transition-colors hover:bg-slate-50 cursor-pointer ${
+                      !n.read ? "bg-blue-50/40" : ""
+                    }`}
                     onClick={() => handleNotificationClick(n)}
                   >
-                    <Circle className={`h-2.5 w-2.5 mt-1.5 flex-shrink-0 ${!n.read ? "fill-primary text-primary" : "fill-muted text-muted"}`} />
+
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span className={`text-[12px] ${!n.read ? "font-normal" : "font-normal"}`}>{n.title}</span>
-                        <Badge variant={badge.variant} className="text-[12px] h-5">{badge.label}</Badge>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className={`text-[15px] leading-snug mb-1 text-black ${!n.read ? "font-semibold" : "font-medium"}`}>
+                            {n.title}
+                          </p>
+                          <p className="text-[14px] text-slate-700 leading-relaxed italic">{n.message}</p>
+                        </div>
+                        <span className="text-[13px] text-slate-700 whitespace-nowrap flex-shrink-0 pt-0.5">
+                          {timeDisplay}
+                        </span>
                       </div>
-                      <p className="text-[12px] text-muted-foreground leading-relaxed">{n.message}</p>
-                      <p className="text-[12px] text-muted-foreground/60 mt-1">
-                        {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
-                      </p>
                     </div>
                   </div>
                 );
