@@ -21,7 +21,6 @@ import {
   BookOpen,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
   CheckCircle2,
   Calendar,
   UserPlus,
@@ -244,15 +243,15 @@ export default function PartnerSearchPrograms() {
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-4">
         <div className="flex flex-wrap items-end gap-4">
           {/* Search */}
-          <div className="space-y-1.5 flex-1 min-w-[200px]">
+          <div className="space-y-1.5 flex-[2] min-w-[240px]">
             <label className="text-xs font-medium text-gray-500">Search</label>
             <div className="relative">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
               <Input
-                placeholder="Program or university…"
+                placeholder="Search by Program or University"
                 value={searchQuery}
                 onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-                className="h-9 text-sm border-gray-200 pl-8"
+                className="h-9 text-xs border-gray-200 pl-8"
               />
               {searchQuery && (
                 <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2">
@@ -263,10 +262,10 @@ export default function PartnerSearchPrograms() {
           </div>
 
           {/* Degree Level */}
-          <div className="space-y-1.5 flex-1 min-w-[150px]">
+          <div className="space-y-1.5 flex-1 min-w-[140px]">
             <label className="text-xs font-medium text-gray-500">Degree Level</label>
             <Select value={level} onValueChange={(v) => { setLevel(v); setCurrentPage(1); }}>
-              <SelectTrigger className="h-9 text-sm border-gray-200">
+              <SelectTrigger className="h-9 text-xs border-gray-200">
                 <SelectValue placeholder="All Levels" />
               </SelectTrigger>
               <SelectContent>
@@ -281,10 +280,10 @@ export default function PartnerSearchPrograms() {
           </div>
 
           {/* Study Area */}
-          <div className="space-y-1.5 flex-[1.5] min-w-[180px]">
+          <div className="space-y-1.5 flex-1 min-w-[150px]">
             <label className="text-xs font-medium text-gray-500">Study Area</label>
             <Select value={studyArea} onValueChange={(v) => { setStudyArea(v); setCurrentPage(1); }}>
-              <SelectTrigger className="h-9 text-sm border-gray-200">
+              <SelectTrigger className="h-9 text-xs border-gray-200">
                 <SelectValue placeholder="All Areas" />
               </SelectTrigger>
               <SelectContent>
@@ -302,10 +301,10 @@ export default function PartnerSearchPrograms() {
           </div>
 
           {/* Intake Month */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 flex-1 min-w-[140px]">
             <label className="text-xs font-medium text-gray-500">Intake Month</label>
             <Select value={intake} onValueChange={(v) => { setIntake(v); setCurrentPage(1); }}>
-              <SelectTrigger className="h-9 text-sm border-gray-200">
+              <SelectTrigger className="h-9 text-xs border-gray-200">
                 <SelectValue placeholder="All Intakes" />
               </SelectTrigger>
               <SelectContent>
@@ -318,49 +317,28 @@ export default function PartnerSearchPrograms() {
           </div>
 
           {/* Year */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 flex-1 min-w-[120px]">
             <label className="text-xs font-medium text-gray-500">Year</label>
             <Select value={year} onValueChange={(v) => { setYear(v); setCurrentPage(1); }}>
-              <SelectTrigger className="h-9 text-sm border-gray-200">
+              <SelectTrigger className="h-9 text-xs border-gray-200">
                 <SelectValue placeholder="All Years" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Years</SelectItem>
-                <SelectItem value="2025">2025</SelectItem>
-                <SelectItem value="2026">2026</SelectItem>
-                <SelectItem value="2027">2027</SelectItem>
+                {Array.from({ length: 10 }, (_, i) => 2026 + i).map((y) => (
+                  <SelectItem key={y} value={y.toString()}>
+                    {y}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-2 flex-1 min-w-[200px]">
+          <div className="flex items-center gap-2 flex-initial min-w-[170px]">
             <Button onClick={handleSearch} className="w-full gap-2 bg-[#2F4F97] hover:bg-white text-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97] transition-colors"><Search className="h-4 w-4" /> Search</Button>
             <Button variant="outline" onClick={handleReset} className="w-full gap-2 border-gray-300">Clear</Button>
           </div>
-        </div>
-
-        {/* Quick tags */}
-        <div className="pt-2 border-t border-gray-100 flex flex-wrap items-center gap-2">
-          <span className="flex items-center gap-1.5 text-xs font-semibold text-[#2F4F97] mr-2">
-            <Sparkles className="h-3.5 w-3.5" />
-            Quick Filters:
-          </span>
-          {[
-            "Scholarship Available",
-            "Affordable University",
-            "English Waiver",
-            "MBA Programs",
-            "High Acceptance Rate",
-          ].map(tag => (
-            <button
-              key={tag}
-              className="flex items-center gap-1.5 text-[11px] font-medium text-gray-600 hover:text-[#2F4F97] py-1 px-2.5 rounded-full border border-gray-200 hover:border-[#2F4F97]/30 hover:bg-[#2F4F97]/5 transition-colors"
-              onClick={() => toast.info(`Filter "${tag}" coming soon!`)}
-            >
-              {tag}
-            </button>
-          ))}
         </div>
       </div>
 
@@ -474,13 +452,6 @@ export default function PartnerSearchPrograms() {
                           >
                             <UserPlus className="h-3.5 w-3.5" />
                             Apply for Student
-                          </Button>
-                          <Button
-                            variant="outline"
-                            className="flex-1 md:flex-initial h-9 px-4 text-xs font-semibold rounded-lg"
-                            onClick={() => toast.info("Our support team will get back to you shortly!")}
-                          >
-                            Ask Us
                           </Button>
                         </div>
                       </div>

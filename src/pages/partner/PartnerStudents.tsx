@@ -7,12 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Users, Loader2, Trash2, X, Search, Mail, Phone, Link2 } from "lucide-react";
+import { Users, Loader2, Trash2, X, Search, Mail, Phone } from "lucide-react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { getStatusLabel } from "@/config/statusFlow";
+import { format } from "date-fns";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -98,21 +99,17 @@ export default function PartnerStudents() {
   const studentRowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
 
   // Filter States
-  const [wbIdFilter, setWbIdFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
   const [dateFromFilter, setDateFromFilter] = useState("");
   const [dateToFilter, setDateToFilter] = useState("");
-  const [countryFilter, setCountryFilter] = useState("all");
   const [intakeFilter, setIntakeFilter] = useState("all");
   const [yearFilter, setYearFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
 
   const [appliedFilters, setAppliedFilters] = useState({
-    wbIdFilter: "all",
     nameFilter: "",
     dateFromFilter: "",
     dateToFilter: "",
-    countryFilter: "all",
     intakeFilter: "all",
     yearFilter: "all",
     statusFilter: searchParams.get("status") || "all"
@@ -243,49 +240,63 @@ export default function PartnerStudents() {
   };
 
   const resetFilters = () => {
-    setWbIdFilter("");
     setNameFilter("");
     setDateFromFilter("");
     setDateToFilter("");
-    setCountryFilter("all");
     setIntakeFilter("all");
     setYearFilter("all");
     setStatusFilter("all");
   };
 
   const handleSearch = () => {
-    setAppliedFilters({ wbIdFilter, nameFilter, dateFromFilter, dateToFilter, countryFilter, intakeFilter, yearFilter, statusFilter });
+    setAppliedFilters({ nameFilter, dateFromFilter, dateToFilter, intakeFilter, yearFilter, statusFilter });
   };
 
   const handleReset = () => {
-    setWbIdFilter("all");
     setNameFilter("");
     setDateFromFilter("");
     setDateToFilter("");
-    setCountryFilter("all");
     setIntakeFilter("all");
     setYearFilter("all");
     setStatusFilter("all");
     setAppliedFilters({
-      wbIdFilter: "all", nameFilter: "", dateFromFilter: "", dateToFilter: "", countryFilter: "all", intakeFilter: "all", yearFilter: "all", statusFilter: "all"
+      nameFilter: "", dateFromFilter: "", dateToFilter: "", intakeFilter: "all", yearFilter: "all", statusFilter: "all"
     });
   };
 
   const filtered = students.filter(s => {
-    if (appliedFilters.wbIdFilter && appliedFilters.wbIdFilter !== "all" && !String(s.wb_student_id || s.id).toLowerCase().includes(appliedFilters.wbIdFilter.toLowerCase())) return false;
-    if (appliedFilters.nameFilter && appliedFilters.nameFilter !== "all" && !s.full_name.toLowerCase().includes(appliedFilters.nameFilter.toLowerCase())) return false;
-    
-    if (appliedFilters.dateFromFilter && new Date(s.created_at) < new Date(appliedFilters.dateFromFilter)) return false;
-    if (appliedFilters.dateToFilter && new Date(s.created_at) > new Date(appliedFilters.dateToFilter)) return false;
-    
-    if (appliedFilters.countryFilter && appliedFilters.countryFilter !== "all") {
-      if (appliedFilters.countryFilter === "Malaysia" && !s.nationality?.toLowerCase().includes("malay")) return false;
+    // Multi-field search keyword (name, created by, wb id, email, phone, status)
+    if (appliedFilters.nameFilter && appliedFilters.nameFilter.trim() !== "") {
+      const q = appliedFilters.nameFilter.toLowerCase().trim();
+      const nameMatch = s.full_name?.toLowerCase().includes(q);
+      const createdByStr = (contactPerson || "Mr. Khondoker Fazle Rahman").toLowerCase();
+      const createdByMatch = createdByStr.includes(q);
+      const wbIdStr = s.wb_student_id ? `wb-${s.wb_student_id}` : (s.id || "");
+      const wbIdMatch = wbIdStr.toLowerCase().includes(q) || String(s.wb_student_id || "").toLowerCase().includes(q);
+      const emailMatch = s.email?.toLowerCase().includes(q);
+      const phoneMatch = s.phone?.toLowerCase().includes(q);
+      const statusLabel = getStatusLabel(s.status).toLowerCase();
+      const statusRaw = (s.status || "").toLowerCase();
+      const isSubmitted = s.status !== 'document_upload' && s.status !== 'document_review' && s.status !== 'document_verification';
+      const displayLabel = (isSubmitted ? "1 app. submitted app. submitted submitted" : "app. incomplete incomplete").toLowerCase();
+      const statusMatch = statusLabel.includes(q) || statusRaw.includes(q) || displayLabel.includes(q);
+
+      if (!nameMatch && !createdByMatch && !wbIdMatch && !emailMatch && !phoneMatch && !statusMatch) {
+        return false;
+      }
     }
     
+    // Date Range filter
+    if (appliedFilters.dateFromFilter && new Date(s.created_at) < new Date(appliedFilters.dateFromFilter)) return false;
+    if (appliedFilters.dateToFilter && new Date(s.created_at) > new Date(appliedFilters.dateToFilter + 'T23:59:59')) return false;
+    
+    // Intake filter
     if (appliedFilters.intakeFilter && appliedFilters.intakeFilter !== "all" && s.intake_month !== appliedFilters.intakeFilter) return false;
     
+    // Year filter
     if (appliedFilters.yearFilter && appliedFilters.yearFilter !== "all" && new Date(s.created_at).getFullYear().toString() !== appliedFilters.yearFilter) return false;
     
+    // Status filter
     if (appliedFilters.statusFilter && appliedFilters.statusFilter !== "all") {
       const statuses = statusFilterMap[appliedFilters.statusFilter];
       if (statuses && !statuses.includes(s.status)) return false;
@@ -295,8 +306,6 @@ export default function PartnerStudents() {
   });
 
   if (loading) return <LoadingScreen fullScreen />;
-
-
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -324,26 +333,27 @@ export default function PartnerStudents() {
       {/* Unified Filter Bar */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-4">
         <div className="flex flex-wrap items-end gap-3">
-           <div className="space-y-1.5 flex-1 min-w-[120px]">
-             <label className="text-xs font-medium text-gray-500">Assigned To</label>
-             <Select value={wbIdFilter} onValueChange={setWbIdFilter}>
-               <SelectTrigger className="h-8 text-xs border-gray-200"><SelectValue placeholder="All" /></SelectTrigger>
-               <SelectContent><SelectItem value="all">All</SelectItem></SelectContent>
-             </Select>
-           </div>
-           
-           <div className="space-y-1.5 flex-1 min-w-[120px]">
-             <label className="text-xs font-medium text-gray-500">Country</label>
-             <Select value={countryFilter} onValueChange={setCountryFilter}>
-               <SelectTrigger className="h-8 text-xs border-gray-200"><SelectValue placeholder="All" /></SelectTrigger>
-               <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="Malaysia">Malaysia</SelectItem>
-               </SelectContent>
-             </Select>
+           <div className="space-y-1.5 flex-1 min-w-[130px]">
+             <label className="text-xs font-medium text-gray-500">From Date</label>
+             <Input
+               type="date"
+               value={dateFromFilter}
+               onChange={(e) => setDateFromFilter(e.target.value)}
+               className="h-8 text-xs border-gray-200"
+             />
            </div>
 
-           <div className="space-y-1.5 flex-1 min-w-[120px]">
+           <div className="space-y-1.5 flex-1 min-w-[130px]">
+             <label className="text-xs font-medium text-gray-500">To Date</label>
+             <Input
+               type="date"
+               value={dateToFilter}
+               onChange={(e) => setDateToFilter(e.target.value)}
+               className="h-8 text-xs border-gray-200"
+             />
+           </div>
+
+           <div className="space-y-1.5 flex-1 min-w-[110px]">
              <label className="text-xs font-medium text-gray-500">Intake</label>
              <Select value={intakeFilter} onValueChange={setIntakeFilter}>
                <SelectTrigger className="h-8 text-xs border-gray-200"><SelectValue placeholder="All" /></SelectTrigger>
@@ -356,7 +366,7 @@ export default function PartnerStudents() {
              </Select>
            </div>
 
-           <div className="space-y-1.5 flex-1 min-w-[100px]">
+           <div className="space-y-1.5 flex-1 min-w-[90px]">
              <label className="text-xs font-medium text-gray-500">Year</label>
              <Select value={yearFilter} onValueChange={setYearFilter}>
                <SelectTrigger className="h-8 text-xs border-gray-200"><SelectValue placeholder="All" /></SelectTrigger>
@@ -365,11 +375,12 @@ export default function PartnerStudents() {
                   <SelectItem value="2024">2024</SelectItem>
                   <SelectItem value="2025">2025</SelectItem>
                   <SelectItem value="2026">2026</SelectItem>
+                  <SelectItem value="2027">2027</SelectItem>
                </SelectContent>
              </Select>
            </div>
 
-           <div className="space-y-1.5 flex-1 min-w-[140px]">
+           <div className="space-y-1.5 flex-1 min-w-[130px]">
              <label className="text-xs font-medium text-gray-500">Status</label>
              <Select value={statusFilter} onValueChange={setStatusFilter}>
                <SelectTrigger className="h-8 text-xs border-gray-200"><SelectValue placeholder="All" /></SelectTrigger>
@@ -381,12 +392,12 @@ export default function PartnerStudents() {
              </Select>
            </div>
            
-           <div className="space-y-1.5 flex-[1.5] min-w-[180px]">
+           <div className="space-y-1.5 flex-[1.5] min-w-[200px]">
              <label className="text-xs font-medium text-gray-500">Search</label>
              <div className="relative">
                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
                <Input 
-                 placeholder="Search by keyword" 
+                 placeholder="Search name, ID, email, phone, created by, status" 
                  value={nameFilter}
                  onChange={(e) => setNameFilter(e.target.value)}
                  className="pl-8 h-8 text-xs border-gray-200" 
@@ -394,7 +405,7 @@ export default function PartnerStudents() {
              </div>
            </div>
            
-           <div className="flex items-center gap-2 flex-1 min-w-[200px]">
+           <div className="flex items-center gap-2 flex-1 min-w-[170px]">
              <Button onClick={handleSearch} className="w-full gap-2 bg-[#2F4F97] hover:bg-white text-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97] transition-colors"><Search className="h-4 w-4" /> Search</Button>
              <Button variant="outline" onClick={handleReset} className="w-full gap-2 border-gray-300">Clear</Button>
            </div>
@@ -425,9 +436,8 @@ export default function PartnerStudents() {
                   <TableHead className="min-w-[120px]">Student Name</TableHead>
                   <TableHead className="min-w-[120px]">Email</TableHead>
                   <TableHead className="min-w-[120px]">Phone Number</TableHead>
-                  <TableHead className="min-w-[100px]">Assigned To</TableHead>
                   <TableHead className="whitespace-nowrap min-w-[100px]">Status</TableHead>
-                  <TableHead className="text-right min-w-[50px]"></TableHead>
+                  <TableHead className="min-w-[90px]">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -458,7 +468,7 @@ export default function PartnerStudents() {
                       <TableCell className="text-xs font-mono py-3 whitespace-nowrap">{s.wb_student_id ? `WB-${s.wb_student_id}` : "—"}</TableCell>
                       <TableCell className="py-3 text-xs text-gray-900 font-normal whitespace-nowrap">{contactPerson || "Mr. Khondoker Fazle Rahman"}</TableCell>
                       <TableCell className="py-3 text-xs text-gray-900 whitespace-nowrap">
-                        {new Date(s.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                        {format(new Date(s.created_at), "MMM dd, yyyy")}
                       </TableCell>
                       <TableCell className="py-3 font-semibold text-xs text-[#1E293B] uppercase whitespace-nowrap">{s.full_name}</TableCell>
                       <TableCell className="py-3 text-xs text-[#2F4F97] whitespace-nowrap">
@@ -467,18 +477,22 @@ export default function PartnerStudents() {
                       <TableCell className="py-3 text-xs text-[#2F4F97] whitespace-nowrap">
                         <div className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" />{s.phone || '-'}</div>
                       </TableCell>
-                      <TableCell className="py-3 text-xs text-gray-900 font-normal whitespace-nowrap">
-                        {"Mr. Khondoker Fazle Rahman"}
-                      </TableCell>
                       <TableCell className="py-3 whitespace-nowrap">
                         <Badge variant="outline" className={`font-normal rounded-md px-2 py-0.5 text-[11px] ${stClass}`}>
                           {displayLabel}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right py-3 pr-4" onClick={(e) => e.stopPropagation()}>
-                        <div className="flex items-center justify-end gap-3">
-                          <Link2 className="w-4 h-4 text-[#2F4F97] cursor-pointer hover:text-blue-700" />
-                          <Trash2 className="w-4 h-4 text-gray-400 cursor-pointer hover:text-red-500" onClick={() => handleDelete(s.id)} />
+                      <TableCell className="py-3" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDelete(s.id)}
+                            className="h-7 px-2.5 text-xs font-semibold rounded-lg text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors"
+                          >
+                            <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                            Delete
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
