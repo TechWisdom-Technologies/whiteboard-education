@@ -417,7 +417,7 @@ export default function PartnerSearchPrograms() {
                     {/* Left: Logo + Program Details */}
                     <div className="flex items-start gap-4 flex-1 min-w-0">
                       {/* Logo */}
-                      <div className="w-20 h-16 shrink-0 flex items-center justify-center bg-gray-50 border border-gray-100 rounded-xl overflow-hidden p-1.5">
+                      <div className="w-20 h-16 shrink-0 flex items-center justify-center">
                         {logoSrc ? (
                           <img src={logoSrc} alt={uni?.name || "Logo"} className="max-w-full max-h-full object-contain" />
                         ) : (

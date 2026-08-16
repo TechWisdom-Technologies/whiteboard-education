@@ -72,6 +72,7 @@ interface Student {
   major: string | null;
   intake_month?: string | null;
   created_at: string;
+  passport_photo_url?: string | null;
 }
 
 const UNIVERSITY_LOGOS: Record<string, string> = {
@@ -346,8 +347,8 @@ export default function PartnerApplyPage() {
         </Button>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <h1 className="text-2xl font-bold text-[#1E293B]">Apply for Student</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <h1 className="text-2xl font-bold text-black">Apply for Student</h1>
+            <p className="text-sm text-black mt-0.5">
               Select a student from existing student list
             </p>
           </div>
@@ -363,9 +364,9 @@ export default function PartnerApplyPage() {
             <div className="flex flex-wrap items-end gap-3">
               {/* Intake Filter */}
               <div className="space-y-1.5 flex-1 min-w-[120px]">
-                <label className="text-xs font-medium text-gray-500">Intake</label>
+                <label className="text-xs font-medium text-black">Intake</label>
                 <Select value={intakeFilter} onValueChange={setIntakeFilter}>
-                  <SelectTrigger className="h-8 text-xs border-gray-200">
+                  <SelectTrigger className="h-8 text-xs border-gray-200 text-black">
                     <SelectValue placeholder="All" />
                   </SelectTrigger>
                   <SelectContent>
@@ -394,9 +395,9 @@ export default function PartnerApplyPage() {
 
               {/* Year Filter */}
               <div className="space-y-1.5 flex-1 min-w-[100px]">
-                <label className="text-xs font-medium text-gray-500">Year</label>
+                <label className="text-xs font-medium text-black">Year</label>
                 <Select value={yearFilter} onValueChange={setYearFilter}>
-                  <SelectTrigger className="h-8 text-xs border-gray-200">
+                  <SelectTrigger className="h-8 text-xs border-gray-200 text-black">
                     <SelectValue placeholder="All" />
                   </SelectTrigger>
                   <SelectContent>
@@ -411,9 +412,9 @@ export default function PartnerApplyPage() {
 
               {/* Status Filter */}
               <div className="space-y-1.5 flex-1 min-w-[140px]">
-                <label className="text-xs font-medium text-gray-500">Status</label>
+                <label className="text-xs font-medium text-black">Status</label>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="h-8 text-xs border-gray-200">
+                  <SelectTrigger className="h-8 text-xs border-gray-200 text-black">
                     <SelectValue placeholder="All" />
                   </SelectTrigger>
                   <SelectContent>
@@ -426,14 +427,14 @@ export default function PartnerApplyPage() {
 
               {/* Keyword Search */}
               <div className="space-y-1.5 flex-[1.8] min-w-[220px]">
-                <label className="text-xs font-medium text-gray-500">Search</label>
+                <label className="text-xs font-medium text-black">Search</label>
                 <div className="relative">
                   <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
                   <Input
                     placeholder="Search name, ID, email, phone, created by, status"
                     value={nameFilter}
                     onChange={(e) => setNameFilter(e.target.value)}
-                    className="pl-8 h-8 text-xs border-gray-200"
+                    className="pl-8 h-8 text-xs border-gray-200 text-black"
                   />
                   {nameFilter && (
                     <button
@@ -537,22 +538,22 @@ export default function PartnerApplyPage() {
                           </TableCell>
 
                           {/* Created By */}
-                          <TableCell className="text-xs text-gray-600 py-3 whitespace-nowrap">
+                          <TableCell className="text-xs text-black py-3 whitespace-nowrap">
                             {contactPerson || "Mr. Khondoker Fazle Rahman"}
                           </TableCell>
 
                           {/* Created on */}
-                          <TableCell className="text-xs text-gray-500 py-3 whitespace-nowrap">
+                          <TableCell className="text-xs text-black py-3 whitespace-nowrap">
                             {s.created_at ? format(new Date(s.created_at), "MMM dd, yyyy") : "—"}
                           </TableCell>
 
                           {/* Student Name */}
-                          <TableCell className="text-xs font-semibold text-gray-900 py-3 uppercase">
+                          <TableCell className="text-xs font-semibold text-black py-3 uppercase">
                             {s.full_name}
                           </TableCell>
 
                           {/* Email */}
-                          <TableCell className="text-xs text-gray-600 py-3">
+                          <TableCell className="text-xs text-black py-3">
                             <div className="flex items-center gap-1">
                               <Mail className="h-3 w-3 text-gray-400 shrink-0" />
                               <span className="truncate max-w-[160px]">{s.email || "—"}</span>
@@ -560,7 +561,7 @@ export default function PartnerApplyPage() {
                           </TableCell>
 
                           {/* Phone */}
-                          <TableCell className="text-xs text-gray-600 py-3 whitespace-nowrap">
+                          <TableCell className="text-xs text-black py-3 whitespace-nowrap">
                             <div className="flex items-center gap-1">
                               <Phone className="h-3 w-3 text-gray-400 shrink-0" />
                               <span>{s.phone || "—"}</span>
@@ -583,169 +584,198 @@ export default function PartnerApplyPage() {
           </Card>
         </div>
 
-        {/* Right Column (4 cols): Selected Program & Application Card */}
+        {/* Right Column (4 cols): Selected Program & Dynamic Application Card */}
         <div className="xl:col-span-4 space-y-4 xl:sticky xl:top-6">
-          {/* Selected Course Card */}
+          {/* Unified Selected Course & Application Card */}
           <Card className="border border-gray-200 shadow-sm rounded-xl overflow-hidden bg-white">
-            {/* Header: Green Background */}
+            {/* Header: Green Background with white rounded check mark */}
             <div className="bg-emerald-600 p-3.5 text-white">
-              <p className="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-1.5">
-                <GraduationCap className="h-4 w-4 text-white" /> Selected Course
+              <p className="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-white" /> Selected Course
               </p>
             </div>
 
             <CardContent className="p-5 space-y-4">
-              {/* University Logo -> Course Name -> University Name -> Location */}
+              {/* University Logo -> Course Name -> University Name -> Location -> Specs */}
               <div className="flex items-start gap-3.5">
-                <div className="w-16 h-14 shrink-0 bg-gray-50 border border-gray-100 rounded-xl overflow-hidden p-1 flex items-center justify-center">
+                <div className="w-16 h-14 shrink-0 flex items-center justify-center">
                   {logoSrc ? (
                     <img src={logoSrc} alt={university?.name || "logo"} className="max-w-full max-h-full object-contain" />
                   ) : (
                     <Building2 className="h-6 w-6 text-gray-400" />
                   )}
                 </div>
-                <div className="flex-1 min-w-0 space-y-1">
-                  <h3 className="text-sm font-bold text-[#1E293B] leading-snug">
+
+                <div className="flex-1 min-w-0 space-y-1.5">
+                  <h3 className="text-[18px] font-normal text-black leading-snug break-words">
                     {course.title}
                   </h3>
-                  <p className="text-xs font-semibold text-gray-800 truncate">{university?.name || "—"}</p>
-                  <p className="text-[11px] text-gray-500 truncate">{university?.city || "Malaysia"}</p>
+                  <p className="text-sm font-semibold italic text-black">
+                    {university?.name || "—"}
+                  </p>
+                  <p className="text-sm text-black">
+                    {university?.city || "Malaysia"}
+                  </p>
+
+                  {/* Specs list: Labels left-aligned, values right-aligned (No top border) */}
+                  <div className="space-y-2 text-xs pt-3">
+                    {course.degree_level && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-black font-medium">Degree Level:</span>
+                        <span className="font-normal text-black">{course.degree_level}</span>
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between">
+                      <span className="text-black font-medium">Tuition Fees:</span>
+                      <span className="font-normal text-black">
+                        {course.tuition_fee != null ? `MYR ${course.tuition_fee.toLocaleString()}/yr` : "Contact WB"}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <span className="text-black font-medium">Duration:</span>
+                      <span className="font-normal text-black">{course.duration || "N/A"}</span>
+                    </div>
+
+                    {course.intake_months && course.intake_months.length > 0 && (
+                      <div className="flex items-start justify-between gap-2">
+                        <span className="text-black font-medium shrink-0">Available Intakes:</span>
+                        <span className="font-normal text-black text-right">
+                          {(course.intake_months as string[]).join(", ")}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              {/* Specs list: Degree Level, Tuition Fees, Duration, Available Intakes */}
-              <div className="pt-3 border-t border-gray-100 space-y-2 text-xs">
-                {course.degree_level && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-500">Degree Level:</span>
-                    <span className="font-semibold text-gray-900">
-                      {course.degree_level}
+              {/* Dynamic Extension: Appears smoothly when a student is selected */}
+              {selectedStudent && (
+                <div className="pt-2 space-y-3 animate-fade-in">
+                  {/* Applying for title with green text background */}
+                  <div className="text-center">
+                    <span className="inline-block bg-emerald-600 text-white px-3 py-0.5 rounded-full text-xs font-medium uppercase tracking-wider">
+                      Applying for
                     </span>
                   </div>
-                )}
 
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-500">Tuition Fees:</span>
-                  <span className="font-semibold text-gray-900">
-                    {course.tuition_fee != null ? `MYR ${course.tuition_fee.toLocaleString()}/yr` : "Contact WB"}
-                  </span>
-                </div>
+                  {/* Student Avatar + Name */}
+                  <div className="flex items-start gap-3.5">
+                    <div className="w-16 h-14 shrink-0 bg-blue-50/80 border border-blue-100 rounded-xl overflow-hidden p-1 flex items-center justify-center text-[#2F4F97] font-bold text-base">
+                      {selectedStudent.passport_photo_url ? (
+                        <img
+                          src={selectedStudent.passport_photo_url}
+                          alt={selectedStudent.full_name}
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                      ) : selectedStudent.full_name ? (
+                        selectedStudent.full_name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .slice(0, 2)
+                          .join("")
+                          .toUpperCase()
+                      ) : (
+                        <Users className="h-6 w-6 text-[#2F4F97]" />
+                      )}
+                    </div>
 
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-500">Duration:</span>
-                  <span className="font-semibold text-gray-900">
-                    {course.duration || "N/A"}
-                  </span>
-                </div>
+                    <div className="flex-1 min-w-0 space-y-1.5">
+                      <h4 className="text-[18px] font-normal text-black leading-snug uppercase break-words">
+                        {selectedStudent.full_name}
+                      </h4>
 
-                {course.intake_months && course.intake_months.length > 0 && (
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="text-gray-500 shrink-0">Available Intakes:</span>
-                    <span className="font-medium text-gray-800 text-right">
-                      {(course.intake_months as string[]).join(", ")}
-                    </span>
+                      {/* Student Specs list: Labels left-aligned, values right-aligned (normal font) */}
+                      <div className="space-y-2 text-xs pt-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-black font-medium">Student WB ID:</span>
+                          <span className="font-normal text-black font-mono">
+                            {selectedStudent.wb_student_id ? `WB-${selectedStudent.wb_student_id}` : "WB-NEW"}
+                          </span>
+                        </div>
+
+                        <div className="flex items-start justify-between gap-2">
+                          <span className="text-black font-medium shrink-0">Email:</span>
+                          <span className="font-normal text-black break-all text-right">
+                            {selectedStudent.email}
+                          </span>
+                        </div>
+
+                        {selectedStudent.phone && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-black font-medium">Phone:</span>
+                            <span className="font-normal text-black">
+                              {selectedStudent.phone}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                )}
-              </div>
+
+                  {/* Action Buttons: Apply/Confirm (Green) & Cancel/Back (Red) */}
+                  <div className="pt-2">
+                    {isConfirming ? (
+                      <div className="space-y-2">
+                        <div className="p-2.5 bg-emerald-50 border border-emerald-200/80 rounded-lg text-[11px] text-emerald-800 flex items-center gap-2">
+                          <AlertCircle className="h-4 w-4 shrink-0 text-emerald-600" />
+                          <span>Click 'Confirm Application' button for Final submission</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            onClick={handleConfirmApplication}
+                            disabled={applying}
+                            className="group flex-1 h-9 gap-2 bg-emerald-600 hover:bg-white text-white hover:text-emerald-600 border border-emerald-600 hover:border-emerald-600 hover:[&_svg]:!text-emerald-600 font-normal text-xs rounded-lg shadow-sm transition-all"
+                          >
+                            {applying ? (
+                              <>
+                                <Loader2 className="h-4 w-4 animate-spin shrink-0 text-white group-hover:!text-emerald-600" />
+                                Confirming Application…
+                              </>
+                            ) : (
+                              <>
+                                <Check className="h-4 w-4 shrink-0 text-white group-hover:!text-emerald-600 transition-colors" />
+                                Confirm Application
+                              </>
+                            )}
+                          </Button>
+                          <Button
+                            onClick={() => setIsConfirming(false)}
+                            disabled={applying}
+                            className="group flex-1 h-9 gap-2 bg-rose-600 hover:bg-white text-white hover:text-rose-600 border border-rose-600 hover:border-rose-600 hover:[&_svg]:!text-rose-600 font-normal text-xs rounded-lg shadow-sm transition-all"
+                          >
+                            <ArrowLeft className="h-4 w-4 shrink-0 text-white group-hover:!text-rose-600 transition-colors" />
+                            Back
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <Button
+                          onClick={() => setIsConfirming(true)}
+                          className="group flex-1 h-9 gap-2 bg-emerald-600 hover:bg-white text-white hover:text-emerald-600 border border-emerald-600 hover:border-emerald-600 hover:[&_svg]:!text-emerald-600 font-normal text-xs rounded-lg shadow-sm transition-all"
+                        >
+                          <CheckCircle2 className="h-4 w-4 shrink-0 text-white group-hover:!text-emerald-600 transition-colors" />
+                          Apply Now
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setSelectedStudentId(null);
+                            setIsConfirming(false);
+                          }}
+                          className="group flex-1 h-9 gap-2 bg-rose-600 hover:bg-white text-white hover:text-rose-600 border border-rose-600 hover:border-rose-600 hover:[&_svg]:!text-rose-600 font-normal text-xs rounded-lg shadow-sm transition-all"
+                        >
+                          <X className="h-4 w-4 shrink-0 text-white group-hover:!text-rose-600 transition-colors" />
+                          Cancel
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
-
-          {/* New Card Appearing When a Student Is Selected */}
-          {selectedStudent && (
-            <Card className="border border-[#2F4F97]/30 shadow-md rounded-xl overflow-hidden bg-white animate-fade-in">
-              <div className="bg-[#2F4F97]/10 border-b border-[#2F4F97]/20 p-4">
-                <div className="flex items-center gap-2 text-xs font-bold text-[#2F4F97] uppercase tracking-wide">
-                  <CheckCircle2 className="h-4 w-4 text-[#2F4F97]" /> Application Summary
-                </div>
-              </div>
-
-              <CardContent className="p-5 space-y-4">
-                {/* Specific statement requested by user */}
-                <div className="p-3.5 bg-blue-50/70 border border-blue-100 rounded-xl text-xs text-[#1E293B] leading-relaxed">
-                  <p>
-                    Student{" "}
-                    <strong className="font-bold text-[#2F4F97] uppercase">
-                      {selectedStudent.full_name}
-                    </strong>{" "}
-                    is Applying for{" "}
-                    <strong className="font-bold text-gray-900">
-                      {course.title}
-                    </strong>{" "}
-                    in{" "}
-                    <strong className="font-bold text-gray-900">
-                      {university?.name || "the University"}
-                    </strong>
-                    .
-                  </p>
-                </div>
-
-                {/* Student Quick Meta */}
-                <div className="p-3 bg-gray-50 border border-gray-100 rounded-xl space-y-1.5 text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-500 font-medium">Student WB ID:</span>
-                    <span className="font-mono font-bold text-gray-900 bg-white px-2 py-0.5 rounded border border-gray-200">
-                      {selectedStudent.wb_student_id ? `WB-${selectedStudent.wb_student_id}` : "WB-NEW"}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-500 font-medium">Email:</span>
-                    <span className="text-gray-700 font-medium truncate max-w-[180px]">{selectedStudent.email}</span>
-                  </div>
-                  {selectedStudent.phone && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-500 font-medium">Phone:</span>
-                      <span className="text-gray-700 font-medium">{selectedStudent.phone}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Apply Now -> Confirm Application Flow */}
-                {isConfirming ? (
-                  <div className="space-y-2 pt-1">
-                    <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-[11px] text-amber-800 flex items-center gap-2">
-                      <AlertCircle className="h-4 w-4 shrink-0 text-amber-600" />
-                      <span>Click below to assign a unique Application ID and submit.</span>
-                    </div>
-                    <Button
-                      onClick={handleConfirmApplication}
-                      disabled={applying}
-                      className="w-full h-10 gap-2 bg-[#2F4F97] hover:bg-[#233d77] text-white font-semibold text-xs rounded-lg shadow-sm transition-all"
-                    >
-                      {applying ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          Confirming Application…
-                        </>
-                      ) : (
-                        <>
-                          <Check className="h-4 w-4" />
-                          Confirm Application
-                        </>
-                      )}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      onClick={() => setIsConfirming(false)}
-                      disabled={applying}
-                      className="w-full h-8 text-xs text-gray-500 hover:text-gray-800"
-                    >
-                      Back
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="pt-1">
-                    <Button
-                      onClick={() => setIsConfirming(true)}
-                      className="w-full h-10 gap-2 bg-[#2F4F97] hover:bg-[#233d77] text-white font-semibold text-xs rounded-lg shadow-sm transition-all"
-                    >
-                      <CheckCircle2 className="h-4 w-4" />
-                      Apply Now
-                    </Button>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
         </div>
       </div>
     </div>
