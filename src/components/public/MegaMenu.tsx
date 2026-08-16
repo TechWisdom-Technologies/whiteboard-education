@@ -67,7 +67,7 @@ const CurrencySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 hover:bg-[#F8FAFC]/50 transition-all border-[#e8e8e8]">
+        <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 hover:bg-[#F8FAFC]/50 transition-all border-[#e8e8e8] [&_svg]:!text-[#2F4F97]">
           <div className="relative">
             <RefreshCw className="h-[18px] w-[18px] text-[#2F4F97]" />
             <span className="absolute -bottom-1.5 -right-1.5 text-[9px] font-bold bg-[#2F4F97] text-white rounded-full w-[14px] h-[14px] flex items-center justify-center">
@@ -213,8 +213,8 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
                     variant="ghost"
                     size="sm"
                     className={cn(
-                      "h-10 text-[14px] font-poppins font-normal text-black hover:text-[#2F4F97] hover:bg-transparent gap-1.5 px-3 transition-colors",
-                      toolsActive && "text-[#2F4F97]",
+                      "h-10 text-[14px] font-poppins font-normal text-black hover:text-[#2F4F97] [&_svg]:hover:!text-[#2F4F97] hover:bg-transparent gap-1.5 px-3 transition-colors",
+                      toolsActive && "text-[#2F4F97] [&_svg]:!text-[#2F4F97]",
                     )}
                   >
                     <BookOpen className="h-3.5 w-3.5" /> Resources
@@ -351,8 +351,8 @@ function NavItem({ to, children, icon: Icon }: { to: string; children: React.Rea
         variant="ghost"
         size="sm"
         className={cn(
-          "h-10 text-[14px] font-poppins font-normal text-black hover:text-[#2F4F97] hover:bg-transparent gap-1.5 px-3 transition-colors",
-          isActive && "text-[#2F4F97]",
+          "h-10 text-[14px] font-poppins font-normal text-black hover:text-[#2F4F97] [&_svg]:hover:!text-[#2F4F97] hover:bg-transparent gap-1.5 px-3 transition-colors",
+          isActive && "text-[#2F4F97] [&_svg]:!text-[#2F4F97]",
         )}
       >
         {Icon && <Icon className="h-3.5 w-3.5" />}

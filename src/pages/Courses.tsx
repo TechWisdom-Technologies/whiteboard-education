@@ -695,7 +695,7 @@ export default function Courses() {
                             <Link to={`/courses/${generateSlug(c.title)}`} className="block">
                               <Button
                                 variant="outline"
-                                className="hover:text-[#2F4F97] border-[#1E293B] rounded-xl h-10 px-3 text-[13px] font-medium w-[110px] lg:w-full"
+                                className="border-[#1E293B] rounded-xl h-10 px-3 text-[13px] font-medium w-[110px] lg:w-full hover:bg-[#2F4F97] hover:border-[#2F4F97] hover:text-white transition-colors"
                               >
                                 Ask Us
                               </Button>

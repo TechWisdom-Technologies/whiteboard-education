@@ -46,7 +46,7 @@ export function PreFooterCTA() {
             </Link>
             
             <Link to="/universities" className="w-full sm:w-auto">
-              <Button variant="outline" className="w-full sm:w-auto border-white/20 hover:text-[#1E293B] font-semibold text-sm rounded-2xl h-11 px-6 bg-white/5 backdrop-blur-sm transition-all">
+              <Button variant="outline" className="w-full sm:w-auto border-white/20 text-white hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] font-semibold text-sm rounded-2xl h-11 px-6 bg-white/5 backdrop-blur-sm transition-all">
                 <GraduationCap className="mr-2 h-4 w-4" />
                 Explore Universities
               </Button>

@@ -547,7 +547,7 @@ export default function Universities() {
                           <Link to={`/universities/${generateSlug(u.name)}`} className="block">
                             <Button
                               variant="outline"
-                              className="bg-[#EEF4FF] h-9 px-3 font-bold w-full hover:bg-[#EEF4FF]/80"
+                              className="bg-[#EEF4FF] text-[#2F4F97] h-9 px-3 font-bold w-full hover:bg-[#2F4F97] hover:text-white border-transparent transition-colors"
                               style={{
                                 fontFamily: "Poppins, sans-serif",
                               }}
