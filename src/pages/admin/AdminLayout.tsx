@@ -77,7 +77,7 @@ export default function AdminLayout() {
               </div>
             </div>
           </header>
-          <main className="flex-1 p-4 sm:p-6 bg-[#F8FAFC] overflow-x-hidden">
+          <main className="flex-1 p-4 sm:p-6 bg-[#F8FAFC] min-w-0">
             <Outlet />
           </main>
         </div>

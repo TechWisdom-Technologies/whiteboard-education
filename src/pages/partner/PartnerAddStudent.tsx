@@ -1,15 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, UserPlus, Loader2, GraduationCap, Languages, User, Mail, Phone, Calendar, CreditCard, CheckCircle2, AlertCircle, Save } from "lucide-react";
+import { ArrowLeft, UserPlus, Loader2, GraduationCap, Languages, User, Mail, Phone, Calendar, CreditCard, CheckCircle2, AlertCircle, Save, Camera, Upload, Trash2, Image as ImageIcon } from "lucide-react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { LoadingScreen } from "@/components/ui/loading-screen";
+import { supabase } from "@/integrations/supabase/client";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -86,6 +87,8 @@ const emptyForm = {
   gender: "",
   nationality: "Bangladeshi",
   passport_number: "",
+  passport_expiry_date: "",
+  passport_photo_url: "",
   date_of_birth: "",
   education_level: "",
   stream: "",
@@ -110,6 +113,79 @@ export default function PartnerAddStudent() {
   const [submitting, setSubmitting] = useState(false);
   const [loadingStudent, setLoadingStudent] = useState(isEditMode);
   const [existingStudent, setExistingStudent] = useState<any>(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const photoInputRef = useRef<HTMLInputElement | null>(null);
+
+  // ─── Photo Upload Handlers ─────────────────────────────
+  const handleUploadPhoto = async (file: File) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file (JPEG, PNG, WEBP)");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Photo size should be less than 5MB");
+      return;
+    }
+    setUploadingPhoto(true);
+    try {
+      const studentFolder = existingStudent?.id || "temp";
+      const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+      const path = `${user?.id || "partner"}/${studentFolder}/passport_photo_${Date.now()}_${cleanFileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("student-documents")
+        .upload(path, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("student-documents")
+        .getPublicUrl(path);
+
+      setForm((f) => ({ ...f, passport_photo_url: publicUrl }));
+
+      if (isEditMode && existingStudent) {
+        await fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${existingStudent.id}`, {
+          method: "PATCH",
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${session?.access_token}`,
+            "Content-Type": "application/json",
+            Prefer: "return=minimal",
+          },
+          body: JSON.stringify({ passport_photo_url: publicUrl }),
+        });
+      }
+
+      toast.success("Profile photo updated!");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to upload photo");
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  const handleDeletePhoto = async () => {
+    setForm((f) => ({ ...f, passport_photo_url: "" }));
+    if (isEditMode && existingStudent) {
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${existingStudent.id}`, {
+          method: "PATCH",
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${session?.access_token}`,
+            "Content-Type": "application/json",
+            Prefer: "return=minimal",
+          },
+          body: JSON.stringify({ passport_photo_url: null }),
+        });
+        toast.success("Profile photo removed");
+      } catch (err: any) {
+        toast.error("Failed to remove photo");
+      }
+    }
+  };
 
   // ─── Load Student for Edit Mode ────────────────────────
   useEffect(() => {
@@ -149,13 +225,24 @@ export default function PartnerAddStudent() {
         if (eduLevel === "Master") eduLevel = "Masters";
         if (eduLevel === "PhD") eduLevel = "PHD";
 
+        const testName = s.language_test_name || s.english_test_type || "";
+        const testOptions = getTestScores(testName);
         let scoreStr = "";
-        if (s.language_test_name === "MOI" || s.english_test_type === "MOI") {
+        if (testName === "MOI" || s.english_test_score === "MOI" || s.language_test_name === "MOI" || s.english_test_type === "MOI") {
           scoreStr = "MOI";
-        } else if (s.ielts_score && s.ielts_score > 0) {
+        } else if (s.english_test_score && testOptions.includes(s.english_test_score)) {
+          scoreStr = s.english_test_score;
+        } else if (s.ielts_score !== undefined && s.ielts_score !== null && testOptions.includes(Number(s.ielts_score).toFixed(1))) {
+          scoreStr = Number(s.ielts_score).toFixed(1);
+        } else if (s.ielts_score !== undefined && s.ielts_score !== null && testOptions.includes(s.ielts_score.toString())) {
           scoreStr = s.ielts_score.toString();
         } else if (s.english_test_score) {
-          scoreStr = s.english_test_score;
+          const matched = testOptions.find(
+            (opt) => opt.toLowerCase() === (s.english_test_score || "").toLowerCase() || opt.startsWith(s.english_test_score)
+          );
+          scoreStr = matched || s.english_test_score;
+        } else if (s.ielts_score && s.ielts_score > 0) {
+          scoreStr = testName === "IELTS" ? Number(s.ielts_score).toFixed(1) : s.ielts_score.toString();
         }
 
         const isSSCHSC = eduLevel === "SSC" || eduLevel === "HSC";
@@ -169,6 +256,8 @@ export default function PartnerAddStudent() {
           gender: s.gender || "",
           nationality: s.nationality || "Bangladeshi",
           passport_number: s.passport_number || "",
+          passport_expiry_date: s.passport_expiry_date ? s.passport_expiry_date.split("T")[0] : "",
+          passport_photo_url: s.passport_photo_url || "",
           date_of_birth: s.date_of_birth ? s.date_of_birth.split("T")[0] : "",
           education_level: eduLevel,
           stream: streamVal,
@@ -176,7 +265,7 @@ export default function PartnerAddStudent() {
           major: s.major || "",
           previous_institution: s.previous_institution || "",
           gpa: s.gpa !== undefined && s.gpa !== null && s.gpa > 0 ? s.gpa.toString() : "",
-          language_test_name: s.language_test_name || s.english_test_type || "",
+          language_test_name: testName,
           ielts_score: scoreStr,
         });
       } catch (err: any) {
@@ -205,11 +294,11 @@ export default function PartnerAddStudent() {
   // Count filled fields for completeness
   const filledFields = [
     form.first_name, form.last_name, form.email && isValidEmail(form.email), form.phone,
-    form.gender, form.nationality, form.passport_number, form.date_of_birth,
+    form.gender, form.nationality, form.passport_number, form.passport_expiry_date, form.date_of_birth,
     form.education_level, form.previous_institution, form.gpa,
     form.language_test_name,
   ].filter(Boolean).length;
-  const totalFields = 12;
+  const totalFields = 13;
 
   const handleBack = () => {
     if (isEditMode && existingStudent) {
@@ -279,6 +368,8 @@ export default function PartnerAddStudent() {
           gender: form.gender,
           nationality: form.nationality,
           passport_number: passportNumber,
+          passport_expiry_date: form.passport_expiry_date || null,
+          passport_photo_url: form.passport_photo_url || null,
           date_of_birth: form.date_of_birth || null,
           previous_degree: previousDegree,
           previous_institution: form.previous_institution.trim(),
@@ -329,6 +420,8 @@ export default function PartnerAddStudent() {
             gender: form.gender,
             nationality: form.nationality,
             passport_number: passportNumber,
+            passport_expiry_date: form.passport_expiry_date || null,
+            passport_photo_url: form.passport_photo_url || null,
             date_of_birth: form.date_of_birth || null,
             previous_degree: previousDegree,
             previous_institution: form.previous_institution.trim(),
@@ -381,7 +474,7 @@ export default function PartnerAddStudent() {
       </div>
 
       {/* Main Layout: Form (2/3) + Live Preview (1/3) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 
         {/* ═══════════════ LEFT: FORM ═══════════════ */}
         <div className="lg:col-span-2">
@@ -394,6 +487,80 @@ export default function PartnerAddStudent() {
                   <User className="w-4 h-4 text-[#2F4F97]" />
                   <h3 className="font-semibold text-sm text-gray-900">Personal Information</h3>
                 </div>
+
+                {/* Profile / Passport Photo Upload Box */}
+                <div className="mb-6 p-4 rounded-xl bg-gray-50/80 border border-gray-200/80 flex flex-col sm:flex-row items-center gap-4">
+                  <div className="relative group shrink-0">
+                    <div className="w-20 h-24 rounded-lg bg-white border border-gray-200 shadow-sm overflow-hidden flex items-center justify-center">
+                      {form.passport_photo_url ? (
+                        <img
+                          src={form.passport_photo_url}
+                          alt="Passport Photo"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center text-gray-400 p-2 text-center">
+                          <ImageIcon className="w-6 h-6 mb-1 text-gray-300" />
+                          <span className="text-[10px] leading-tight">No Photo</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex-1 text-center sm:text-left space-y-1.5 min-w-0">
+                    <div className="flex items-center gap-2 justify-center sm:justify-start flex-wrap">
+                      <Label className="text-xs font-semibold text-gray-900">Passport / Profile Photo</Label>
+                      <Badge variant="outline" className="text-[10px] font-normal bg-purple-50 text-purple-700 border-purple-200">Recommended</Badge>
+                      {form.passport_photo_url && (
+                        <Badge variant="outline" className="text-[10px] font-normal bg-green-50 text-green-700 border-green-200">Uploaded</Badge>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-gray-500">
+                      Standard passport size photo with white background (JPEG, PNG, max 5MB).
+                    </p>
+                    <div className="flex items-center gap-2 justify-center sm:justify-start pt-1">
+                      <input
+                        type="file"
+                        ref={photoInputRef}
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleUploadPhoto(file);
+                          e.target.value = "";
+                        }}
+                      />
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        disabled={uploadingPhoto}
+                        onClick={() => photoInputRef.current?.click()}
+                        className="h-8 px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white border-gray-200 shadow-sm"
+                      >
+                        {uploadingPhoto ? (
+                          <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                        ) : (
+                          <Upload className="w-3.5 h-3.5 mr-1.5" />
+                        )}
+                        {form.passport_photo_url ? "Change Photo" : "Upload Photo"}
+                      </Button>
+                      {form.passport_photo_url && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          disabled={uploadingPhoto}
+                          onClick={handleDeletePhoto}
+                          className="h-8 px-3 text-xs font-semibold bg-red-600 hover:bg-white text-white hover:text-red-600 border border-red-600 hover:border-red-600 shadow-sm transition-all duration-200 group"
+                        >
+                          <Trash2 className="w-3.5 h-3.5 mr-1 text-white group-hover:text-red-600 transition-colors" />
+                          Remove
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label className="text-xs">First Name <span className="text-red-500">*</span></Label>
@@ -421,7 +588,7 @@ export default function PartnerAddStudent() {
                       onChange={e => setForm(f => ({ ...f, email: e.target.value.trim() }))}
                       onBlur={() => setTouchedEmail(true)}
                       placeholder="email@example.com"
-                      className={`h-9 mt-1 ${emailInvalid ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                      className={`h-9 mt-1 ${emailInvalid ? "border-red-500 focus:bg-red-500" : ""}`}
                     />
                     {emailInvalid && (
                       <p className="text-[11px] text-red-500 mt-1 flex items-center gap-1">
@@ -469,6 +636,30 @@ export default function PartnerAddStudent() {
                       placeholder="e.g. A01234567"
                       className="h-9 mt-1 uppercase"
                     />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Passport Expiry Date</Label>
+                    <Input
+                      type="date"
+                      value={form.passport_expiry_date}
+                      onChange={e => setForm(f => ({ ...f, passport_expiry_date: e.target.value }))}
+                      className="h-9 mt-1"
+                    />
+                    {form.passport_expiry_date && (
+                      (() => {
+                        const today = new Date();
+                        const expiry = new Date(form.passport_expiry_date);
+                        const monthsDiff = (expiry.getFullYear() - today.getFullYear()) * 12 + (expiry.getMonth() - today.getMonth());
+                        if (monthsDiff < 18) {
+                          return (
+                            <p className="text-[11px] text-red-500 mt-1 flex items-center gap-1">
+                              <AlertCircle className="w-3 h-3" /> Validity &lt; 18 months
+                            </p>
+                          );
+                        }
+                        return null;
+                      })()
+                    )}
                   </div>
                   <div>
                     <Label className="text-xs">Date of Birth</Label>
@@ -619,6 +810,9 @@ export default function PartnerAddStudent() {
                           {availableScores.map(score => (
                             <SelectItem key={score} value={score}>{score}</SelectItem>
                           ))}
+                          {form.ielts_score && !availableScores.includes(form.ielts_score) && form.ielts_score !== "MOI" && (
+                            <SelectItem key={form.ielts_score} value={form.ielts_score}>{form.ielts_score}</SelectItem>
+                          )}
                         </SelectContent>
                       </Select>
                     ) : (
@@ -640,13 +834,17 @@ export default function PartnerAddStudent() {
                 <Button variant="outline" onClick={handleBack} className="h-10 px-6">
                   Cancel
                 </Button>
-                <Button className="h-10 px-6 bg-[#2F4F97] hover:bg-[#243e78]" onClick={handleSubmit} disabled={submitting}>
+                <Button
+                  className="h-10 px-6 bg-[#2F4F97] text-white border border-[#2F4F97] hover:bg-white hover:text-[#2F4F97] hover:border-[#2F4F97] transition-all duration-200 shadow-sm group"
+                  onClick={handleSubmit}
+                  disabled={submitting}
+                >
                   {submitting ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin text-white group-hover:text-[#2F4F97]" />
                   ) : isEditMode ? (
-                    <Save className="h-4 w-4 mr-2" />
+                    <Save className="h-4 w-4 mr-2 text-white group-hover:text-[#2F4F97]" />
                   ) : (
-                    <UserPlus className="h-4 w-4 mr-2" />
+                    <UserPlus className="h-4 w-4 mr-2 text-white group-hover:text-[#2F4F97]" />
                   )}
                   {isEditMode ? "Update Student" : "Save Student"}
                 </Button>
@@ -657,16 +855,21 @@ export default function PartnerAddStudent() {
         </div>
 
         {/* ═══════════════ RIGHT: LIVE PREVIEW ═══════════════ */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-6 space-y-4">
+        <div className="lg:col-span-1 lg:sticky lg:top-[80px] lg:self-start space-y-4">
 
             {/* Live Profile Card */}
             <Card className="border border-gray-200 shadow-sm overflow-hidden">
               {/* Header gradient */}
               <div className="h-20 bg-gradient-to-br from-[#2F4F97] to-[#1E3A6F] relative">
                 <div className="absolute -bottom-8 left-5">
-                  <div className="w-16 h-16 rounded-xl bg-white shadow-lg border-2 border-white flex items-center justify-center">
-                    {form.first_name ? (
+                  <div className="w-16 h-16 rounded-xl bg-white shadow-lg border-2 border-white overflow-hidden flex items-center justify-center">
+                    {form.passport_photo_url ? (
+                      <img
+                        src={form.passport_photo_url}
+                        alt={form.first_name || "Student"}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : form.first_name ? (
                       <span className="text-2xl font-bold text-[#2F4F97]">
                         {form.first_name.charAt(0).toUpperCase()}{form.last_name ? form.last_name.charAt(0).toUpperCase() : ""}
                       </span>
@@ -705,10 +908,31 @@ export default function PartnerAddStudent() {
                     <CreditCard className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
                     <span>{form.passport_number || "Passport #"}</span>
                   </div>
+                  {form.passport_expiry_date && (
+                    <div className="flex items-center gap-2 text-xs text-gray-600">
+                      <Calendar className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+                      <span>
+                        Exp: {new Date(form.passport_expiry_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                      </span>
+                      {(() => {
+                        const today = new Date();
+                        const expiry = new Date(form.passport_expiry_date);
+                        const monthsDiff = (expiry.getFullYear() - today.getFullYear()) * 12 + (expiry.getMonth() - today.getMonth());
+                        if (monthsDiff < 18) {
+                          return (
+                            <Badge variant="outline" className="text-[9px] bg-red-50 text-red-600 border-red-200 px-1 py-0 h-4 uppercase">
+                              &lt; 18m
+                            </Badge>
+                          );
+                        }
+                        return null;
+                      })()}
+                    </div>
+                  )}
                   {form.date_of_birth && (
                     <div className="flex items-center gap-2 text-xs text-gray-600">
                       <Calendar className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
-                      <span>{new Date(form.date_of_birth).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                      <span>DOB: {new Date(form.date_of_birth).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
                     </div>
                   )}
                 </div>
@@ -797,7 +1021,6 @@ export default function PartnerAddStudent() {
               </CardContent>
             </Card>
 
-          </div>
         </div>
 
       </div>

@@ -98,7 +98,7 @@ export default function Login() {
 
 
   const inputCls =
-    "w-full h-12 px-4 text-sm bg-gray-50 border border-transparent text-gray-900 placeholder:text-gray-400 outline-none focus:bg-white focus:border-[#2F4F97]/30 focus:ring-4 focus:ring-[#2F4F97]/10 transition-all duration-300 rounded-2xl";
+    "w-full h-12 px-4 text-sm bg-gray-50 border border-transparent text-gray-900 placeholder:text-gray-400 outline-none focus:outline-none focus:ring-0 focus:border-transparent focus:bg-[#2F4F97] focus:text-white focus:placeholder:text-white/60 focus:caret-white transition-all duration-200 rounded-2xl";
 
   // ─── Forgot Password Handlers ───
   const handleFpSendCode = async () => {

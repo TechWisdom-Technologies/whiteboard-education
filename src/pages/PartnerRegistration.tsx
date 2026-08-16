@@ -140,14 +140,15 @@ export default function PartnerRegistration() {
         setSubmitting(true);
         try {
           // Attempt immediate check via RPC (requires admin to add the SQL function)
-          const { data, error } = await supabase.rpc('check_registration_exists', {
+          const { data, error } = await (supabase.rpc as any)('check_registration_exists', {
             check_email: email,
             check_phone: phone
           });
 
           if (!error && data) {
-            if (data.email_exists) newErrors.email = "This email is already registered.";
-            if (data.phone_exists) newErrors.phone = "This phone number is already registered.";
+            const resData = data as { email_exists?: boolean; phone_exists?: boolean };
+            if (resData.email_exists) newErrors.email = "This email is already registered.";
+            if (resData.phone_exists) newErrors.phone = "This phone number is already registered.";
           }
         } catch (e) {
           // If RPC doesn't exist yet, gracefully continue
@@ -257,7 +258,7 @@ export default function PartnerRegistration() {
   };
 
   const inputCls =
-    "w-full h-11 px-3 text-[13px] bg-gray-50 border border-transparent text-gray-900 placeholder:text-gray-400 outline-none focus:bg-white focus:border-[#2F4F97]/30 focus:ring-4 focus:ring-[#2F4F97]/10 transition-all duration-300 rounded-xl";
+    "w-full h-11 px-3 text-[13px] bg-gray-50 border border-transparent text-gray-900 placeholder:text-gray-400 outline-none focus:outline-none focus:ring-0 focus:border-transparent focus:bg-[#2F4F97] focus:text-white focus:placeholder:text-white/60 focus:caret-white transition-all duration-200 rounded-xl";
 
   return (
     <div className="fixed inset-0 flex bg-[#F8FAFC]">
