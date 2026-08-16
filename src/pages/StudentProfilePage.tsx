@@ -51,6 +51,9 @@ import {
   Info,
   ChevronDown,
   ChevronUp,
+  Globe,
+  Calendar,
+  CreditCard,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -821,51 +824,176 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
           {/* Main Left Column (8 cols on XL) */}
           <div className="xl:col-span-8 space-y-6 min-w-0">
 
-            {/* Global Student Info Card */}
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 no-print">
-           <div className="flex items-center gap-4">
-             {student.passport_photo_url ? (
-               <img src={student.passport_photo_url} alt={student.full_name} className="object-cover border border-gray-200 rounded-md shadow-sm" style={{ width: '35mm', height: '45mm' }} />
-             ) : (
-               <div className="bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-3xl border border-blue-200 rounded-md shadow-sm" style={{ width: '35mm', height: '45mm' }}>
-                 {student.full_name.charAt(0)}
-               </div>
-             )}
-             <div className="flex flex-col gap-1">
-               <h2 className="text-xl font-bold text-[#1E293B] flex items-center gap-2">{student.full_name}
-                 <Badge variant="outline" className="text-[10px] font-normal bg-gray-50 h-5 px-1.5 text-gray-500 uppercase">{student.status}</Badge>
-               </h2>
-               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[14px] text-gray-600">
-                 <div className="flex items-center gap-1.5"><Mail className="w-4 h-4 text-gray-400"/> {student.email}</div>
-                 <div className="flex items-center gap-1.5"><Phone className="w-4 h-4 text-gray-400"/> {student.phone || "N/A"}</div>
-                 <div className="flex items-center gap-1.5"><User className="w-4 h-4 text-gray-400"/> {student.gender || "N/A"}</div>
-               </div>
-             </div>
-           </div>
-           <div className="flex items-center gap-2">
-             <Button 
-               variant="outline"
-               size="sm"
-               className="h-9 px-3 text-xs font-semibold text-[#2F4F97] border-[#2F4F97]/30 hover:bg-[#2F4F97]/10 gap-1.5 shadow-sm"
-               onClick={handleEditProfile}
-             >
-               <Pencil className="w-3.5 h-3.5" />
-               Edit Profile
-             </Button>
-             {student.status === 'document_upload' && mode === 'partner' && (
-               <Button 
-                 className="bg-green-600 hover:bg-green-700 text-xs h-9"
-                 onClick={() => {
-                   if (confirm("Are you sure you want to submit this student's application to Whiteboard for review?")) {
-                     handleSaveStatusTracker('document_review');
-                   }
-                 }}
-               >
-                 Submit Application
-               </Button>
-             )}
-           </div>
-        </div>
+            {/* Global Student Info Card / Brief Info Box */}
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-5 no-print">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-8 w-full">
+                
+                {/* 1st Column: Image with uniform rounded corners */}
+                <div className="shrink-0">
+                  {student.passport_photo_url ? (
+                    <img
+                      src={student.passport_photo_url}
+                      alt={student.full_name}
+                      className="object-cover border border-gray-200 rounded-lg shadow-sm"
+                      style={{ width: "35mm", height: "42mm" }}
+                    />
+                  ) : (
+                    <div
+                      className="bg-blue-100 flex items-center justify-center text-[#2F4F97] font-bold text-2xl border border-blue-200 rounded-lg shadow-sm"
+                      style={{ width: "35mm", height: "42mm" }}
+                    >
+                      {student.full_name?.charAt(0) || "S"}
+                    </div>
+                  )}
+                </div>
+
+                {/* 2nd Column: Comprehensive info in theme blue */}
+                <div className="flex-1 min-w-0 flex flex-col justify-center space-y-2.5">
+                  
+                  {/* Name + (WB-ID) */}
+                  <div className="w-full">
+                    <h2 className="text-lg sm:text-xl font-semibold text-[#1E293B] truncate">
+                      {student.full_name}
+                      {student.wb_student_id ? ` (WB-${student.wb_student_id})` : ""}
+                    </h2>
+                  </div>
+
+                  {/* Info Grid in Theme Blue with generous vertical row spacing */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-3 sm:gap-y-3.5 text-xs text-[#2F4F97] font-medium pt-0.5">
+                    
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Mail className="w-3.5 h-3.5 text-[#2F4F97] shrink-0" />
+                      <span className="truncate" title={student.email || "N/A"}>
+                        {student.email || "N/A"}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Phone className="w-3.5 h-3.5 text-[#2F4F97] shrink-0" />
+                      <span className="truncate" title={student.phone || "N/A"}>
+                        {student.phone || "N/A"}
+                      </span>
+                    </div>
+
+                    {/* Degree: 'level of education' in 'program' (cgpa) */}
+                    <div className="flex items-center gap-2 min-w-0">
+                      <GraduationCap className="w-3.5 h-3.5 text-[#2F4F97] shrink-0" />
+                      <span className="truncate" title={(() => {
+                        const level = student.degree_level || student.previous_degree || "";
+                        const program = student.major || "";
+                        const gpa = student.gpa ? `(${student.gpa})` : "";
+                        if (level && program) return `${level} in ${program} ${gpa}`.trim();
+                        if (level) return `${level} ${gpa}`.trim();
+                        if (program) return `${program} ${gpa}`.trim();
+                        return "Education N/A";
+                      })()}>
+                        {(() => {
+                          const level = student.degree_level || student.previous_degree || "";
+                          const program = student.major || "";
+                          const gpa = student.gpa ? `(${student.gpa})` : "";
+                          if (level && program) return `${level} in ${program} ${gpa}`.trim();
+                          if (level) return `${level} ${gpa}`.trim();
+                          if (program) return `${program} ${gpa}`.trim();
+                          return "Education N/A";
+                        })()}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Award className="w-3.5 h-3.5 text-[#2F4F97] shrink-0" />
+                      <span className="truncate">
+                        {student.language_test_name || student.english_test_type ? (
+                          `${student.language_test_name || student.english_test_type}: ${student.english_test_score || student.ielts_score || "MOI"}`
+                        ) : (
+                          "English: No test"
+                        )}
+                      </span>
+                    </div>
+
+                    {student.nationality && (
+                      <div className="flex items-center gap-2 min-w-0">
+                        <Globe className="w-3.5 h-3.5 text-[#2F4F97] shrink-0" />
+                        <span className="truncate">
+                          {student.nationality}
+                        </span>
+                      </div>
+                    )}
+
+                    {student.passport_number && (
+                      <div className="flex items-center gap-2 min-w-0">
+                        <CreditCard className="w-3.5 h-3.5 text-[#2F4F97] shrink-0" />
+                        <span className="truncate">
+                          Passport: {student.passport_number}
+                          {student.passport_expiry_date ? ` (Exp: ${new Date(student.passport_expiry_date).toLocaleDateString("en-GB", { month: "short", year: "numeric" })})` : ""}
+                        </span>
+                      </div>
+                    )}
+
+                  </div>
+
+                  {/* Actions & Status: Edit Profile, Save PDF, Print, Status Box */}
+                  <div className="flex flex-wrap items-center justify-between gap-3 pt-2 no-print">
+                    
+                    {/* Left: Action Buttons */}
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      <Button
+                        size="sm"
+                        onClick={handleEditProfile}
+                        className="group h-9 min-h-[36px] px-4 text-xs font-semibold bg-[#2F4F97] text-white border border-[#2F4F97] hover:bg-white hover:text-[#2F4F97] hover:border-[#2F4F97] gap-1.5 shadow-sm transition-all duration-200 rounded-lg inline-flex items-center justify-center cursor-pointer"
+                      >
+                        <Pencil className="w-3.5 h-3.5 text-white group-hover:text-[#2F4F97] transition-colors duration-200" />
+                        Edit Profile
+                      </Button>
+
+                      <Button
+                        size="sm"
+                        onClick={() => window.print()}
+                        className="group h-9 min-h-[36px] px-4 text-xs font-semibold bg-white text-[#2F4F97] border border-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] gap-1.5 shadow-sm transition-all duration-200 rounded-lg inline-flex items-center justify-center cursor-pointer"
+                      >
+                        <Download className="w-3.5 h-3.5 text-[#2F4F97] group-hover:text-white transition-colors duration-200" />
+                        Save PDF
+                      </Button>
+
+                      <Button
+                        size="sm"
+                        onClick={() => window.print()}
+                        className="group h-9 min-h-[36px] px-4 text-xs font-semibold bg-white text-[#2F4F97] border border-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] gap-1.5 shadow-sm transition-all duration-200 rounded-lg inline-flex items-center justify-center cursor-pointer"
+                      >
+                        <Printer className="w-3.5 h-3.5 text-[#2F4F97] group-hover:text-white transition-colors duration-200" />
+                        Print
+                      </Button>
+                    </div>
+
+                    {/* Right: Status Box & Submit Application */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <div className="h-9 min-h-[36px] px-3.5 flex items-center justify-center text-xs font-semibold uppercase tracking-wider rounded-lg border border-gray-200 bg-gray-50 text-gray-700 shadow-sm">
+                        {getStatusLabel(student.status) || student.status}
+                      </div>
+
+                      {student.status === "document_upload" && mode === "partner" && (
+                        <Button
+                          className="bg-green-600 hover:bg-green-700 text-white text-xs h-9 min-h-[36px] px-3.5 rounded-lg shadow-sm"
+                          onClick={() => {
+                            if (
+                              confirm(
+                                "Are you sure you want to submit this student's application to Whiteboard for review?"
+                              )
+                            ) {
+                              handleSaveStatusTracker("document_review");
+                            }
+                          }}
+                        >
+                          Submit Application
+                        </Button>
+                      )}
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
 
         <Tabs defaultValue={defaultTab} className="w-full space-y-6">
           <TabsList className="flex w-full h-12 bg-transparent p-0 no-print gap-8 rounded-none justify-start">
@@ -903,7 +1031,6 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             <TableHead className="min-w-[140px]">University</TableHead>
                             <TableHead className="min-w-[140px]">Program</TableHead>
                             <TableHead className="whitespace-nowrap w-[80px]">Intake</TableHead>
-                            <TableHead className="min-w-[100px]">Created By</TableHead>
                             <TableHead className="whitespace-nowrap w-[120px]">Status</TableHead>
                           </TableRow>
                         </TableHeader>
@@ -924,9 +1051,6 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                               </TableCell>
                               <TableCell className="text-xs text-gray-900 whitespace-nowrap">
                                 {app.courses?.intake_months?.[0] || "—"}
-                              </TableCell>
-                              <TableCell className="text-xs text-gray-900 whitespace-nowrap">
-                                {student?.partner_id === app.partner_id ? "Partner" : "Admin"}
                               </TableCell>
                               <TableCell className="whitespace-nowrap">
                                 <Badge variant="outline" className={`${statusColors[app.status] || "bg-gray-100 text-gray-800"} text-[10px] px-2 border-transparent whitespace-nowrap`}>
@@ -1715,20 +1839,10 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
             <Card className="print:border-none print:shadow-none border border-gray-200 shadow-sm">
               <CardContent className="p-6 sm:p-7 print:p-0 space-y-6">
                 
-                {/* Profile Card Header with single Edit Profile button */}
-                <div className="flex items-center justify-between pb-3 border-b border-gray-100 no-print">
-                  <div>
-                    <h3 className="text-base font-bold text-[#1E293B]">Student Profile</h3>
-                    <p className="text-xs text-gray-500 mt-0.5">Personal, academic, and contact information</p>
-                  </div>
-                  <Button
-                    size="sm"
-                    className="h-8 px-3.5 text-xs font-semibold bg-[#2F4F97] hover:bg-[#243e78] text-white shadow-sm gap-1.5"
-                    onClick={handleEditProfile}
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                    Edit Profile
-                  </Button>
+                {/* Profile Card Header */}
+                <div className="pb-3 border-b border-gray-100 no-print">
+                  <h3 className="text-base font-bold text-[#1E293B]">Student Profile</h3>
+                  <p className="text-xs text-gray-500 mt-0.5">Personal, academic, and contact information</p>
                 </div>
 
                 {/* ── Section 1: Personal Information ── */}

@@ -49,8 +49,9 @@ export function StudentChatWidget({
   const [inputText, setInputText] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const chatScrollRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const prevMsgCountRef = useRef<number>(0);
 
   const headers = {
     apikey: SUPABASE_KEY,
@@ -70,7 +71,7 @@ export function StudentChatWidget({
 
       if (error) throw error;
       if (Array.isArray(data)) {
-        setMessages(data as ChatMessage[]);
+        setMessages(data as unknown as ChatMessage[]);
       }
     } catch (err: any) {
       if (!silent) {
@@ -124,9 +125,12 @@ export function StudentChatWidget({
     };
   }, [student?.id, session?.access_token]);
 
-  // Scroll to bottom when messages update
+  // Scroll ONLY the internal chat container to bottom when new messages arrive (without moving window)
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatScrollRef.current && messages.length > prevMsgCountRef.current) {
+      chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+    }
+    prevMsgCountRef.current = messages.length;
   }, [messages]);
 
   // ─── Send Message ───────────────────────────────────────────
@@ -157,7 +161,7 @@ export function StudentChatWidget({
 
       if (error) throw error;
 
-      const savedMsg = data?.[0] || {
+      const savedMsg: ChatMessage = (data?.[0] as unknown as ChatMessage) || {
         ...newRecord,
         id: `temp-${Date.now()}`,
         created_at: new Date().toISOString(),
@@ -266,7 +270,7 @@ export function StudentChatWidget({
       </CardHeader>
 
       {/* ── Message Stream ── */}
-      <CardContent className="flex-1 p-3.5 overflow-y-auto space-y-3 bg-[#F8FAFC]/50 custom-scrollbar">
+      <CardContent ref={chatScrollRef} className="flex-1 p-3.5 overflow-y-auto space-y-3 bg-[#F8FAFC]/50 custom-scrollbar">
         {loading ? (
           <div className="flex flex-col items-center justify-center h-full gap-2 text-gray-400 py-10">
             <Loader2 className="w-5 h-5 animate-spin text-[#2F4F97]" />
@@ -356,7 +360,6 @@ export function StudentChatWidget({
                 </div>
               );
             })}
-            <div ref={messagesEndRef} />
           </div>
         )}
       </CardContent>

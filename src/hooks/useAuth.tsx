@@ -67,42 +67,69 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isRecoverySession, setIsRecoverySession] = useState(false);
 
   useEffect(() => {
+    let mounted = true;
+
+    const initAuth = async () => {
+      try {
+        const { data: { session: sess } } = await supabase.auth.getSession();
+        if (!mounted) return;
+
+        if (sess?.user) {
+          // Pre-populate with cached roles for instant flicker-free access
+          const cached = localStorage.getItem(`auth_roles_${sess.user.id}`);
+          if (cached) {
+            try {
+              const parsed = JSON.parse(cached);
+              if (Array.isArray(parsed) && parsed.length > 0) {
+                setRoles(parsed);
+              }
+            } catch (_) {}
+          }
+          setSession(sess);
+
+          // Await fresh roles from DB before ending loading
+          const r = await fetchUserRoles(sess.user.id, sess.access_token);
+          if (!mounted) return;
+          setRoles(r);
+          localStorage.setItem(`auth_roles_${sess.user.id}`, JSON.stringify(r));
+        } else {
+          setRoles([]);
+          setSession(null);
+        }
+      } catch (err) {
+        console.error("Auth init error:", err);
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    initAuth();
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, sess) => {
       if (event === 'PASSWORD_RECOVERY') {
         setIsRecoverySession(true);
       }
-      
-      setSession(prev => {
-        if (prev?.access_token === sess?.access_token) return prev;
-        
-        // Only fetch roles if we're actually setting a new session
-        if (sess?.user) {
-          fetchUserRoles(sess.user.id, sess.access_token).then(r => setRoles(r));
-        } else {
-          setRoles([]);
-        }
-        
-        return sess;
-      });
-      
+
+      if (sess?.user) {
+        setSession(sess);
+        const r = await fetchUserRoles(sess.user.id, sess.access_token);
+        if (!mounted) return;
+        setRoles(r);
+        localStorage.setItem(`auth_roles_${sess.user.id}`, JSON.stringify(r));
+      } else {
+        if (!mounted) return;
+        setRoles([]);
+        setSession(null);
+      }
       setLoading(false);
     });
 
-    supabase.auth.getSession().then(({ data: { session: sess } }) => {
-      setSession(prev => {
-        if (prev?.access_token === sess?.access_token) return prev;
-        
-        if (sess?.user) {
-          fetchUserRoles(sess.user.id, sess.access_token).then(r => setRoles(r));
-        } else {
-          setRoles([]);
-        }
-        return sess;
-      });
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = useCallback(async (email: string, password: string) => {
@@ -110,6 +137,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) return { success: false, error: error.message };
     const r = await fetchUserRoles(data.user.id, data.session?.access_token);
     setRoles(r);
+    localStorage.setItem(`auth_roles_${data.user.id}`, JSON.stringify(r));
     const redirectTo = r.includes("admin") ? "/admin" : r.includes("partner") ? "/partner-dashboard" : "/";
     return { success: true, redirectTo };
   }, []);
@@ -128,10 +156,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signOut = useCallback(async () => {
+    if (session?.user) {
+      localStorage.removeItem(`auth_roles_${session.user.id}`);
+    }
     await supabase.auth.signOut();
     setSession(null);
     setRoles([]);
-  }, []);
+  }, [session?.user]);
 
   const resetPassword = useCallback(async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email);
