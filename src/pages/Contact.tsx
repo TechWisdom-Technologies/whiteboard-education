@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { 
   Phone, Mail, MapPin, Clock, MessageSquare, 
-  Send, CheckCircle2, Globe,
+  Send, CheckCircle2, Globe, RotateCcw,
   Facebook, Instagram, Linkedin, Youtube
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -87,7 +87,7 @@ export default function Contact() {
 
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
-                    <div className="mt-1 bg-white/5 border border-white/10 p-2 rounded-xl text-[#2F4F97]">
+                    <div className="mt-1 bg-white/5 border border-white p-2 rounded-xl text-white">
                       <MapPin className="h-4 w-4" />
                     </div>
                     <div>
@@ -100,7 +100,7 @@ export default function Contact() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <div className="mt-1 bg-white/5 border border-white/10 p-2 rounded-xl text-[#2F4F97]">
+                    <div className="mt-1 bg-white/5 border border-white p-2 rounded-xl text-white">
                       <Phone className="h-4 w-4" />
                     </div>
                     <div>
@@ -110,7 +110,7 @@ export default function Contact() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <div className="mt-1 bg-white/5 border border-white/10 p-2 rounded-xl text-[#2F4F97]">
+                    <div className="mt-1 bg-white/5 border border-white p-2 rounded-xl text-white">
                       <Mail className="h-4 w-4" />
                     </div>
                     <div>
@@ -120,7 +120,7 @@ export default function Contact() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <div className="mt-1 bg-white/5 border border-white/10 p-2 rounded-xl text-[#2F4F97]">
+                    <div className="mt-1 bg-white/5 border border-white p-2 rounded-xl text-white">
                       <Clock className="h-4 w-4" />
                     </div>
                     <div>
@@ -153,28 +153,28 @@ export default function Contact() {
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-1.5">
-                    <Label htmlFor="name" className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Full Name</Label>
+                    <Label htmlFor="name" className="text-[12px] font-bold text-black uppercase tracking-widest">Full Name</Label>
                     <Input name="name" id="name" placeholder="John Doe" required className="h-11 bg-gray-50 border-gray-200 text-[#1E293B] focus:text-[#1E293B] focus:caret-[#2F4F97] focus:placeholder:text-gray-400 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] text-[13px] rounded-xl transition-colors shadow-none" />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="email" className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Email Address</Label>
+                    <Label htmlFor="email" className="text-[12px] font-bold text-black uppercase tracking-widest">Email Address</Label>
                     <Input name="email" id="email" type="email" placeholder="john@example.com" required className="h-11 bg-gray-50 border-gray-200 text-[#1E293B] focus:text-[#1E293B] focus:caret-[#2F4F97] focus:placeholder:text-gray-400 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] text-[13px] rounded-xl transition-colors shadow-none" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-1.5">
-                    <Label htmlFor="phone" className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Contact Number</Label>
+                    <Label htmlFor="phone" className="text-[12px] font-bold text-black uppercase tracking-widest">Contact Number</Label>
                     <Input name="phone" id="phone" placeholder="+880 1XXX-XXXXXX" required className="h-11 bg-gray-50 border-gray-200 text-[#1E293B] focus:text-[#1E293B] focus:caret-[#2F4F97] focus:placeholder:text-gray-400 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] text-[13px] rounded-xl transition-colors shadow-none" />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="subject" className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Subject</Label>
+                    <Label htmlFor="subject" className="text-[12px] font-bold text-black uppercase tracking-widest">Subject</Label>
                     <Input name="subject" id="subject" placeholder="How can we help?" required className="h-11 bg-gray-50 border-gray-200 text-[#1E293B] focus:text-[#1E293B] focus:caret-[#2F4F97] focus:placeholder:text-gray-400 focus:bg-white focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] text-[13px] rounded-xl transition-colors shadow-none" />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="message" className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Message Details</Label>
+                  <Label htmlFor="message" className="text-[12px] font-bold text-black uppercase tracking-widest">Message Details</Label>
                   <Textarea 
                     name="message"
                     id="message" 
@@ -184,20 +184,30 @@ export default function Contact() {
                   />
                 </div>
 
-                <Button 
-                  type="submit" 
-                  className="w-full h-12 font-bold text-[14px] rounded-xl transition-all flex items-center justify-center gap-2 mt-2"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <div className="h-4 w-4 border-2 border-[#1E293B]/30 border-t-[#1E293B] animate-spin rounded-full" />
-                  ) : (
-                    <>
-                      <Send className="h-4 w-4" />
-                      Submit Message
-                    </>
-                  )}
-                </Button>
+                <div className="flex items-center gap-3 mt-4">
+                  <Button 
+                    type="reset"
+                    variant="outline"
+                    className="w-1/2 h-12 font-bold text-[14px] rounded-xl transition-all flex items-center justify-center gap-2 border-[#1E293B] text-[#1E293B] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97]"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    Reset
+                  </Button>
+                  <Button 
+                    type="submit" 
+                    className="w-1/2 h-12 font-bold text-[14px] rounded-xl transition-all flex items-center justify-center gap-2"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <div className="h-4 w-4 border-2 border-white/30 border-t-white animate-spin rounded-full" />
+                    ) : (
+                      <>
+                        <Send className="h-4 w-4" />
+                        Submit Message
+                      </>
+                    )}
+                  </Button>
+                </div>
               </form>
             </div>
           </div>
