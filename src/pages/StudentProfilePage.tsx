@@ -58,6 +58,7 @@ import { toast } from "sonner";
 import { StatusTracker } from "@/components/ui/StatusTracker";
 import { getStatusLabel } from "@/config/statusFlow";
 import { LoadingScreen } from "@/components/ui/loading-screen";
+import { StudentChatWidget } from "@/components/student/StudentChatWidget";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -814,8 +815,14 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
           </div>
         </div>
 
-        {/* Global Student Info Card */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 no-print mt-2">
+        {/* Main Grid: Left (Student Info + Tabs) | Right (Live Discussion / Chat Widget) */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+          
+          {/* Main Left Column (8 cols on XL) */}
+          <div className="xl:col-span-8 space-y-6 min-w-0">
+
+            {/* Global Student Info Card */}
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 no-print">
            <div className="flex items-center gap-4">
              {student.passport_photo_url ? (
                <img src={student.passport_photo_url} alt={student.full_name} className="object-cover border border-gray-200 rounded-md shadow-sm" style={{ width: '35mm', height: '45mm' }} />
@@ -1961,6 +1968,21 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
         </TabsContent>
         
       </Tabs>
+
+          </div>
+
+          {/* Right Column: Chat & Discussion Widget (4 cols on XL) */}
+          <div className="xl:col-span-4 xl:sticky xl:top-[76px] xl:self-start no-print">
+            <StudentChatWidget
+              student={student}
+              session={session}
+              user={user}
+              mode={mode}
+              partner={partner}
+            />
+          </div>
+
+        </div>
       </div>
 
       {/* Add Application Modal */}
