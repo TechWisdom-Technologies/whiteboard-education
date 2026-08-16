@@ -465,7 +465,7 @@ export default function PartnerAddStudent() {
           variant="ghost"
           size="icon"
           onClick={handleBack}
-          className="h-8 w-8 rounded-full bg-[#2F4F97]/10 hover:bg-[#2F4F97]/20 transition-colors flex-shrink-0"
+          className="h-8 w-8 rounded-full bg-theme/10 hover:bg-theme/20 transition-colors flex-shrink-0"
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
@@ -485,7 +485,7 @@ export default function PartnerAddStudent() {
               {/* ── Personal Information ── */}
               <div>
                 <div className="flex items-center gap-2 mb-4">
-                  <User className="w-4 h-4 text-[#2F4F97]" />
+                  <User className="w-4 h-4 text-theme" />
                   <h3 className="font-semibold text-sm text-gray-900">Personal Information</h3>
                 </div>
 
@@ -537,7 +537,7 @@ export default function PartnerAddStudent() {
                         variant="outline"
                         disabled={uploadingPhoto}
                         onClick={() => photoInputRef.current?.click()}
-                        className="h-8 px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white border-gray-200 shadow-sm"
+                        className="h-8 px-3 text-xs font-semibold text-theme hover:bg-theme hover:text-white border-gray-200 shadow-sm"
                       >
                         {uploadingPhoto ? (
                           <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
@@ -679,7 +679,7 @@ export default function PartnerAddStudent() {
               {/* ── Academic Background ── */}
               <div>
                 <div className="flex items-center gap-2 mb-4">
-                  <GraduationCap className="w-4 h-4 text-[#2F4F97]" />
+                  <GraduationCap className="w-4 h-4 text-theme" />
                   <h3 className="font-semibold text-sm text-gray-900">Academic Background</h3>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -768,7 +768,7 @@ export default function PartnerAddStudent() {
               {/* ── Language Proficiency ── */}
               <div>
                 <div className="flex items-center gap-2 mb-4">
-                  <Languages className="w-4 h-4 text-[#2F4F97]" />
+                  <Languages className="w-4 h-4 text-theme" />
                   <h3 className="font-semibold text-sm text-gray-900">Language Proficiency</h3>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -836,16 +836,16 @@ export default function PartnerAddStudent() {
                   Cancel
                 </Button>
                 <Button
-                  className="h-10 px-6 bg-[#2F4F97] text-white border border-[#2F4F97] hover:bg-white hover:text-[#2F4F97] hover:border-[#2F4F97] transition-all duration-200 shadow-sm group"
+                  className="h-10 px-6 bg-theme text-white border border-theme hover:bg-white hover:text-theme hover:border-theme transition-all duration-200 shadow-sm group"
                   onClick={handleSubmit}
                   disabled={submitting}
                 >
                   {submitting ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin text-white group-hover:text-[#2F4F97]" />
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin text-white group-hover:text-theme" />
                   ) : isEditMode ? (
-                    <Save className="h-4 w-4 mr-2 text-white group-hover:text-[#2F4F97]" />
+                    <Save className="h-4 w-4 mr-2 text-white group-hover:text-theme" />
                   ) : (
-                    <UserPlus className="h-4 w-4 mr-2 text-white group-hover:text-[#2F4F97]" />
+                    <UserPlus className="h-4 w-4 mr-2 text-white group-hover:text-theme" />
                   )}
                   {isEditMode ? "Update Student" : "Save Student"}
                 </Button>
@@ -861,7 +861,7 @@ export default function PartnerAddStudent() {
             {/* Live Profile Card */}
             <Card className="border border-gray-200 shadow-sm overflow-hidden">
               {/* Header gradient */}
-              <div className="h-20 bg-gradient-to-br from-[#2F4F97] to-[#1E3A6F] relative">
+              <div className="h-20 bg-gradient-to-br from-theme to-[#1E3A6F] relative">
                 <div className="absolute -bottom-8 left-5">
                   <div className="w-16 h-16 rounded-xl bg-white shadow-lg border-2 border-white overflow-hidden flex items-center justify-center">
                     {form.passport_photo_url ? (
@@ -871,7 +871,7 @@ export default function PartnerAddStudent() {
                         className="w-full h-full object-cover"
                       />
                     ) : form.first_name ? (
-                      <span className="text-2xl font-bold text-[#2F4F97]">
+                      <span className="text-2xl font-bold text-theme">
                         {form.first_name.charAt(0).toUpperCase()}{form.last_name ? form.last_name.charAt(0).toUpperCase() : ""}
                       </span>
                     ) : (
@@ -944,7 +944,7 @@ export default function PartnerAddStudent() {
                     <div className="border-t border-gray-100 pt-3">
                       <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Academic</p>
                       <div className="flex flex-wrap gap-1.5">
-                        <Badge variant="outline" className="text-[10px] bg-[#2F4F97]/5 text-[#2F4F97] border-[#2F4F97]/20">
+                        <Badge variant="outline" className="text-[10px] bg-theme/5 text-theme border-theme/20">
                           {form.education_level}
                         </Badge>
                         {isSSCOrHSC && form.stream && (
@@ -998,11 +998,11 @@ export default function PartnerAddStudent() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-semibold text-gray-700">Profile Completeness</span>
-                  <span className="text-xs font-bold text-[#2F4F97]">{filledFields}/{totalFields}</span>
+                  <span className="text-xs font-bold text-theme">{filledFields}/{totalFields}</span>
                 </div>
                 <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-[#2F4F97] to-[#4A6FC7] rounded-full transition-all duration-500 ease-out"
+                    className="h-full bg-gradient-to-r from-theme to-[#4A6FC7] rounded-full transition-all duration-500 ease-out"
                     style={{ width: `${(filledFields / totalFields) * 100}%` }}
                   />
                 </div>

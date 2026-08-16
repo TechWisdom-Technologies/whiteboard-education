@@ -196,12 +196,12 @@ export default function AdminPartners() {
           >
             {tab.label}
             <span className={`ml-1.5 text-[12px] font-normal px-1.5 py-0.5 rounded-xl ${
-              activeTab === tab.key ? "bg-[#2F4F97]/15 text-[#2F4F97]" : "bg-gray-100 text-gray-400"
+              activeTab === tab.key ? "bg-[#1d283a]/15 text-[#1d283a]" : "bg-gray-100 text-gray-400"
             }`}>
               {counts[tab.key]}
             </span>
             {activeTab === tab.key && (
-              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#2F4F97]" />
+              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1d283a]" />
             )}
           </button>
         ))}

@@ -45,7 +45,7 @@ const studentStatusLabels: Record<string, { label: string; color: string }> = {
   documents_verified: { label: "Docs Verified", color: "bg-blue-500/10 text-blue-600" },
   university_applied: { label: "Applied", color: "bg-indigo-500/10 text-indigo-600" },
   offer_letter: { label: "Offer Letter", color: "bg-purple-500/10 text-purple-600" },
-  emgs_processing: { label: "EMGS", color: "bg-[#2F4F97]/10 text-[#2F4F97]" },
+  emgs_processing: { label: "EMGS", color: "bg-[#1d283a]/10 text-[#1d283a]" },
   visa_approved: { label: "Visa ✓", color: "bg-emerald-500/10 text-emerald-600" },
   travel_ready: { label: "Travel Ready", color: "bg-teal-500/10 text-teal-600" },
   enrolled: { label: "Enrolled", color: "bg-green-600/10 text-green-700" },
@@ -158,7 +158,7 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-[12px] flex items-center gap-2">
-              <Users className="h-4 w-4 text-[#2F4F97]" />
+              <Users className="h-4 w-4 text-[#1d283a]" />
               Recent Partner Agents
             </CardTitle>
           </CardHeader>
@@ -204,7 +204,7 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-[12px] flex items-center gap-2">
-              <UserCheck className="h-4 w-4 text-[#2F4F97]" />
+              <UserCheck className="h-4 w-4 text-[#1d283a]" />
               Recent Students
             </CardTitle>
           </CardHeader>

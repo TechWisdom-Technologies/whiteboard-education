@@ -64,6 +64,8 @@
     --warning-foreground: 0 0% 8%;
     --gold: 222 53% 39%;
     --gold-foreground: 217 33% 17%;
+    
+    --theme-primary: 47 79 151; /* #2F4F97 */
   }
 
   .dark {
@@ -646,3 +648,10 @@
 .dashboard-theme td * {
   font-weight: 400 !important;
 }
+
+@layer base {
+  .admin-theme {
+    --theme-primary: 29 40 58; /* #1d283a */
+  }
+}
+

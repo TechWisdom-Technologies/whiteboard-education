@@ -178,7 +178,7 @@ export function AccountManagerSection() {
       <CardHeader className="pb-4 border-b border-gray-100 flex flex-row items-center justify-between">
         <div>
           <CardTitle className="flex items-center gap-2 text-base font-semibold text-[#1E293B]">
-            <UserCircle className="h-5 w-5 text-[#2F4F97]" />
+            <UserCircle className="h-5 w-5 text-[#1d283a]" />
             Account Managers
           </CardTitle>
           <CardDescription className="mt-1">
@@ -208,17 +208,17 @@ export function AccountManagerSection() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {managers.map((m) => (
-              <div key={m.id} className="p-4 rounded-xl border border-gray-200 bg-white shadow-sm flex items-start justify-between gap-4 hover:border-[#2F4F97]/40 transition-colors">
+              <div key={m.id} className="p-4 rounded-xl border border-gray-200 bg-white shadow-sm flex items-start justify-between gap-4 hover:border-[#1d283a]/40 transition-colors">
                 <div className="flex items-start gap-3.5 min-w-0">
-                  <Avatar className="w-12 h-12 rounded-full shrink-0 border-2 border-[#2F4F97]/20">
+                  <Avatar className="w-12 h-12 rounded-full shrink-0 border-2 border-[#1d283a]/20">
                     <AvatarImage src={m.photo_url || ""} alt={m.name} className="object-cover" />
-                    <AvatarFallback className="bg-[#2F4F97]/10 text-[#2F4F97] font-bold text-base">
+                    <AvatarFallback className="bg-[#1d283a]/10 text-[#1d283a] font-bold text-base">
                       {m.name ? m.name.charAt(0).toUpperCase() : 'A'}
                     </AvatarFallback>
                   </Avatar>
                   <div className="min-w-0">
                     <p className="text-[14px] font-bold text-[#1E293B] truncate">{m.name || "Unnamed Manager"}</p>
-                    <p className="text-[12px] font-medium text-[#2F4F97] mt-0.5 truncate">{m.title || "Partner Relations"}</p>
+                    <p className="text-[12px] font-medium text-[#1d283a] mt-0.5 truncate">{m.title || "Partner Relations"}</p>
                     <div className="space-y-1 mt-2.5">
                       {m.email && (
                         <p className="flex items-center gap-2 text-[12px] text-muted-foreground truncate">
@@ -234,7 +234,7 @@ export function AccountManagerSection() {
                   </div>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
-                  <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(m)} className="h-8 w-8 text-slate-600 hover:text-[#2F4F97]">
+                  <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(m)} className="h-8 w-8 text-slate-600 hover:text-[#1d283a]">
                     <Edit2 className="h-4 w-4" />
                   </Button>
                   <Button variant="ghost" size="icon" onClick={() => handleDelete(m.id)} className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive">
@@ -256,9 +256,9 @@ export function AccountManagerSection() {
             {/* Photo Upload */}
             <div className="flex flex-col items-center gap-3 pb-2">
               <div className="relative group cursor-pointer" onClick={() => photoInputRef.current?.click()}>
-                <Avatar className="w-20 h-20 rounded-full border-4 border-[#2F4F97]/20 shadow">
+                <Avatar className="w-20 h-20 rounded-full border-4 border-[#1d283a]/20 shadow">
                   <AvatarImage src={formData.photo_url || ""} alt="Manager photo" className="object-cover" />
-                  <AvatarFallback className="bg-[#2F4F97]/10 text-[#2F4F97] font-bold text-2xl">
+                  <AvatarFallback className="bg-[#1d283a]/10 text-[#1d283a] font-bold text-2xl">
                     {formData.name ? formData.name.charAt(0).toUpperCase() : <UserCircle className="h-8 w-8" />}
                   </AvatarFallback>
                 </Avatar>
@@ -470,7 +470,7 @@ export function TutorialsSection() {
       <CardHeader className="pb-4 border-b border-gray-100 flex flex-row items-center justify-between">
         <div>
           <CardTitle className="flex items-center gap-2 text-base font-semibold text-[#1E293B]">
-            <PlaySquare className="h-5 w-5 text-[#2F4F97]" />
+            <PlaySquare className="h-5 w-5 text-[#1d283a]" />
             Platform Tutorials
           </CardTitle>
           <CardDescription className="mt-1">
@@ -502,8 +502,8 @@ export function TutorialsSection() {
             {tutorials.map((t) => (
               <div key={t.id} className={`flex items-center justify-between gap-4 p-4 rounded-xl border transition-colors ${t.is_active ? 'bg-white border-gray-200 shadow-sm' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
                 <div className="flex items-center gap-3.5 min-w-0">
-                  <div className="h-11 w-11 rounded-lg bg-[#2F4F97]/10 flex items-center justify-center shrink-0">
-                    <Video className="h-5 w-5 text-[#2F4F97]" />
+                  <div className="h-11 w-11 rounded-lg bg-[#1d283a]/10 flex items-center justify-center shrink-0">
+                    <Video className="h-5 w-5 text-[#1d283a]" />
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
@@ -525,7 +525,7 @@ export function TutorialsSection() {
                   >
                     {t.is_active ? 'Deactivate' : 'Activate'}
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(t)} className="h-8 w-8 text-slate-600 hover:text-[#2F4F97]">
+                  <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(t)} className="h-8 w-8 text-slate-600 hover:text-[#1d283a]">
                     <Edit2 className="h-4 w-4" />
                   </Button>
                   <Button variant="ghost" size="icon" onClick={() => handleDelete(t.id!)} className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive">
@@ -587,7 +587,7 @@ export function TutorialsSection() {
                   id="active"
                   checked={formData.is_active}
                   onChange={(e) => setFormData(p => ({ ...p, is_active: e.target.checked }))}
-                  className="rounded border-gray-300 text-[#2F4F97] focus:ring-[#2F4F97]"
+                  className="rounded border-gray-300 text-[#1d283a] focus:ring-[#1d283a]"
                 />
                 <Label htmlFor="active" className="text-sm font-medium cursor-pointer">Active / Visible</Label>
               </div>

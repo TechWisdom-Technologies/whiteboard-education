@@ -29,7 +29,7 @@ const statusColors: Record<string, string> = {
   application_on_hold_intake: "bg-amber-500/10 text-amber-600 border-amber-500/20",
   application_on_hold_wb: "bg-amber-500/10 text-amber-600 border-amber-500/20",
   application_on_hold_university: "bg-amber-500/10 text-amber-600 border-amber-500/20",
-  application_submitted: "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]/20",
+  application_submitted: "bg-[#1d283a]/10 text-[#1d283a] border-[#1d283a]/20",
   offer_letter_received: "bg-purple-500/10 text-purple-600 border-purple-500/30",
   rejected_by_university: "bg-destructive/10 text-destructive border-destructive/20",
   ready_for_visa_application: "bg-teal-500/10 text-teal-600 border-teal-500/30",
@@ -270,7 +270,7 @@ export default function AdminStudents() {
           </div>
 
           <div className="flex items-center gap-2 flex-1 min-w-[200px]">
-            <Button onClick={handleSearch} className="w-full gap-2 bg-[#2F4F97] hover:bg-white text-white hover:text-[#2F4F97] border border-transparent hover:border-[#2F4F97] transition-colors"><Search className="h-4 w-4" /> Search</Button>
+            <Button onClick={handleSearch} className="w-full gap-2 bg-[#1d283a] hover:bg-white text-white hover:text-[#1d283a] border border-transparent hover:border-[#1d283a] transition-colors"><Search className="h-4 w-4" /> Search</Button>
             <Button variant="outline" onClick={handleReset} className="w-full gap-2 border-gray-300">Clear</Button>
           </div>
         </div>

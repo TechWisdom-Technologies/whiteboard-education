@@ -245,7 +245,7 @@ export default function AdminPartnerProfile() {
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 relative">
           <div className="flex gap-5 items-start">
             <div className="h-20 w-20 rounded-lg bg-muted border border-border flex items-center justify-center overflow-hidden shrink-0 shadow-sm print:h-24 print:w-24">
-              <Building2 className="h-10 w-10 text-[#2F4F97]" />
+              <Building2 className="h-10 w-10 text-[#1d283a]" />
             </div>
             
             <div className="pt-1">
@@ -316,7 +316,7 @@ export default function AdminPartnerProfile() {
           <CardContent className="p-5 sm:p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="flex items-center gap-2 text-[12px] font-normal text-[#1E293B]">
-                <FileCheck className="h-4 w-4 text-[#2F4F97]" />
+                <FileCheck className="h-4 w-4 text-[#1d283a]" />
                 Agency Documents
               </h3>
             </div>
@@ -348,7 +348,7 @@ export default function AdminPartnerProfile() {
                         target="_blank"
                         rel="noopener noreferrer"
                         title="Preview Document"
-                        className="h-7 w-7 rounded-full bg-white border border-border flex items-center justify-center text-[#2F4F97] hover:bg-muted transition-colors shadow-sm"
+                        className="h-7 w-7 rounded-full bg-white border border-border flex items-center justify-center text-[#1d283a] hover:bg-muted transition-colors shadow-sm"
                       >
                         <ExternalLink className="h-3.5 w-3.5" />
                       </a>
@@ -368,7 +368,7 @@ export default function AdminPartnerProfile() {
                 {/* ── Section 1: Agency Information ──────────────── */}
                 <div className="flex items-center justify-between pb-4">
                   <h3 className="flex items-center gap-2.5 text-[12px] font-normal text-[#1E293B] uppercase tracking-wide">
-                    <Building2 className="h-4 w-4 text-[#2F4F97]" />
+                    <Building2 className="h-4 w-4 text-[#1d283a]" />
                     Agency Information
                   </h3>
                 </div>
@@ -383,7 +383,7 @@ export default function AdminPartnerProfile() {
                 <div className="border-t border-border/30 pt-5 mt-4 print:border-none">
                   <div className="flex items-center justify-between pb-4">
                     <h3 className="flex items-center gap-2.5 text-[12px] font-normal text-[#1E293B] uppercase tracking-wide">
-                      <User className="h-4 w-4 text-[#2F4F97]" />
+                      <User className="h-4 w-4 text-[#1d283a]" />
                       Contact Person
                     </h3>
                   </div>
@@ -401,7 +401,7 @@ export default function AdminPartnerProfile() {
           <CardContent className="p-6 space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-[12px] font-normal text-[#1E293B]">
-                <ClipboardList className="h-4 w-4 text-[#2F4F97]" />
+                <ClipboardList className="h-4 w-4 text-[#1d283a]" />
                 Admin Notes (Visible to Partner)
               </div>
             </div>
@@ -419,7 +419,7 @@ export default function AdminPartnerProfile() {
         {/* ── Print-Only Documents Checklist ──────────────────────────── */}
         <div className="hidden print:block pt-8 mt-8">
           <h3 className="text-[12px] font-normal text-[#1E293B] uppercase tracking-wide mb-5 flex items-center gap-2.5">
-            <FileCheck className="h-4 w-4 text-[#2F4F97]" />
+            <FileCheck className="h-4 w-4 text-[#1d283a]" />
             Uploaded Documents Checklist
           </h3>
           <div className="grid grid-cols-2 gap-y-4 gap-x-8">

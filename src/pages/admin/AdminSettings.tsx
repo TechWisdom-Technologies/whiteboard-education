@@ -188,21 +188,21 @@ export default function AdminSettings() {
           <Button 
             variant="ghost" 
             onClick={() => setActiveTab("profile")}
-            className={`justify-start h-10 px-4 text-[13px] font-normal transition-colors ${activeTab === "profile" ? "bg-[#2F4F97]/10 text-[#2F4F97] hover:bg-[#2F4F97]/20" : "text-gray-500 hover:text-[#1E293B] hover:bg-gray-100/50"}`}
+            className={`justify-start h-10 px-4 text-[13px] font-normal transition-colors ${activeTab === "profile" ? "bg-[#1d283a]/10 text-[#1d283a] hover:bg-[#1d283a]/20" : "text-gray-500 hover:text-[#1E293B] hover:bg-gray-100/50"}`}
           >
             <User className="mr-3 h-4 w-4" /> Admin Profile
           </Button>
           <Button 
             variant="ghost" 
             onClick={() => setActiveTab("security")}
-            className={`justify-start h-10 px-4 text-[13px] font-normal transition-colors ${activeTab === "security" ? "bg-[#2F4F97]/10 text-[#2F4F97] hover:bg-[#2F4F97]/20" : "text-gray-500 hover:text-[#1E293B] hover:bg-gray-100/50"}`}
+            className={`justify-start h-10 px-4 text-[13px] font-normal transition-colors ${activeTab === "security" ? "bg-[#1d283a]/10 text-[#1d283a] hover:bg-[#1d283a]/20" : "text-gray-500 hover:text-[#1E293B] hover:bg-gray-100/50"}`}
           >
             <Lock className="mr-3 h-4 w-4" /> Security
           </Button>
           <Button 
             variant="ghost" 
             onClick={() => setActiveTab("platform")}
-            className={`justify-start h-10 px-4 text-[13px] font-normal transition-colors ${activeTab === "platform" ? "bg-[#2F4F97]/10 text-[#2F4F97] hover:bg-[#2F4F97]/20" : "text-gray-500 hover:text-[#1E293B] hover:bg-gray-100/50"}`}
+            className={`justify-start h-10 px-4 text-[13px] font-normal transition-colors ${activeTab === "platform" ? "bg-[#1d283a]/10 text-[#1d283a] hover:bg-[#1d283a]/20" : "text-gray-500 hover:text-[#1E293B] hover:bg-gray-100/50"}`}
           >
             <Globe className="mr-3 h-4 w-4" /> Platform Settings
           </Button>
@@ -225,7 +225,7 @@ export default function AdminSettings() {
                   <div className="relative group shrink-0">
                     <Avatar className="h-28 w-28 border-4 border-background shadow-md rounded-full overflow-hidden shrink-0">
                       <AvatarImage src={profile.avatar_url} className="object-cover w-full h-full rounded-full" />
-                      <AvatarFallback className="text-sm font-semibold bg-[#2F4F97]/10 text-[#2F4F97] rounded-full">{initials}</AvatarFallback>
+                      <AvatarFallback className="text-sm font-semibold bg-[#1d283a]/10 text-[#1d283a] rounded-full">{initials}</AvatarFallback>
                     </Avatar>
                     <button
                       onClick={() => fileInputRef.current?.click()}
@@ -254,7 +254,7 @@ export default function AdminSettings() {
                         value={profile.display_name}
                         onChange={e => setProfile(prev => ({ ...prev, display_name: e.target.value }))}
                         placeholder="E.g. John Doe"
-                        className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] transition-colors shadow-sm"
+                        className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#1d283a] focus:ring-1 focus:ring-[#1d283a] transition-colors shadow-sm"
                       />
                     </div>
                     <div className="space-y-2">
@@ -299,7 +299,7 @@ export default function AdminSettings() {
 
                 {pwStep === "sending" && (
                   <div className="flex items-center gap-3 text-[13px] text-gray-500 p-4">
-                    <Loader2 className="h-5 w-5 animate-spin text-[#2F4F97]" />
+                    <Loader2 className="h-5 w-5 animate-spin text-[#1d283a]" />
                     Sending verification code to your email...
                   </div>
                 )}
@@ -316,7 +316,7 @@ export default function AdminSettings() {
                         value={otpCode}
                         onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                         placeholder="000000"
-                        className="h-12 text-lg bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm tracking-[0.5em] text-center font-medium"
+                        className="h-12 text-lg bg-white border-gray-200 focus:border-[#1d283a] focus:ring-1 focus:ring-[#1d283a] shadow-sm tracking-[0.5em] text-center font-medium"
                         maxLength={6}
                       />
                     </div>
@@ -331,7 +331,7 @@ export default function AdminSettings() {
 
                 {pwStep === "verifying" && (
                   <div className="flex items-center gap-3 text-[13px] text-gray-500 p-4">
-                    <Loader2 className="h-5 w-5 animate-spin text-[#2F4F97]" />
+                    <Loader2 className="h-5 w-5 animate-spin text-[#1d283a]" />
                     Verifying code...
                   </div>
                 )}
@@ -344,11 +344,11 @@ export default function AdminSettings() {
                     </div>
                     <div className="space-y-2">
                       <Label className="text-[12px] font-medium text-gray-700">New Password</Label>
-                      <Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Min. 6 characters" className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm" />
+                      <Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Min. 6 characters" className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#1d283a] focus:ring-1 focus:ring-[#1d283a] shadow-sm" />
                     </div>
                     <div className="space-y-2">
                       <Label className="text-[12px] font-medium text-gray-700">Confirm Password</Label>
-                      <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat new password" className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm" />
+                      <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat new password" className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#1d283a] focus:ring-1 focus:ring-[#1d283a] shadow-sm" />
                     </div>
                     <div className="flex gap-3 pt-4">
                       <Button onClick={handleUpdatePw} className="gap-2 font-medium text-[13px] h-10 px-6 flex-1">
@@ -361,7 +361,7 @@ export default function AdminSettings() {
 
                 {pwStep === "updating" && (
                   <div className="flex items-center gap-3 text-[13px] text-gray-500 p-4">
-                    <Loader2 className="h-5 w-5 animate-spin text-[#2F4F97]" />
+                    <Loader2 className="h-5 w-5 animate-spin text-[#1d283a]" />
                     Updating your password...
                   </div>
                 )}
@@ -395,7 +395,7 @@ export default function AdminSettings() {
                       <Input
                         value={systemSettings.companyName}
                         onChange={(e) => setSystemSettings(p => ({ ...p, companyName: e.target.value }))}
-                        className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm"
+                        className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#1d283a] focus:ring-1 focus:ring-[#1d283a] shadow-sm"
                       />
                     </div>
                     <div className="space-y-2">
@@ -405,7 +405,7 @@ export default function AdminSettings() {
                       <Input
                         value={systemSettings.contactEmail}
                         onChange={(e) => setSystemSettings(p => ({ ...p, contactEmail: e.target.value }))}
-                        className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm"
+                        className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#1d283a] focus:ring-1 focus:ring-[#1d283a] shadow-sm"
                       />
                     </div>
                     <div className="space-y-2">
@@ -415,7 +415,7 @@ export default function AdminSettings() {
                       <Input
                         value={systemSettings.phoneNumber}
                         onChange={(e) => setSystemSettings(p => ({ ...p, phoneNumber: e.target.value }))}
-                        className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97] shadow-sm"
+                        className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#1d283a] focus:ring-1 focus:ring-[#1d283a] shadow-sm"
                       />
                     </div>
                   </div>

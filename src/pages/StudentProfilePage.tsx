@@ -75,7 +75,7 @@ const statusColors: Record<string, string> = {
   application_on_hold_intake: "bg-amber-500/10 text-amber-600 border-amber-500/20",
   application_on_hold_wb: "bg-amber-500/10 text-amber-600 border-amber-500/20",
   application_on_hold_university: "bg-amber-500/10 text-amber-600 border-amber-500/20",
-  application_submitted: "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]/20",
+  application_submitted: "bg-theme/10 text-theme border-theme/20",
   offer_letter_received: "bg-purple-500/10 text-purple-600 border-purple-500/30",
   rejected_by_university: "bg-destructive/10 text-destructive border-destructive/20",
   ready_for_visa_application: "bg-teal-500/10 text-teal-600 border-teal-500/30",
@@ -187,7 +187,7 @@ function InfoRow({ label, value }: { label: string; value: string | number | nul
   const isEmpty = value === null || value === undefined || value === "" || (typeof value === "number" && value === 0);
   return (
     <div className="flex flex-col gap-1.5 py-1">
-      <span className="text-xs font-semibold text-[#2F4F97] uppercase tracking-wider">
+      <span className="text-xs font-semibold text-theme uppercase tracking-wider">
         {label}
       </span>
       <span className={`text-sm font-medium leading-snug ${isEmpty ? "text-amber-600/80 italic text-xs flex items-center gap-1 bg-amber-50/50 dark:bg-amber-950/10 px-2.5 py-1 rounded-2xl border border-amber-200/30 w-fit" : "text-[#1E293B]"}`}>
@@ -843,7 +843,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                     />
                   ) : (
                     <div
-                      className="bg-blue-100 flex items-center justify-center text-[#2F4F97] font-bold text-2xl border border-blue-200 rounded-lg shadow-sm"
+                      className="bg-blue-100 flex items-center justify-center text-theme font-bold text-2xl border border-blue-200 rounded-lg shadow-sm"
                       style={{ width: "35mm", height: "42mm" }}
                     >
                       {student.full_name?.charAt(0) || "S"}
@@ -863,17 +863,17 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                   </div>
 
                   {/* Info Grid in Theme Blue with generous vertical row spacing */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-3 sm:gap-y-3.5 text-xs text-[#2F4F97] font-medium pt-0.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-3 sm:gap-y-3.5 text-xs text-theme font-medium pt-0.5">
                     
                     <div className="flex items-center gap-2 min-w-0">
-                      <Mail className="w-3.5 h-3.5 text-[#2F4F97] shrink-0" />
+                      <Mail className="w-3.5 h-3.5 text-theme shrink-0" />
                       <span className="truncate" title={student.email || "N/A"}>
                         {student.email || "N/A"}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-2 min-w-0">
-                      <Phone className="w-3.5 h-3.5 text-[#2F4F97] shrink-0" />
+                      <Phone className="w-3.5 h-3.5 text-theme shrink-0" />
                       <span className="truncate" title={student.phone || "N/A"}>
                         {student.phone || "N/A"}
                       </span>
@@ -881,7 +881,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
 
                     {/* Degree: 'level of education' in 'program' (cgpa) */}
                     <div className="flex items-center gap-2 min-w-0">
-                      <GraduationCap className="w-3.5 h-3.5 text-[#2F4F97] shrink-0" />
+                      <GraduationCap className="w-3.5 h-3.5 text-theme shrink-0" />
                       <span className="truncate" title={(() => {
                         const level = student.degree_level || student.previous_degree || "";
                         const program = student.major || "";
@@ -904,7 +904,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                     </div>
 
                     <div className="flex items-center gap-2 min-w-0">
-                      <Award className="w-3.5 h-3.5 text-[#2F4F97] shrink-0" />
+                      <Award className="w-3.5 h-3.5 text-theme shrink-0" />
                       <span className="truncate">
                         {student.language_test_name || student.english_test_type ? (
                           `${student.language_test_name || student.english_test_type}: ${student.english_test_score || student.ielts_score || "MOI"}`
@@ -916,7 +916,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
 
                     {student.nationality && (
                       <div className="flex items-center gap-2 min-w-0">
-                        <Globe className="w-3.5 h-3.5 text-[#2F4F97] shrink-0" />
+                        <Globe className="w-3.5 h-3.5 text-theme shrink-0" />
                         <span className="truncate">
                           {student.nationality}
                         </span>
@@ -925,7 +925,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
 
                     {student.passport_number && (
                       <div className="flex items-center gap-2 min-w-0">
-                        <CreditCard className="w-3.5 h-3.5 text-[#2F4F97] shrink-0" />
+                        <CreditCard className="w-3.5 h-3.5 text-theme shrink-0" />
                         <span className="truncate">
                           Passport: {student.passport_number}
                           {student.passport_expiry_date ? ` (Exp: ${new Date(student.passport_expiry_date).toLocaleDateString("en-GB", { month: "short", year: "numeric" })})` : ""}
@@ -943,27 +943,27 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                       <Button
                         size="sm"
                         onClick={handleEditProfile}
-                        className="group h-9 min-h-[36px] px-4 text-xs font-semibold bg-[#2F4F97] text-white border border-[#2F4F97] hover:bg-white hover:text-[#2F4F97] hover:border-[#2F4F97] gap-1.5 shadow-sm transition-all duration-200 rounded-lg inline-flex items-center justify-center cursor-pointer"
+                        className="group h-9 min-h-[36px] px-4 text-xs font-semibold bg-theme text-white border border-theme hover:bg-white hover:text-theme hover:border-theme gap-1.5 shadow-sm transition-all duration-200 rounded-lg inline-flex items-center justify-center cursor-pointer"
                       >
-                        <Pencil className="w-3.5 h-3.5 text-white group-hover:text-[#2F4F97] transition-colors duration-200" />
+                        <Pencil className="w-3.5 h-3.5 text-white group-hover:text-theme transition-colors duration-200" />
                         Edit Profile
                       </Button>
 
                       <Button
                         size="sm"
                         onClick={() => window.print()}
-                        className="group h-9 min-h-[36px] px-4 text-xs font-semibold bg-white text-[#2F4F97] border border-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] gap-1.5 shadow-sm transition-all duration-200 rounded-lg inline-flex items-center justify-center cursor-pointer"
+                        className="group h-9 min-h-[36px] px-4 text-xs font-semibold bg-white text-theme border border-theme hover:bg-theme hover:text-white hover:border-theme gap-1.5 shadow-sm transition-all duration-200 rounded-lg inline-flex items-center justify-center cursor-pointer"
                       >
-                        <Download className="w-3.5 h-3.5 text-[#2F4F97] group-hover:text-white transition-colors duration-200" />
+                        <Download className="w-3.5 h-3.5 text-theme group-hover:text-white transition-colors duration-200" />
                         Save PDF
                       </Button>
 
                       <Button
                         size="sm"
                         onClick={() => window.print()}
-                        className="group h-9 min-h-[36px] px-4 text-xs font-semibold bg-white text-[#2F4F97] border border-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] gap-1.5 shadow-sm transition-all duration-200 rounded-lg inline-flex items-center justify-center cursor-pointer"
+                        className="group h-9 min-h-[36px] px-4 text-xs font-semibold bg-white text-theme border border-theme hover:bg-theme hover:text-white hover:border-theme gap-1.5 shadow-sm transition-all duration-200 rounded-lg inline-flex items-center justify-center cursor-pointer"
                       >
-                        <Printer className="w-3.5 h-3.5 text-[#2F4F97] group-hover:text-white transition-colors duration-200" />
+                        <Printer className="w-3.5 h-3.5 text-theme group-hover:text-white transition-colors duration-200" />
                         Print
                       </Button>
                     </div>
@@ -978,7 +978,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                         >
                           <SelectTrigger className={`h-9 min-h-[36px] px-3.5 flex items-center justify-center text-xs font-semibold uppercase tracking-wider rounded-lg shadow-sm ${statusColors[student.status] || "bg-gray-50 border-gray-200 text-gray-700"}`}>
                             {savingStatus ? (
-                              <div className="h-3 w-3 border-2 border-[#2F4F97]/30 border-t-[#2F4F97] animate-spin rounded-full mx-2" />
+                              <div className="h-3 w-3 border-2 border-theme/30 border-t-theme animate-spin rounded-full mx-2" />
                             ) : (
                               <SelectValue placeholder="Select Status" />
                             )}
@@ -1007,9 +1007,9 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
 
         <Tabs defaultValue={defaultTab} className="w-full space-y-6">
           <TabsList className="flex w-full h-12 bg-transparent p-0 no-print gap-8 rounded-none justify-start">
-            <TabsTrigger value="profile" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">1. Profile</TabsTrigger>
-            <TabsTrigger value="documents" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">2. Documents</TabsTrigger>
-            <TabsTrigger value="applications" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">3. Applications</TabsTrigger>
+            <TabsTrigger value="profile" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-theme data-[state=active]:text-theme data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">1. Profile</TabsTrigger>
+            <TabsTrigger value="documents" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-theme data-[state=active]:text-theme data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">2. Documents</TabsTrigger>
+            <TabsTrigger value="applications" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-theme data-[state=active]:text-theme data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">3. Applications</TabsTrigger>
           </TabsList>
           
           <TabsContent value="applications" className="space-y-6 mt-0">
@@ -1047,7 +1047,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                         <TableBody>
                           {applications.map((app) => (
                             <TableRow key={app.id}>
-                              <TableCell className="font-mono text-xs font-semibold text-[#2F4F97] whitespace-nowrap">
+                              <TableCell className="font-mono text-xs font-semibold text-theme whitespace-nowrap">
                                 {app.application_code}
                               </TableCell>
                               <TableCell className="text-xs text-gray-900 whitespace-nowrap">
@@ -1113,7 +1113,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
               <CardContent className="p-6 sm:p-7 print:p-0 space-y-8">
                 
                 {/* Documents Card Header */}
-                <div className="bg-[#2F4F97] p-4 sm:p-5 rounded-lg text-white no-print">
+                <div className="bg-theme p-4 sm:p-5 rounded-lg text-white no-print">
                   <h3 className="text-base font-bold text-white">Student Documents</h3>
                   <p className="text-xs text-blue-100 mt-0.5">Identification, academic transcripts, certificates, language test results, and supporting records</p>
                 </div>
@@ -1150,7 +1150,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                               href={url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-theme hover:bg-theme hover:text-white hover:border-theme shadow-sm transition-colors"
                             >
                               Preview
                             </a>
@@ -1161,7 +1161,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             variant="outline"
                             disabled={isUploading}
                             onClick={() => fileInputRefs.current["passport_photo_url"]?.click()}
-                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-theme hover:border-theme border-gray-200 shadow-sm transition-colors"
                           >
                             {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
                             {url ? "Replace" : "Upload"}
@@ -1215,7 +1215,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                               href={url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-theme hover:bg-theme hover:text-white hover:border-theme shadow-sm transition-colors"
                             >
                               Preview
                             </a>
@@ -1226,7 +1226,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             variant="outline"
                             disabled={isUploading}
                             onClick={() => fileInputRefs.current["passport_url"]?.click()}
-                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-theme hover:border-theme border-gray-200 shadow-sm transition-colors"
                           >
                             {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
                             {url ? "Replace" : "Upload"}
@@ -1288,7 +1288,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                                 href={transcriptUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                                className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-theme hover:bg-theme hover:text-white hover:border-theme shadow-sm transition-colors"
                               >
                                 Preview
                               </a>
@@ -1299,7 +1299,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                               variant="outline"
                               disabled={isTranscriptUploading}
                               onClick={() => fileInputRefs.current[transcriptDocKey]?.click()}
-                              className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                              className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-theme hover:border-theme border-gray-200 shadow-sm transition-colors"
                             >
                               {isTranscriptUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
                               {transcriptUrl ? "Replace" : "Upload"}
@@ -1347,7 +1347,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                                 href={certUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                                className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-theme hover:bg-theme hover:text-white hover:border-theme shadow-sm transition-colors"
                               >
                                 Preview
                               </a>
@@ -1358,7 +1358,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                               variant="outline"
                               disabled={isCertUploading}
                               onClick={() => fileInputRefs.current[certDocKey]?.click()}
-                              className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                              className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-theme hover:border-theme border-gray-200 shadow-sm transition-colors"
                             >
                               {isCertUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
                               {certUrl ? "Replace" : "Upload"}
@@ -1433,7 +1433,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                               href={url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-theme hover:bg-theme hover:text-white hover:border-theme shadow-sm transition-colors"
                             >
                               Preview
                             </a>
@@ -1444,7 +1444,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             variant="outline"
                             disabled={isUploading}
                             onClick={() => fileInputRefs.current["ielts_certificate_url"]?.click()}
-                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-theme hover:border-theme border-gray-200 shadow-sm transition-colors"
                           >
                             {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
                             {url ? "Replace" : "Upload"}
@@ -1498,7 +1498,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                               href={url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-theme hover:bg-theme hover:text-white hover:border-theme shadow-sm transition-colors"
                             >
                               Preview
                             </a>
@@ -1509,7 +1509,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             variant="outline"
                             disabled={isUploading}
                             onClick={() => fileInputRefs.current["personal_statement_url"]?.click()}
-                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-theme hover:border-theme border-gray-200 shadow-sm transition-colors"
                           >
                             {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
                             {url ? "Replace" : "Upload"}
@@ -1563,7 +1563,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                               href={url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-theme hover:bg-theme hover:text-white hover:border-theme shadow-sm transition-colors"
                             >
                               Preview
                             </a>
@@ -1574,7 +1574,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             variant="outline"
                             disabled={isUploading}
                             onClick={() => fileInputRefs.current["recommendation_letter_url"]?.click()}
-                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-theme hover:border-theme border-gray-200 shadow-sm transition-colors"
                           >
                             {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
                             {url ? "Replace" : "Upload"}
@@ -1629,7 +1629,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                               href={url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-theme hover:bg-theme hover:text-white hover:border-theme shadow-sm transition-colors"
                             >
                               Preview
                             </a>
@@ -1640,7 +1640,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             variant="outline"
                             disabled={isUploading}
                             onClick={() => fileInputRefs.current[docKey]?.click()}
-                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-theme hover:border-theme border-gray-200 shadow-sm transition-colors"
                           >
                             {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
                             {url ? "Replace" : "Upload"}
@@ -1695,7 +1695,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                               href={url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-theme hover:bg-theme hover:text-white hover:border-theme shadow-sm transition-colors"
                             >
                               Preview
                             </a>
@@ -1706,7 +1706,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             variant="outline"
                             disabled={isUploading}
                             onClick={() => fileInputRefs.current[docKey]?.click()}
-                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-theme hover:border-theme border-gray-200 shadow-sm transition-colors"
                           >
                             {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
                             {url ? "Replace" : "Upload"}
@@ -1740,7 +1740,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
               <CardContent className="p-6 sm:p-7 print:p-0 space-y-6">
                 
                 {/* Profile Card Header */}
-                <div className="bg-[#2F4F97] p-4 sm:p-5 rounded-lg text-white no-print">
+                <div className="bg-theme p-4 sm:p-5 rounded-lg text-white no-print">
                   <h3 className="text-base font-bold text-white">Student Profile</h3>
                   <p className="text-xs text-blue-100 mt-0.5">Personal, academic, and contact information</p>
                 </div>
@@ -1748,7 +1748,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                 {/* ── Section 1: Personal Information ── */}
                 <div>
                   <div className="flex items-center gap-2.5 pb-4">
-                    <User className="h-4 w-4 text-[#2F4F97]" />
+                    <User className="h-4 w-4 text-theme" />
                     <h4 className="text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
                       Personal Information
                     </h4>
@@ -1763,7 +1763,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                     
                     {/* Passport Expiry & Validation */}
                     <div className="flex flex-col gap-1.5 py-1">
-                      <span className="text-xs font-semibold text-[#2F4F97] uppercase tracking-wider">
+                      <span className="text-xs font-semibold text-theme uppercase tracking-wider">
                         Passport Expiry
                       </span>
                       <div className="flex items-center gap-2">
@@ -1807,7 +1807,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                 {/* ── Section 2: Academic Background ── */}
                 <div className="border-t border-border/30 pt-5 print:border-none">
                   <div className="flex items-center gap-2.5 pb-4">
-                    <GraduationCap className="h-4 w-4 text-[#2F4F97]" />
+                    <GraduationCap className="h-4 w-4 text-theme" />
                     <h4 className="text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
                       Academic Background
                     </h4>
@@ -1823,7 +1823,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                 {/* ── Section 3: Language Proficiency ── */}
                 <div className="border-t border-border/30 pt-5 print:border-none">
                   <div className="flex items-center gap-2.5 pb-4">
-                    <Languages className="h-4 w-4 text-[#2F4F97]" />
+                    <Languages className="h-4 w-4 text-theme" />
                     <h4 className="text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
                       Language Proficiency
                     </h4>
@@ -1845,7 +1845,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                 {(student.guardian_name || student.guardian_phone || student.guardian_email || student.guardian_relationship) && (
                   <div className="border-t border-border/30 pt-5 print:border-none">
                     <div className="flex items-center gap-2.5 pb-4">
-                      <ShieldAlert className="h-4 w-4 text-[#2F4F97]" />
+                      <ShieldAlert className="h-4 w-4 text-theme" />
                       <h4 className="text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
                         Emergency Contact
                       </h4>
@@ -1862,7 +1862,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                 {/* ── Section 5: Submitted By ── */}
                 <div className="border-t border-border/30 pt-5 print:border-none">
                   <div className="flex items-center gap-2.5 pb-4">
-                    <Building2 className="h-4 w-4 text-[#2F4F97]" />
+                    <Building2 className="h-4 w-4 text-theme" />
                     <h4 className="text-[13px] font-bold text-[#1E293B] uppercase tracking-wide">
                       Submitted By
                     </h4>
@@ -1882,82 +1882,12 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
               </CardContent>
             </Card>
 
-        {/* Admin Activity Stream (Admin only) - Moved to bottom */}
-        {mode === "admin" && (
-          <Card className="no-print border border-[#2F4F97]/10 shadow-sm mt-8">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-2 text-sm font-bold text-[#1E293B] uppercase tracking-wide mb-6">
-                <ClipboardList className="h-4 w-4 text-[#2F4F97]" />
-                Admin Internal Notes & Activity
-              </div>
-              
-              <div className="space-y-6">
-                {/* Notes Feed */}
-                <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                  {activityNotes.length === 0 ? (
-                    <div className="text-center py-6 text-sm text-muted-foreground italic bg-gray-50/50 rounded-lg border border-dashed border-gray-200">
-                      No internal notes yet.
-                    </div>
-                  ) : (
-                    activityNotes.map((note) => (
-                      <div key={note.id} className="flex gap-3 text-sm">
-                        <div className="mt-0.5 shrink-0">
-                          <div className="h-8 w-8 rounded-full bg-[#2F4F97]/10 flex items-center justify-center text-[#2F4F97] font-semibold text-xs border border-[#2F4F97]/20">
-                            {note.admin_name ? note.admin_name.substring(0, 2).toUpperCase() : "AD"}
-                          </div>
-                        </div>
-                        <div className="flex-1 space-y-1 bg-gray-50 rounded-lg p-3 border border-gray-100">
-                          <div className="flex items-center justify-between">
-                            <span className="font-semibold text-[#1E293B] text-xs">
-                              {note.admin_name || "Admin"}
-                            </span>
-                            <span className="text-[10px] text-muted-foreground">
-                              {new Date(note.created_at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
-                            </span>
-                          </div>
-                          <p className="text-gray-700 whitespace-pre-wrap leading-relaxed text-[13px]">
-                            {note.content}
-                          </p>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
 
-                {/* Add Note Form */}
-                <div className="pt-4 border-t border-gray-100 flex flex-col gap-3">
-                  <Textarea
-                    value={adminNotes}
-                    onChange={(e) => setAdminNotes(e.target.value)}
-                    placeholder="Add a private note about this application..."
-                    rows={2}
-                    className="resize-none text-sm bg-gray-50/50 focus:bg-white transition-colors"
-                  />
-                  <div className="flex justify-end">
-                    <Button
-                      size="sm"
-                      className="h-8 px-4 font-medium text-xs shadow-sm"
-                      onClick={handleAddActivityNote}
-                      disabled={savingStatus || !adminNotes.trim()}
-                    >
-                      {savingStatus ? (
-                        <Loader2 className="h-3 w-3 animate-spin mr-1.5" />
-                      ) : (
-                        <Save className="h-3.5 w-3.5 mr-1.5" />
-                      )}
-                      Add Note
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
         {/* â”€â”€ Print-Only Documents Checklist â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div className="hidden print:block pt-8 mt-8">
           <h3 className="text-[13px] font-bold text-[#1E293B] uppercase tracking-wide mb-5 flex items-center gap-2.5">
-            <FileCheck className="h-4 w-4 text-[#2F4F97]" />
+            <FileCheck className="h-4 w-4 text-theme" />
             Uploaded Documents Checklist
           </h3>
           <div className="grid grid-cols-2 gap-y-4 gap-x-8">
