@@ -21,6 +21,7 @@ import {
   Loader2,
   FileText,
   Upload,
+  Check,
   CheckCircle2,
   ExternalLink,
   Printer,
@@ -183,7 +184,7 @@ function InfoRow({ label, value }: { label: string; value: string | number | nul
   const isEmpty = value === null || value === undefined || value === "" || (typeof value === "number" && value === 0);
   return (
     <div className="flex flex-col gap-1.5 py-1">
-      <span className="text-xs font-medium text-muted-foreground/70 uppercase tracking-wider">
+      <span className="text-xs font-semibold text-[#2F4F97] uppercase tracking-wider">
         {label}
       </span>
       <span className={`text-sm font-medium leading-snug ${isEmpty ? "text-amber-600/80 italic text-xs flex items-center gap-1 bg-amber-50/50 dark:bg-amber-950/10 px-2.5 py-1 rounded-2xl border border-amber-200/30 w-fit" : "text-[#1E293B]"}`}>
@@ -821,8 +822,8 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
         {/* Main Grid: Left (Student Info + Tabs) | Right (Live Discussion / Chat Widget) */}
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
           
-          {/* Main Left Column (8 cols on XL) */}
-          <div className="xl:col-span-8 space-y-6 min-w-0">
+          {/* Main Left Column (9 cols on XL) */}
+          <div className="xl:col-span-9 space-y-6 min-w-0">
 
             {/* Global Student Info Card / Brief Info Box */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-5 no-print">
@@ -998,8 +999,8 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
         <Tabs defaultValue={defaultTab} className="w-full space-y-6">
           <TabsList className="flex w-full h-12 bg-transparent p-0 no-print gap-8 rounded-none justify-start">
             <TabsTrigger value="profile" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">1. Profile</TabsTrigger>
-            <TabsTrigger value="applications" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">2. Applications</TabsTrigger>
-            <TabsTrigger value="documents" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">3. Documents</TabsTrigger>
+            <TabsTrigger value="documents" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">2. Documents</TabsTrigger>
+            <TabsTrigger value="applications" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#2F4F97] data-[state=active]:text-[#2F4F97] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">3. Applications</TabsTrigger>
           </TabsList>
           
           <TabsContent value="applications" className="space-y-6 mt-0">
@@ -1068,771 +1069,631 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
           </TabsContent>
 
           <TabsContent value="documents" className="space-y-6 mt-0">
-                    {/* 1. Identification & Passport Documents */}
-                    <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
-                      <div className="flex items-center gap-2 border-b border-gray-100 pb-3">
-                        <User className="w-4 h-4 text-[#2F4F97]" />
-                        <h3 className="font-semibold text-sm text-[#1E293B]">Identification & Passport</h3>
-                      </div>
-                      
-                      <div className="space-y-3">
-                        {/* Passport Size Photo */}
-                        {(() => {
-                          const url = getDocUrl("passport_photo_url");
-                          const isUploading = uploading["passport_photo_url"];
-                          return (
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50/60 border border-gray-200/80 rounded-xl gap-4 hover:border-gray-300 transition-colors">
-                              <div className="flex items-start gap-3.5 min-w-0">
-                                <div className={`h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${url ? 'bg-blue-50 text-[#2F4F97] border border-blue-100' : 'bg-white text-gray-400 border border-gray-200'}`}>
-                                  <ImageIcon className="w-5 h-5" />
-                                </div>
-                                <div className="min-w-0 space-y-1.5">
-                                  <div className="flex items-center gap-2 flex-wrap">
-                                    <h4 className="font-semibold text-sm text-[#1E293B]">Passport Size Photo</h4>
-                                    {url ? (
-                                      <Badge variant="outline" className="text-[10px] font-normal bg-green-50 text-green-700 border-green-200">Uploaded</Badge>
-                                    ) : (
-                                      <Badge variant="outline" className="text-[10px] font-normal bg-gray-100 text-gray-600 border-gray-200">Required</Badge>
-                                    )}
-                                  </div>
-                                  <div className="flex flex-wrap gap-1.5">
-                                    <span className="text-[11px] bg-blue-50 text-[#2F4F97] border border-blue-100 px-2 py-0.5 rounded-md font-medium">1. 35mm X 45mm</span>
-                                    <span className="text-[11px] bg-blue-50 text-[#2F4F97] border border-blue-100 px-2 py-0.5 rounded-md font-medium">2. Must be White Background</span>
-                                    <span className="text-[11px] bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded-md font-medium">3. Avoid white color dress</span>
-                                  </div>
-                                </div>
-                              </div>
+            {/* ── Main Single Card Container for All Documents ──────────── */}
+            <Card className="print:border-none print:shadow-none border border-gray-200 shadow-sm">
+              <CardContent className="p-6 sm:p-7 print:p-0 space-y-8">
+                
+                {/* Documents Card Header */}
+                <div className="bg-[#2F4F97] p-4 sm:p-5 rounded-lg text-white no-print">
+                  <h3 className="text-base font-bold text-white">Student Documents</h3>
+                  <p className="text-xs text-blue-100 mt-0.5">Identification, academic transcripts, certificates, language test results, and supporting records</p>
+                </div>
 
-                              <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
-                                <input
-                                  type="file"
-                                  accept="image/*"
-                                  className="hidden"
-                                  ref={(el) => { fileInputRefs.current["passport_photo_url"] = el; }}
-                                  onChange={(e) => {
-                                    const file = e.target.files?.[0];
-                                    if (file) handleUploadDoc("passport_photo_url", file);
-                                    e.target.value = "";
-                                  }}
-                                />
-                                {url && (
-                                  <a
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
-                                  >
-                                    Preview
-                                  </a>
-                                )}
-                                <Button
-                                  type="button"
-                                  size="sm"
-                                  variant="outline"
-                                  disabled={isUploading}
-                                  onClick={() => fileInputRefs.current["passport_photo_url"]?.click()}
-                                  className="h-8 px-3 text-xs font-semibold text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
-                                >
-                                  {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
-                                  {url ? "Replace" : "Upload"}
-                                </Button>
-                                {url && (
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="icon"
-                                    disabled={isUploading}
-                                    onClick={() => handleDeleteDoc("passport_photo_url")}
-                                    className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 border-gray-200 shadow-sm"
-                                    title="Delete Document"
-                                  >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })()}
-
-                        {/* Full Passport Scan Copy */}
-                        {(() => {
-                          const url = getDocUrl("passport_url");
-                          const isUploading = uploading["passport_url"];
-                          return (
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50/60 border border-gray-200/80 rounded-xl gap-4 hover:border-gray-300 transition-colors">
-                              <div className="flex items-start gap-3.5 min-w-0">
-                                <div className={`h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${url ? 'bg-blue-50 text-[#2F4F97] border border-blue-100' : 'bg-white text-gray-400 border border-gray-200'}`}>
-                                  <FileText className="w-5 h-5" />
-                                </div>
-                                <div className="min-w-0 space-y-1">
-                                  <div className="flex items-center gap-2 flex-wrap">
-                                    <h4 className="font-semibold text-sm text-[#1E293B]">Full Passport Scan Copy</h4>
-                                    {url ? (
-                                      <Badge variant="outline" className="text-[10px] font-normal bg-green-50 text-green-700 border-green-200">Uploaded</Badge>
-                                    ) : (
-                                      <Badge variant="outline" className="text-[10px] font-normal bg-gray-100 text-gray-600 border-gray-200">Required</Badge>
-                                    )}
-                                  </div>
-                                  <p className="text-xs text-gray-500 flex items-center gap-1.5">
-                                    <Info className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
-                                    Scan all the pages of your passport and make a pdf file
-                                  </p>
-                                </div>
-                              </div>
-
-                              <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
-                                <input
-                                  type="file"
-                                  accept=".pdf,image/*"
-                                  className="hidden"
-                                  ref={(el) => { fileInputRefs.current["passport_url"] = el; }}
-                                  onChange={(e) => {
-                                    const file = e.target.files?.[0];
-                                    if (file) handleUploadDoc("passport_url", file);
-                                    e.target.value = "";
-                                  }}
-                                />
-                                {url && (
-                                  <a
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
-                                  >
-                                    Preview
-                                  </a>
-                                )}
-                                <Button
-                                  type="button"
-                                  size="sm"
-                                  variant="outline"
-                                  disabled={isUploading}
-                                  onClick={() => fileInputRefs.current["passport_url"]?.click()}
-                                  className="h-8 px-3 text-xs font-semibold text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
-                                >
-                                  {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
-                                  {url ? "Replace" : "Upload"}
-                                </Button>
-                                {url && (
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="icon"
-                                    disabled={isUploading}
-                                    onClick={() => handleDeleteDoc("passport_url")}
-                                    className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 border-gray-200 shadow-sm"
-                                    title="Delete Document"
-                                  >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })()}
-                      </div>
-                    </div>
-
-                    {/* 2. Academic Transcripts */}
-                    <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
-                      <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                        <div className="flex items-center gap-2">
-                          <GraduationCap className="w-4 h-4 text-[#2F4F97]" />
-                          <div>
-                            <h3 className="font-semibold text-sm text-[#1E293B]">Academic Transcript</h3>
-                            <p className="text-xs text-gray-500">Upload transcripts for each level of completed education</p>
+                <div className="space-y-0 max-h-[475px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200 hover:scrollbar-thumb-gray-300">
+                  {/* Passport Size Photo */}
+                  {(() => {
+                    const url = getDocUrl("passport_photo_url");
+                    const isUploading = uploading["passport_photo_url"];
+                    return (
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between py-4 border-b border-gray-200 gap-4 hover:bg-gray-50/50 transition-colors">
+                        <div className="min-w-0 space-y-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="font-semibold text-sm text-[#1E293B]">Passport Size Photo</h4>
+                            {url && <Check className="w-4 h-4 text-green-600 flex-shrink-0" />}
                           </div>
-                        </div>
-                      </div>
-
-                      <div className="space-y-2.5">
-                        {academicDegreeLevels.map((lvl) => {
-                          const docKey = `transcript_${lvl.key}`;
-                          const url = getDocUrl(docKey);
-                          const isUploading = uploading[docKey];
-
-                          return (
-                            <div key={docKey} className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-gray-50/60 border border-gray-200/80 rounded-xl gap-3 hover:border-gray-300 transition-colors">
-                              <div className="flex items-center gap-3 min-w-0">
-                                <div className={`h-9 w-9 rounded-lg flex items-center justify-center flex-shrink-0 ${url ? 'bg-blue-50 text-[#2F4F97] border border-blue-100' : 'bg-white text-gray-400 border border-gray-200'}`}>
-                                  <FileText className="w-4 h-4" />
-                                </div>
-                                <div className="min-w-0">
-                                  <div className="flex items-center gap-2">
-                                    <h4 className="font-semibold text-xs text-[#1E293B]">{lvl.label} - Transcript</h4>
-                                    {url ? (
-                                      <Badge variant="outline" className="text-[10px] font-normal bg-green-50 text-green-700 border-green-200">Uploaded</Badge>
-                                    ) : (
-                                      <Badge variant="outline" className="text-[10px] font-normal bg-gray-50 text-gray-400 border-gray-200">Optional / Pending</Badge>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
-                                <input
-                                  type="file"
-                                  accept=".pdf,image/*"
-                                  className="hidden"
-                                  ref={(el) => { fileInputRefs.current[docKey] = el; }}
-                                  onChange={(e) => {
-                                    const file = e.target.files?.[0];
-                                    if (file) handleUploadDoc(docKey, file);
-                                    e.target.value = "";
-                                  }}
-                                />
-                                {url && (
-                                  <a
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex h-7.5 items-center justify-center rounded-md border border-gray-200 bg-white px-2.5 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
-                                  >
-                                    Preview
-                                  </a>
-                                )}
-                                <Button
-                                  type="button"
-                                  size="sm"
-                                  variant="outline"
-                                  disabled={isUploading}
-                                  onClick={() => fileInputRefs.current[docKey]?.click()}
-                                  className="h-7.5 px-2.5 text-xs font-semibold text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
-                                >
-                                  {isUploading ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Upload className="h-3 w-3 mr-1" />}
-                                  {url ? "Replace" : "Upload"}
-                                </Button>
-                                {url && (
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="icon"
-                                    disabled={isUploading}
-                                    onClick={() => handleDeleteDoc(docKey)}
-                                    className="h-7.5 w-7.5 text-red-500 hover:text-red-600 hover:bg-red-50 border-gray-200 shadow-sm"
-                                    title="Delete Document"
-                                  >
-                                    <Trash2 className="w-3 h-3" />
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* 3. Academic Certificate */}
-                    <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
-                      <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                        <div className="flex items-center gap-2">
-                          <Award className="w-4 h-4 text-[#2F4F97]" />
-                          <div>
-                            <h3 className="font-semibold text-sm text-[#1E293B]">Academic Certificate</h3>
-                            <p className="text-xs text-gray-500">Upload certificates / passing degrees for each completed level</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="space-y-2.5">
-                        {academicDegreeLevels.map((lvl) => {
-                          const docKey = `certificate_${lvl.key}`;
-                          const url = getDocUrl(docKey);
-                          const isUploading = uploading[docKey];
-
-                          return (
-                            <div key={docKey} className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-gray-50/60 border border-gray-200/80 rounded-xl gap-3 hover:border-gray-300 transition-colors">
-                              <div className="flex items-center gap-3 min-w-0">
-                                <div className={`h-9 w-9 rounded-lg flex items-center justify-center flex-shrink-0 ${url ? 'bg-blue-50 text-[#2F4F97] border border-blue-100' : 'bg-white text-gray-400 border border-gray-200'}`}>
-                                  <Award className="w-4 h-4" />
-                                </div>
-                                <div className="min-w-0">
-                                  <div className="flex items-center gap-2">
-                                    <h4 className="font-semibold text-xs text-[#1E293B]">{lvl.label} - Certificate</h4>
-                                    {url ? (
-                                      <Badge variant="outline" className="text-[10px] font-normal bg-green-50 text-green-700 border-green-200">Uploaded</Badge>
-                                    ) : (
-                                      <Badge variant="outline" className="text-[10px] font-normal bg-gray-50 text-gray-400 border-gray-200">Optional / Pending</Badge>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
-                                <input
-                                  type="file"
-                                  accept=".pdf,image/*"
-                                  className="hidden"
-                                  ref={(el) => { fileInputRefs.current[docKey] = el; }}
-                                  onChange={(e) => {
-                                    const file = e.target.files?.[0];
-                                    if (file) handleUploadDoc(docKey, file);
-                                    e.target.value = "";
-                                  }}
-                                />
-                                {url && (
-                                  <a
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex h-7.5 items-center justify-center rounded-md border border-gray-200 bg-white px-2.5 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
-                                  >
-                                    Preview
-                                  </a>
-                                )}
-                                <Button
-                                  type="button"
-                                  size="sm"
-                                  variant="outline"
-                                  disabled={isUploading}
-                                  onClick={() => fileInputRefs.current[docKey]?.click()}
-                                  className="h-7.5 px-2.5 text-xs font-semibold text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
-                                >
-                                  {isUploading ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Upload className="h-3 w-3 mr-1" />}
-                                  {url ? "Replace" : "Upload"}
-                                </Button>
-                                {url && (
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="icon"
-                                    disabled={isUploading}
-                                    onClick={() => handleDeleteDoc(docKey)}
-                                    className="h-7.5 w-7.5 text-red-500 hover:text-red-600 hover:bg-red-50 border-gray-200 shadow-sm"
-                                    title="Delete Document"
-                                  >
-                                    <Trash2 className="w-3 h-3" />
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* 4. Language Test Certificate */}
-                    <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-100 pb-3 gap-3">
-                        <div className="flex items-center gap-2">
-                          <Languages className="w-4 h-4 text-[#2F4F97]" />
-                          <div>
-                            <h3 className="font-semibold text-sm text-[#1E293B]">Language Test Certificate</h3>
-                            <p className="text-xs text-gray-500">Official language proficiency certificate or MOI letter</p>
-                          </div>
+                          <p className="text-xs text-gray-500 italic">1. Size must be 35mm X 45mm &nbsp;|&nbsp; 2. Must be White Background &nbsp;|&nbsp; 3. Avoid white color dress</p>
                         </div>
 
-                        {/* Test Selection Dropdown */}
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-gray-500 whitespace-nowrap">Test:</span>
-                          <Select
-                            value={student?.language_test_name || student?.english_test_type || "IELTS"}
-                            onValueChange={(val) => handleUpdateLanguageTestType(val)}
+                        <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            ref={(el) => { fileInputRefs.current["passport_photo_url"] = el; }}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleUploadDoc("passport_photo_url", file);
+                              e.target.value = "";
+                            }}
+                          />
+                          {url && (
+                            <a
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                            >
+                              Preview
+                            </a>
+                          )}
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            disabled={isUploading}
+                            onClick={() => fileInputRefs.current["passport_photo_url"]?.click()}
+                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
                           >
-                            <SelectTrigger className="h-8 w-44 text-xs font-semibold bg-gray-50 border-gray-200">
-                              <SelectValue placeholder="Select Test" />
-                            </SelectTrigger>
-                            <SelectContent className="max-h-60">
-                              {languageTestOptions.map((t) => (
-                                <SelectItem key={t.id} value={t.id} className="text-xs">
-                                  {t.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                            {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
+                            {url ? "Replace" : "Upload"}
+                          </Button>
+                          {url && (
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              disabled={isUploading}
+                              onClick={() => handleDeleteDoc("passport_photo_url")}
+                              className="h-8 px-3 text-xs font-semibold rounded-lg text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors"
+                            >
+                              <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                              Delete
+                            </Button>
+                          )}
                         </div>
                       </div>
+                    );
+                  })()}
 
-                      {(() => {
-                        const testType = student?.language_test_name || student?.english_test_type || "IELTS";
-                        const isMOITest = testType === "MOI";
-                        const docTitle = isMOITest ? "MOI (Medium of Instruction) Letter" : `${testType} Certificate / Score Card`;
-                        const docDesc = isMOITest
-                          ? "Upload official institutional letter certifying previous education was conducted in English"
-                          : `Upload official ${testType} test result / certificate`;
-                        const url = getDocUrl("ielts_certificate_url");
-                        const isUploading = uploading["ielts_certificate_url"];
+                  {/* Full Passport Scan Copy */}
+                  {(() => {
+                    const url = getDocUrl("passport_url");
+                    const isUploading = uploading["passport_url"];
+                    return (
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between py-4 border-b border-gray-200 gap-4 hover:bg-gray-50/50 transition-colors">
+                        <div className="min-w-0 space-y-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="font-semibold text-sm text-[#1E293B]">Full Passport Scan Copy</h4>
+                            {url && <Check className="w-4 h-4 text-green-600 flex-shrink-0" />}
+                          </div>
+                          <p className="text-xs text-gray-500 italic">Scan all the pages of your passport and make a pdf file</p>
+                        </div>
 
-                        return (
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50/60 border border-gray-200/80 rounded-xl gap-4 hover:border-gray-300 transition-colors">
-                            <div className="flex items-start gap-3.5 min-w-0">
-                              <div className={`h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${url ? 'bg-blue-50 text-[#2F4F97] border border-blue-100' : 'bg-white text-gray-400 border border-gray-200'}`}>
-                                <Languages className="w-5 h-5" />
-                              </div>
-                              <div className="min-w-0 space-y-1">
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <h4 className="font-semibold text-sm text-[#1E293B]">{docTitle}</h4>
-                                  {url ? (
-                                    <Badge variant="outline" className="text-[10px] font-normal bg-green-50 text-green-700 border-green-200">Uploaded</Badge>
-                                  ) : (
-                                    <Badge variant="outline" className="text-[10px] font-normal bg-gray-100 text-gray-600 border-gray-200">Pending</Badge>
-                                  )}
-                                </div>
-                                <p className="text-xs text-gray-500">{docDesc}</p>
-                              </div>
+                        <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                          <input
+                            type="file"
+                            accept=".pdf,image/*"
+                            className="hidden"
+                            ref={(el) => { fileInputRefs.current["passport_url"] = el; }}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleUploadDoc("passport_url", file);
+                              e.target.value = "";
+                            }}
+                          />
+                          {url && (
+                            <a
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                            >
+                              Preview
+                            </a>
+                          )}
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            disabled={isUploading}
+                            onClick={() => fileInputRefs.current["passport_url"]?.click()}
+                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                          >
+                            {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
+                            {url ? "Replace" : "Upload"}
+                          </Button>
+                          {url && (
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              disabled={isUploading}
+                              onClick={() => handleDeleteDoc("passport_url")}
+                              className="h-8 px-3 text-xs font-semibold rounded-lg text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors"
+                            >
+                              <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                              Delete
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* Academic Transcripts & Certificates grouped by degree level */}
+                  {academicDegreeLevels.map((lvl) => {
+                    const transcriptDocKey = `transcript_${lvl.key}`;
+                    const transcriptUrl = getDocUrl(transcriptDocKey);
+                    const isTranscriptUploading = uploading[transcriptDocKey];
+
+                    const certDocKey = `certificate_${lvl.key}`;
+                    const certUrl = getDocUrl(certDocKey);
+                    const isCertUploading = uploading[certDocKey];
+
+                    return (
+                      <div key={lvl.key} className="contents">
+                        {/* Transcript */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between py-4 border-b border-gray-200 gap-4 hover:bg-gray-50/50 transition-colors">
+                          <div className="min-w-0 space-y-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <h4 className="font-semibold text-sm text-[#1E293B]">{lvl.label} - Transcript</h4>
+                              {transcriptUrl && <Check className="w-4 h-4 text-green-600 flex-shrink-0" />}
                             </div>
+                            <p className="text-xs text-gray-500 italic">Official academic transcript / mark sheet for {lvl.label}</p>
+                          </div>
 
-                            <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
-                              <input
-                                type="file"
-                                accept=".pdf,image/*"
-                                className="hidden"
-                                ref={(el) => { fileInputRefs.current["ielts_certificate_url"] = el; }}
-                                onChange={(e) => {
-                                  const file = e.target.files?.[0];
-                                  if (file) handleUploadDoc("ielts_certificate_url", file);
-                                  e.target.value = "";
-                                }}
-                              />
-                              {url && (
-                                <a
-                                  href={url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
-                                >
-                                  Preview
-                                </a>
-                              )}
+                          <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                            <input
+                              type="file"
+                              accept=".pdf,image/*"
+                              className="hidden"
+                              ref={(el) => { fileInputRefs.current[transcriptDocKey] = el; }}
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleUploadDoc(transcriptDocKey, file);
+                                e.target.value = "";
+                              }}
+                            />
+                            {transcriptUrl && (
+                              <a
+                                href={transcriptUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                              >
+                                Preview
+                              </a>
+                            )}
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              disabled={isTranscriptUploading}
+                              onClick={() => fileInputRefs.current[transcriptDocKey]?.click()}
+                              className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                            >
+                              {isTranscriptUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
+                              {transcriptUrl ? "Replace" : "Upload"}
+                            </Button>
+                            {transcriptUrl && (
                               <Button
                                 type="button"
                                 size="sm"
                                 variant="outline"
-                                disabled={isUploading}
-                                onClick={() => fileInputRefs.current["ielts_certificate_url"]?.click()}
-                                className="h-8 px-3 text-xs font-semibold text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                                disabled={isTranscriptUploading}
+                                onClick={() => handleDeleteDoc(transcriptDocKey)}
+                                className="h-8 px-3 text-xs font-semibold rounded-lg text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors"
                               >
-                                {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
-                                {url ? "Replace" : "Upload"}
+                                <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                                Delete
                               </Button>
-                              {url && (
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  size="icon"
-                                  disabled={isUploading}
-                                  onClick={() => handleDeleteDoc("ielts_certificate_url")}
-                                  className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 border-gray-200 shadow-sm"
-                                  title="Delete Document"
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </Button>
-                              )}
-                            </div>
+                            )}
                           </div>
-                        );
-                      })()}
-                    </div>
+                        </div>
 
-                    {/* 5. Supporting Documents (SOP, Recommendation, Experience, Gap Evidence) */}
-                    <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
-                      <div className="flex items-center gap-2 border-b border-gray-100 pb-3">
-                        <FileCheck className="w-4 h-4 text-[#2F4F97]" />
-                        <div>
-                          <h3 className="font-semibold text-sm text-[#1E293B]">Supporting & Additional Documents</h3>
-                          <p className="text-xs text-gray-500">Statements, recommendation letters, experience proof & study gap evidence</p>
+                        {/* Certificate */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between py-4 border-b border-gray-200 gap-4 hover:bg-gray-50/50 transition-colors">
+                          <div className="min-w-0 space-y-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <h4 className="font-semibold text-sm text-[#1E293B]">{lvl.label} - Certificate</h4>
+                              {certUrl && <Check className="w-4 h-4 text-green-600 flex-shrink-0" />}
+                            </div>
+                            <p className="text-xs text-gray-500 italic">Official certificate / provisional certificate for {lvl.label}</p>
+                          </div>
+
+                          <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                            <input
+                              type="file"
+                              accept=".pdf,image/*"
+                              className="hidden"
+                              ref={(el) => { fileInputRefs.current[certDocKey] = el; }}
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleUploadDoc(certDocKey, file);
+                                e.target.value = "";
+                              }}
+                            />
+                            {certUrl && (
+                              <a
+                                href={certUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                              >
+                                Preview
+                              </a>
+                            )}
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              disabled={isCertUploading}
+                              onClick={() => fileInputRefs.current[certDocKey]?.click()}
+                              className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                            >
+                              {isCertUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
+                              {certUrl ? "Replace" : "Upload"}
+                            </Button>
+                            {certUrl && (
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                disabled={isCertUploading}
+                                onClick={() => handleDeleteDoc(certDocKey)}
+                                className="h-8 px-3 text-xs font-semibold rounded-lg text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors"
+                              >
+                                <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                                Delete
+                              </Button>
+                            )}
+                          </div>
                         </div>
                       </div>
+                    );
+                  })}
 
-                      <div className="space-y-3">
-                        {/* SOP */}
-                        {(() => {
-                          const url = getDocUrl("personal_statement_url");
-                          const isUploading = uploading["personal_statement_url"];
-                          return (
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50/60 border border-gray-200/80 rounded-xl gap-4 hover:border-gray-300 transition-colors">
-                              <div className="flex items-start gap-3.5 min-w-0">
-                                <div className={`h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${url ? 'bg-blue-50 text-[#2F4F97] border border-blue-100' : 'bg-white text-gray-400 border border-gray-200'}`}>
-                                  <FileText className="w-5 h-5" />
-                                </div>
-                                <div className="min-w-0 space-y-1">
-                                  <div className="flex items-center gap-2 flex-wrap">
-                                    <h4 className="font-semibold text-sm text-[#1E293B]">Statement of Purpose (SOP)</h4>
-                                    {url ? (
-                                      <Badge variant="outline" className="text-[10px] font-normal bg-green-50 text-green-700 border-green-200">Uploaded</Badge>
-                                    ) : (
-                                      <Badge variant="outline" className="text-[10px] font-normal bg-gray-50 text-gray-500 border-gray-200">Pending</Badge>
-                                    )}
-                                  </div>
-                                  <p className="text-xs text-gray-500">Personal statement or essay explaining academic intent and motivation</p>
-                                </div>
-                              </div>
+                  {/* Language Test Certificate */}
+                  {(() => {
+                    const url = getDocUrl("ielts_certificate_url");
+                    const isUploading = uploading["ielts_certificate_url"];
 
-                              <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
-                                <input
-                                  type="file"
-                                  accept=".pdf,.doc,.docx"
-                                  className="hidden"
-                                  ref={(el) => { fileInputRefs.current["personal_statement_url"] = el; }}
-                                  onChange={(e) => {
-                                    const file = e.target.files?.[0];
-                                    if (file) handleUploadDoc("personal_statement_url", file);
-                                    e.target.value = "";
-                                  }}
-                                />
-                                {url && (
-                                  <a
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
-                                  >
-                                    Preview
-                                  </a>
-                                )}
-                                <Button
-                                  type="button"
-                                  size="sm"
-                                  variant="outline"
-                                  disabled={isUploading}
-                                  onClick={() => fileInputRefs.current["personal_statement_url"]?.click()}
-                                  className="h-8 px-3 text-xs font-semibold text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
-                                >
-                                  {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
-                                  {url ? "Replace" : "Upload"}
-                                </Button>
-                                {url && (
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="icon"
-                                    disabled={isUploading}
-                                    onClick={() => handleDeleteDoc("personal_statement_url")}
-                                    className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 border-gray-200 shadow-sm"
-                                    title="Delete Document"
-                                  >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  </Button>
-                                )}
-                              </div>
+                    return (
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between py-4 border-b border-gray-200 gap-4 hover:bg-gray-50/50 transition-colors">
+                        <div className="min-w-0 space-y-1">
+                          <div className="flex items-center gap-2.5 flex-wrap">
+                            <h4 className="font-semibold text-sm text-[#1E293B]">Language Test Certificate</h4>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs text-gray-500 whitespace-nowrap font-normal">Test:</span>
+                              <Select
+                                value={student?.language_test_name || student?.english_test_type || "IELTS"}
+                                onValueChange={(val) => handleUpdateLanguageTestType(val)}
+                                disabled={!!url || isUploading}
+                              >
+                                <SelectTrigger className="h-7 w-32 text-xs font-semibold bg-gray-50 border-gray-200 disabled:opacity-60 disabled:cursor-not-allowed">
+                                  <SelectValue placeholder="Select Test" />
+                                </SelectTrigger>
+                                <SelectContent className="max-h-60">
+                                  {languageTestOptions.map((t) => (
+                                    <SelectItem key={t.id} value={t.id} className="text-xs">
+                                      {t.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
                             </div>
-                          );
-                        })()}
+                            {url && <Check className="w-4 h-4 text-green-600 flex-shrink-0" />}
+                          </div>
+                          <p className="text-xs text-gray-500 italic">Upload your official language test certificate</p>
+                        </div>
 
-                        {/* Recommendation Letter */}
-                        {(() => {
-                          const url = getDocUrl("recommendation_letter_url");
-                          const isUploading = uploading["recommendation_letter_url"];
-                          return (
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50/60 border border-gray-200/80 rounded-xl gap-4 hover:border-gray-300 transition-colors">
-                              <div className="flex items-start gap-3.5 min-w-0">
-                                <div className={`h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${url ? 'bg-blue-50 text-[#2F4F97] border border-blue-100' : 'bg-white text-gray-400 border border-gray-200'}`}>
-                                  <FileText className="w-5 h-5" />
-                                </div>
-                                <div className="min-w-0 space-y-1">
-                                  <div className="flex items-center gap-2 flex-wrap">
-                                    <h4 className="font-semibold text-sm text-[#1E293B]">Recommendation Letter</h4>
-                                    {url ? (
-                                      <Badge variant="outline" className="text-[10px] font-normal bg-green-50 text-green-700 border-green-200">Uploaded</Badge>
-                                    ) : (
-                                      <Badge variant="outline" className="text-[10px] font-normal bg-gray-50 text-gray-500 border-gray-200">Pending</Badge>
-                                    )}
-                                  </div>
-                                  <p className="text-xs text-gray-500">Letter of recommendation from teacher, professor, or employer</p>
-                                </div>
-                              </div>
-
-                              <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
-                                <input
-                                  type="file"
-                                  accept=".pdf,.doc,.docx"
-                                  className="hidden"
-                                  ref={(el) => { fileInputRefs.current["recommendation_letter_url"] = el; }}
-                                  onChange={(e) => {
-                                    const file = e.target.files?.[0];
-                                    if (file) handleUploadDoc("recommendation_letter_url", file);
-                                    e.target.value = "";
-                                  }}
-                                />
-                                {url && (
-                                  <a
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
-                                  >
-                                    Preview
-                                  </a>
-                                )}
-                                <Button
-                                  type="button"
-                                  size="sm"
-                                  variant="outline"
-                                  disabled={isUploading}
-                                  onClick={() => fileInputRefs.current["recommendation_letter_url"]?.click()}
-                                  className="h-8 px-3 text-xs font-semibold text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
-                                >
-                                  {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
-                                  {url ? "Replace" : "Upload"}
-                                </Button>
-                                {url && (
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="icon"
-                                    disabled={isUploading}
-                                    onClick={() => handleDeleteDoc("recommendation_letter_url")}
-                                    className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 border-gray-200 shadow-sm"
-                                    title="Delete Document"
-                                  >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })()}
-
-                        {/* Job Experience (If any) */}
-                        {(() => {
-                          const docKey = "job_experience_url";
-                          const url = getDocUrl(docKey);
-                          const isUploading = uploading[docKey];
-                          return (
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50/60 border border-gray-200/80 rounded-xl gap-4 hover:border-gray-300 transition-colors">
-                              <div className="flex items-start gap-3.5 min-w-0">
-                                <div className={`h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${url ? 'bg-blue-50 text-[#2F4F97] border border-blue-100' : 'bg-white text-gray-400 border border-gray-200'}`}>
-                                  <Briefcase className="w-5 h-5" />
-                                </div>
-                                <div className="min-w-0 space-y-1">
-                                  <div className="flex items-center gap-2 flex-wrap">
-                                    <h4 className="font-semibold text-sm text-[#1E293B]">Job Experience (If any)</h4>
-                                    <Badge variant="outline" className="text-[10px] font-normal bg-purple-50 text-purple-700 border-purple-200">Optional</Badge>
-                                    {url && (
-                                      <Badge variant="outline" className="text-[10px] font-normal bg-green-50 text-green-700 border-green-200">Uploaded</Badge>
-                                    )}
-                                  </div>
-                                  <p className="text-xs text-gray-500">Employment certificates, appointment letters, or payslips (if applicable)</p>
-                                </div>
-                              </div>
-
-                              <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
-                                <input
-                                  type="file"
-                                  accept=".pdf,.doc,.docx,image/*"
-                                  className="hidden"
-                                  ref={(el) => { fileInputRefs.current[docKey] = el; }}
-                                  onChange={(e) => {
-                                    const file = e.target.files?.[0];
-                                    if (file) handleUploadDoc(docKey, file);
-                                    e.target.value = "";
-                                  }}
-                                />
-                                {url && (
-                                  <a
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
-                                  >
-                                    Preview
-                                  </a>
-                                )}
-                                <Button
-                                  type="button"
-                                  size="sm"
-                                  variant="outline"
-                                  disabled={isUploading}
-                                  onClick={() => fileInputRefs.current[docKey]?.click()}
-                                  className="h-8 px-3 text-xs font-semibold text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
-                                >
-                                  {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
-                                  {url ? "Replace" : "Upload"}
-                                </Button>
-                                {url && (
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="icon"
-                                    disabled={isUploading}
-                                    onClick={() => handleDeleteDoc(docKey)}
-                                    className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 border-gray-200 shadow-sm"
-                                    title="Delete Document"
-                                  >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })()}
-
-                        {/* Study Gap Evidence Documents */}
-                        {(() => {
-                          const docKey = "study_gap_url";
-                          const url = getDocUrl(docKey);
-                          const isUploading = uploading[docKey];
-                          return (
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50/60 border border-gray-200/80 rounded-xl gap-4 hover:border-gray-300 transition-colors">
-                              <div className="flex items-start gap-3.5 min-w-0">
-                                <div className={`h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${url ? 'bg-blue-50 text-[#2F4F97] border border-blue-100' : 'bg-white text-gray-400 border border-gray-200'}`}>
-                                  <CalendarClock className="w-5 h-5" />
-                                </div>
-                                <div className="min-w-0 space-y-1">
-                                  <div className="flex items-center gap-2 flex-wrap">
-                                    <h4 className="font-semibold text-sm text-[#1E293B]">Study Gap Evidence Documents</h4>
-                                    <Badge variant="outline" className="text-[10px] font-normal bg-purple-50 text-purple-700 border-purple-200">Optional</Badge>
-                                    {url && (
-                                      <Badge variant="outline" className="text-[10px] font-normal bg-green-50 text-green-700 border-green-200">Uploaded</Badge>
-                                    )}
-                                  </div>
-                                  <p className="text-xs text-gray-500">Official documents explaining study gap (e.g. employment, courses, medical certificate)</p>
-                                </div>
-                              </div>
-
-                              <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
-                                <input
-                                  type="file"
-                                  accept=".pdf,.doc,.docx,image/*"
-                                  className="hidden"
-                                  ref={(el) => { fileInputRefs.current[docKey] = el; }}
-                                  onChange={(e) => {
-                                    const file = e.target.files?.[0];
-                                    if (file) handleUploadDoc(docKey, file);
-                                    e.target.value = "";
-                                  }}
-                                />
-                                {url && (
-                                  <a
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
-                                  >
-                                    Preview
-                                  </a>
-                                )}
-                                <Button
-                                  type="button"
-                                  size="sm"
-                                  variant="outline"
-                                  disabled={isUploading}
-                                  onClick={() => fileInputRefs.current[docKey]?.click()}
-                                  className="h-8 px-3 text-xs font-semibold text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
-                                >
-                                  {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
-                                  {url ? "Replace" : "Upload"}
-                                </Button>
-                                {url && (
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="icon"
-                                    disabled={isUploading}
-                                    onClick={() => handleDeleteDoc(docKey)}
-                                    className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 border-gray-200 shadow-sm"
-                                    title="Delete Document"
-                                  >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })()}
+                        <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                          <input
+                            type="file"
+                            accept=".pdf,image/*"
+                            className="hidden"
+                            ref={(el) => { fileInputRefs.current["ielts_certificate_url"] = el; }}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleUploadDoc("ielts_certificate_url", file);
+                              e.target.value = "";
+                            }}
+                          />
+                          {url && (
+                            <a
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                            >
+                              Preview
+                            </a>
+                          )}
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            disabled={isUploading}
+                            onClick={() => fileInputRefs.current["ielts_certificate_url"]?.click()}
+                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                          >
+                            {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
+                            {url ? "Replace" : "Upload"}
+                          </Button>
+                          {url && (
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              disabled={isUploading}
+                              onClick={() => handleDeleteDoc("ielts_certificate_url")}
+                              className="h-8 px-3 text-xs font-semibold rounded-lg text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors"
+                            >
+                              <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                              Delete
+                            </Button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-           </TabsContent>
+                    );
+                  })()}
+
+                  {/* Statement of Purpose (SOP) */}
+                  {(() => {
+                    const url = getDocUrl("personal_statement_url");
+                    const isUploading = uploading["personal_statement_url"];
+                    return (
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between py-4 border-b border-gray-200 gap-4 hover:bg-gray-50/50 transition-colors">
+                        <div className="min-w-0 space-y-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="font-semibold text-sm text-[#1E293B]">Statement of Purpose (SOP)</h4>
+                            {url && <Check className="w-4 h-4 text-green-600 flex-shrink-0" />}
+                          </div>
+                          <p className="text-xs text-gray-500 italic">Personal statement or essay explaining academic intent and motivation</p>
+                        </div>
+
+                        <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                          <input
+                            type="file"
+                            accept=".pdf,.doc,.docx"
+                            className="hidden"
+                            ref={(el) => { fileInputRefs.current["personal_statement_url"] = el; }}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleUploadDoc("personal_statement_url", file);
+                              e.target.value = "";
+                            }}
+                          />
+                          {url && (
+                            <a
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                            >
+                              Preview
+                            </a>
+                          )}
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            disabled={isUploading}
+                            onClick={() => fileInputRefs.current["personal_statement_url"]?.click()}
+                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                          >
+                            {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
+                            {url ? "Replace" : "Upload"}
+                          </Button>
+                          {url && (
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              disabled={isUploading}
+                              onClick={() => handleDeleteDoc("personal_statement_url")}
+                              className="h-8 px-3 text-xs font-semibold rounded-lg text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors"
+                            >
+                              <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                              Delete
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* Recommendation Letter */}
+                  {(() => {
+                    const url = getDocUrl("recommendation_letter_url");
+                    const isUploading = uploading["recommendation_letter_url"];
+                    return (
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between py-4 border-b border-gray-200 gap-4 hover:bg-gray-50/50 transition-colors">
+                        <div className="min-w-0 space-y-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="font-semibold text-sm text-[#1E293B]">Recommendation Letter</h4>
+                            {url && <Check className="w-4 h-4 text-green-600 flex-shrink-0" />}
+                          </div>
+                          <p className="text-xs text-gray-500 italic">Letter of recommendation from teacher, professor, or employer</p>
+                        </div>
+
+                        <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                          <input
+                            type="file"
+                            accept=".pdf,.doc,.docx"
+                            className="hidden"
+                            ref={(el) => { fileInputRefs.current["recommendation_letter_url"] = el; }}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleUploadDoc("recommendation_letter_url", file);
+                              e.target.value = "";
+                            }}
+                          />
+                          {url && (
+                            <a
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                            >
+                              Preview
+                            </a>
+                          )}
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            disabled={isUploading}
+                            onClick={() => fileInputRefs.current["recommendation_letter_url"]?.click()}
+                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                          >
+                            {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
+                            {url ? "Replace" : "Upload"}
+                          </Button>
+                          {url && (
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              disabled={isUploading}
+                              onClick={() => handleDeleteDoc("recommendation_letter_url")}
+                              className="h-8 px-3 text-xs font-semibold rounded-lg text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors"
+                            >
+                              <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                              Delete
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* Job Experience (If any) */}
+                  {(() => {
+                    const docKey = "job_experience_url";
+                    const url = getDocUrl(docKey);
+                    const isUploading = uploading[docKey];
+                    return (
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between py-4 border-b border-gray-200 gap-4 hover:bg-gray-50/50 transition-colors">
+                        <div className="min-w-0 space-y-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="font-semibold text-sm text-[#1E293B]">Job Experience (If any)</h4>
+                            {url && <Check className="w-4 h-4 text-green-600 flex-shrink-0" />}
+                          </div>
+                          <p className="text-xs text-gray-500 italic">Employment certificates, appointment letters, or payslips (if applicable)</p>
+                        </div>
+
+                        <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                          <input
+                            type="file"
+                            accept=".pdf,.doc,.docx,image/*"
+                            className="hidden"
+                            ref={(el) => { fileInputRefs.current[docKey] = el; }}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleUploadDoc(docKey, file);
+                              e.target.value = "";
+                            }}
+                          />
+                          {url && (
+                            <a
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                            >
+                              Preview
+                            </a>
+                          )}
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            disabled={isUploading}
+                            onClick={() => fileInputRefs.current[docKey]?.click()}
+                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                          >
+                            {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
+                            {url ? "Replace" : "Upload"}
+                          </Button>
+                          {url && (
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              disabled={isUploading}
+                              onClick={() => handleDeleteDoc(docKey)}
+                              className="h-8 px-3 text-xs font-semibold rounded-lg text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors"
+                            >
+                              <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                              Delete
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* Study Gap Evidence Documents */}
+                  {(() => {
+                    const docKey = "study_gap_url";
+                    const url = getDocUrl(docKey);
+                    const isUploading = uploading[docKey];
+                    return (
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between py-4 border-b border-gray-200 last:border-b-0 gap-4 hover:bg-gray-50/50 transition-colors">
+                        <div className="min-w-0 space-y-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="font-semibold text-sm text-[#1E293B]">Study Gap Evidence Documents</h4>
+                            {url && <Check className="w-4 h-4 text-green-600 flex-shrink-0" />}
+                          </div>
+                          <p className="text-xs text-gray-500 italic">Official documents explaining study gap (e.g. employment, courses, medical certificate)</p>
+                        </div>
+
+                        <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                          <input
+                            type="file"
+                            accept=".pdf,.doc,.docx,image/*"
+                            className="hidden"
+                            ref={(el) => { fileInputRefs.current[docKey] = el; }}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleUploadDoc(docKey, file);
+                              e.target.value = "";
+                            }}
+                          />
+                          {url && (
+                            <a
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white hover:border-[#2F4F97] shadow-sm transition-colors"
+                            >
+                              Preview
+                            </a>
+                          )}
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            disabled={isUploading}
+                            onClick={() => fileInputRefs.current[docKey]?.click()}
+                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] border-gray-200 shadow-sm transition-colors"
+                          >
+                            {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
+                            {url ? "Replace" : "Upload"}
+                          </Button>
+                          {url && (
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              disabled={isUploading}
+                              onClick={() => handleDeleteDoc(docKey)}
+                              className="h-8 px-3 text-xs font-semibold rounded-lg text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors"
+                            >
+                              <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                              Delete
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="profile" className="space-y-6 mt-0">
             {/* ── Main Single Column Layout ────────────────────────────── */}
@@ -1840,9 +1701,9 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
               <CardContent className="p-6 sm:p-7 print:p-0 space-y-6">
                 
                 {/* Profile Card Header */}
-                <div className="pb-3 border-b border-gray-100 no-print">
-                  <h3 className="text-base font-bold text-[#1E293B]">Student Profile</h3>
-                  <p className="text-xs text-gray-500 mt-0.5">Personal, academic, and contact information</p>
+                <div className="bg-[#2F4F97] p-4 sm:p-5 rounded-lg text-white no-print">
+                  <h3 className="text-base font-bold text-white">Student Profile</h3>
+                  <p className="text-xs text-blue-100 mt-0.5">Personal, academic, and contact information</p>
                 </div>
 
                 {/* ── Section 1: Personal Information ── */}
@@ -1860,15 +1721,14 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                     <InfoRow label="Gender" value={student.gender} />
                     <InfoRow label="Nationality" value={student.nationality} />
                     <InfoRow label="Passport Number" value={student.passport_number} />
-                    <InfoRow label="NID Number" value={student.nid_number} />
                     
                     {/* Passport Expiry & Validation */}
                     <div className="flex flex-col gap-1.5 py-1">
-                      <span className="text-[11px] font-medium text-muted-foreground/70 uppercase tracking-wider">
+                      <span className="text-xs font-semibold text-[#2F4F97] uppercase tracking-wider">
                         Passport Expiry
                       </span>
                       <div className="flex items-center gap-2">
-                        <span className={`text-[13px] font-medium leading-snug ${!student.passport_expiry_date ? "text-amber-600/80 italic text-xs flex items-center gap-1 bg-amber-50/50 dark:bg-amber-950/10 px-2.5 py-1 rounded-2xl border border-amber-200/30 w-fit" : "text-[#1E293B]"}`}>
+                        <span className={`text-sm font-medium leading-snug ${!student.passport_expiry_date ? "text-amber-600/80 italic text-xs flex items-center gap-1 bg-amber-50/50 dark:bg-amber-950/10 px-2.5 py-1 rounded-2xl border border-amber-200/30 w-fit" : "text-[#1E293B]"}`}>
                           {student.passport_expiry_date ? new Date(student.passport_expiry_date).toLocaleDateString() : "Not provided"}
                         </span>
                         {student.passport_expiry_date && (
@@ -2085,8 +1945,8 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
 
           </div>
 
-          {/* Right Column: Chat & Discussion Widget (4 cols on XL) */}
-          <div className="xl:col-span-4 xl:sticky xl:top-[76px] xl:self-start no-print">
+          {/* Right Column: Chat & Discussion Widget (3 cols on XL) */}
+          <div className="xl:col-span-3 xl:sticky xl:top-[76px] xl:self-start no-print">
             <StudentChatWidget
               student={student}
               session={session}
