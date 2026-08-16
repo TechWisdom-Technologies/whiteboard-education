@@ -210,29 +210,32 @@ export default function PartnerApplications() {
       if (appliedFilters.statusFilter !== "all") {
         const s = app.status;
         switch (appliedFilters.statusFilter) {
-          case "received_wb":
-            if (!['document_upload', 'document_review', 'document_verification'].includes(s)) return false;
+          case "received_application_at_wb":
+            if (s !== 'received_application_at_wb') return false;
             break;
-          case "in_progress":
-            if (!['university_selection', 'university_application'].includes(s)) return false;
+          case "application_in_progress":
+            if (s !== 'application_in_progress') return false;
             break;
-          case "on_hold":
-            if (s !== 'on_hold') return false;
+          case "application_on_hold":
+            if (!['application_on_hold_intake', 'application_on_hold_wb', 'application_on_hold_university'].includes(s)) return false;
             break;
-          case "submitted":
-            if (s !== 'application_pending') return false;
+          case "application_submitted":
+            if (s !== 'application_submitted') return false;
             break;
-          case "get_offer":
-            if (!['university_accepted', 'offer_letter_signed'].includes(s)) return false;
+          case "offer_letter_received":
+            if (s !== 'offer_letter_received') return false;
             break;
-          case "emgs_pending":
-            if (!['emgs_application_submitted', 'emgs_fee_paid', 'pre_medical_clearance', 'emgs_approval_pending'].includes(s)) return false;
+          case "rejected_by_university":
+            if (s !== 'rejected_by_university') return false;
             break;
-          case "visa_ready":
-            if (!['val_issued', 'sev_application', 'sev_received'].includes(s)) return false;
+          case "ready_for_visa_application":
+            if (s !== 'ready_for_visa_application') return false;
             break;
-          case "rejected":
-            if (s !== 'rejected') return false;
+          case "emgs_approval_pending":
+            if (s !== 'emgs_approval_pending') return false;
+            break;
+          case "rejected_by_visa_office":
+            if (s !== 'rejected_by_visa_office') return false;
             break;
         }
       }
@@ -366,14 +369,15 @@ export default function PartnerApplications() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="received_wb">Received</SelectItem>
-                  <SelectItem value="in_progress">In Progress</SelectItem>
-                  <SelectItem value="on_hold">On Hold</SelectItem>
-                  <SelectItem value="submitted">Submitted</SelectItem>
-                  <SelectItem value="get_offer">Offer</SelectItem>
-                  <SelectItem value="emgs_pending">EMGS</SelectItem>
-                  <SelectItem value="visa_ready">Visa</SelectItem>
-                  <SelectItem value="rejected">Rejected</SelectItem>
+                  <SelectItem value="received_application_at_wb">Received Application at WB</SelectItem>
+                  <SelectItem value="application_in_progress">Application in Progress</SelectItem>
+                  <SelectItem value="application_on_hold">Application on Hold</SelectItem>
+                  <SelectItem value="application_submitted">Application Submitted</SelectItem>
+                  <SelectItem value="offer_letter_received">Offer Letter Received</SelectItem>
+                  <SelectItem value="rejected_by_university">Rejected by University</SelectItem>
+                  <SelectItem value="ready_for_visa_application">Ready for Visa</SelectItem>
+                  <SelectItem value="emgs_approval_pending">EMGS Pending</SelectItem>
+                  <SelectItem value="rejected_by_visa_office">Rejected by Visa Office</SelectItem>
                 </SelectContent>
               </Select>
             </div>

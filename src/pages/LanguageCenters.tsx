@@ -107,21 +107,21 @@ export default function LanguageCentersPage() {
       for (let i = 1; i <= totalPages; i++) pages.push(i);
     } else {
       pages.push(1);
-      
+
       let start = Math.max(2, currentPage - 2);
       let end = Math.min(totalPages - 1, currentPage + 2);
-      
+
       if (currentPage <= 3) {
         end = 5;
       }
       if (currentPage >= totalPages - 2) {
         start = totalPages - 4;
       }
-      
+
       if (start > 2) pages.push("ellipsis");
       for (let i = start; i <= end; i++) pages.push(i);
       if (end < totalPages - 1) pages.push("ellipsis");
-      
+
       pages.push(totalPages);
     }
     return pages;
@@ -141,7 +141,7 @@ export default function LanguageCentersPage() {
             <aside className="lg:w-[320px] xl:w-[360px] shrink-0">
               <div className="overflow-hidden border bg-white" style={{ borderColor: "#e8e8e8", borderRadius: "12px" }}>
                 {/* Mobile Filter Toggle */}
-                <button 
+                <button
                   onClick={() => setShowFilters(!showFilters)}
                   className="w-full flex items-center justify-between p-4 lg:hidden text-[#1E293B] font-semibold border-b" style={{ borderColor: "#e8e8e8" }}
                 >
@@ -188,13 +188,13 @@ export default function LanguageCentersPage() {
 
                   {/* Apply/Reset Buttons */}
                   <div className="flex items-center gap-3 px-5 pb-5">
-                    <Button 
+                    <Button
                       className="flex-1 font-bold h-11 text-sm hover:text-[#2F4F97]"
                       onClick={applyFilters}
                     >
                       Apply Filter
                     </Button>
-                    <Button 
+                    <Button
                       variant="outline"
                       className="flex-1 font-bold h-11 text-sm"
                       onClick={resetFilters}
@@ -211,7 +211,7 @@ export default function LanguageCentersPage() {
                 <h1 className="text-[20px] md:text-[22px] font-semibold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B" }}>
                   Language Centers
                 </h1>
-                
+
                 <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 md:gap-4 text-[12px] md:text-[14px]">
                   <div className="flex items-center gap-2 shrink-0">
                     <span className="font-semibold text-[#1E293B] whitespace-nowrap">Sort By:</span>
@@ -226,168 +226,168 @@ export default function LanguageCentersPage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  
-                  
-                  
+
+
+
                   <div className="font-medium text-gray-600 whitespace-nowrap shrink-0">
                     Total Centers: {filtered.length}
                   </div>
                 </div>
               </div>
               {paged.length === 0 ? (
-              <div
-                className="text-center py-20"
-                style={{ color: "#999999", fontFamily: "Poppins, sans-serif" }}
-              >
-                <Languages className="h-12 w-12 mx-auto mb-4 opacity-40" />
-                <p className="font-semibold text-lg mb-1" style={{ color: "#64748B" }}>
-                  No programs found
-                </p>
-                <p className="text-sm">Try adjusting your search or filters.</p>
-              </div>
-            ) : (
-              <div className="flex flex-col divide-y divide-gray-400">
-                {paged.map((lc: any) => {
-                  return (
-                    <div
-                      key={lc.id}
-                      className="bg-white py-8 lg:py-11 animate-fade-in group"
-                    >
-                      <div className="flex flex-row gap-4 md:gap-6 lg:gap-8 items-start md:items-center">
-                        {/* Elegant Icon Representation or Image */}
-                        <Link
-                          to={`/language-centers/${generateSlug(lc.name)}`}
-                          className="w-[100px] md:w-[170px] lg:w-[200px] shrink-0 h-[100px] md:h-[110px] flex items-center justify-center overflow-hidden"
-                        >
-                          {lc.logo_url ? (
-                            <img
-                              src={lc.logo_url}
-                              alt={lc.name}
-                              className="max-w-full max-h-full object-contain"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = "";
-                                (e.target as HTMLImageElement).className = "hidden";
-                              }}
-                            />
-                          ) : (
-                            <Languages className="h-10 w-10 text-[#2F4F97]" />
-                          )}
-                        </Link>
-
-                        <div className="flex-1 min-w-0 flex flex-col justify-between lg:flex-row lg:items-center gap-4 lg:gap-8">
-                          {/* Info block */}
-                        <div className="min-w-0 flex flex-col justify-center space-y-4 md:col-span-1 lg:col-span-1">
-                          <Link to={`/language-centers/${generateSlug(lc.name)}`}>
-                            <h3 className="font-medium hover:text-[#2F4F97] transition-colors text-[17px] md:text-[18px] text-[#1E293B] leading-tight mb-1">
-                              {lc.name}
-                            </h3>
+                <div
+                  className="text-center py-20"
+                  style={{ color: "#999999", fontFamily: "Poppins, sans-serif" }}
+                >
+                  <Languages className="h-12 w-12 mx-auto mb-4 opacity-40" />
+                  <p className="font-semibold text-lg mb-1" style={{ color: "#64748B" }}>
+                    No programs found
+                  </p>
+                  <p className="text-sm">Try adjusting your search or filters.</p>
+                </div>
+              ) : (
+                <div className="flex flex-col divide-y divide-gray-400">
+                  {paged.map((lc: any) => {
+                    return (
+                      <div
+                        key={lc.id}
+                        className="bg-white py-8 lg:py-11 animate-fade-in group"
+                      >
+                        <div className="flex flex-row gap-4 md:gap-6 lg:gap-8 items-start md:items-center">
+                          {/* Elegant Icon Representation or Image */}
+                          <Link
+                            to={`/language-centers/${generateSlug(lc.name)}`}
+                            className="w-[100px] md:w-[170px] lg:w-[200px] shrink-0 h-[100px] md:h-[110px] flex items-center justify-center overflow-hidden"
+                          >
+                            {lc.logo_url ? (
+                              <img
+                                src={lc.logo_url}
+                                alt={lc.name}
+                                className="max-w-full max-h-full object-contain"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = "";
+                                  (e.target as HTMLImageElement).className = "hidden";
+                                }}
+                              />
+                            ) : (
+                              <Languages className="h-10 w-10 text-[#2F4F97]" />
+                            )}
                           </Link>
 
-                          <div className="flex flex-col gap-3">
-                            {/* Location */}
-                            <div className="flex items-center gap-3 text-[12px] md:text-[14px] text-[#475569]">
-                              <MapPin className="shrink-0 h-4 w-4 text-[#475569]" />
-                              <span>{lc.city || "Malaysia"}, Malaysia</span>
+                          <div className="flex-1 min-w-0 flex flex-col justify-between lg:flex-row lg:items-center gap-4 lg:gap-8">
+                            {/* Info block */}
+                            <div className="min-w-0 flex flex-col justify-center space-y-4 md:col-span-1 lg:col-span-1">
+                              <Link to={`/language-centers/${generateSlug(lc.name)}`}>
+                                <h3 className="font-medium hover:text-[#2F4F97] transition-colors text-[17px] md:text-[18px] text-[#1E293B] leading-tight mb-1">
+                                  {lc.name}
+                                </h3>
+                              </Link>
+
+                              <div className="flex flex-col gap-3">
+                                {/* Location */}
+                                <div className="flex items-center gap-3 text-[12px] md:text-[14px] text-[#475569]">
+                                  <MapPin className="shrink-0 h-4 w-4 text-[#475569]" />
+                                  <span>{lc.city || "Malaysia"}, Malaysia</span>
+                                </div>
+
+
+                              </div>
                             </div>
 
-
+                            {/* Right: Actions */}
+                            <div className="flex flex-row lg:flex-col gap-2 md:gap-3 mt-1 lg:mt-0 shrink-0 lg:w-[140px]">
+                              <Button
+                                className="rounded-xl border-[#1E293B] h-10 px-3 text-[13px] font-medium w-[110px] lg:w-full"
+                                onClick={() => navigate(`/apply?centerId=${lc.id}`)}
+                              >
+                                Apply Now
+                              </Button>
+                              <Link to={`/language-centers/${generateSlug(lc.name)}`} className="block">
+                                <Button
+                                  variant="outline"
+                                  className="border-[#1E293B] rounded-xl h-10 px-3 text-[13px] font-medium w-[110px] lg:w-full hover:bg-[#2F4F97] hover:border-[#2F4F97] hover:text-white transition-colors"
+                                >
+                                  View Details
+                                </Button>
+                              </Link>
+                            </div>
                           </div>
                         </div>
-
-                        {/* Right: Actions */}
-                        <div className="flex flex-row lg:flex-col gap-2 md:gap-3 mt-1 lg:mt-0 shrink-0 lg:w-[140px]">
-                          <Button
-                            className="rounded-xl border-[#1E293B] h-10 px-3 text-[13px] font-medium w-[110px] lg:w-full"
-                            onClick={() => navigate(`/apply?centerId=${lc.id}`)}
-                          >
-                            Apply Now
-                          </Button>
-                          <Link to={`/language-centers/${generateSlug(lc.name)}`} className="block">
-                            <Button
-                              variant="outline"
-                              className="border-[#1E293B] rounded-xl h-10 px-3 text-[13px] font-medium w-[110px] lg:w-full hover:bg-[#2F4F97] hover:border-[#2F4F97] hover:text-white transition-colors"
-                            >
-                              View Details
-                            </Button>
-                          </Link>
-                        </div>
                       </div>
-                    </div>
-                  </div>
-                );
-              })}
-              </div>
-            )}
+                    );
+                  })}
+                </div>
+              )}
 
-            {/* Pagination styled like Universities2 / Courses2 */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-1.5 mt-10 mb-4">
-                {/* Previous */}
-                <button
-                  disabled={currentPage === 1}
-                  onClick={() => changePage(currentPage - 1)}
-                  className="h-9 w-9 flex items-center justify-center border transition-colors disabled:opacity-30"
-                  style={{
-                    borderColor: "#cacdd4",
-                    borderRadius: "8px",
-                    color: "#64748B",
-                    backgroundColor: "#ffffff",
-                  }}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </button>
+              {/* Pagination styled like Universities2 / Courses2 */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-1.5 mt-10 mb-4">
+                  {/* Previous */}
+                  <button
+                    disabled={currentPage === 1}
+                    onClick={() => changePage(currentPage - 1)}
+                    className="h-9 w-9 flex items-center justify-center border transition-colors disabled:opacity-30"
+                    style={{
+                      borderColor: "#cacdd4",
+                      borderRadius: "8px",
+                      color: "#64748B",
+                      backgroundColor: "#ffffff",
+                    }}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
 
-                {/* Page Numbers */}
-                {getPageNumbers().map((page, i) =>
-                  page === "ellipsis" ? (
-                    <span
-                      key={`ellipsis-${i}`}
-                      className="h-9 w-9 flex items-center justify-center text-sm"
-                      style={{ color: "#999999" }}
-                    >
-                      …
-                    </span>
-                  ) : (
-                    <button
-                      key={page}
-                      onClick={() => changePage(page)}
-                      className="h-9 w-9 flex items-center justify-center border text-sm font-light transition-colors"
-                      style={{
-                        borderRadius: "8px",
-                        fontFamily: "Poppins, sans-serif",
-                        backgroundColor: currentPage === page ? "#2F4F97" : "#ffffff",
-                        color: currentPage === page ? "#ffffff" : "#64748B",
-                        borderColor: currentPage === page ? "#2F4F97" : "#cacdd4",
-                      }}
-                    >
-                      {page}
-                    </button>
-                  )
-                )}
+                  {/* Page Numbers */}
+                  {getPageNumbers().map((page, i) =>
+                    page === "ellipsis" ? (
+                      <span
+                        key={`ellipsis-${i}`}
+                        className="h-9 w-9 flex items-center justify-center text-sm"
+                        style={{ color: "#999999" }}
+                      >
+                        …
+                      </span>
+                    ) : (
+                      <button
+                        key={page}
+                        onClick={() => changePage(page)}
+                        className="h-9 w-9 flex items-center justify-center border text-sm font-light transition-colors"
+                        style={{
+                          borderRadius: "8px",
+                          fontFamily: "Poppins, sans-serif",
+                          backgroundColor: currentPage === page ? "#2F4F97" : "#ffffff",
+                          color: currentPage === page ? "#ffffff" : "#64748B",
+                          borderColor: currentPage === page ? "#2F4F97" : "#cacdd4",
+                        }}
+                      >
+                        {page}
+                      </button>
+                    )
+                  )}
 
-                {/* Next */}
-                <button
-                  disabled={currentPage === totalPages}
-                  onClick={() => changePage(currentPage + 1)}
-                  className="h-9 w-9 flex items-center justify-center border transition-colors disabled:opacity-30"
-                  style={{
-                    borderColor: "#cacdd4",
-                    borderRadius: "8px",
-                    color: "#64748B",
-                    backgroundColor: "#ffffff",
-                  }}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-              </div>
-            )}
+                  {/* Next */}
+                  <button
+                    disabled={currentPage === totalPages}
+                    onClick={() => changePage(currentPage + 1)}
+                    className="h-9 w-9 flex items-center justify-center border transition-colors disabled:opacity-30"
+                    style={{
+                      borderColor: "#cacdd4",
+                      borderRadius: "8px",
+                      color: "#64748B",
+                      backgroundColor: "#ffffff",
+                    }}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
       </div>
 
       <PublicFooter />
-      
+
     </div>
   );
 }

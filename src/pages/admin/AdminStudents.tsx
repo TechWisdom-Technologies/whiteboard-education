@@ -23,16 +23,18 @@ const statusOptions = [
 ];
 
 const statusColors: Record<string, string> = {
-  document_review: "bg-gray-100 text-gray-600",
-  documents_verified: "bg-blue-500/10 text-blue-600 border-blue-500/30",
-  university_applied: "bg-indigo-500/10 text-indigo-600 border-indigo-500/30",
-  offer_letter: "bg-purple-500/10 text-purple-600 border-purple-500/30",
-  emgs_processing: "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]/20",
-  visa_approved: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
-  travel_ready: "bg-teal-500/10 text-teal-600 border-teal-500/30",
-  enrolled: "bg-green-600/10 text-green-700 border-green-600/30",
-  rejected: "bg-destructive/10 text-destructive border-destructive/20",
-  on_hold: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+  new: "bg-gray-100 text-gray-600 border-gray-200",
+  received_application_at_wb: "bg-blue-500/10 text-blue-600 border-blue-500/30",
+  application_in_progress: "bg-indigo-500/10 text-indigo-600 border-indigo-500/30",
+  application_on_hold_intake: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+  application_on_hold_wb: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+  application_on_hold_university: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+  application_submitted: "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]/20",
+  offer_letter_received: "bg-purple-500/10 text-purple-600 border-purple-500/30",
+  rejected_by_university: "bg-destructive/10 text-destructive border-destructive/20",
+  ready_for_visa_application: "bg-teal-500/10 text-teal-600 border-teal-500/30",
+  emgs_approval_pending: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
+  rejected_by_visa_office: "bg-destructive/10 text-destructive border-destructive/20",
 };
 
 interface Student {

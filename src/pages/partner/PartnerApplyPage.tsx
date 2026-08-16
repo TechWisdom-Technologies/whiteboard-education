@@ -102,6 +102,21 @@ const statusFilterMap: Record<string, string[]> = {
   rejected: ["rejected"],
 };
 
+const statusColors: Record<string, string> = {
+  new: "bg-gray-100 text-gray-600 border-gray-200",
+  received_application_at_wb: "bg-blue-500/10 text-blue-600 border-blue-500/30",
+  application_in_progress: "bg-indigo-500/10 text-indigo-600 border-indigo-500/30",
+  application_on_hold_intake: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+  application_on_hold_wb: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+  application_on_hold_university: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+  application_submitted: "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]/20",
+  offer_letter_received: "bg-purple-500/10 text-purple-600 border-purple-500/30",
+  rejected_by_university: "bg-destructive/10 text-destructive border-destructive/20",
+  ready_for_visa_application: "bg-teal-500/10 text-teal-600 border-teal-500/30",
+  emgs_approval_pending: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
+  rejected_by_visa_office: "bg-destructive/10 text-destructive border-destructive/20",
+};
+
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
@@ -233,9 +248,7 @@ export default function PartnerApplyPage() {
         const phoneMatch = s.phone?.toLowerCase().includes(q);
         const statusLabel = getStatusLabel(s.status).toLowerCase();
         const statusRaw = (s.status || "").toLowerCase();
-        const isSubmitted = s.status !== "document_upload" && s.status !== "document_review" && s.status !== "document_verification";
-        const displayLabel = (isSubmitted ? "1 app. submitted app. submitted submitted" : "app. incomplete incomplete").toLowerCase();
-        const statusMatch = statusLabel.includes(q) || statusRaw.includes(q) || displayLabel.includes(q);
+        const statusMatch = statusLabel.includes(q) || statusRaw.includes(q);
 
         if (!nameMatch && !createdByMatch && !wbIdMatch && !emailMatch && !phoneMatch && !statusMatch) {
           return false;
@@ -287,7 +300,7 @@ export default function PartnerApplyPage() {
           university_id: course.university_id || null,
           course_id: course.id,
           application_code: appCode,
-          status: "document_upload",
+          status: "received_application_at_wb",
         }),
       });
 
@@ -297,6 +310,19 @@ export default function PartnerApplyPage() {
         toast.error(`Error: ${errorData.message || errorData.details || "Failed to submit application"}`);
         return;
       }
+
+      // Also update the student's main status to received_application_at_wb
+      await fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${selectedStudentId}`, {
+        method: "PATCH",
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${session.access_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          status: "received_application_at_wb",
+        }),
+      });
 
       const student = students.find((s) => s.id === selectedStudentId);
       toast.success(`Application ${appCode} confirmed successfully!`, {
@@ -505,11 +531,8 @@ export default function PartnerApplyPage() {
                   <TableBody>
                     {filteredStudents.map((s) => {
                       const isSelected = selectedStudentId === s.id;
-                      const isSubmitted = s.status !== "document_upload" && s.status !== "document_review" && s.status !== "document_verification";
-                      const displayLabel = isSubmitted ? "1 App. Submitted" : "App. Incomplete";
-                      const stClass = isSubmitted
-                        ? "bg-green-50 text-green-600 border-green-200"
-                        : "bg-orange-50 text-orange-600 border-orange-200";
+                      const label = getStatusLabel(s.status);
+                      const stClass = statusColors[s.status] || "bg-gray-100 text-gray-600 border-gray-200";
 
                       return (
                         <TableRow
@@ -570,8 +593,11 @@ export default function PartnerApplyPage() {
 
                           {/* Status */}
                           <TableCell className="py-3 whitespace-nowrap">
-                            <Badge variant="outline" className={`font-normal rounded-md px-2 py-0.5 text-[11px] ${stClass}`}>
-                              {displayLabel}
+                            <Badge
+                              variant="outline"
+                              className={`font-medium rounded-md px-2 py-0.5 text-[11px] whitespace-nowrap ${stClass}`}
+                            >
+                              {label}
                             </Badge>
                           </TableCell>
                         </TableRow>

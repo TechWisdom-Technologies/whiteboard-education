@@ -12,7 +12,27 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { LoadingScreen } from "@/components/ui/loading-screen";
-import { getStatusLabel } from "@/config/statusFlow";
+import { statusPhases, exceptionalStatuses, getStatusLabel } from "@/config/statusFlow";
+
+const statusOptions = [
+  ...statusPhases.flatMap(p => p.steps.map(s => ({ value: s.id, label: s.label }))),
+  ...exceptionalStatuses.map(s => ({ value: s.id, label: s.label }))
+];
+
+const statusColors: Record<string, string> = {
+  new: "bg-gray-100 text-gray-600 border-gray-200",
+  received_application_at_wb: "bg-blue-500/10 text-blue-600 border-blue-500/30",
+  application_in_progress: "bg-indigo-500/10 text-indigo-600 border-indigo-500/30",
+  application_on_hold_intake: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+  application_on_hold_wb: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+  application_on_hold_university: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+  application_submitted: "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]/20",
+  offer_letter_received: "bg-purple-500/10 text-purple-600 border-purple-500/30",
+  rejected_by_university: "bg-destructive/10 text-destructive border-destructive/20",
+  ready_for_visa_application: "bg-teal-500/10 text-teal-600 border-teal-500/30",
+  emgs_approval_pending: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
+  rejected_by_visa_office: "bg-destructive/10 text-destructive border-destructive/20",
+};
 import { format } from "date-fns";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -51,40 +71,7 @@ interface Student {
   wb_student_id?: number;
 }
 
-const statusMap: Record<string, { label: string; class: string }> = {
-  document_upload: { label: "Document Upload", class: "bg-gray-100 text-gray-600" },
-  document_review: { label: "Document Review", class: "bg-gray-100 text-gray-600" },
-  document_verification: { label: "Doc Verification", class: "bg-blue-500/10 text-blue-600 border-blue-500/30" },
-  university_selection: { label: "Uni Selection", class: "bg-indigo-500/10 text-indigo-600 border-indigo-500/30" },
-  university_application: { label: "Uni Applied", class: "bg-indigo-500/10 text-indigo-600 border-indigo-500/30" },
-  application_pending: { label: "App Pending", class: "bg-purple-500/10 text-purple-600 border-purple-500/30" },
-  university_accepted: { label: "Uni Accepted", class: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30" },
-  offer_letter_signed: { label: "Offer Signed", class: "bg-emerald-600/10 text-emerald-700 border-emerald-600/30" },
-  emgs_application_submitted: { label: "EMGS Submitted", class: "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]/20" },
-  emgs_fee_paid: { label: "EMGS Fee Paid", class: "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]/20" },
-  pre_medical_clearance: { label: "Pre-Medical", class: "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]/20" },
-  emgs_approval_pending: { label: "EMGS Pending", class: "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]/20" },
-  val_issued: { label: "VAL Issued", class: "bg-teal-500/10 text-teal-600 border-teal-500/30" },
-  sev_application: { label: "SEV Applied", class: "bg-teal-500/10 text-teal-600 border-teal-500/30" },
-  sev_received: { label: "SEV Received", class: "bg-green-600/10 text-green-700 border-green-600/30" },
-  enrolled: { label: "Enrolled", class: "bg-green-600/10 text-green-700 border-green-600/30" },
-  enrolled_completed: { label: "Completed", class: "bg-green-600/10 text-green-700 border-green-600/30" },
-  rejected: { label: "Rejected", class: "bg-destructive/10 text-destructive border-destructive/20" },
-  on_hold: { label: "On Hold", class: "bg-amber-500/10 text-amber-600 border-amber-500/20" },
-};
 
-const statusFilterMap: Record<string, string[]> = {
-  received_at_wb: ['document_upload', 'document_review', 'document_verification'],
-  in_progress: ['university_selection', 'university_application'],
-  on_hold_intake: ['on_hold'],
-  on_hold_wb: ['on_hold'],
-  on_hold_uni: ['on_hold'],
-  submitted: ['application_pending'],
-  offer: ['university_accepted', 'offer_letter_signed'],
-  emgs: ['emgs_application_submitted', 'emgs_fee_paid', 'pre_medical_clearance', 'emgs_approval_pending'],
-  visa: ['val_issued', 'sev_application', 'sev_received'],
-  rejected: ['rejected'],
-};
 
 export default function PartnerStudents() {
   const { session, user } = useAuth();
@@ -277,9 +264,7 @@ export default function PartnerStudents() {
       const phoneMatch = s.phone?.toLowerCase().includes(q);
       const statusLabel = getStatusLabel(s.status).toLowerCase();
       const statusRaw = (s.status || "").toLowerCase();
-      const isSubmitted = s.status !== 'document_upload' && s.status !== 'document_review' && s.status !== 'document_verification';
-      const displayLabel = (isSubmitted ? "1 app. submitted app. submitted submitted" : "app. incomplete incomplete").toLowerCase();
-      const statusMatch = statusLabel.includes(q) || statusRaw.includes(q) || displayLabel.includes(q);
+      const statusMatch = statusLabel.includes(q) || statusRaw.includes(q);
 
       if (!nameMatch && !createdByMatch && !wbIdMatch && !emailMatch && !phoneMatch && !statusMatch) {
         return false;
@@ -298,8 +283,7 @@ export default function PartnerStudents() {
     
     // Status filter
     if (appliedFilters.statusFilter && appliedFilters.statusFilter !== "all") {
-      const statuses = statusFilterMap[appliedFilters.statusFilter];
-      if (statuses && !statuses.includes(s.status)) return false;
+      if (s.status !== appliedFilters.statusFilter) return false;
     }
     
     return true;
@@ -386,8 +370,9 @@ export default function PartnerStudents() {
                <SelectTrigger className="h-8 text-xs border-gray-200"><SelectValue placeholder="All" /></SelectTrigger>
                <SelectContent>
                   <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="submitted">App. Submitted</SelectItem>
-                  <SelectItem value="in_progress">App. Incomplete</SelectItem>
+                  {statusOptions.map(opt => (
+                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                  ))}
                </SelectContent>
              </Select>
            </div>
@@ -443,12 +428,7 @@ export default function PartnerStudents() {
               <TableBody>
                 {filtered.map(s => {
                   const label = getStatusLabel(s.status);
-                  // Adapting colors for the mock:
-                  const isSubmitted = s.status !== 'document_upload' && s.status !== 'document_review' && s.status !== 'document_verification';
-                  const displayLabel = isSubmitted ? "1 App. Submitted" : "App. Incomplete";
-                  const stClass = isSubmitted 
-                    ? "bg-green-50 text-green-600 border-green-200" 
-                    : "bg-gray-100 text-gray-600 border-gray-200";
+                  const stClass = statusColors[s.status] || "bg-gray-100 text-gray-600 border-gray-200";
 
                   return (
                     <TableRow
@@ -478,8 +458,8 @@ export default function PartnerStudents() {
                         <div className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" />{s.phone || '-'}</div>
                       </TableCell>
                       <TableCell className="py-3 whitespace-nowrap">
-                        <Badge variant="outline" className={`font-normal rounded-md px-2 py-0.5 text-[11px] ${stClass}`}>
-                          {displayLabel}
+                        <Badge variant="outline" className={`font-medium rounded-md px-2 py-0.5 text-[11px] ${stClass}`}>
+                          {label}
                         </Badge>
                       </TableCell>
                       <TableCell className="py-3" onClick={(e) => e.stopPropagation()}>

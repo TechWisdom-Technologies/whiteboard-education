@@ -433,6 +433,7 @@ export default function PartnerAddStudent() {
             english_test_score: isMOI ? "MOI" : form.ielts_score || "",
             degree_level: form.education_level === "Bachelors" ? "Bachelor" : form.education_level === "Masters" ? "Master" : form.education_level,
             partner_id: user?.id,
+            status: "new",
           }),
         });
         const data = await res.json();

@@ -124,7 +124,7 @@ export default function Universities() {
   const { data: universities = [], isLoading } = useTableData("universities", { orderBy: "name" });
   const { data: courses = [], isLoading: loadingCourses } = useTableData("courses");
   const [search, setSearch] = useState(searchParams.get("search") || "");
-  
+
   useEffect(() => {
     const q = searchParams.get("search");
     if (q) setSearch(q);
@@ -413,7 +413,7 @@ export default function Universities() {
                 <h1 className="text-[20px] md:text-[22px] font-bold shrink-0" style={{ fontFamily: "Poppins, sans-serif", color: "#1E293B" }}>
                   Universities
                 </h1>
-                
+
                 <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 md:gap-4 text-[14px]">
                   <div className="flex items-center gap-2 shrink-0">
                     <span className="font-semibold text-[#1E293B] whitespace-nowrap">Sort By:</span>
@@ -427,9 +427,9 @@ export default function Universities() {
                       <option value="name_z_a">Name (Z to A)</option>
                     </select>
                   </div>
-                  
+
                   <div className="text-gray-500 hidden sm:block">|</div>
-                  
+
                   <div className="font-medium text-gray-600 whitespace-nowrap shrink-0">
                     Total Universities: {filtered.length}
                   </div>
@@ -463,99 +463,99 @@ export default function Universities() {
                             to={`/universities/${generateSlug(u.name)}`}
                             className="w-full h-[100px] flex items-center justify-center overflow-hidden border border-gray-100 rounded-2xl p-2"
                           >
-                          {u.logo_url || UNIVERSITY_LOGOS[u.name] ? (
-                            <img
-                              src={u.logo_url || UNIVERSITY_LOGOS[u.name]}
-                              alt={u.name}
-                              className="max-w-full max-h-full object-contain p-2"
-                              onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.style.display = 'none';
-                                e.currentTarget.insertAdjacentHTML('afterend', '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#cacdd4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-graduation-cap"><path d="M21.42 10.922a2 2 0 0 0-.019-3.838L12.83 4.018a2 2 0 0 0-1.66 0L2.6 7.08a2 2 0 0 0 0 3.832l8.57 3.064a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>');
-                              }}
-                            />
-                          ) : (
-                            <GraduationCap className="h-10 w-10" style={{ color: "#cacdd4" }} />
-                          )}
-                        </Link>
-
-                        {/* Middle: Info */}
-                        <div className="min-w-0 flex flex-col justify-center space-y-3 md:col-span-1 lg:col-span-1">
-                          <Link to={`/universities/${generateSlug(u.name)}`}>
-                            <h3 className="font-semibold hover:text-[#2F4F97] transition-colors text-[18px] md:text-[20px] text-[#1E293B] leading-tight mb-1">
-                              {u.name}
-                            </h3>
+                            {u.logo_url || UNIVERSITY_LOGOS[u.name] ? (
+                              <img
+                                src={u.logo_url || UNIVERSITY_LOGOS[u.name]}
+                                alt={u.name}
+                                className="max-w-full max-h-full object-contain p-2"
+                                onError={(e) => {
+                                  e.currentTarget.onerror = null;
+                                  e.currentTarget.style.display = 'none';
+                                  e.currentTarget.insertAdjacentHTML('afterend', '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#cacdd4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-graduation-cap"><path d="M21.42 10.922a2 2 0 0 0-.019-3.838L12.83 4.018a2 2 0 0 0-1.66 0L2.6 7.08a2 2 0 0 0 0 3.832l8.57 3.064a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>');
+                                }}
+                              />
+                            ) : (
+                              <GraduationCap className="h-10 w-10" style={{ color: "#cacdd4" }} />
+                            )}
                           </Link>
 
-                          <div className="flex flex-col gap-1.5">
-                            {/* Location */}
-                            <div className="flex items-center gap-2">
-                              <MapPin className="h-4 w-4 shrink-0" style={{ color: "#2F4F97" }} />
-                              <span
-                                style={{
-                                  fontFamily: "Poppins, sans-serif",
-                                  fontSize: "14px",
-                                  color: "#444444",
-                                }}
-                              >
-                                {u.city || "Malaysia"}, Malaysia
-                              </span>
-                            </div>
+                          {/* Middle: Info */}
+                          <div className="min-w-0 flex flex-col justify-center space-y-3 md:col-span-1 lg:col-span-1">
+                            <Link to={`/universities/${generateSlug(u.name)}`}>
+                              <h3 className="font-semibold hover:text-[#2F4F97] transition-colors text-[18px] md:text-[20px] text-[#1E293B] leading-tight mb-1">
+                                {u.name}
+                              </h3>
+                            </Link>
 
-                            {/* Offer Letter */}
-                            <div className="flex items-center gap-2">
-                              <FileText className="h-4 w-4 shrink-0" style={{ color: "#64748B" }} />
-                              <span
-                                style={{
-                                  fontFamily: "Poppins, sans-serif",
-                                  fontSize: "14px",
-                                  color: "#444444",
-                                }}
-                              >
-                                {PAID_OFFER_LETTER_UNIS.includes(u.name) ? "Offer Letter Fees Applies" : "Free Offer Letter"}
-                              </span>
-                            </div>
+                            <div className="flex flex-col gap-1.5">
+                              {/* Location */}
+                              <div className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4 shrink-0" style={{ color: "#2F4F97" }} />
+                                <span
+                                  style={{
+                                    fontFamily: "Poppins, sans-serif",
+                                    fontSize: "14px",
+                                    color: "#444444",
+                                  }}
+                                >
+                                  {u.city || "Malaysia"}, Malaysia
+                                </span>
+                              </div>
 
-                            {/* Course count */}
-                            <div className="flex items-center gap-2">
-                              <BookOpen className="h-4 w-4 shrink-0" style={{ color: "#64748B" }} />
-                              <span
-                                className="font-bold"
-                                style={{
-                                  fontFamily: "Poppins, sans-serif",
-                                  fontSize: "14px",
-                                  color: "#444444",
-                                }}
-                              >
-                                {courseCount} courses
-                              </span>
+                              {/* Offer Letter */}
+                              <div className="flex items-center gap-2">
+                                <FileText className="h-4 w-4 shrink-0" style={{ color: "#64748B" }} />
+                                <span
+                                  style={{
+                                    fontFamily: "Poppins, sans-serif",
+                                    fontSize: "14px",
+                                    color: "#444444",
+                                  }}
+                                >
+                                  {PAID_OFFER_LETTER_UNIS.includes(u.name) ? "Offer Letter Fees Applies" : "Free Offer Letter"}
+                                </span>
+                              </div>
+
+                              {/* Course count */}
+                              <div className="flex items-center gap-2">
+                                <BookOpen className="h-4 w-4 shrink-0" style={{ color: "#64748B" }} />
+                                <span
+                                  className="font-bold"
+                                  style={{
+                                    fontFamily: "Poppins, sans-serif",
+                                    fontSize: "14px",
+                                    color: "#444444",
+                                  }}
+                                >
+                                  {courseCount} courses
+                                </span>
+                              </div>
                             </div>
                           </div>
-                        </div>
 
-                        {/* Right: Buttons */}
-                        <div className="w-full md:col-span-2 lg:col-span-1 flex flex-col gap-3 mt-4 lg:mt-2">
-                          <Button
-                            className="rounded-[20px] h-9 px-3 font-bold"
-                            style={{
-                              fontFamily: "Poppins, sans-serif",
-                            }}
-                            onClick={() => navigate(`/apply?universityId=${u.id}`)}
-                          >
-                            Apply Now
-                          </Button>
-                          <Link to={`/universities/${generateSlug(u.name)}`} className="block">
+                          {/* Right: Buttons */}
+                          <div className="w-full md:col-span-2 lg:col-span-1 flex flex-col gap-3 mt-4 lg:mt-2">
                             <Button
-                              variant="outline"
-                              className="bg-[#EEF4FF] text-[#2F4F97] h-9 px-3 font-bold w-full hover:bg-[#2F4F97] hover:text-white border-transparent transition-colors"
+                              className="rounded-[20px] h-9 px-3 font-bold"
                               style={{
                                 fontFamily: "Poppins, sans-serif",
                               }}
+                              onClick={() => navigate(`/apply?universityId=${u.id}`)}
                             >
-                              Ask Us
+                              Apply Now
                             </Button>
-                          </Link>
-                        </div>
+                            <Link to={`/universities/${generateSlug(u.name)}`} className="block">
+                              <Button
+                                variant="outline"
+                                className="bg-[#EEF4FF] text-[#2F4F97] h-9 px-3 font-bold w-full hover:bg-[#2F4F97] hover:text-white border-transparent transition-colors"
+                                style={{
+                                  fontFamily: "Poppins, sans-serif",
+                                }}
+                              >
+                                Ask Us
+                              </Button>
+                            </Link>
+                          </div>
 
                         </div>
                       </div>
@@ -632,7 +632,7 @@ export default function Universities() {
       </div>
 
       <PublicFooter />
-      
+
     </div>
   );
 }

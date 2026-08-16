@@ -59,7 +59,6 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { StatusTracker } from "@/components/ui/StatusTracker";
 import { getStatusLabel } from "@/config/statusFlow";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { StudentChatWidget } from "@/components/student/StudentChatWidget";
@@ -70,29 +69,33 @@ const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 // â”€â”€â”€ Status configuration â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const statusColors: Record<string, string> = {
-  document_review: "bg-gray-100 text-gray-600",
-  documents_verified: "bg-blue-500/10 text-blue-600 border-blue-500/30",
-  university_applied: "bg-indigo-500/10 text-indigo-600 border-indigo-500/30",
-  offer_letter: "bg-purple-500/10 text-purple-600 border-purple-500/30",
-  emgs_processing: "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]/20",
-  visa_approved: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
-  travel_ready: "bg-teal-500/10 text-teal-600 border-teal-500/30",
-  enrolled: "bg-green-600/10 text-green-700 border-green-600/30",
-  rejected: "bg-destructive/10 text-destructive border-destructive/20",
-  on_hold: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+  new: "bg-gray-100 text-gray-600 border-gray-200",
+  received_application_at_wb: "bg-blue-500/10 text-blue-600 border-blue-500/30",
+  application_in_progress: "bg-indigo-500/10 text-indigo-600 border-indigo-500/30",
+  application_on_hold_intake: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+  application_on_hold_wb: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+  application_on_hold_university: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+  application_submitted: "bg-[#2F4F97]/10 text-[#2F4F97] border-[#2F4F97]/20",
+  offer_letter_received: "bg-purple-500/10 text-purple-600 border-purple-500/30",
+  rejected_by_university: "bg-destructive/10 text-destructive border-destructive/20",
+  ready_for_visa_application: "bg-teal-500/10 text-teal-600 border-teal-500/30",
+  emgs_approval_pending: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
+  rejected_by_visa_office: "bg-destructive/10 text-destructive border-destructive/20",
 };
 
 const statusLabels: Record<string, string> = {
-  document_review: "Document Review",
-  documents_verified: "Documents Verified",
-  university_applied: "University Applied",
-  offer_letter: "Offer Letter",
-  emgs_processing: "EMGS Processing",
-  visa_approved: "Visa Approved",
-  travel_ready: "Travel Ready",
-  enrolled: "Enrolled",
-  rejected: "Rejected",
-  on_hold: "On Hold",
+  new: "New",
+  received_application_at_wb: "Received Application at WB",
+  application_in_progress: "Application in Progress",
+  application_on_hold_intake: "Application on Hold \u2013 Intake yet to open",
+  application_on_hold_wb: "Application on Hold \u2013 Wb team",
+  application_on_hold_university: "Application on Hold \u2013 University",
+  application_submitted: "Application Submitted",
+  offer_letter_received: "Offer Letter Received",
+  rejected_by_university: "Rejected by University",
+  ready_for_visa_application: "Ready for Visa Application",
+  emgs_approval_pending: "EMGS Approval Pending",
+  rejected_by_visa_office: "Rejected by Visa Office",
 };
 
 const statusOptions = Object.entries(statusLabels).map(([value, label]) => ({
@@ -599,7 +602,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
           university_id: newAppForm.university_id,
           course_id: newAppForm.course_id,
           application_code: applicationCode,
-          status: "document_review"
+          status: "received_application_at_wb"
         })
       });
       
@@ -967,25 +970,31 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
 
                     {/* Right: Status Box & Submit Application */}
                     <div className="flex items-center gap-2 shrink-0">
-                      <div className="h-9 min-h-[36px] px-3.5 flex items-center justify-center text-xs font-semibold uppercase tracking-wider rounded-lg border border-gray-200 bg-gray-50 text-gray-700 shadow-sm">
-                        {getStatusLabel(student.status) || student.status}
-                      </div>
-
-                      {student.status === "document_upload" && mode === "partner" && (
-                        <Button
-                          className="bg-green-600 hover:bg-green-700 text-white text-xs h-9 min-h-[36px] px-3.5 rounded-lg shadow-sm"
-                          onClick={() => {
-                            if (
-                              confirm(
-                                "Are you sure you want to submit this student's application to Whiteboard for review?"
-                              )
-                            ) {
-                              handleSaveStatusTracker("document_review");
-                            }
-                          }}
+                      {mode === "admin" ? (
+                        <Select
+                          value={student.status}
+                          onValueChange={handleSaveStatusTracker}
+                          disabled={savingStatus}
                         >
-                          Submit Application
-                        </Button>
+                          <SelectTrigger className={`h-9 min-h-[36px] px-3.5 flex items-center justify-center text-xs font-semibold uppercase tracking-wider rounded-lg shadow-sm ${statusColors[student.status] || "bg-gray-50 border-gray-200 text-gray-700"}`}>
+                            {savingStatus ? (
+                              <div className="h-3 w-3 border-2 border-[#2F4F97]/30 border-t-[#2F4F97] animate-spin rounded-full mx-2" />
+                            ) : (
+                              <SelectValue placeholder="Select Status" />
+                            )}
+                          </SelectTrigger>
+                          <SelectContent>
+                            {statusOptions.map((opt) => (
+                              <SelectItem key={opt.value} value={opt.value} className="text-xs">
+                                {opt.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <div className={`h-9 min-h-[36px] px-3.5 flex items-center justify-center text-xs font-semibold uppercase tracking-wider rounded-lg shadow-sm ${statusColors[student.status] || "bg-gray-50 border-gray-200 text-gray-700"}`}>
+                          {getStatusLabel(student.status) || student.status}
+                        </div>
                       )}
                     </div>
 
@@ -1054,9 +1063,39 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                                 {app.courses?.intake_months?.[0] || "—"}
                               </TableCell>
                               <TableCell className="whitespace-nowrap">
-                                <Badge variant="outline" className={`${statusColors[app.status] || "bg-gray-100 text-gray-800"} text-[10px] px-2 border-transparent whitespace-nowrap`}>
-                                  {getStatusLabel(app.status)}
-                                </Badge>
+                                {mode === "admin" ? (
+                                  <Select
+                                    value={app.status}
+                                    onValueChange={async (newStatus) => {
+                                      try {
+                                        const { error } = await supabase
+                                          .from("student_applications")
+                                          .update({ status: newStatus })
+                                          .eq("id", app.id);
+                                        if (error) throw error;
+                                        setApplications(applications.map(a => a.id === app.id ? { ...a, status: newStatus } : a));
+                                        toast.success("Application status updated");
+                                      } catch (err: any) {
+                                        toast.error("Failed to update application status");
+                                      }
+                                    }}
+                                  >
+                                    <SelectTrigger className={`h-7 min-w-[120px] text-[10px] font-semibold border-transparent shadow-sm ${statusColors[app.status] || "bg-gray-100 text-gray-800"}`}>
+                                      <SelectValue placeholder="Select Status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {statusOptions.filter(o => o.value !== "new").map((opt) => (
+                                        <SelectItem key={opt.value} value={opt.value} className="text-[10px]">
+                                          {opt.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                ) : (
+                                  <Badge variant="outline" className={`${statusColors[app.status] || "bg-gray-100 text-gray-800"} text-[10px] px-2 border-transparent whitespace-nowrap`}>
+                                    {getStatusLabel(app.status)}
+                                  </Badge>
+                                )}
                               </TableCell>
                             </TableRow>
                           ))}

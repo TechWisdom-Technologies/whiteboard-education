@@ -27,16 +27,16 @@ export function PreFooterCTA() {
             <Calendar className="h-4 w-4" />
             <span className="text-xs font-semibold tracking-wide uppercase">Intakes are open for 2026</span>
           </div>
-          
+
           <h2 className="text-2xl md:text-[32px] font-bold text-white mb-3 leading-tight">
             Ready to Start Your Malaysian <br />
             <span className="text-white">Academic Adventure?</span>
           </h2>
-          
+
           <p className="text-[13px] md:text-[16px] text-white/90 mb-10 max-w-xl mx-auto leading-relaxed">
             Get personalized guidance from our experts and secure your place at a world-class university today. We handle the paperwork, you focus on your future.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to="/contact" className="w-full sm:w-auto">
               <Button className="w-full sm:w-auto hover:text-[#2F4F97] font-semibold text-sm rounded-2xl h-11 px-6 group transition-all">
@@ -44,7 +44,7 @@ export function PreFooterCTA() {
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
               </Button>
             </Link>
-            
+
             <Link to="/universities" className="w-full sm:w-auto">
               <Button variant="outline" className="w-full sm:w-auto border-white/20 text-white hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] font-semibold text-sm rounded-2xl h-11 px-6 bg-white/5 backdrop-blur-sm transition-all">
                 <GraduationCap className="mr-2 h-4 w-4" />

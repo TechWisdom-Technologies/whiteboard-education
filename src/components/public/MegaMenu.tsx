@@ -33,7 +33,7 @@ import { GlobalBreadcrumbs } from "./GlobalBreadcrumbs";
 
 const CurrencySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
   const { currency, setCurrency } = useCurrency();
-  
+
   if (isMobile) {
     return (
       <Collapsible>
@@ -162,23 +162,23 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
       <div className="bg-[#1E293B] text-white py-2">
         <div className="container mx-auto flex justify-end gap-6 px-4 lg:px-8">
           {hasRole("partner") ? (
-            <Link 
-              to="/partner-dashboard" 
+            <Link
+              to="/partner-dashboard"
               className="text-[12px] font-semibold hover:text-gray-300 transition-colors flex items-center gap-1.5 tracking-wide pr-3"
             >
               <LayoutDashboard className="h-3 w-3" /> PARTNER DASHBOARD
             </Link>
           ) : (
-            <Link 
-              to="/partner" 
+            <Link
+              to="/partner"
               className="text-[12px] font-semibold hover:text-gray-300 transition-colors flex items-center gap-1.5 tracking-wide pr-3"
             >
               <Handshake className="h-3 w-3" /> APPLY FOR PARTNERSHIP
             </Link>
           )}
           {!user ? (
-            <Link 
-              to="/login" 
+            <Link
+              to="/login"
               className="text-[12px] font-semibold hover:text-gray-300 transition-colors flex items-center gap-1.5 tracking-wide pr-3"
             >
               <LogIn className="h-3 w-3" /> PARTNER LOGIN
@@ -193,110 +193,110 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
 
       <header className={`${disableSticky ? 'relative' : 'sticky top-0'} z-50 w-full bg-[#F8FAFC]`}>
         <div className="bg-[#F8FAFC]">
-        <div className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-8">
-          {/* Brand - Left */}
-          <Link to="/" className="flex items-center gap-3 shrink-0 group">
-            <img src="/logo.png" alt="Whiteboard Education" className="h-6 md:h-8 w-auto object-contain" />
-          </Link>
+          <div className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-8">
+            {/* Brand - Left */}
+            <Link to="/" className="flex items-center gap-3 shrink-0 group">
+              <img src="/logo.png" alt="Whiteboard Education" className="h-6 md:h-8 w-auto object-contain" />
+            </Link>
 
-          {/* Desktop Nav - Right Aligned */}
-          <div className="hidden lg:flex items-center gap-1">
-            <nav className="flex items-center gap-1">
-              <NavItem to="/universities" icon={GraduationCap}>Universities</NavItem>
-              <NavItem to="/courses" icon={BookOpen}>Courses</NavItem>
-              <NavItem to="/language-centers" icon={Languages}>Language</NavItem>
+            {/* Desktop Nav - Right Aligned */}
+            <div className="hidden lg:flex items-center gap-1">
+              <nav className="flex items-center gap-1">
+                <NavItem to="/universities" icon={GraduationCap}>Universities</NavItem>
+                <NavItem to="/courses" icon={BookOpen}>Courses</NavItem>
+                <NavItem to="/language-centers" icon={Languages}>Language</NavItem>
 
-              {/* Resources & Tools Dropdown */}
-              <DropdownMenu modal={false}>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className={cn(
-                      "h-10 text-[14px] font-poppins font-normal text-black hover:text-[#2F4F97] [&_svg]:hover:!text-[#2F4F97] hover:bg-transparent gap-1.5 px-3 transition-colors",
-                      toolsActive && "text-[#2F4F97] [&_svg]:!text-[#2F4F97]",
-                    )}
-                  >
-                    <BookOpen className="h-3.5 w-3.5" /> Resources
-                    <ChevronDown className="h-3 w-3 opacity-50" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" sideOffset={20} className="w-[520px] p-5 shadow-xl border-[#e8e8e8] border-t-[3px] border-t-[#2F4F97] rounded-t-none">
-                  <div className="grid grid-cols-4 gap-3">
-                    {resourceToolsLinks.map((item) => (
-                      <Link
-                        key={item.to}
-                        to={item.to}
-                        className="relative aspect-square rounded-xl overflow-hidden group shadow-sm hover:shadow-md transition-shadow"
-                      >
-                        <img 
-                          src={item.bgImage} 
-                          alt={item.label} 
-                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#1E293B]/95 via-[#1E293B]/60 to-[#1E293B]/20" />
-                        <div className="absolute inset-0 p-2 flex flex-col items-center justify-center text-center">
-                          <item.icon className="h-6 w-6 text-[#2F4F97] mb-1.5" />
-                          <span className="text-[11px] font-bold text-white leading-tight">{item.label}</span>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <NavItem to="/contact" icon={Phone}>Contact</NavItem>
-              <CurrencySelector />
-
-              {user && (
+                {/* Resources & Tools Dropdown */}
                 <DropdownMenu modal={false}>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 hover:bg-transparent transition-all ml-1">
-                      <Avatar className="h-10 w-10 border-2 border-[#2F4F97]/30 overflow-hidden rounded-full shrink-0">
-                        <AvatarImage src={avatarUrl} alt={user?.email || "User avatar"} className="object-cover w-full h-full rounded-full" />
-                        <AvatarFallback className="bg-primary text-primary-foreground text-sm font-bold rounded-full w-full h-full flex items-center justify-center">
-                          {userInitial}
-                        </AvatarFallback>
-                      </Avatar>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={cn(
+                        "h-10 text-[14px] font-poppins font-normal text-black hover:text-[#2F4F97] [&_svg]:hover:!text-[#2F4F97] hover:bg-transparent gap-1.5 px-3 transition-colors",
+                        toolsActive && "text-[#2F4F97] [&_svg]:!text-[#2F4F97]",
+                      )}
+                    >
+                      <BookOpen className="h-3.5 w-3.5" /> Resources
+                      <ChevronDown className="h-3 w-3 opacity-50" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 bg-white border-[#e8e8e8] shadow-md rounded-xl p-2 z-[100] mt-1">
-                    <div className="flex flex-col space-y-1 p-2 mb-2 border-b border-gray-100">
-                      <p className="text-sm font-medium leading-none truncate">{user.email}</p>
-                      <p className="text-[11px] text-muted-foreground uppercase tracking-widest mt-1">
-                        {hasRole("admin") ? "Administrator" : hasRole("partner") ? "Partner" : "User"}
-                      </p>
+                  <DropdownMenuContent align="end" sideOffset={20} className="w-[520px] p-5 shadow-xl border-[#e8e8e8] border-t-[3px] border-t-[#2F4F97] rounded-t-none">
+                    <div className="grid grid-cols-4 gap-3">
+                      {resourceToolsLinks.map((item) => (
+                        <Link
+                          key={item.to}
+                          to={item.to}
+                          className="relative aspect-square rounded-xl overflow-hidden group shadow-sm hover:shadow-md transition-shadow"
+                        >
+                          <img
+                            src={item.bgImage}
+                            alt={item.label}
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#1E293B]/95 via-[#1E293B]/60 to-[#1E293B]/20" />
+                          <div className="absolute inset-0 p-2 flex flex-col items-center justify-center text-center">
+                            <item.icon className="h-6 w-6 text-[#2F4F97] mb-1.5" />
+                            <span className="text-[11px] font-bold text-white leading-tight">{item.label}</span>
+                          </div>
+                        </Link>
+                      ))}
                     </div>
-                    {hasRole("admin") && (
-                      <DropdownMenuItem onClick={() => navigate("/admin")} className="cursor-pointer rounded-lg py-2.5">
-                        <ShieldCheck className="mr-2 h-4 w-4 text-[#2F4F97]" />
-                        <span>Admin Panel</span>
-                      </DropdownMenuItem>
-                    )}
-                    {hasRole("partner") && (
-                      <DropdownMenuItem onClick={() => navigate("/partner-dashboard")} className="cursor-pointer rounded-lg py-2.5">
-                        <LayoutDashboard className="mr-2 h-4 w-4 text-[#2F4F97]" />
-                        <span>Partner Dashboard</span>
-                      </DropdownMenuItem>
-                    )}
-                    <DropdownMenuSeparator className="bg-gray-100" />
-                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 rounded-lg py-2.5">
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Log out</span>
-                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              )}
-            </nav>
-          </div>
 
-          {/* Mobile Hamburger - now visible on mobile */}
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="lg:hidden ml-auto hover:text-[#2F4F97] transition-colors rounded-xl">
-                <Menu className="h-6 w-6 stroke-[3]" />
-              </Button>
-            </SheetTrigger>
+                <NavItem to="/contact" icon={Phone}>Contact</NavItem>
+                <CurrencySelector />
+
+                {user && (
+                  <DropdownMenu modal={false}>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 hover:bg-transparent transition-all ml-1">
+                        <Avatar className="h-10 w-10 border-2 border-[#2F4F97]/30 overflow-hidden rounded-full shrink-0">
+                          <AvatarImage src={avatarUrl} alt={user?.email || "User avatar"} className="object-cover w-full h-full rounded-full" />
+                          <AvatarFallback className="bg-primary text-primary-foreground text-sm font-bold rounded-full w-full h-full flex items-center justify-center">
+                            {userInitial}
+                          </AvatarFallback>
+                        </Avatar>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56 bg-white border-[#e8e8e8] shadow-md rounded-xl p-2 z-[100] mt-1">
+                      <div className="flex flex-col space-y-1 p-2 mb-2 border-b border-gray-100">
+                        <p className="text-sm font-medium leading-none truncate">{user.email}</p>
+                        <p className="text-[11px] text-muted-foreground uppercase tracking-widest mt-1">
+                          {hasRole("admin") ? "Administrator" : hasRole("partner") ? "Partner" : "User"}
+                        </p>
+                      </div>
+                      {hasRole("admin") && (
+                        <DropdownMenuItem onClick={() => navigate("/admin")} className="cursor-pointer rounded-lg py-2.5">
+                          <ShieldCheck className="mr-2 h-4 w-4 text-[#2F4F97]" />
+                          <span>Admin Panel</span>
+                        </DropdownMenuItem>
+                      )}
+                      {hasRole("partner") && (
+                        <DropdownMenuItem onClick={() => navigate("/partner-dashboard")} className="cursor-pointer rounded-lg py-2.5">
+                          <LayoutDashboard className="mr-2 h-4 w-4 text-[#2F4F97]" />
+                          <span>Partner Dashboard</span>
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuSeparator className="bg-gray-100" />
+                      <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 rounded-lg py-2.5">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>Log out</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              </nav>
+            </div>
+
+            {/* Mobile Hamburger - now visible on mobile */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="lg:hidden ml-auto hover:text-[#2F4F97] transition-colors rounded-xl">
+                  <Menu className="h-6 w-6 stroke-[3]" />
+                </Button>
+              </SheetTrigger>
               <SheetContent side="top" className="w-screen h-screen p-0 border-none">
                 <div className="flex flex-col h-full bg-white">
                   {/* Mobile Header */}
@@ -334,8 +334,8 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
             </Sheet>
           </div>
         </div>
-    </header>
-    {!hideBreadcrumbs && <GlobalBreadcrumbs />}
+      </header>
+      {!hideBreadcrumbs && <GlobalBreadcrumbs />}
     </>
   );
 }
