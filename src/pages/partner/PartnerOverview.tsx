@@ -263,8 +263,8 @@ export default function PartnerOverview() {
           
           {/* Bangladesh Time */}
           <div className="flex flex-col items-end">
-            <span className="text-[11px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Bangladesh</span>
-            <p className="text-3xl sm:text-4xl font-semibold text-slate-700 whitespace-nowrap" style={{ fontVariantNumeric: 'tabular-nums' }}>
+            <span className="text-[11px] sm:text-xs font-bold text-theme uppercase tracking-widest mb-1">Bangladesh</span>
+            <p className="text-3xl sm:text-4xl font-semibold text-theme whitespace-nowrap" style={{ fontVariantNumeric: 'tabular-nums' }}>
               {(() => {
                 const d = new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Dhaka' }));
                 const h = d.getHours() % 12 || 12;
@@ -274,7 +274,7 @@ export default function PartnerOverview() {
                 return <>{String(h).padStart(2, '0')}:{m}:{s} {ap}</>;
               })()}
             </p>
-            <p className="text-[11px] sm:text-xs font-semibold text-slate-500 tracking-wider mt-1">
+            <p className="text-[11px] sm:text-xs font-semibold text-theme tracking-wider mt-1">
               {currentTime.toLocaleDateString('en-US', { timeZone: 'Asia/Dhaka', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
             </p>
           </div>
@@ -284,8 +284,8 @@ export default function PartnerOverview() {
 
           {/* Malaysia Time */}
           <div className="flex flex-col items-end">
-            <span className="text-[11px] sm:text-xs font-bold text-theme uppercase tracking-widest mb-1">Malaysia</span>
-            <p className="text-3xl sm:text-4xl font-semibold text-theme whitespace-nowrap" style={{ fontVariantNumeric: 'tabular-nums' }}>
+            <span className="text-[11px] sm:text-xs font-bold text-[#CC0000] uppercase tracking-widest mb-1">Malaysia</span>
+            <p className="text-3xl sm:text-4xl font-semibold text-[#CC0000] whitespace-nowrap" style={{ fontVariantNumeric: 'tabular-nums' }}>
               {(() => {
                 const d = new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
                 const h = d.getHours() % 12 || 12;
@@ -295,7 +295,7 @@ export default function PartnerOverview() {
                 return <>{String(h).padStart(2, '0')}:{m}:{s} {ap}</>;
               })()}
             </p>
-            <p className="text-[11px] sm:text-xs font-semibold text-theme/80 tracking-wider mt-1">
+            <p className="text-[11px] sm:text-xs font-semibold text-[#CC0000] tracking-wider mt-1">
               {currentTime.toLocaleDateString('en-US', { timeZone: 'Asia/Kuala_Lumpur', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
             </p>
           </div>
