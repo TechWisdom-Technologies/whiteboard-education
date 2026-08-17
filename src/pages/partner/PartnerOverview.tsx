@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { statusPhases } from "@/config/statusFlow";
 import { 
   ChevronDown, 
   ChevronUp, 
@@ -55,9 +56,12 @@ export default function PartnerOverview() {
   const [applicationsList, setApplicationsList] = useState<any[]>([]);
 
   // Card dropdown states
+  const [card0Filter, setCard0Filter] = useState("all");
   const [card1Filter, setCard1Filter] = useState("all");
   const [card2Filter, setCard2Filter] = useState("offer_letter_received_conditional");
   const [card3Filter, setCard3Filter] = useState("ready_for_visa_application");
+  const [card4Filter, setCard4Filter] = useState("rejected_by_university");
+  const [card5Filter, setCard5Filter] = useState("rejected_by_visa_office");
 
   useEffect(() => {
     if (!user || !session) return;
@@ -134,7 +138,7 @@ export default function PartnerOverview() {
           const studentIds = students.map((s: any) => s.id);
           try {
             const { data, count } = await (supabase.from as any)("student_applications")
-              .select("id, status", { count: 'exact' })
+              .select("id, status, student_id", { count: 'exact' })
               .in("student_id", studentIds);
             setApplicationsCount(count || 0);
             if (data) setApplicationsList(data);
@@ -190,13 +194,14 @@ export default function PartnerOverview() {
   const totalStudentsCount = studentsData.length;
 
   // Dynamic Card Counts
+  const getCard0Count = () => {
+    if (card0Filter === "all") return studentsData.length;
+    return studentsData.filter(s => s.status === card0Filter).length;
+  };
+
   const getCard1Count = () => {
     if (card1Filter === "all") return applicationsList.length;
-    if (card1Filter === "received") return applicationsList.filter(a => a.status === 'received_application_at_wb').length;
-    if (card1Filter === "on_hold") return applicationsList.filter(a => ['application_on_hold_intake', 'application_on_hold_wb', 'application_on_hold_university', 'on_hold'].includes(a.status)).length;
-    if (card1Filter === "submitted") return applicationsList.filter(a => a.status === 'application_submitted').length;
-    if (card1Filter === "rejected") return applicationsList.filter(a => ['rejected_by_university', 'rejected_by_visa_office'].includes(a.status)).length;
-    return 0;
+    return applicationsList.filter(a => a.status === card1Filter).length;
   };
 
   const getCard2Count = () => {
@@ -205,6 +210,14 @@ export default function PartnerOverview() {
 
   const getCard3Count = () => {
     return applicationsList.filter(a => a.status === card3Filter).length;
+  };
+
+  const getCard4Count = () => {
+    return applicationsList.filter(a => a.status === card4Filter).length;
+  };
+
+  const getCard5Count = () => {
+    return applicationsList.filter(a => a.status === card5Filter).length;
   };
 
   // Utilities
@@ -250,27 +263,47 @@ export default function PartnerOverview() {
 
       {/* Dynamic Status Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Card 1 */}
+        
+        {/* Card 0: Total Students */}
         <div 
-          onClick={() => navigate(`/partner-dashboard/applications?status=${card1Filter === 'all' ? 'all' : card1Filter === 'received' ? 'received_application_at_wb' : card1Filter === 'on_hold' ? 'application_on_hold' : card1Filter === 'submitted' ? 'application_submitted' : 'rejected'}`)}
+          onClick={() => navigate(`/partner-dashboard/students?status=${card0Filter}`)}
           className="bg-white border border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
         >
-          <div className="flex justify-between items-start mb-4" onClick={(e) => e.stopPropagation()}>
-            <p className="text-sm font-medium text-slate-500">Total Students</p>
-            <Select value={card1Filter} onValueChange={setCard1Filter}>
-              <SelectTrigger className="h-8 w-[140px] text-xs border-slate-200 bg-slate-50">
+          <div className="mb-4" onClick={(e) => e.stopPropagation()}>
+            <Select value={card0Filter} onValueChange={setCard0Filter}>
+              <SelectTrigger className="h-8 w-full text-xs border-slate-200 bg-slate-50">
                 <SelectValue placeholder="Filter" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Applications</SelectItem>
-                <SelectItem value="received">Received at WB</SelectItem>
-                <SelectItem value="on_hold">On Hold</SelectItem>
-                <SelectItem value="submitted">Submitted</SelectItem>
-                <SelectItem value="rejected">Rejected</SelectItem>
+                <SelectItem value="all" className="text-xs">All Students</SelectItem>
+                {statusPhases[0].steps.map(step => (
+                  <SelectItem key={step.id} value={step.id} className="text-xs">{step.label}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
-          <p className="text-4xl font-bold text-slate-800">{getCard1Count()}</p>
+          <p className="text-4xl font-bold text-theme group-hover:underline">{getCard0Count()}</p>
+        </div>
+
+        {/* Card 1: Total Applications */}
+        <div 
+          onClick={() => navigate(`/partner-dashboard/applications?status=${card1Filter}`)}
+          className="bg-white border border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
+        >
+          <div className="mb-4" onClick={(e) => e.stopPropagation()}>
+            <Select value={card1Filter} onValueChange={setCard1Filter}>
+              <SelectTrigger className="h-8 w-full text-xs border-slate-200 bg-slate-50">
+                <SelectValue placeholder="Filter" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all" className="text-xs">All Applications</SelectItem>
+                {statusPhases[0].steps.filter(s => s.id !== 'new').map(step => (
+                  <SelectItem key={step.id} value={step.id} className="text-xs">{step.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <p className="text-4xl font-bold text-theme group-hover:underline">{getCard1Count()}</p>
         </div>
 
         {/* Card 2 */}
@@ -278,40 +311,74 @@ export default function PartnerOverview() {
           onClick={() => navigate(`/partner-dashboard/applications?status=${card2Filter}`)}
           className="bg-white border border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
         >
-          <div className="flex justify-between items-start mb-4" onClick={(e) => e.stopPropagation()}>
-            <p className="text-sm font-medium text-slate-500">Offers</p>
+          <div className="mb-4" onClick={(e) => e.stopPropagation()}>
             <Select value={card2Filter} onValueChange={setCard2Filter}>
-              <SelectTrigger className="h-8 w-[140px] text-xs border-slate-200 bg-slate-50">
+              <SelectTrigger className="h-8 w-full text-xs border-slate-200 bg-slate-50">
                 <SelectValue placeholder="Filter" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="offer_letter_received_conditional">Conditional</SelectItem>
-                <SelectItem value="offer_letter_received_unconditional">Unconditional</SelectItem>
+                <SelectItem value="offer_letter_received_conditional" className="text-xs">Conditional</SelectItem>
+                <SelectItem value="offer_letter_received_unconditional" className="text-xs">Unconditional</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <p className="text-4xl font-bold text-slate-800">{getCard2Count()}</p>
+          <p className="text-4xl font-bold text-theme group-hover:underline">{getCard2Count()}</p>
         </div>
 
-        {/* Card 3 */}
+        {/* Card 3: Visa Applications */}
         <div 
           onClick={() => navigate(`/partner-dashboard/applications?status=${card3Filter}`)}
           className="bg-white border border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
         >
-          <div className="flex justify-between items-start mb-4" onClick={(e) => e.stopPropagation()}>
-            <p className="text-sm font-medium text-slate-500">Visa Applications</p>
+          <div className="mb-4" onClick={(e) => e.stopPropagation()}>
             <Select value={card3Filter} onValueChange={setCard3Filter}>
-              <SelectTrigger className="h-8 w-[140px] text-xs border-slate-200 bg-slate-50">
+              <SelectTrigger className="h-8 w-full text-xs border-slate-200 bg-slate-50">
                 <SelectValue placeholder="Filter" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ready_for_visa_application">Ready for Visa</SelectItem>
-                <SelectItem value="emgs_approval_pending">EMGS Pending</SelectItem>
-                <SelectItem value="rejected_by_visa_office">Rejected by Visa</SelectItem>
+                <SelectItem value="ready_for_visa_application" className="text-xs">Ready for Visa</SelectItem>
+                <SelectItem value="emgs_approval_pending" className="text-xs">EMGS Pending</SelectItem>
+                <SelectItem value="rejected_by_visa_office" className="text-xs">Rejected by Visa</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <p className="text-4xl font-bold text-slate-800">{getCard3Count()}</p>
+          <p className="text-4xl font-bold text-theme group-hover:underline">{getCard3Count()}</p>
+        </div>
+
+        {/* Card 4: Rejected by University */}
+        <div 
+          onClick={() => navigate(`/partner-dashboard/applications?status=${card4Filter}`)}
+          className="bg-white border border-destructive shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
+        >
+          <div className="mb-4" onClick={(e) => e.stopPropagation()}>
+            <Select value={card4Filter} onValueChange={setCard4Filter}>
+              <SelectTrigger className="h-8 w-full text-xs border-slate-200 bg-slate-50">
+                <SelectValue placeholder="Filter" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="rejected_by_university" className="text-xs">Rejected by University</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <p className="text-4xl font-bold text-theme group-hover:underline">{getCard4Count()}</p>
+        </div>
+
+        {/* Card 5: Rejected by Visa */}
+        <div 
+          onClick={() => navigate(`/partner-dashboard/applications?status=${card5Filter}`)}
+          className="bg-white border border-destructive shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
+        >
+          <div className="mb-4" onClick={(e) => e.stopPropagation()}>
+            <Select value={card5Filter} onValueChange={setCard5Filter}>
+              <SelectTrigger className="h-8 w-full text-xs border-slate-200 bg-slate-50">
+                <SelectValue placeholder="Filter" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="rejected_by_visa_office" className="text-xs">Rejected by Visa</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <p className="text-4xl font-bold text-theme group-hover:underline">{getCard5Count()}</p>
         </div>
       </div>
 
