@@ -1038,8 +1038,8 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                  ) : (
                     <div className="w-full overflow-x-auto">
                       <Table>
-                        <TableHeader>
-                          <TableRow className="bg-gray-50/80 hover:bg-gray-50/80">
+                        <TableHeader className={mode === 'admin' ? "[&_tr]:bg-[#1d283a] [&_tr:hover]:bg-[#1d283a] [&_th]:text-white" : "[&_tr]:bg-[#2F4F97] [&_tr:hover]:bg-[#2F4F97] [&_th]:text-white"}>
+                          <TableRow>
                             <TableHead className="whitespace-nowrap w-[100px]">App ID</TableHead>
                             <TableHead className="whitespace-nowrap w-[100px]">Date created</TableHead>
                             <TableHead className="min-w-[140px]">University</TableHead>
