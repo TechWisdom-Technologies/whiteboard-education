@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, BookOpen, Users, Clock, UserCheck, FileText, TrendingUp, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { GraduationCap, BookOpen, Users, Clock, UserCheck, FileText, TrendingUp, Loader2, ChevronLeft, ChevronRight, UserPlus, FilePlus, Video, PlayCircle, UserCog, Building2, Library } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { statusPhases } from "@/config/statusFlow";
+import { statusPhases, getStatusLabel } from "@/config/statusFlow";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -30,6 +30,7 @@ interface DashboardStats {
 
 interface RecentStudent {
   id: string;
+  wbe_student_id?: string;
   full_name: string;
   status: string;
   partner_id: string;
@@ -50,23 +51,28 @@ interface PartnerLookup {
   agency_name: string;
 }
 
-const studentStatusLabels: Record<string, { label: string; color: string }> = {
-  document_review: { label: "Doc Review", color: "bg-gray-100 text-gray-600" },
-  documents_verified: { label: "Docs Verified", color: "bg-blue-500/10 text-blue-600" },
-  university_applied: { label: "Applied", color: "bg-indigo-500/10 text-indigo-600" },
-  offer_letter: { label: "Offer Letter", color: "bg-purple-500/10 text-purple-600" },
-  emgs_processing: { label: "EMGS", color: "bg-[#1d283a]/10 text-[#1d283a]" },
-  visa_approved: { label: "Visa ✓", color: "bg-emerald-500/10 text-emerald-600" },
-  travel_ready: { label: "Travel Ready", color: "bg-teal-500/10 text-teal-600" },
-  enrolled: { label: "Enrolled", color: "bg-green-600/10 text-green-700" },
-  rejected: { label: "Rejected", color: "bg-destructive/10 text-destructive" },
-  on_hold: { label: "On Hold", color: "bg-amber-500/10 text-amber-600" },
-};
+
 
 const partnerStatusColor = (s: string) =>
   s === "approved" ? "bg-green-500/10 text-green-600 border-green-200" :
   s === "rejected" ? "bg-red-500/10 text-red-600 border-red-200" :
   "bg-amber-500/10 text-amber-600 border-amber-200";
+
+const statusTextColors: Record<string, string> = {
+  new: "text-gray-600",
+  received_application_at_wb: "text-blue-600",
+  application_in_progress: "text-indigo-600",
+  application_on_hold_intake: "text-amber-600",
+  application_on_hold_wb: "text-amber-600",
+  application_on_hold_university: "text-amber-600",
+  application_submitted: "text-[#1d283a]",
+  offer_letter_received_conditional: "text-purple-600",
+  offer_letter_received_unconditional: "text-purple-600",
+  rejected_by_university: "text-destructive",
+  ready_for_visa_application: "text-teal-600",
+  emgs_approval_pending: "text-emerald-600",
+  rejected_by_visa_office: "text-destructive",
+};
 
 const PAGE_SIZE = 7;
 
@@ -98,6 +104,8 @@ export default function AdminDashboard() {
   const [card3Filter, setCard3Filter] = useState("ready_for_visa_application");
   const [card4Filter, setCard4Filter] = useState("rejected_by_university");
   const [card5Filter, setCard5Filter] = useState("rejected_by_visa_office");
+  const [studentAgencyFilter, setStudentAgencyFilter] = useState("all");
+  const [partnerStatusFilter, setPartnerStatusFilter] = useState("all");
 
   const [applicationsList, setApplicationsList] = useState<any[]>([]);
 
@@ -118,7 +126,7 @@ export default function AdminDashboard() {
           supabase.from("universities").select("id", { count: "exact", head: true }),
           supabase.from("courses").select("id", { count: "exact", head: true }),
           supabase.from("partner_registrations").select("id, agency_name, contact_first_name, contact_last_name, status, created_at").order("created_at", { ascending: false }),
-          supabase.from("students").select("id, full_name, status, partner_id, created_at").order("created_at", { ascending: false }),
+          supabase.from("students").select("id, wbe_student_id, full_name, status, partner_id, created_at").order("created_at", { ascending: false }),
           supabase.from("blogs").select("id", { count: "exact", head: true }),
           fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?select=user_id,agency_name`, { headers }).then(r => r.json()),
           (supabase.from as any)("student_applications").select("id, status"),
@@ -149,6 +157,16 @@ export default function AdminDashboard() {
   if (loading) return <LoadingScreen fullScreen />;
 
   if (!stats) return null;
+
+  const handleApprovePartner = async (id: string) => {
+    try {
+      const { error } = await supabase.from('partner_registrations').update({ status: 'approved' }).eq('id', id);
+      if (!error) {
+        setAllPartners(allPartners.map(p => p.id === id ? { ...p, status: 'approved' } : p));
+        setStats(prev => prev ? { ...prev, pendingPartners: prev.pendingPartners - 1 } : prev);
+      }
+    } catch (e) {}
+  };
 
   const getPartnerName = (partnerId: string) => {
     const p = partnerLookup.find(pl => pl.user_id === partnerId);
@@ -365,96 +383,157 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Partners */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-[12px] flex items-center gap-2">
-              <Users className="h-4 w-4 text-[#1d283a]" />
-              Recent Partner Agents
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        {/* Recent Students */}
+        <Card className="flex flex-col h-[450px] overflow-hidden">
+          <CardHeader className="px-4 py-3 bg-[#1d283a] shrink-0 flex flex-row items-center justify-between h-[52px]">
+            <CardTitle className="text-[13px] flex items-center gap-2 text-white font-medium">
+              <UserCheck className="h-4 w-4 text-white" />
+              Recent Students
             </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {allPartners.length === 0 ? (
-              <p className="text-[12px] text-muted-foreground text-center py-8">No partners yet</p>
-            ) : (
-              <>
-                <div className="space-y-0.5">
-                  {pagedPartners.map(p => (
-                    <div key={p.id} className="flex items-center justify-between gap-3 py-2.5 px-2 border-b last:border-0 hover:bg-muted/30 transition-colors rounded-xl">
-                      <div className="min-w-0 flex-1">
-                        <p className="text-[12px] font-normal text-[#1E293B] truncate">{p.agency_name}</p>
-                        <p className="text-[12px] text-muted-foreground truncate">{p.contact_first_name} {p.contact_last_name}</p>
-                      </div>
-                      <Badge variant="outline" className={`shrink-0 text-[12px] font-normal uppercase tracking-wider ${partnerStatusColor(p.status)}`}>
-                        {p.status}
-                      </Badge>
-                    </div>
+            <div className="w-[120px]">
+              <Select value={studentAgencyFilter} onValueChange={setStudentAgencyFilter}>
+                <SelectTrigger className="h-7 text-[11px] bg-white text-slate-900 border-0 focus:ring-0">
+                  <SelectValue placeholder="All Agencies" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all" className="text-[11px]">All Agencies</SelectItem>
+                  {partnerLookup.map(p => (
+                    <SelectItem key={p.user_id} value={p.user_id} className="text-[11px]">{p.agency_name}</SelectItem>
                   ))}
-                </div>
-                {totalPartnerPages > 1 && (
-                  <div className="flex items-center justify-between mt-3 pt-3 border-t">
-                    <span className="text-[12px] text-muted-foreground">
-                      Page {partnerPage + 1} of {totalPartnerPages}
-                    </span>
-                    <div className="flex gap-1">
-                      <Button variant="outline" size="icon" className="h-7 w-7" disabled={partnerPage === 0} onClick={() => setPartnerPage(p => p - 1)}>
-                        <ChevronLeft className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button variant="outline" size="icon" className="h-7 w-7" disabled={partnerPage >= totalPartnerPages - 1} onClick={() => setPartnerPage(p => p + 1)}>
-                        <ChevronRight className="h-3.5 w-3.5" />
-                      </Button>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardHeader>
+          <CardContent className="overflow-y-auto flex-1 p-0 bg-white">
+            {allStudents.length === 0 ? (
+              <p className="text-[12px] text-muted-foreground text-center py-8">No students yet</p>
+            ) : (
+              <div className="divide-y">
+                {(studentAgencyFilter === 'all' ? allStudents : allStudents.filter(s => s.partner_id === studentAgencyFilter)).slice(0, 50).map(s => (
+                  <div 
+                    key={s.id} 
+                    onClick={() => navigate(`/admin/students/${s.wbe_student_id || s.id}`)}
+                    className="flex flex-col gap-1 py-3 px-4 hover:bg-[#1d283a] group cursor-pointer transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[14px] font-medium text-[#1E293B] group-hover:text-white">
+                          {s.full_name} <span className="italic text-[12px] font-normal text-muted-foreground group-hover:text-white/70">({s.wbe_student_id || 'Pending ID'})</span>
+                        </p>
+                        <p className="text-[11px] text-muted-foreground group-hover:text-white/70 mt-1">
+                          <span className="text-[#1E293B] font-medium group-hover:text-white">{new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}, {new Date(s.created_at).toLocaleDateString('en-US', { weekday: 'short' })}</span> - {new Date(s.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
+                      <div className={`text-[13px] font-medium ${statusTextColors[s.status] || "text-[#1E293B]"} group-hover:text-white text-right shrink-0 mt-0.5`}>
+                        {getStatusLabel(s.status)}
+                      </div>
                     </div>
                   </div>
-                )}
-              </>
+                ))}
+              </div>
             )}
           </CardContent>
         </Card>
 
-        {/* Recent Students */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-[12px] flex items-center gap-2">
-              <UserCheck className="h-4 w-4 text-[#1d283a]" />
-              Recent Students
+        {/* Recent Partner Agents */}
+        <Card className="flex flex-col h-[450px] overflow-hidden">
+          <CardHeader className="px-4 py-3 bg-[#1d283a] shrink-0 flex flex-row items-center justify-between h-[52px]">
+            <CardTitle className="text-[13px] flex items-center gap-2 text-white font-medium">
+              <Users className="h-4 w-4 text-white" />
+              Recent Partner Agents
             </CardTitle>
+            <div className="w-[120px]">
+              <Select value={partnerStatusFilter} onValueChange={setPartnerStatusFilter}>
+                <SelectTrigger className="h-7 text-[11px] bg-white text-slate-900 border-0 focus:ring-0">
+                  <SelectValue placeholder="All Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all" className="text-[11px]">All Status</SelectItem>
+                  <SelectItem value="approved" className="text-[11px]">Approved</SelectItem>
+                  <SelectItem value="pending" className="text-[11px]">Pending</SelectItem>
+                  <SelectItem value="rejected" className="text-[11px]">Rejected</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </CardHeader>
-          <CardContent>
-            {allStudents.length === 0 ? (
-              <p className="text-[12px] text-muted-foreground text-center py-8">No students yet</p>
+          <CardContent className="overflow-y-auto flex-1 p-0 bg-white">
+            {allPartners.length === 0 ? (
+              <p className="text-[12px] text-muted-foreground text-center py-8">No partners yet</p>
             ) : (
-              <>
-                <div className="space-y-0.5">
-                  {pagedStudents.map(s => (
-                    <div key={s.id} className="flex items-center justify-between gap-3 py-2.5 px-2 border-b last:border-0 hover:bg-muted/30 transition-colors rounded-xl">
+              <div className="divide-y">
+                {(partnerStatusFilter === 'all' ? allPartners : allPartners.filter(p => p.status === partnerStatusFilter)).slice(0, 50).map(p => (
+                  <div key={p.id} className="flex flex-col gap-2 py-3 px-4 hover:bg-[#1d283a] group transition-colors">
+                    <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
-                        <p className="text-[12px] font-normal text-[#1E293B] truncate">{s.full_name}</p>
-                        <p className="text-[12px] text-muted-foreground truncate">Added by {getPartnerName(s.partner_id)}</p>
+                        <p className="text-[14px] font-medium text-[#1E293B] group-hover:text-white">Agency: {p.agency_name}</p>
+                        <p className="text-[13px] text-muted-foreground group-hover:text-white/70 mt-0.5"><span className="italic">Representative:</span> {p.contact_first_name} {p.contact_last_name}</p>
+                        <p className="text-[11px] text-muted-foreground group-hover:text-white/70 mt-1.5">
+                          <span className="text-[#1E293B] font-medium group-hover:text-white">{new Date(p.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}, {new Date(p.created_at).toLocaleDateString('en-US', { weekday: 'short' })}</span> - {new Date(p.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                        </p>
                       </div>
-                      <Badge variant="outline" className={`shrink-0 text-[12px] font-normal uppercase tracking-wider ${studentStatusLabels[s.status]?.color || "bg-muted text-muted-foreground"}`}>
-                        {studentStatusLabels[s.status]?.label || s.status}
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-                {totalStudentPages > 1 && (
-                  <div className="flex items-center justify-between mt-3 pt-3 border-t">
-                    <span className="text-[12px] text-muted-foreground">
-                      Page {studentPage + 1} of {totalStudentPages}
-                    </span>
-                    <div className="flex gap-1">
-                      <Button variant="outline" size="icon" className="h-7 w-7" disabled={studentPage === 0} onClick={() => setStudentPage(p => p - 1)}>
-                        <ChevronLeft className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button variant="outline" size="icon" className="h-7 w-7" disabled={studentPage >= totalStudentPages - 1} onClick={() => setStudentPage(p => p + 1)}>
-                        <ChevronRight className="h-3.5 w-3.5" />
-                      </Button>
+                      <div className="flex flex-col items-end gap-2 shrink-0">
+                        <Badge variant="outline" className={`text-[11px] font-medium uppercase tracking-wider group-hover:border-white/20 group-hover:bg-white/10 group-hover:text-white ${partnerStatusColor(p.status)}`}>
+                          {p.status}
+                        </Badge>
+                        {p.status === 'pending' && (
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleApprovePartner(p.id)}
+                            className="h-7 text-[11px] px-3 border-green-200 text-green-700 hover:bg-green-50 hover:text-green-800 group-hover:bg-green-500 group-hover:text-white group-hover:border-green-500"
+                          >
+                            Approve
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </div>
-                )}
-              </>
+                ))}
+              </div>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Quick Actions */}
+        <Card className="flex flex-col h-[450px] overflow-hidden">
+          <CardHeader className="px-4 py-3 bg-[#1d283a] shrink-0 flex flex-row items-center justify-between h-[52px]">
+            <CardTitle className="text-[13px] flex items-center gap-2 text-white font-medium">
+              <TrendingUp className="h-4 w-4 text-white" />
+              Quick Actions
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="overflow-y-auto flex-1 p-0 bg-white">
+            <div className="divide-y">
+              <button onClick={() => navigate('/admin/partners?tab=pending')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
+                <UserPlus className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
+                View pending partners
+              </button>
+              <button onClick={() => navigate('/admin/students?filter=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
+                <FilePlus className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
+                View new student applications
+              </button>
+              <button onClick={() => navigate('/admin/partner-content?tab=events&action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
+                <Video className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
+                Open a webinar
+              </button>
+              <button onClick={() => navigate('/admin/partner-content?tab=tutorials&action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
+                <PlayCircle className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
+                Add a platform tutorial
+              </button>
+              <button onClick={() => navigate('/admin/partner-content?tab=managers&action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
+                <UserCog className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
+                Add a manager
+              </button>
+              <button onClick={() => navigate('/admin/universities?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
+                <Building2 className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
+                Add a university
+              </button>
+              <button onClick={() => navigate('/admin/courses?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
+                <Library className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
+                Add new course
+              </button>
+            </div>
           </CardContent>
         </Card>
       </div>
