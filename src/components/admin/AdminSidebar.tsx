@@ -35,47 +35,63 @@ export function AdminSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-sidebar-border bg-sidebar !top-[60px] !h-[calc(100svh-60px)] z-20">
-
-
-      {/* Sidebar Content containing shifted-down menu items */}
-      <SidebarContent className="bg-sidebar">
-        <SidebarGroup className="pt-6"> {/* Shifted menu down by pt-6 */}
+    <Sidebar collapsible="icon" className="border-r border-[#1d283a] bg-[#1d283a] !top-[60px] !h-[calc(100svh-60px)] z-20">
+      <SidebarContent className="bg-[#1d283a]">
+        <SidebarGroup className={`pt-5 ${collapsed ? "px-1.5" : "px-3"}`}>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                      <NavLink 
-                        to={item.url} 
-                        end 
-                        className={`relative hover:bg-sidebar-accent/40 transition-colors py-1.5 flex items-center w-full ${collapsed ? "justify-center" : "justify-between"}`}
-                        activeClassName="bg-transparent text-white font-bold"
+            <SidebarMenu className="gap-0.5">
+              {items.map((item) => {
+                const isItemActive =
+                  item.url === "/admin"
+                    ? location.pathname === "/admin"
+                    : location.pathname.startsWith(item.url);
+
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <NavLink
+                      to={item.url}
+                      end={item.url === "/admin"}
+                      className="block"
+                    >
+                      <div
+                        className={`
+                          flex items-center rounded-lg transition-colors duration-150 cursor-pointer
+                          ${collapsed ? "justify-center p-2" : "gap-3 px-3 py-2.5"}
+                          ${isItemActive
+                            ? "bg-white text-[#1d283a] shadow-sm"
+                            : "text-slate-300 hover:bg-white/10 hover:text-white"
+                          }
+                        `}
                       >
-                      {({ isActive }) => (
-                        <>
-                          {isActive && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-3.5 w-[3px] bg-white rounded-r-sm" />
-                          )}
-                          {!collapsed && <span className={`text-[13px] ${isActive ? "font-bold" : "font-medium"}`}>{item.title}</span>}
-                          <item.icon className="h-4 w-4 flex-shrink-0" strokeWidth={isActive ? 2.5 : 2} />
-                        </>
-                      )}
+                        <item.icon
+                          className={`h-5 w-5 flex-shrink-0 ${isItemActive ? "text-[#1d283a]" : "text-slate-400"}`}
+                          strokeWidth={isItemActive ? 2.2 : 1.8}
+                        />
+                        {!collapsed && (
+                          <span className={`text-[15px] leading-5 ${isItemActive ? "font-semibold" : "font-medium"}`}>
+                            {item.title}
+                          </span>
+                        )}
+                      </div>
                     </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-              
+                  </SidebarMenuItem>
+                );
+              })}
+
+              {/* Divider */}
+              <div className="my-2 border-t border-slate-700/50" />
+
+              {/* Sign Out */}
               <SidebarMenuItem>
-                <SidebarMenuButton 
-                  onClick={handleSignOut} 
-                  className={`relative hover:bg-sidebar-accent/40 transition-colors py-1.5 text-red-500 hover:text-red-600 bg-transparent w-full flex items-center ${collapsed ? "justify-center" : "justify-between"}`}
+                <div
+                  onClick={handleSignOut}
+                  className={`flex items-center rounded-lg text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors duration-150 cursor-pointer ${collapsed ? "justify-center p-2" : "gap-3 px-3 py-2.5"}`}
                 >
-                  {!collapsed && <span className="text-[13px] font-medium">Sign Out</span>}
-                  <LogOut className="h-4 w-4 flex-shrink-0" />
-                </SidebarMenuButton>
+                  <LogOut className="h-5 w-5 flex-shrink-0" strokeWidth={1.8} />
+                  {!collapsed && <span className="text-[15px] leading-5 font-medium">Sign Out</span>}
+                </div>
               </SidebarMenuItem>
-              
+
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

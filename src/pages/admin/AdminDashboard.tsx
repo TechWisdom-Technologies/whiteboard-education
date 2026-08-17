@@ -68,6 +68,19 @@ export default function AdminDashboard() {
   const [allPartners, setAllPartners] = useState<RecentPartner[]>([]);
   const [partnerLookup, setPartnerLookup] = useState<PartnerLookup[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const getTimeOfDay = () => {
+    const hour = currentTime.getHours();
+    if (hour < 12) return 'Morning';
+    if (hour < 18) return 'Afternoon';
+    return 'Evening';
+  };
 
   // Pagination
   const [studentPage, setStudentPage] = useState(0);
@@ -135,7 +148,58 @@ export default function AdminDashboard() {
   const totalStudentPages = Math.ceil(allStudents.length / PAGE_SIZE);
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="max-w-[1400px] mx-auto space-y-6 animate-fade-in text-[#1E293B]">
+
+      {/* Greeting and Clock Banner */}
+      <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-6 flex flex-col lg:flex-row justify-between items-center bg-gradient-to-r from-slate-50 to-white gap-6 lg:gap-0">
+        <div className="text-center lg:text-left">
+          <h2 className="text-2xl font-bold text-[#1E293B]">Good {getTimeOfDay()}, Admin!</h2>
+          <p className="text-slate-500 mt-1">Here is the latest update on the platform</p>
+        </div>
+        
+        <div className="flex flex-row items-center gap-6 sm:gap-10 text-center lg:text-right mt-2 lg:mt-0">
+          
+          {/* Bangladesh Time */}
+          <div className="flex flex-col items-end">
+            <span className="text-[11px] sm:text-xs font-bold text-[#1d283a] uppercase tracking-widest mb-1">Bangladesh</span>
+            <p className="text-3xl sm:text-4xl font-semibold text-[#1d283a] whitespace-nowrap" style={{ fontVariantNumeric: 'tabular-nums' }}>
+              {(() => {
+                const d = new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Dhaka' }));
+                const h = d.getHours() % 12 || 12;
+                const m = String(d.getMinutes()).padStart(2, '0');
+                const s = String(d.getSeconds()).padStart(2, '0');
+                const ap = d.getHours() >= 12 ? 'PM' : 'AM';
+                return <>{String(h).padStart(2, '0')}:{m}:{s} {ap}</>;
+              })()}
+            </p>
+            <p className="text-[11px] sm:text-xs font-semibold text-[#1d283a] tracking-wider mt-1">
+              {currentTime.toLocaleDateString('en-US', { timeZone: 'Asia/Dhaka', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+            </p>
+          </div>
+
+          {/* Divider */}
+          <div className="w-px h-16 bg-slate-200" />
+
+          {/* Malaysia Time */}
+          <div className="flex flex-col items-end">
+            <span className="text-[11px] sm:text-xs font-bold text-[#CC0000] uppercase tracking-widest mb-1">Malaysia</span>
+            <p className="text-3xl sm:text-4xl font-semibold text-[#CC0000] whitespace-nowrap" style={{ fontVariantNumeric: 'tabular-nums' }}>
+              {(() => {
+                const d = new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
+                const h = d.getHours() % 12 || 12;
+                const m = String(d.getMinutes()).padStart(2, '0');
+                const s = String(d.getSeconds()).padStart(2, '0');
+                const ap = d.getHours() >= 12 ? 'PM' : 'AM';
+                return <>{String(h).padStart(2, '0')}:{m}:{s} {ap}</>;
+              })()}
+            </p>
+            <p className="text-[11px] sm:text-xs font-semibold text-[#CC0000] tracking-wider mt-1">
+              {currentTime.toLocaleDateString('en-US', { timeZone: 'Asia/Kuala_Lumpur', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+            </p>
+          </div>
+
+        </div>
+      </div>
 
       {/* KPI Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
