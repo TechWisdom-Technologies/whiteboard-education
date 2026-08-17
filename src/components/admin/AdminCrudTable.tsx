@@ -1006,7 +1006,7 @@ export default function AdminCrudTable({
                 <TableRow 
                 key={row.id} 
                 className="hover:bg-muted/50 cursor-pointer transition-colors"
-                onClick={() => setUpdateData(row)}
+                onClick={() => openEdit(row)}
               >
                 <TableCell className="text-center px-4 py-3" onClick={(e) => e.stopPropagation()}>
                     <Checkbox 
