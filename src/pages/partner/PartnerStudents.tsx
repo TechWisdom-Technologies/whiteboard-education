@@ -69,7 +69,7 @@ interface Student {
   recommendation_letter_url: string;
   other_documents: string[];
   created_at: string;
-  wb_student_id?: number;
+  wbe_student_id?: string;
 }
 
 
@@ -416,7 +416,7 @@ export default function PartnerStudents() {
                       onCheckedChange={handleSelectAll}
                     />
                   </TableHead>
-                  <TableHead className="whitespace-nowrap min-w-[80px]">WB ID</TableHead>
+                  <TableHead className="whitespace-nowrap min-w-[80px]">Student ID</TableHead>
                   <TableHead className="whitespace-nowrap min-w-[100px]">Created By</TableHead>
                   <TableHead className="whitespace-nowrap min-w-[100px]">Created on</TableHead>
                   <TableHead className="min-w-[120px]">Student Name</TableHead>
@@ -438,7 +438,7 @@ export default function PartnerStudents() {
                         studentRowRefs.current[s.id] = row;
                       }}
                       className={`hover:bg-[#F1F5F9]/80 cursor-pointer border-gray-100 transition-colors ${highlightedStudentId === s.id ? "bg-blue-50/50" : ""}`}
-                      onClick={() => navigate(`/partner-dashboard/students/${s.wb_student_id ? `WB-${s.wb_student_id}` : s.id}`)}
+                      onClick={() => navigate(`/partner-dashboard/students/${s.wbe_student_id ? s.wbe_student_id : s.id}`)}
                     >
                       <TableCell className="text-center px-4 py-3" onClick={(e) => e.stopPropagation()}>
                         <Checkbox 
@@ -446,7 +446,7 @@ export default function PartnerStudents() {
                           onCheckedChange={(c) => handleSelectRow(s.id, c as boolean)}
                         />
                       </TableCell>
-                      <TableCell className="text-xs font-mono py-3 whitespace-nowrap">{s.wb_student_id ? `WB-${s.wb_student_id}` : "—"}</TableCell>
+                      <TableCell className="text-xs font-mono py-3 whitespace-nowrap">{s.wbe_student_id ? s.wbe_student_id : "—"}</TableCell>
                       <TableCell className="py-3 text-xs text-gray-900 font-normal whitespace-nowrap">{contactPerson || "Mr. Khondoker Fazle Rahman"}</TableCell>
                       <TableCell className="py-3 text-xs text-gray-900 whitespace-nowrap">
                         {format(new Date(s.created_at), "MMM dd, yyyy")}

@@ -122,8 +122,7 @@ export default function PartnerOverview() {
           const { data: eventsData } = await supabase
             .from("events")
             .select("id, title, date, time, description, meeting_link")
-            .order("date", { ascending: true })
-            .limit(3);
+            .order("date", { ascending: true });
           const mappedEvents = (eventsData || []).map((e: any) => ({
             ...e,
             event_date: e.date || new Date().toISOString()
@@ -435,9 +434,9 @@ export default function PartnerOverview() {
               Upcoming Webinars
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-4 flex-grow">
+          <CardContent className="pt-4">
             {webinars.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-4 h-[280px] overflow-y-auto pr-2 custom-scrollbar">
                 {webinars.map((w: any) => {
                   const d = w.date ? new Date(w.date) : null;
                   const dayName = d ? d.toLocaleDateString(undefined, { weekday: 'long' }) : '';
@@ -480,9 +479,9 @@ export default function PartnerOverview() {
               Account Manager
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-4 flex-grow">
+          <CardContent className="pt-4 flex-grow overflow-hidden">
             {Array.isArray(accountManager) && accountManager.length > 0 ? (
-              <div className="space-y-6">
+              <div className="space-y-6 h-[280px] overflow-y-auto pr-2 custom-scrollbar">
                 {accountManager.map((am: any, idx: number) => (
                   <div key={idx} className={idx > 0 ? "pt-4 border-t border-slate-100 space-y-4" : "space-y-4"}>
                     <div className="flex items-start gap-3">
@@ -557,9 +556,9 @@ export default function PartnerOverview() {
               Platform Tutorials
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-4 flex-grow">
+          <CardContent className="pt-4 flex-grow overflow-hidden">
             {tutorials.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-4 h-[280px] overflow-y-auto pr-2 custom-scrollbar">
                 {tutorials.map((tut: any) => {
                   const videoUrl = tut.video_url || tut.youtube_url || tut.url || '';
                   const videoId = extractYoutubeId(videoUrl);

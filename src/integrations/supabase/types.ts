@@ -668,9 +668,11 @@ export type Database = {
           previous_institution: string | null
           recommendation_letter_url: string | null
           status: string
+          student_number: number | null
           target_course: string | null
           target_university: string | null
           updated_at: string
+          wbe_student_id: string | null
         }
         Insert: {
           academic_transcript_url?: string | null
@@ -707,9 +709,11 @@ export type Database = {
           previous_institution?: string | null
           recommendation_letter_url?: string | null
           status?: string
+          student_number?: number | null
           target_course?: string | null
           target_university?: string | null
           updated_at?: string
+          wbe_student_id?: string | null
         }
         Update: {
           academic_transcript_url?: string | null
@@ -746,9 +750,11 @@ export type Database = {
           previous_institution?: string | null
           recommendation_letter_url?: string | null
           status?: string
+          student_number?: number | null
           target_course?: string | null
           target_university?: string | null
           updated_at?: string
+          wbe_student_id?: string | null
         }
         Relationships: []
       }

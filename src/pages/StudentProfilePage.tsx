@@ -121,7 +121,7 @@ const documentFields = [
 interface Student {
   id: string;
   partner_id: string;
-  wb_student_id?: number;
+  wbe_student_id?: string;
   full_name: string;
   email: string;
   phone: string;
@@ -164,6 +164,7 @@ interface Student {
 interface Application {
   id: string;
   application_code: string;
+  wbe_application_id?: string;
   university_id: string;
   course_id: string;
   status: string;
@@ -264,7 +265,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
 
   const handleEditProfile = () => {
     if (!student) return;
-    const targetId = student.wb_student_id ? `WB-${student.wb_student_id}` : student.id;
+    const targetId = student.wbe_student_id ? student.wbe_student_id : student.id;
     if (mode === "admin") {
       navigate(`/admin/students/new?edit=${targetId}`);
     } else {
@@ -319,9 +320,9 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     setLoading(true);
     setError(null);
     try {
-      const isWbId = studentId.startsWith("WB-");
-      const queryField = isWbId ? "wb_student_id" : "id";
-      const queryValue = isWbId ? studentId.replace("WB-", "") : studentId;
+      const isWbId = studentId.startsWith("WBE-STU-");
+      const queryField = isWbId ? "wbe_student_id" : "id";
+      const queryValue = studentId;
 
       const res = await fetch(
         `${SUPABASE_URL}/rest/v1/students?${queryField}=eq.${queryValue}&select=*`,
@@ -857,11 +858,11 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                 {/* 2nd Column: Comprehensive info in theme blue */}
                 <div className="flex-1 min-w-0 flex flex-col justify-center space-y-2.5">
                   
-                  {/* Name + (WB-ID) */}
+                  {/* Name + (WBE-STU-ID) */}
                   <div className="w-full">
                     <h2 className="text-lg sm:text-xl font-semibold text-[#1E293B] truncate">
                       {student.full_name}
-                      {student.wb_student_id ? ` (WB-${student.wb_student_id})` : ""}
+                      {student.wbe_student_id ? ` (${student.wbe_student_id})` : ""}
                     </h2>
                   </div>
 
@@ -1051,7 +1052,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                           {applications.map((app) => (
                             <TableRow key={app.id}>
                               <TableCell className="font-mono text-xs font-semibold text-theme whitespace-nowrap">
-                                {app.application_code}
+                                {app.wbe_application_id || app.application_code}
                               </TableCell>
                               <TableCell className="text-xs text-gray-900 whitespace-nowrap">
                                 {new Date(app.created_at).toLocaleDateString()}

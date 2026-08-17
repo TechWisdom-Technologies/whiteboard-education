@@ -41,7 +41,7 @@ const statusColors: Record<string, string> = {
 interface Student {
   id: string;
   partner_id: string;
-  wb_student_id?: number;
+  wbe_student_id?: string;
   full_name: string;
   email: string;
   phone: string;
@@ -104,7 +104,7 @@ export default function AdminStudents() {
     const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}` };
     try {
       const [studentsRes, partnersRes] = await Promise.all([
-        fetch(`${SUPABASE_URL}/rest/v1/students?select=id,partner_id,wb_student_id,full_name,email,phone,passport_number,nationality,nid_number,date_of_birth,gender,previous_institution,previous_degree,major,gpa,ielts_score,language_test_name,target_university,target_course,intake_month,degree_level,status,admin_notes,passport_photo_url,passport_url,academic_transcript_url,ielts_certificate_url,personal_statement_url,recommendation_letter_url,other_documents,created_at&order=created_at.desc`, { headers }),
+        fetch(`${SUPABASE_URL}/rest/v1/students?select=id,partner_id,wbe_student_id,full_name,email,phone,passport_number,nationality,nid_number,date_of_birth,gender,previous_institution,previous_degree,major,gpa,ielts_score,language_test_name,target_university,target_course,intake_month,degree_level,status,admin_notes,passport_photo_url,passport_url,academic_transcript_url,ielts_certificate_url,personal_statement_url,recommendation_letter_url,other_documents,created_at&order=created_at.desc`, { headers }),
         fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?select=id,agency_name,contact_first_name,contact_last_name,email,phone,user_id`, { headers }),
       ]);
       if (studentsRes.ok) setStudents(await studentsRes.json());
@@ -292,7 +292,7 @@ export default function AdminStudents() {
                     onCheckedChange={handleSelectAll}
                   />
                 </TableHead>
-                <TableHead className="whitespace-nowrap min-w-[80px]">WB ID</TableHead>
+                <TableHead className="whitespace-nowrap min-w-[80px]">Student ID</TableHead>
                 <TableHead className="min-w-[120px]">Student Name</TableHead>
                 <TableHead className="min-w-[120px]">Partner Agency</TableHead>
                 <TableHead className="min-w-[100px]">Status</TableHead>
@@ -309,7 +309,7 @@ export default function AdminStudents() {
                   <TableRow 
                     key={s.id} 
                     className="h-10 hover:bg-muted/50 cursor-pointer transition-colors"
-                    onClick={() => navigate(`/admin/students/${s.wb_student_id ? `WB-${s.wb_student_id}` : s.id}`)}
+                    onClick={() => navigate(`/admin/students/${s.wbe_student_id ? s.wbe_student_id : s.id}`)}
                   >
                     <TableCell className="text-center px-0 py-1 text-xs" onClick={(e) => e.stopPropagation()}>
                       <Checkbox 
@@ -317,7 +317,7 @@ export default function AdminStudents() {
                         onCheckedChange={(c) => handleSelectRow(s.id, c as boolean)}
                       />
                     </TableCell>
-                    <TableCell className="text-xs font-mono py-1">{s.wb_student_id ? `WB-${s.wb_student_id}` : "—"}</TableCell>
+                    <TableCell className="text-xs font-mono py-1">{s.wbe_student_id ? s.wbe_student_id : "—"}</TableCell>
                     <TableCell className="text-xs font-normal py-1">{s.full_name}</TableCell>
                     <TableCell className="text-xs py-1">{partner?.agency_name || "Unknown"}</TableCell>
                     <TableCell className="text-xs py-1"><Badge variant="outline" className={statusColors[s.status] || "bg-muted text-muted-foreground"}>{label}</Badge></TableCell>

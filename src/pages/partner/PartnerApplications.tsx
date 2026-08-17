@@ -55,7 +55,7 @@ const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 interface Student {
   id: string;
   full_name: string;
-  wb_student_id: string;
+  wbe_student_id: string;
   email: string;
 }
 
@@ -65,6 +65,7 @@ interface Application {
   university_id: string | null;
   course_id: string | null;
   application_code: string;
+  wbe_application_id: string;
   status: string;
   emgs_application_number: string | null;
   emgs_status_percentage: number | null;
@@ -457,7 +458,7 @@ export default function PartnerApplications() {
                             }}
                           >
                             <TableCell className="font-mono text-xs font-semibold text-[#2F4F97] whitespace-nowrap">
-                              {app.application_code}
+                              {app.wbe_application_id || app.application_code}
                             </TableCell>
                             <TableCell className="text-xs text-gray-900 whitespace-nowrap">
                               {format(new Date(app.created_at), "MMM dd, yyyy")}
