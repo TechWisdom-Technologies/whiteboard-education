@@ -510,7 +510,8 @@ export type Database = {
           agency_name: string
           annual_students: number | null
           certificate_urls: Json | null
-          contact_person: string
+          contact_first_name: string
+          contact_last_name: string
           country: string
           created_at: string
           default_commission_percentage: number | null
@@ -528,7 +529,8 @@ export type Database = {
           agency_name: string
           annual_students?: number | null
           certificate_urls?: Json | null
-          contact_person: string
+          contact_first_name: string
+          contact_last_name: string
           country?: string
           created_at?: string
           default_commission_percentage?: number | null
@@ -546,7 +548,8 @@ export type Database = {
           agency_name?: string
           annual_students?: number | null
           certificate_urls?: Json | null
-          contact_person?: string
+          contact_first_name?: string
+          contact_last_name?: string
           country?: string
           created_at?: string
           default_commission_percentage?: number | null

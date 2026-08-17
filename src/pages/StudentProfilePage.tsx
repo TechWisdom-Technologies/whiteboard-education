@@ -179,7 +179,8 @@ interface Application {
 interface Partner {
   id: string;
   agency_name: string;
-  contact_person: string;
+  contact_first_name: string;
+  contact_last_name: string;
   email: string;
   phone: string;
   user_id: string;
@@ -344,7 +345,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
       if (s.partner_id) {
         promises.push(
           fetch(
-            `${SUPABASE_URL}/rest/v1/partner_registrations?user_id=eq.${s.partner_id}&select=id,agency_name,contact_person,email,phone,user_id`,
+            `${SUPABASE_URL}/rest/v1/partner_registrations?user_id=eq.${s.partner_id}&select=id,agency_name,contact_first_name,contact_last_name,email,phone,user_id`,
             { headers }
           ).then(res => res.json()).then(data => {
             if (data && data.length > 0) setPartner(data[0]);
@@ -1872,7 +1873,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                   {partner ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4">
                       <InfoRow label="Agency Name" value={partner.agency_name} />
-                      <InfoRow label="Contact Person" value={partner.contact_person} />
+                      <InfoRow label="Contact Person" value={`${partner.contact_first_name || ''} ${partner.contact_last_name || ''}`.trim()} />
                       <InfoRow label="Phone" value={partner.phone} />
                       <InfoRow label="Email" value={partner.email} />
                     </div>

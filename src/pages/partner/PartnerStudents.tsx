@@ -113,12 +113,12 @@ export default function PartnerStudents() {
       if (res.ok) setStudents(await res.json());
 
       const partnerRes = await fetch(
-        `${SUPABASE_URL}/rest/v1/partner_registrations?select=contact_person&user_id=eq.${user?.id}&limit=1`,
+        `${SUPABASE_URL}/rest/v1/partner_registrations?select=contact_first_name,contact_last_name&user_id=eq.${user?.id}&limit=1`,
         { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}` } }
       );
       if (partnerRes.ok) {
         const pData = await partnerRes.json();
-        if (pData.length > 0) setContactPerson(pData[0].contact_person);
+        if (pData.length > 0) setContactPerson(`${pData[0].contact_first_name || ''} ${pData[0].contact_last_name || ''}`.trim());
       }
     } catch { /* ignore */ } finally { setLoading(false); }
   };

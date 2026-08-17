@@ -129,11 +129,11 @@ export default function PartnerApplications() {
         const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}` };
 
         // Fetch partner details
-        const partnerRes = await fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?select=contact_person&user_id=eq.${user.id}&limit=1`, { headers });
+        const partnerRes = await fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?select=contact_first_name,contact_last_name&user_id=eq.${user.id}&limit=1`, { headers });
         if (partnerRes.ok) {
           const partnerData = await partnerRes.json();
           if (partnerData.length > 0) {
-            setPartnerName(partnerData[0].contact_person);
+            setPartnerName(`${partnerData[0].contact_first_name || ''} ${partnerData[0].contact_last_name || ''}`.trim());
           }
         }
 

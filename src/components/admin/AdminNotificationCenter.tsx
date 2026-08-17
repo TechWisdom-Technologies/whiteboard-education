@@ -34,7 +34,8 @@ type LeadRow = {
 type PartnerRow = {
   id: string;
   agency_name: string | null;
-  contact_person: string | null;
+  contact_first_name: string | null;
+  contact_last_name: string | null;
   created_at: string;
 };
 
@@ -101,7 +102,7 @@ export function AdminNotificationCenter() {
         .limit(10),
       supabase
         .from("partner_registrations")
-        .select("id, agency_name, contact_person, created_at")
+        .select("id, agency_name, contact_first_name, contact_last_name, created_at")
         .eq("status", "pending")
         .order("created_at", { ascending: false })
         .limit(10),
@@ -130,7 +131,7 @@ export function AdminNotificationCenter() {
       return {
         key,
         title: "Partner Approval Pending",
-        message: `${partner.agency_name || "Agency"} (${partner.contact_person || "Contact"}) is waiting for approval`,
+        message: `${partner.agency_name || "Agency"} (${partner.contact_first_name || ""} ${partner.contact_last_name || ""}) is waiting for approval`.trim(),
         createdAt: partner.created_at,
         href: "/admin/partners",
         read: !!readMap[key],

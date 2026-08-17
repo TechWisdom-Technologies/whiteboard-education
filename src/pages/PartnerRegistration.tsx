@@ -96,9 +96,9 @@ export default function PartnerRegistration() {
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Form state
   const [agencyName, setAgencyName] = useState("");
-  const [contactPerson, setContactPerson] = useState("");
+  const [contactFirstName, setContactFirstName] = useState("");
+  const [contactLastName, setContactLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [country, setCountry] = useState("");
@@ -131,7 +131,8 @@ export default function PartnerRegistration() {
       setErrors({});
       setStep(2);
     } else if (step === 2) {
-      if (!contactPerson) newErrors.contactPerson = "Contact Person is required";
+      if (!contactFirstName) newErrors.contactFirstName = "First Name is required";
+      if (!contactLastName) newErrors.contactLastName = "Last Name is required";
       if (!phone) newErrors.phone = "Phone Number is required";
       if (!email) newErrors.email = "Email is required";
       if (!password || password.length < 6) newErrors.password = "Password must be at least 6 characters";
@@ -185,7 +186,7 @@ export default function PartnerRegistration() {
         email,
         password,
         options: {
-          data: { display_name: contactPerson },
+          data: { first_name: contactFirstName, last_name: contactLastName, display_name: `${contactFirstName} ${contactLastName}` },
           emailRedirectTo: `${window.location.origin}/login`,
         },
       });
@@ -218,7 +219,8 @@ export default function PartnerRegistration() {
         body: JSON.stringify({
           user_id: userId,
           agency_name: agencyName,
-          contact_person: contactPerson,
+          contact_first_name: contactFirstName,
+          contact_last_name: contactLastName,
           email,
           phone,
           country,
@@ -421,13 +423,28 @@ export default function PartnerRegistration() {
                     <span className="bg-[#2F4F97] text-white w-5 h-5 rounded-xl flex items-center justify-center text-[10px] font-black">2</span>
                     Account Representative
                   </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Contact Person <span className="text-red-500">*</span></Label>
-                      <Input value={contactPerson} onChange={(e) => { setContactPerson(e.target.value); setErrors((p) => ({ ...p, contactPerson: "" })); }} placeholder="Full name" className={inputCls} />
-                      {errors.contactPerson && <p className="text-red-500 text-[10px] mt-0.5">{errors.contactPerson}</p>}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1 sm:space-y-2">
+                      <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">First Name <span className="text-red-500">*</span></Label>
+                      <Input
+                        value={contactFirstName}
+                        onChange={(e) => { setContactFirstName(e.target.value); setErrors((p) => ({ ...p, contactFirstName: "" })); }}
+                        placeholder="John"
+                        className={`${inputCls} ${errors.contactFirstName ? "border-red-500" : ""}`}
+                      />
+                      {errors.contactFirstName && <p className="text-xs text-red-500 mt-1">{errors.contactFirstName}</p>}
                     </div>
-                    <div className="space-y-1">
+                    <div className="space-y-1 sm:space-y-2">
+                      <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Last Name <span className="text-red-500">*</span></Label>
+                      <Input
+                        value={contactLastName}
+                        onChange={(e) => { setContactLastName(e.target.value); setErrors((p) => ({ ...p, contactLastName: "" })); }}
+                        placeholder="Doe"
+                        className={`${inputCls} ${errors.contactLastName ? "border-red-500" : ""}`}
+                      />
+                      {errors.contactLastName && <p className="text-xs text-red-500 mt-1">{errors.contactLastName}</p>}
+                    </div>
+                    <div className="space-y-1 sm:col-span-2">
                       <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Phone Number <span className="text-red-500">*</span></Label>
                       <Input value={phone} onChange={(e) => { setPhone(e.target.value); setErrors((p) => ({ ...p, phone: "" })); }} placeholder="+880 1XXXXXXXXX" className={inputCls} />
                       {errors.phone && <p className="text-red-500 text-[10px] mt-0.5">{errors.phone}</p>}

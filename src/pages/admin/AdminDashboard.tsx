@@ -30,7 +30,8 @@ interface RecentStudent {
 interface RecentPartner {
   id: string;
   agency_name: string;
-  contact_person: string;
+  contact_first_name: string;
+  contact_last_name: string;
   status: string;
   created_at: string;
 }
@@ -82,7 +83,7 @@ export default function AdminDashboard() {
         const [uniRes, courseRes, partnerRes, studentRes, blogRes, partnerLookupRes] = await Promise.all([
           supabase.from("universities").select("id", { count: "exact", head: true }),
           supabase.from("courses").select("id", { count: "exact", head: true }),
-          supabase.from("partner_registrations").select("id, agency_name, contact_person, status, created_at").order("created_at", { ascending: false }),
+          supabase.from("partner_registrations").select("id, agency_name, contact_first_name, contact_last_name, status, created_at").order("created_at", { ascending: false }),
           supabase.from("students").select("id, full_name, status, partner_id, created_at").order("created_at", { ascending: false }),
           supabase.from("blogs").select("id", { count: "exact", head: true }),
           fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?select=user_id,agency_name`, { headers }).then(r => r.json()),
@@ -172,7 +173,7 @@ export default function AdminDashboard() {
                     <div key={p.id} className="flex items-center justify-between gap-3 py-2.5 px-2 border-b last:border-0 hover:bg-muted/30 transition-colors rounded-xl">
                       <div className="min-w-0 flex-1">
                         <p className="text-[12px] font-normal text-[#1E293B] truncate">{p.agency_name}</p>
-                        <p className="text-[12px] text-muted-foreground truncate">{p.contact_person}</p>
+                        <p className="text-[12px] text-muted-foreground truncate">{p.contact_first_name} {p.contact_last_name}</p>
                       </div>
                       <Badge variant="outline" className={`shrink-0 text-[12px] font-normal uppercase tracking-wider ${partnerStatusColor(p.status)}`}>
                         {p.status}

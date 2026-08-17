@@ -62,6 +62,14 @@ export default function PartnerOverview() {
   const [card3Filter, setCard3Filter] = useState("ready_for_visa_application");
   const [card4Filter, setCard4Filter] = useState("rejected_by_university");
   const [card5Filter, setCard5Filter] = useState("rejected_by_visa_office");
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (!user || !session) return;
@@ -228,34 +236,68 @@ export default function PartnerOverview() {
     return (match && match[7].length === 11) ? match[7] : null;
   };
 
+  const getTimeOfDay = () => {
+    const hour = currentTime.getHours();
+    if (hour < 12) return 'Morning';
+    if (hour < 18) return 'Afternoon';
+    return 'Evening';
+  };
+
+  const getLastName = () => {
+    if (partnerInfo?.contact_last_name) return partnerInfo.contact_last_name;
+    if (partnerInfo?.contact_first_name) return partnerInfo.contact_first_name;
+    return 'Partner';
+  };
+
   return (
     <div className="max-w-[1400px] mx-auto space-y-6 animate-fade-in text-[#1E293B]">
 
-            <div className="bg-white border-[#2F4F97]/10 shadow-sm rounded-xl p-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+      {/* Greeting and Clock Banner */}
+      <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-6 flex flex-col lg:flex-row justify-between items-center bg-gradient-to-r from-blue-50 to-white gap-6 lg:gap-0">
+        <div className="text-center lg:text-left">
+          <h2 className="text-2xl font-bold text-[#1E293B]">Good {getTimeOfDay()}, {getLastName()}!</h2>
+          <p className="text-slate-500 mt-1">Check your students and applications latest update</p>
+        </div>
+        
+        <div className="flex flex-row items-center gap-6 sm:gap-10 text-center lg:text-right mt-2 lg:mt-0">
           
-          <div className="flex flex-col items-center justify-center p-4 cursor-pointer hover:bg-slate-50 transition-colors rounded-xl group" onClick={() => navigate('/partner-dashboard/students')}>
-            <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-              <Users className="w-6 h-6 text-[#2F4F97]" />
-            </div>
-            <p className="text-3xl font-bold text-[#2F4F97]">{totalStudentsCount}</p>
-            <p className="text-sm text-slate-500 font-medium mt-1">Total Students</p>
+          {/* Bangladesh Time */}
+          <div className="flex flex-col items-end">
+            <span className="text-[11px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Bangladesh</span>
+            <p className="text-3xl sm:text-4xl font-semibold text-slate-700 whitespace-nowrap" style={{ fontVariantNumeric: 'tabular-nums' }}>
+              {(() => {
+                const d = new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Dhaka' }));
+                const h = d.getHours() % 12 || 12;
+                const m = String(d.getMinutes()).padStart(2, '0');
+                const s = String(d.getSeconds()).padStart(2, '0');
+                const ap = d.getHours() >= 12 ? 'PM' : 'AM';
+                return <>{String(h).padStart(2, '0')}:{m}:{s} {ap}</>;
+              })()}
+            </p>
+            <p className="text-[11px] sm:text-xs font-semibold text-slate-500 tracking-wider mt-1">
+              {currentTime.toLocaleDateString('en-US', { timeZone: 'Asia/Dhaka', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+            </p>
           </div>
 
-          <div className="flex flex-col items-center justify-center p-4 cursor-pointer hover:bg-slate-50 transition-colors rounded-xl group" onClick={() => navigate('/partner-dashboard/applications')}>
-            <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-              <FileText className="w-6 h-6 text-emerald-600" />
-            </div>
-            <p className="text-3xl font-bold text-[#2F4F97]">{applicationsCount}</p>
-            <p className="text-sm text-slate-500 font-medium mt-1">Applications</p>
-          </div>
+          {/* Divider */}
+          <div className="w-px h-16 bg-slate-200" />
 
-          <div className="flex flex-col items-center justify-center p-4 cursor-pointer hover:bg-slate-50 transition-colors rounded-xl group" onClick={() => navigate('/partner-dashboard/search-programs')}>
-            <div className="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-              <Search className="w-6 h-6 text-amber-600" />
-            </div>
-            <p className="text-3xl font-bold text-[#2F4F97]">{coursesCount}</p>
-            <p className="text-sm text-slate-500 font-medium mt-1">Search Programs</p>
+          {/* Malaysia Time */}
+          <div className="flex flex-col items-end">
+            <span className="text-[11px] sm:text-xs font-bold text-theme uppercase tracking-widest mb-1">Malaysia</span>
+            <p className="text-3xl sm:text-4xl font-semibold text-theme whitespace-nowrap" style={{ fontVariantNumeric: 'tabular-nums' }}>
+              {(() => {
+                const d = new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
+                const h = d.getHours() % 12 || 12;
+                const m = String(d.getMinutes()).padStart(2, '0');
+                const s = String(d.getSeconds()).padStart(2, '0');
+                const ap = d.getHours() >= 12 ? 'PM' : 'AM';
+                return <>{String(h).padStart(2, '0')}:{m}:{s} {ap}</>;
+              })()}
+            </p>
+            <p className="text-[11px] sm:text-xs font-semibold text-theme/80 tracking-wider mt-1">
+              {currentTime.toLocaleDateString('en-US', { timeZone: 'Asia/Kuala_Lumpur', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+            </p>
           </div>
 
         </div>
@@ -267,7 +309,7 @@ export default function PartnerOverview() {
         {/* Card 0: Total Students */}
         <div 
           onClick={() => navigate(`/partner-dashboard/students?status=${card0Filter}`)}
-          className="bg-white border border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
+          className="bg-white border-2 border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
         >
           <div className="mb-4" onClick={(e) => e.stopPropagation()}>
             <Select value={card0Filter} onValueChange={setCard0Filter}>
@@ -282,13 +324,13 @@ export default function PartnerOverview() {
               </SelectContent>
             </Select>
           </div>
-          <p className="text-4xl font-bold text-theme group-hover:underline">{getCard0Count()}</p>
+          <p className="text-4xl font-bold text-theme">{getCard0Count()}</p>
         </div>
 
         {/* Card 1: Total Applications */}
         <div 
           onClick={() => navigate(`/partner-dashboard/applications?status=${card1Filter}`)}
-          className="bg-white border border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
+          className="bg-white border-2 border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
         >
           <div className="mb-4" onClick={(e) => e.stopPropagation()}>
             <Select value={card1Filter} onValueChange={setCard1Filter}>
@@ -303,13 +345,13 @@ export default function PartnerOverview() {
               </SelectContent>
             </Select>
           </div>
-          <p className="text-4xl font-bold text-theme group-hover:underline">{getCard1Count()}</p>
+          <p className="text-4xl font-bold text-theme">{getCard1Count()}</p>
         </div>
 
         {/* Card 2 */}
         <div 
           onClick={() => navigate(`/partner-dashboard/applications?status=${card2Filter}`)}
-          className="bg-white border border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
+          className="bg-white border-2 border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
         >
           <div className="mb-4" onClick={(e) => e.stopPropagation()}>
             <Select value={card2Filter} onValueChange={setCard2Filter}>
@@ -322,13 +364,13 @@ export default function PartnerOverview() {
               </SelectContent>
             </Select>
           </div>
-          <p className="text-4xl font-bold text-theme group-hover:underline">{getCard2Count()}</p>
+          <p className="text-4xl font-bold text-theme">{getCard2Count()}</p>
         </div>
 
         {/* Card 3: Visa Applications */}
         <div 
           onClick={() => navigate(`/partner-dashboard/applications?status=${card3Filter}`)}
-          className="bg-white border border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
+          className="bg-white border-2 border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
         >
           <div className="mb-4" onClick={(e) => e.stopPropagation()}>
             <Select value={card3Filter} onValueChange={setCard3Filter}>
@@ -342,13 +384,13 @@ export default function PartnerOverview() {
               </SelectContent>
             </Select>
           </div>
-          <p className="text-4xl font-bold text-theme group-hover:underline">{getCard3Count()}</p>
+          <p className="text-4xl font-bold text-theme">{getCard3Count()}</p>
         </div>
 
         {/* Card 4: Rejected by University */}
         <div 
           onClick={() => navigate(`/partner-dashboard/applications?status=${card4Filter}`)}
-          className="bg-white border border-destructive shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
+          className="bg-white border-2 border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
         >
           <div className="mb-4" onClick={(e) => e.stopPropagation()}>
             <Select value={card4Filter} onValueChange={setCard4Filter}>
@@ -360,13 +402,13 @@ export default function PartnerOverview() {
               </SelectContent>
             </Select>
           </div>
-          <p className="text-4xl font-bold text-theme group-hover:underline">{getCard4Count()}</p>
+          <p className="text-4xl font-bold text-theme">{getCard4Count()}</p>
         </div>
 
         {/* Card 5: Rejected by Visa */}
         <div 
           onClick={() => navigate(`/partner-dashboard/applications?status=${card5Filter}`)}
-          className="bg-white border border-destructive shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
+          className="bg-white border-2 border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
         >
           <div className="mb-4" onClick={(e) => e.stopPropagation()}>
             <Select value={card5Filter} onValueChange={setCard5Filter}>
@@ -378,7 +420,7 @@ export default function PartnerOverview() {
               </SelectContent>
             </Select>
           </div>
-          <p className="text-4xl font-bold text-theme group-hover:underline">{getCard5Count()}</p>
+          <p className="text-4xl font-bold text-theme">{getCard5Count()}</p>
         </div>
       </div>
 

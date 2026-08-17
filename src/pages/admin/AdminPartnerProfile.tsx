@@ -42,7 +42,8 @@ interface PartnerRegistration {
   id: string;
   user_id: string | null;
   agency_name: string;
-  contact_person: string;
+  contact_first_name: string;
+  contact_last_name: string;
   email: string;
   phone: string | null;
   country: string;
@@ -114,7 +115,7 @@ export default function AdminPartnerProfile() {
   const handlePrint = () => {
     if (!partner) return;
     const originalTitle = document.title;
-    document.title = `${partner.agency_name}_${partner.contact_person}_Registration`;
+    document.title = `${partner.agency_name}_${partner.contact_first_name}_Registration`;
     window.print();
     document.title = originalTitle;
   };
@@ -388,7 +389,8 @@ export default function AdminPartnerProfile() {
                     </h3>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4">
-                    <InfoRow label="Full Name" value={partner.contact_person} />
+                    <InfoRow label="First Name" value={partner.contact_first_name} />
+                    <InfoRow label="Last Name" value={partner.contact_last_name} />
                     <InfoRow label="Email" value={partner.email} />
                     <InfoRow label="Phone" value={partner.phone} />
                   </div>

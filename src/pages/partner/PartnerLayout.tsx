@@ -27,15 +27,15 @@ export default function PartnerLayout() {
     const localAvatar = localStorage.getItem(`partner_avatar_${user.id}`);
     if (localAvatar) setAvatarUrl(localAvatar);
 
-    // 1. Fetch contact_person from partner_registrations
+    // 1. Fetch contact_first_name and contact_last_name from partner_registrations
     const { data: partnerData } = await supabase
       .from("partner_registrations")
-      .select("contact_person, trade_license_url")
+      .select("contact_first_name, contact_last_name, trade_license_url")
       .eq("user_id", user.id)
       .maybeSingle();
 
-    if (partnerData && partnerData.contact_person) {
-      setDisplayName(partnerData.contact_person);
+    if (partnerData && (partnerData.contact_first_name || partnerData.contact_last_name)) {
+      setDisplayName(`${partnerData.contact_first_name || ''} ${partnerData.contact_last_name || ''}`.trim());
     }
 
     // 2. Fetch avatar and fallback display_name from profiles
@@ -50,7 +50,7 @@ export default function PartnerLayout() {
         setAvatarUrl(data.avatar_url);
         localStorage.setItem(`partner_avatar_${user.id}`, data.avatar_url);
       }
-      if (data.display_name && (!partnerData || !partnerData.contact_person)) {
+      if (data.display_name && (!partnerData || (!partnerData.contact_first_name && !partnerData.contact_last_name))) {
         setDisplayName(data.display_name);
       }
     }

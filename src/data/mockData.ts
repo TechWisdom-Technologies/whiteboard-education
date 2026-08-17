@@ -88,6 +88,7 @@ export interface Accommodation {
   price_per_month: number;
   type: string;
   amenities: string[];
+  image_url: string;
 }
 
 export interface Scholarship {
@@ -108,7 +109,8 @@ export interface B2BPartner {
   converted: number;
   commission: number;
   agency_name: string;
-  contact_person: string;
+  contact_first_name: string;
+  contact_last_name: string;
   total_referrals: number;
   successful_enrollments: number;
   commission_earned: number;
@@ -452,11 +454,11 @@ export const scholarships: Scholarship[] = [
 // ─── B2B Partners ────────────────────────────────────────────────────────────
 
 export const b2bPartners: B2BPartner[] = [
-  { id: 1, company_name: "Global Education Hub", contact_name: "Ahmad Ibrahim", email: "ahmad@globaledhub.com", total_sent: 156, processing: 18, converted: 124, commission: 62000, agency_name: "Global Education Hub", contact_person: "Ahmad Ibrahim", total_referrals: 156, successful_enrollments: 124, commission_earned: 62000 },
-  { id: 2, company_name: "StudyBridge International", contact_name: "Sarah Chen", email: "sarah@studybridge.com", total_sent: 89, processing: 12, converted: 67, commission: 33500, agency_name: "StudyBridge International", contact_person: "Sarah Chen", total_referrals: 89, successful_enrollments: 67, commission_earned: 33500 },
-  { id: 3, company_name: "EduConnect Africa", contact_name: "James Okonkwo", email: "james@educonnect.africa", total_sent: 210, processing: 22, converted: 178, commission: 89000, agency_name: "EduConnect Africa", contact_person: "James Okonkwo", total_referrals: 210, successful_enrollments: 178, commission_earned: 89000 },
-  { id: 4, company_name: "Pacific Student Services", contact_name: "Mei Ling Wong", email: "mei@pacificstudent.com", total_sent: 45, processing: 5, converted: 38, commission: 19000, agency_name: "Pacific Student Services", contact_person: "Mei Ling Wong", total_referrals: 45, successful_enrollments: 38, commission_earned: 19000 },
-  { id: 5, company_name: "Mideast Scholars Agency", contact_name: "Omar Farouk", email: "omar@mideastscholars.com", total_sent: 112, processing: 9, converted: 95, commission: 47500, agency_name: "Mideast Scholars Agency", contact_person: "Omar Farouk", total_referrals: 112, successful_enrollments: 95, commission_earned: 47500 },
+  { id: 1, company_name: "Global Education Hub", contact_name: "Ahmad Ibrahim", email: "ahmad@globaledhub.com", total_sent: 156, processing: 18, converted: 124, commission: 62000, agency_name: "Global Education Hub", contact_first_name: "Ahmad", contact_last_name: "Ibrahim", total_referrals: 156, successful_enrollments: 124, commission_earned: 62000 },
+  { id: 2, company_name: "StudyBridge International", contact_name: "Sarah Chen", email: "sarah@studybridge.com", total_sent: 89, processing: 12, converted: 67, commission: 33500, agency_name: "StudyBridge International", contact_first_name: "Sarah", contact_last_name: "Chen", total_referrals: 89, successful_enrollments: 67, commission_earned: 33500 },
+  { id: 3, company_name: "EduConnect Africa", contact_name: "James Okonkwo", email: "james@educonnect.africa", total_sent: 210, processing: 22, converted: 178, commission: 89000, agency_name: "EduConnect Africa", contact_first_name: "James", contact_last_name: "Okonkwo", total_referrals: 210, successful_enrollments: 178, commission_earned: 89000 },
+  { id: 4, company_name: "Pacific Student Services", contact_name: "Mei Ling Wong", email: "mei@pacificstudent.com", total_sent: 45, processing: 5, converted: 38, commission: 19000, agency_name: "Pacific Student Services", contact_first_name: "Mei Ling", contact_last_name: "Wong", total_referrals: 45, successful_enrollments: 38, commission_earned: 19000 },
+  { id: 5, company_name: "Mideast Scholars Agency", contact_name: "Omar Farouk", email: "omar@mideastscholars.com", total_sent: 112, processing: 9, converted: 95, commission: 47500, agency_name: "Mideast Scholars Agency", contact_first_name: "Omar", contact_last_name: "Farouk", total_referrals: 112, successful_enrollments: 95, commission_earned: 47500 },
 ];
 
 // ─── Students ────────────────────────────────────────────────────────────────

@@ -75,7 +75,8 @@ interface Student {
 interface Partner {
   id: string;
   agency_name: string;
-  contact_person: string;
+  contact_first_name: string;
+  contact_last_name: string;
   email: string;
   phone: string;
   user_id: string;
@@ -104,7 +105,7 @@ export default function AdminStudents() {
     try {
       const [studentsRes, partnersRes] = await Promise.all([
         fetch(`${SUPABASE_URL}/rest/v1/students?select=id,partner_id,wb_student_id,full_name,email,phone,passport_number,nationality,nid_number,date_of_birth,gender,previous_institution,previous_degree,major,gpa,ielts_score,language_test_name,target_university,target_course,intake_month,degree_level,status,admin_notes,passport_photo_url,passport_url,academic_transcript_url,ielts_certificate_url,personal_statement_url,recommendation_letter_url,other_documents,created_at&order=created_at.desc`, { headers }),
-        fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?select=id,agency_name,contact_person,email,phone,user_id`, { headers }),
+        fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?select=id,agency_name,contact_first_name,contact_last_name,email,phone,user_id`, { headers }),
       ]);
       if (studentsRes.ok) setStudents(await studentsRes.json());
       if (partnersRes.ok) setPartners(await partnersRes.json());

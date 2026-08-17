@@ -17,7 +17,8 @@ interface PartnerRegistration {
   id: string;
   user_id: string;
   agency_name: string;
-  contact_person: string;
+  contact_first_name: string;
+  contact_last_name: string;
   email: string;
   phone: string;
   country: string;
@@ -252,7 +253,7 @@ export default function AdminPartners() {
                       />
                     </TableCell>
                     <TableCell className="font-normal max-w-[150px] truncate py-1 text-xs md:text-[13px]" title={reg.agency_name}>{reg.agency_name}</TableCell>
-                    <TableCell className="max-w-[150px] truncate py-1 text-xs md:text-[13px]" title={reg.contact_person}>{reg.contact_person}</TableCell>
+                    <TableCell className="max-w-[150px] truncate py-1 text-xs md:text-[13px]" title={`${reg.contact_first_name} ${reg.contact_last_name}`.trim()}>{`${reg.contact_first_name} ${reg.contact_last_name}`.trim()}</TableCell>
                     <TableCell className="text-[12px] max-w-[150px] truncate py-1 md:text-[13px]" title={reg.email}>{reg.email}</TableCell>
                     <TableCell className="py-1">
                       {reg.status === 'approved' && <span title="Approved"><CheckCircle className="h-4 w-4 text-green-600" /></span>}

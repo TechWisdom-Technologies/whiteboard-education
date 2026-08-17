@@ -27,7 +27,8 @@ interface PartnerData {
   linkedin_url: string;
   instagram_url: string;
   youtube_url: string;
-  contact_person: string;
+  contact_first_name: string;
+  contact_last_name: string;
   rep_phone: string;
   rep_email: string;
   status: string;
@@ -141,7 +142,7 @@ export default function PartnerProfile() {
 
         const { data: partnerData } = await supabase
           .from("partner_registrations")
-          .select("agency_name, contact_person, email, phone, country, annual_students, status, admin_notes, certificate_urls")
+          .select("agency_name, contact_first_name, contact_last_name, email, phone, country, annual_students, status, admin_notes, certificate_urls")
           .eq("user_id", user.id)
           .maybeSingle();
 
@@ -169,7 +170,8 @@ export default function PartnerProfile() {
             linkedin_url: extendedMeta.linkedin_url || "",
             instagram_url: extendedMeta.instagram_url || "",
             youtube_url: extendedMeta.youtube_url || "",
-            contact_person: partnerData.contact_person || "",
+            contact_first_name: partnerData.contact_first_name || "",
+            contact_last_name: partnerData.contact_last_name || "",
             rep_phone: extendedMeta.rep_phone || partnerData.phone || "",
             rep_email: extendedMeta.rep_email || partnerData.email || "",
             status: partnerData.status || "pending",
@@ -272,7 +274,8 @@ export default function PartnerProfile() {
 
       const { error } = await supabase.from("partner_registrations").update({
         agency_name: editAgencyData.agency_name,
-        contact_person: editAgencyData.contact_person,
+        contact_first_name: editAgencyData.contact_first_name,
+        contact_last_name: editAgencyData.contact_last_name,
         email: editAgencyData.agency_email || editAgencyData.rep_email || partner?.agency_email,
         phone: editAgencyData.agency_phone || editAgencyData.rep_phone || partner?.agency_phone,
         country: editAgencyData.country,
@@ -360,7 +363,7 @@ export default function PartnerProfile() {
 
   if (loading) return <LoadingScreen fullScreen />;
 
-  const initials = (partner?.agency_name || partner?.contact_person || user?.email || "PA")
+  const initials = (partner?.agency_name || partner?.contact_first_name || user?.email || "PA")
     .split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
 
   const inputCls = "h-12 text-base bg-white text-black border border-slate-300 rounded-xl px-3.5 focus:bg-white focus:text-black focus:border-[#2F4F97] focus:ring-2 focus:ring-[#2F4F97]/20 focus:caret-black placeholder:text-gray-400 focus:placeholder:text-gray-400 transition-all shadow-none font-normal";
@@ -394,10 +397,10 @@ export default function PartnerProfile() {
                 <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-black">
                   {partner?.agency_name || "Partner Agency"}
                 </h1>
-                {partner?.contact_person && (
-                  <p className="text-black text-sm font-normal flex items-center justify-center sm:justify-start gap-1.5 mt-1">
-                    <User className="h-4 w-4 shrink-0 text-black" /> {partner.contact_person}
-                  </p>
+                {(partner?.contact_first_name || partner?.contact_last_name) && (
+                  <div className="flex items-center gap-2 text-sm sm:text-base text-slate-700 bg-white/80 backdrop-blur border border-slate-200/50 py-1.5 px-3 rounded-full shadow-sm w-fit mx-auto sm:mx-0 mt-2">
+                    <User className="h-4 w-4 shrink-0 text-black" /> {partner.contact_first_name} {partner.contact_last_name}
+                  </div>
                 )}
               </div>
               {partner && (
@@ -518,9 +521,15 @@ export default function PartnerProfile() {
 
               {isEditingAgency && editAgencyData ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 bg-slate-50/50 p-6 rounded-2xl border border-slate-100 animate-fade-in">
-                  <div className="space-y-2">
-                    <Label className="text-xs sm:text-[13px] font-medium text-[#2F4F97] uppercase tracking-wider">Contact Person Name</Label>
-                    <Input value={editAgencyData.contact_person} onChange={e => setEditAgencyData({...editAgencyData, contact_person: e.target.value})} className={inputCls} placeholder="e.g. John Doe" />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs sm:text-[13px] font-medium text-[#2F4F97] uppercase tracking-wider">First Name</Label>
+                      <Input value={editAgencyData.contact_first_name} onChange={e => setEditAgencyData({...editAgencyData, contact_first_name: e.target.value})} className={inputCls} placeholder="e.g. John" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs sm:text-[13px] font-medium text-[#2F4F97] uppercase tracking-wider">Last Name</Label>
+                      <Input value={editAgencyData.contact_last_name} onChange={e => setEditAgencyData({...editAgencyData, contact_last_name: e.target.value})} className={inputCls} placeholder="e.g. Doe" />
+                    </div>
                   </div>
 
                   <div className="space-y-2">
@@ -535,7 +544,7 @@ export default function PartnerProfile() {
                 </div>
               ) : partner ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-                  <InfoTile icon={User} label="Contact Person Name" value={partner.contact_person} />
+                  <InfoTile icon={User} label="Contact Person Name" value={`${partner.contact_first_name || ''} ${partner.contact_last_name || ''}`.trim()} />
                   <InfoTile icon={Phone} label="Phone" value={partner.rep_phone} />
                   <InfoTile icon={Mail} label="Email" value={partner.rep_email} />
                 </div>
