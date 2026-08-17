@@ -1,4 +1,4 @@
-import { LayoutDashboard, GraduationCap, BookOpen, Home, Users, Settings, Languages, FileText, UserCheck, Target, LogOut, PlaySquare } from "lucide-react";
+import { LayoutDashboard, GraduationCap, BookOpen, Home, Users, Settings, Languages, FileText, UserCheck, Target, LogOut, PlaySquare, ExternalLink } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -80,6 +80,17 @@ export function AdminSidebar() {
 
               {/* Divider */}
               <div className="my-2 border-t border-slate-700/50" />
+
+              {/* Go to Website */}
+              <SidebarMenuItem>
+                <div
+                  onClick={() => window.open("/", "_blank")}
+                  className={`flex items-center rounded-lg text-slate-300 hover:bg-white/10 hover:text-white transition-colors duration-150 cursor-pointer ${collapsed ? "justify-center p-2" : "gap-3 px-3 py-2.5"}`}
+                >
+                  <ExternalLink className="h-5 w-5 flex-shrink-0 text-slate-400" strokeWidth={1.8} />
+                  {!collapsed && <span className="text-[15px] leading-5 font-medium">Go to Website</span>}
+                </div>
+              </SidebarMenuItem>
 
               {/* Sign Out */}
               <SidebarMenuItem>

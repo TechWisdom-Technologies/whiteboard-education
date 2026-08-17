@@ -991,7 +991,7 @@ export default function AdminCrudTable({
               {tableFields.map((f) => (
                 <TableHead key={f.key} className="h-10 text-xs">{f.label}</TableHead>
               ))}
-              <TableHead className="text-right h-10 text-xs">Actions</TableHead>
+              <TableHead className="text-left h-10 text-xs">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -1019,12 +1019,12 @@ export default function AdminCrudTable({
                       {renderCell ? renderCell(row, f.key) : formatCellValue(row, f.key)}
                     </TableCell>
                   ))}
-                  <TableCell className="text-right py-1" onClick={(e) => e.stopPropagation()}>
-                    <div className="flex items-center justify-end gap-1">
+                  <TableCell className="text-left py-1" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center justify-start gap-1">
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10">
-                            <Trash2 className="h-3.5 w-3.5" />
+                          <Button variant="outline" size="sm" className="h-7 px-2.5 text-xs font-semibold rounded-lg text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors">
+                            <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Delete
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent className="text-[13px]">

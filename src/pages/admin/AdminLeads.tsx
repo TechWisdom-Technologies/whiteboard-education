@@ -204,7 +204,7 @@ export default function AdminLeads() {
                     <TableHead className="h-10">Date</TableHead>
                     <TableHead className="h-10">Status</TableHead>
                     <TableHead className="h-10">Source</TableHead>
-                    <TableHead className="text-right h-10">Actions</TableHead>
+                    <TableHead className="text-left h-10">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -223,8 +223,8 @@ export default function AdminLeads() {
                       <TableCell className="py-1 text-xs md:text-[13px] text-muted-foreground">{new Date(lead.created_at).toLocaleDateString()}</TableCell>
                       <TableCell className="py-1"><Badge className={`${statusColors[lead.status] || ""} border-0`}>{lead.status}</Badge></TableCell>
                       <TableCell className="py-1 text-xs md:text-[13px] text-muted-foreground">{formatSource(lead.source)}</TableCell>
-                      <TableCell className="text-right py-1">
-                        <div className="flex items-center justify-end gap-1">
+                      <TableCell className="text-left py-1">
+                        <div className="flex items-center justify-start gap-1">
                           <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-muted" onClick={() => openDetail(lead)}>
                             <Eye className="h-3.5 w-3.5 text-muted-foreground" />
                           </Button>

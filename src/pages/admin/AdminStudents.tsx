@@ -298,7 +298,7 @@ export default function AdminStudents() {
                 <TableHead className="min-w-[120px]">Partner Agency</TableHead>
                 <TableHead className="min-w-[100px]">Status</TableHead>
                 <TableHead className="min-w-[100px]">Added</TableHead>
-                <TableHead className="text-right min-w-[50px]">Actions</TableHead>
+                <TableHead className="text-left min-w-[50px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -325,11 +325,11 @@ export default function AdminStudents() {
                     <TableCell className="text-xs text-muted-foreground py-1">
                       {new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </TableCell>
-                    <TableCell className="text-right py-1 text-xs" onClick={(e) => e.stopPropagation()}>
-                      <div className="flex items-center justify-end gap-1">
-                        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={(e) => handleDelete(s.id, e)} title="Delete Student">
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
+                    <TableCell className="text-left py-1 text-xs" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex items-center justify-start gap-1">
+                          <Button variant="outline" size="sm" className="h-7 px-2.5 text-xs font-semibold rounded-lg text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors" onClick={(e) => handleDelete(s.id, e)} title="Delete Student">
+                            <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Delete
+                          </Button>
                       </div>
                     </TableCell>
                   </TableRow>
