@@ -62,6 +62,8 @@ interface AdminCrudTableProps {
   onBulkDelete?: (ids: string[]) => void;
   onBulkUpsert?: (rows: Record<string, any>[]) => Promise<void>;
   renderCell?: (row: any, key: string) => React.ReactNode;
+  onAddClick?: () => void;
+  onEditClick?: (row: any) => void;
 }
 
 function TagInput({ value, onChange, placeholder }: { value: string[]; onChange: (v: string[]) => void; placeholder?: string }) {
@@ -434,7 +436,7 @@ function RelationArrayEditor({ value = [], onChange, relationConfig }: { value: 
 }
 
 export default function AdminCrudTable({
-  title, data, isLoading, fields, searchKey, onInsert, onUpdate, onDelete, onBulkDelete, onBulkUpsert, renderCell,
+  title, data, isLoading, fields, searchKey, onInsert, onUpdate, onDelete, onBulkDelete, onBulkUpsert, renderCell, onAddClick, onEditClick,
 }: AdminCrudTableProps) {
   const { toast } = useToast();
   const [search, setSearch] = useState("");
@@ -707,6 +709,7 @@ export default function AdminCrudTable({
   };
 
   const openCreate = () => {
+    if (onAddClick) return onAddClick();
     setEditingRow(null);
     const empty: Record<string, any> = {};
     fields.forEach((f) => (empty[f.key] = getDefaultValue(f)));
@@ -715,6 +718,7 @@ export default function AdminCrudTable({
   };
 
   const openEdit = (row: any) => {
+    if (onEditClick) return onEditClick(row);
     setEditingRow(row);
     const vals: Record<string, any> = {};
     fields.forEach((f) => {

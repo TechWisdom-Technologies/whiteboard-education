@@ -343,8 +343,7 @@ export default function UniversityDetail() {
       return levelKey(effLevel);
     }))];
   }, [uniCourses]);
-
-  if (isLoading) return <div className="min-h-screen flex flex-col bg-white"><MegaMenu /><LoadingScreen label="Loading university" className="flex-1" /><PublicFooter /></div>;
+if (isLoading) return <div className="min-h-screen flex flex-col bg-white"><MegaMenu /><LoadingScreen label="Loading university" className="flex-1" /><PublicFooter /></div>;
   if (!uni) return <div className="min-h-screen flex flex-col bg-background"><MegaMenu /><div className="flex-1 flex items-center justify-center"><div className="text-center space-y-4"><Building className="h-16 w-16 text-muted-foreground mx-auto" /><h1 className="text-2xl font-bold">University Not Found</h1><Link to="/universities"><Button>Browse All</Button></Link></div></div><PublicFooter /></div>;
 
   // removed open function
@@ -352,7 +351,7 @@ export default function UniversityDetail() {
   const faqs: any[] = Array.isArray(uni.faqs) ? uni.faqs : [];
   const steps: string[] = Array.isArray(uni.registration_steps || uni.registrationSteps) ? (uni.registration_steps || uni.registrationSteps) : [];
   const isPaid = PAID_UNIS.includes(uni.name);
-  const logo = LOGOS[uni.name] || uni.logo_url;
+  const logo = uni.logo_url || LOGOS[uni.name] || "/placeholder-university-logo.png";
   const stepIcons = [FileText, CheckCircle, HomeIcon, Car, MapPinCheck];
 
   return (
@@ -467,41 +466,49 @@ export default function UniversityDetail() {
             <div className="w-full max-w-[1000px] mx-auto px-4">
               <h2 className="text-xl md:text-2xl font-semibold text-[#1E293B] mb-8">About {uni.name}</h2>
               
-              <div className="text-black leading-relaxed text-justify space-y-8">
-                {/* Paragraph 1 */}
-                <p className="text-black text-[12px] md:text-[14px]">
-                  {(() => {
-                    const firstPara = about ? about.split('\n').filter((p: string) => p.trim() !== '')[0] || "" : "";
-                    const fallback = `As one of the premier educational institutions, ${uni.name} adheres to the strictest requirements for high-quality degrees. A study conducted by leading industry analysts found that ${uni.name} is one of the top universities where major corporations prefer graduate employment, which proves the quality of our academicians, courses, student development plans, and our stellar reputation in the industry. The institution is dedicated to producing industry-ready graduates who are equipped to tackle global challenges with innovative solutions.`;
-                    return firstPara.length > 400 ? firstPara : (firstPara ? `${firstPara} ${fallback}` : fallback);
-                  })()}
-                </p>
+              {uni.about_text?.trim().startsWith('<') ? (
+                <div 
+                  className="prose max-w-none text-black text-[12px] md:text-[14px]"
+                  dangerouslySetInnerHTML={{ __html: uni.about_text }} 
+                />
+              ) : (
+                <div className="text-black leading-relaxed text-justify space-y-8">
+                  {/* Paragraph 1 */}
+                  <p className="text-black text-[12px] md:text-[14px]">
+                    {(() => {
+                      const firstPara = about ? about.split('\n').filter((p: string) => p.trim() !== '')[0] || "" : "";
+                      const fallback = `As one of the premier educational institutions, ${uni.name} adheres to the strictest requirements for high-quality degrees. A study conducted by leading industry analysts found that ${uni.name} is one of the top universities where major corporations prefer graduate employment, which proves the quality of our academicians, courses, student development plans, and our stellar reputation in the industry. The institution is dedicated to producing industry-ready graduates who are equipped to tackle global challenges with innovative solutions.`;
+                      return firstPara.length > 400 ? firstPara : (firstPara ? `${firstPara} ${fallback}` : fallback);
+                    })()}
+                  </p>
 
-                {/* High-Res Campus Image */}
-                <div className="rounded-xl rounded-bl-[8rem] md:rounded-bl-[11rem] overflow-hidden border border-gray-100 bg-gray-50 flex justify-center">
-                  <img 
-                    src={
-                      CAMPUS_IMAGES[uni.name] || 
-                      `https://en.your-uni.com/assets/images/university/${uni.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}.webp`
-                    }
-                    alt={`Campus of ${uni.name}`} 
-                    className="w-full h-auto object-contain"
-                    onError={(e) => {
-                      // Fallback to a high-res generic campus image if the specific uni image isn't found on the server
-                      (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1200&q=80";
-                    }}
-                  />
+                  {/* High-Res Campus Image */}
+                  <div className="rounded-xl rounded-bl-[8rem] md:rounded-bl-[11rem] overflow-hidden border border-gray-100 bg-gray-50 flex justify-center">
+                    <img 
+                      src={
+                        uni.hero_image ||
+                        CAMPUS_IMAGES[uni.name] || 
+                        `https://en.your-uni.com/assets/images/university/${uni.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}.webp`
+                      }
+                      alt={`Campus of ${uni.name}`} 
+                      className="w-full h-auto object-contain"
+                      onError={(e) => {
+                        // Fallback to a high-res generic campus image if the specific uni image isn't found on the server
+                        (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1200&q=80";
+                      }}
+                    />
+                  </div>
+
+                  {/* Paragraph 2 */}
+                  <p className="text-black text-[12px] md:text-[14px]">
+                    {(() => {
+                      const secondPara = about ? about.split('\n').filter((p: string) => p.trim() !== '').slice(1).join('\n\n') || "" : "";
+                      const fallback = `From the moment of conceptualization, ${uni.name} has been committed to fostering a diverse, inclusive, and vibrant campus life that encourages cross-cultural exchange and personal growth. The university recognizes the accelerated development of the globalization of education and has regarded global partnerships as an internationally visible entity. The university's state-of-the-art facilities, modern research laboratories, and expansive libraries provide an ideal ecosystem for collaboration and discovery. By continuously adapting its curriculum to meet the rapidly evolving demands of the global market, ${uni.name} empowers its students to become visionary leaders and pioneers in their respective fields. Students benefit from a truly transformative university journey.`;
+                      return secondPara.length > 400 ? secondPara : (secondPara ? `${secondPara} ${fallback}` : fallback);
+                    })()}
+                  </p>
                 </div>
-
-                {/* Paragraph 2 */}
-                <p className="text-black text-[12px] md:text-[14px]">
-                  {(() => {
-                    const secondPara = about ? about.split('\n').filter((p: string) => p.trim() !== '').slice(1).join('\n\n') || "" : "";
-                    const fallback = `From the moment of conceptualization, ${uni.name} has been committed to fostering a diverse, inclusive, and vibrant campus life that encourages cross-cultural exchange and personal growth. The university recognizes the accelerated development of the globalization of education and has regarded global partnerships as an internationally visible entity. The university's state-of-the-art facilities, modern research laboratories, and expansive libraries provide an ideal ecosystem for collaboration and discovery. By continuously adapting its curriculum to meet the rapidly evolving demands of the global market, ${uni.name} empowers its students to become visionary leaders and pioneers in their respective fields. Students benefit from a truly transformative university journey.`;
-                    return secondPara.length > 400 ? secondPara : (secondPara ? `${secondPara} ${fallback}` : fallback);
-                  })()}
-                </p>
-              </div>
+              )}
             </div>
           </section>
 

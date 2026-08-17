@@ -1,5 +1,8 @@
 import AdminCrudTable, { FieldConfig } from "@/components/admin/AdminCrudTable";
 import { useTableData, useInsertRow, useUpdateRow, useDeleteRow, useBulkUpsertRows } from "@/hooks/useSupabaseData";
+import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import AdminCourseForm from "./AdminCourseForm";
 
 export default function AdminCourses() {
   const { data, isLoading } = useTableData("courses");
@@ -25,6 +28,27 @@ export default function AdminCourses() {
     { key: "curriculum", label: "Curriculum", type: "json_array", showInTable: false, placeholder: '[{"year":"Year 1","modules":["Math"]}]' },
     { key: "career_outcomes", label: "Career Outcomes", type: "tag_input", showInTable: false, placeholder: "e.g. Software Engineer, Data Analyst" },
   ];
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [editingRow, setEditingRow] = useState<any | null>(null);
+
+  const action = searchParams.get("action");
+  
+  // Close form by clearing url params and local state
+  const closeForm = () => {
+    setSearchParams(new URLSearchParams());
+    setEditingRow(null);
+  };
+
+  // If action is new, or we are editing a row, show the custom form
+  if (action === "new" || editingRow) {
+    return (
+      <AdminCourseForm 
+        initialData={editingRow} 
+        onCancel={closeForm} 
+        onSuccess={closeForm} 
+      />
+    );
+  }
 
   return (
     <AdminCrudTable
@@ -37,6 +61,8 @@ export default function AdminCourses() {
       onUpdate={(row) => update.mutate(row)}
       onDelete={(id) => del.mutate(id)}
       onBulkUpsert={(rows) => bulkUpsert.mutateAsync(rows).then(() => undefined)}
+      onAddClick={() => setSearchParams({ action: "new" })}
+      onEditClick={(row) => setEditingRow(row)}
     />
   );
 }
