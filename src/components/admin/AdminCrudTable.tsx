@@ -980,9 +980,9 @@ export default function AdminCrudTable({
 
       <div className="rounded-xl border bg-card overflow-x-auto">
         <Table className="text-xs md:text-[13px]">
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[40px] text-center px-0">
+          <TableHeader className="bg-gray-50/50">
+            <TableRow className="border-gray-100 hover:bg-transparent">
+              <TableHead className="w-[40px] text-center px-4">
                 <Checkbox 
                   checked={paginatedData.length > 0 && selectedIds.length === paginatedData.length}
                   onCheckedChange={handleSelectAll}
@@ -1004,22 +1004,22 @@ export default function AdminCrudTable({
             ) : (
               paginatedData.map((row) => (
                 <TableRow 
-                  key={row.id} 
-                  className="h-10 hover:bg-muted/50 transition-colors cursor-pointer"
-                  onClick={() => openEdit(row)}
-                >
-                  <TableCell className="text-center px-0 py-1" onClick={(e) => e.stopPropagation()}>
+                key={row.id} 
+                className="hover:bg-muted/50 cursor-pointer transition-colors"
+                onClick={() => setUpdateData(row)}
+              >
+                <TableCell className="text-center px-4 py-3" onClick={(e) => e.stopPropagation()}>
                     <Checkbox 
                       checked={selectedIds.includes(row.id)}
                       onCheckedChange={(c) => handleSelectRow(row.id, c as boolean)}
                     />
                   </TableCell>
                   {tableFields.map((f) => (
-                    <TableCell key={f.key} className={`${f.key === searchKey ? "font-normal" : ""} py-1 text-xs md:text-[13px]`}>
-                      {renderCell ? renderCell(row, f.key) : formatCellValue(row, f.key)}
-                    </TableCell>
-                  ))}
-                  <TableCell className="text-left py-1" onClick={(e) => e.stopPropagation()}>
+                    <TableCell key={f.key} className={`${f.key === searchKey ? "font-semibold text-[#1E293B] uppercase" : ""} py-3 text-xs md:text-[13px]`}>
+                    {renderCell ? renderCell(row, f.key) : formatCellValue(row, f.key)}
+                  </TableCell>
+                ))}
+                <TableCell className="text-left py-3" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-start gap-1">
                       <AlertDialog>
                         <AlertDialogTrigger asChild>

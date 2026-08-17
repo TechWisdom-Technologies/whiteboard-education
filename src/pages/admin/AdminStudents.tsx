@@ -285,9 +285,9 @@ export default function AdminStudents() {
       ) : (
         <div className="rounded-xl border bg-card overflow-x-auto">
           <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[40px] text-center px-0">
+            <TableHeader className="bg-gray-50/50">
+              <TableRow className="border-gray-100 hover:bg-transparent">
+                <TableHead className="w-[40px] text-center px-4">
                   <Checkbox 
                     checked={filtered.length > 0 && selectedIds.length === filtered.length}
                     onCheckedChange={handleSelectAll}
@@ -309,23 +309,23 @@ export default function AdminStudents() {
                 return (
                   <TableRow 
                     key={s.id} 
-                    className="h-10 hover:bg-muted/50 cursor-pointer transition-colors"
+                    className="hover:bg-muted/50 cursor-pointer transition-colors"
                     onClick={() => navigate(`/admin/students/${s.wbe_student_id ? s.wbe_student_id : s.id}`)}
                   >
-                    <TableCell className="text-center px-0 py-1 text-xs" onClick={(e) => e.stopPropagation()}>
+                    <TableCell className="text-center px-4 py-3 text-xs" onClick={(e) => e.stopPropagation()}>
                       <Checkbox 
                         checked={selectedIds.includes(s.id)}
                         onCheckedChange={(c) => handleSelectRow(s.id, c as boolean)}
                       />
                     </TableCell>
-                    <TableCell className="text-xs font-mono py-1">{s.wbe_student_id ? s.wbe_student_id : "—"}</TableCell>
-                    <TableCell className="text-xs font-normal py-1">{s.full_name}</TableCell>
-                    <TableCell className="text-xs py-1">{partner?.agency_name || "Unknown"}</TableCell>
-                    <TableCell className="text-xs py-1"><Badge variant="outline" className={statusColors[s.status] || "bg-muted text-muted-foreground"}>{label}</Badge></TableCell>
-                    <TableCell className="text-xs text-muted-foreground py-1">
+                    <TableCell className="text-xs font-mono py-3">{s.wbe_student_id ? s.wbe_student_id : "-"}</TableCell>
+                    <TableCell className="py-3 font-semibold text-xs text-[#1E293B] uppercase whitespace-nowrap">{s.full_name}</TableCell>
+                    <TableCell className="text-xs py-3">{partner?.agency_name || "Unknown"}</TableCell>
+                    <TableCell className="text-xs py-3"><Badge variant="outline" className={statusColors[s.status] || "bg-muted text-muted-foreground"}>{label}</Badge></TableCell>
+                    <TableCell className="text-xs text-muted-foreground py-3">
                       {new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </TableCell>
-                    <TableCell className="text-left py-1 text-xs" onClick={(e) => e.stopPropagation()}>
+                    <TableCell className="text-left py-3 text-xs" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-start gap-1">
                           <Button variant="outline" size="sm" className="h-7 px-2.5 text-xs font-semibold rounded-lg text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors" onClick={(e) => handleDelete(s.id, e)} title="Delete Student">
                             <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Delete

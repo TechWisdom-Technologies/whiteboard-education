@@ -227,9 +227,9 @@ export default function AdminPartners() {
       ) : (
         <div className="rounded-xl border bg-card overflow-x-auto">
           <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[40px] text-center px-0">
+            <TableHeader className="bg-gray-50/50">
+              <TableRow className="border-gray-100 hover:bg-transparent">
+                <TableHead className="w-[40px] text-center px-4">
                   <Checkbox 
                     checked={filtered.length > 0 && selectedIds.length === filtered.length}
                     onCheckedChange={handleSelectAll}
@@ -248,28 +248,28 @@ export default function AdminPartners() {
               {filtered.map((reg) => {
                 const docCount = (reg.nid_document_url ? 1 : 0) + (reg.trade_license_url ? 1 : 0) + ((reg.certificate_urls as any[])?.length || 0);
                 return (
-                  <TableRow key={reg.id} className="h-10 hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => openDetail(reg)}>
-                    <TableCell className="text-center px-0 py-1" onClick={(e) => e.stopPropagation()}>
+                  <TableRow key={reg.id} className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => openDetail(reg)}>
+                    <TableCell className="text-center px-4 py-3" onClick={(e) => e.stopPropagation()}>
                       <Checkbox 
                         checked={selectedIds.includes(reg.id)}
                         onCheckedChange={(c) => handleSelectRow(reg.id, c as boolean)}
                       />
                     </TableCell>
-                    <TableCell className="font-normal max-w-[150px] truncate py-1 text-xs md:text-[13px]" title={reg.agency_name}>{reg.agency_name}</TableCell>
-                    <TableCell className="max-w-[150px] truncate py-1 text-xs md:text-[13px]" title={`${reg.contact_first_name} ${reg.contact_last_name}`.trim()}>{`${reg.contact_first_name} ${reg.contact_last_name}`.trim()}</TableCell>
-                    <TableCell className="text-[12px] max-w-[150px] truncate py-1 md:text-[13px]" title={reg.email}>{reg.email}</TableCell>
-                    <TableCell className="py-1">
+                    <TableCell className="py-3 font-semibold text-xs text-[#1E293B] uppercase md:text-[13px] max-w-[150px] truncate" title={reg.agency_name}>{reg.agency_name}</TableCell>
+                    <TableCell className="max-w-[150px] truncate py-3 text-xs md:text-[13px]" title={`${reg.contact_first_name} ${reg.contact_last_name}`.trim()}>{`${reg.contact_first_name} ${reg.contact_last_name}`.trim()}</TableCell>
+                    <TableCell className="text-[12px] max-w-[150px] truncate py-3 md:text-[13px]" title={reg.email}>{reg.email}</TableCell>
+                    <TableCell className="py-3">
                       {reg.status === 'approved' && <span title="Approved"><CheckCircle className="h-4 w-4 text-green-600" /></span>}
                       {reg.status === 'pending' && <span title="Pending"><Clock className="h-4 w-4 text-warning" /></span>}
                       {reg.status === 'rejected' && <span title="Rejected"><XCircle className="h-4 w-4 text-destructive" /></span>}
                     </TableCell>
-                    <TableCell className="py-1">
+                    <TableCell className="py-3">
                       <span className="text-xs md:text-[13px] font-normal text-muted-foreground">{docCount} Docs</span>
                     </TableCell>
-                    <TableCell className="text-xs md:text-[13px] text-muted-foreground whitespace-nowrap py-1">
+                    <TableCell className="text-xs md:text-[13px] text-muted-foreground whitespace-nowrap py-3">
                       {new Date(reg.created_at).toLocaleDateString()}
                     </TableCell>
-                    <TableCell className="text-left py-1">
+                    <TableCell className="text-left py-3">
                       <div className="flex items-center justify-start gap-1">
                         <Button variant="outline" size="sm" className="h-7 px-2.5 text-xs font-semibold rounded-lg text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors" onClick={(e) => handleDelete(reg.id, e)} title="Delete Partner">
                           <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Delete

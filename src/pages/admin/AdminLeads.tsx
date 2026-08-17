@@ -191,9 +191,9 @@ export default function AdminLeads() {
           ) : (
             <div className="rounded-xl border bg-card overflow-x-auto">
               <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[40px] text-center px-0">
+                <TableHeader className="bg-gray-50/50">
+                  <TableRow className="border-gray-100 hover:bg-transparent">
+                    <TableHead className="w-[40px] text-center px-4">
                       <Checkbox 
                         checked={filtered.length > 0 && selectedIds.length === filtered.length}
                         onCheckedChange={handleSelectAll}
@@ -209,21 +209,21 @@ export default function AdminLeads() {
                 </TableHeader>
                 <TableBody>
                   {filtered.map((lead: any) => (
-                    <TableRow key={lead.id} className="h-10 hover:bg-muted/50 transition-colors">
-                      <TableCell className="text-center px-0 py-1">
+                    <TableRow key={lead.id} className="hover:bg-muted/50 transition-colors">
+                      <TableCell className="text-center px-4 py-3">
                         <Checkbox 
                           checked={selectedIds.includes(lead.id)}
                           onCheckedChange={(c) => handleSelectRow(lead.id, c as boolean)}
                         />
                       </TableCell>
-                      <TableCell className="font-normal text-foreground py-1 text-xs md:text-[13px]">{lead.full_name}</TableCell>
-                      <TableCell className="py-1 text-xs md:text-[13px]">
+                      <TableCell className="py-3 font-semibold text-xs text-[#1E293B] uppercase md:text-[13px]">{lead.full_name}</TableCell>
+                      <TableCell className="py-3 text-xs md:text-[13px]">
                         <a href={`mailto:${lead.email}`} className="text-[#1d283a] hover:underline">{lead.email}</a>
                       </TableCell>
-                      <TableCell className="py-1 text-xs md:text-[13px] text-muted-foreground">{new Date(lead.created_at).toLocaleDateString()}</TableCell>
-                      <TableCell className="py-1"><Badge className={`${statusColors[lead.status] || ""} border-0`}>{lead.status}</Badge></TableCell>
-                      <TableCell className="py-1 text-xs md:text-[13px] text-muted-foreground">{formatSource(lead.source)}</TableCell>
-                      <TableCell className="text-left py-1">
+                      <TableCell className="py-3 text-xs md:text-[13px] text-muted-foreground">{new Date(lead.created_at).toLocaleDateString()}</TableCell>
+                      <TableCell className="py-3"><Badge className={`${statusColors[lead.status] || ""} border-0`}>{lead.status}</Badge></TableCell>
+                      <TableCell className="py-3 text-xs md:text-[13px] text-muted-foreground">{formatSource(lead.source)}</TableCell>
+                      <TableCell className="text-left py-3">
                         <div className="flex items-center justify-start gap-1">
                           <Button variant="ghost" size="icon" className="h-7 w-7 hover:bg-muted" onClick={() => openDetail(lead)}>
                             <Eye className="h-3.5 w-3.5 text-muted-foreground" />
