@@ -183,6 +183,9 @@ export default function AdminPartners() {
 
   return (
     <div>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-slate-800">All B2B Partners</h1>
+      </div>
       {/* Tabs */}
       <div className="flex items-center gap-1 mb-4 border-b">
         {TABS.map(tab => (

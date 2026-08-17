@@ -4,8 +4,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, BookOpen, Users, Clock, UserCheck, FileText, TrendingUp, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { LoadingScreen } from "@/components/ui/loading-screen";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { statusPhases } from "@/config/statusFlow";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -82,9 +91,21 @@ export default function AdminDashboard() {
     return 'Evening';
   };
 
+  // Card Filters
+  const [card0Filter, setCard0Filter] = useState("all");
+  const [card1Filter, setCard1Filter] = useState("all");
+  const [card2Filter, setCard2Filter] = useState("offer_letter_received_unconditional");
+  const [card3Filter, setCard3Filter] = useState("ready_for_visa_application");
+  const [card4Filter, setCard4Filter] = useState("rejected_by_university");
+  const [card5Filter, setCard5Filter] = useState("rejected_by_visa_office");
+
+  const [applicationsList, setApplicationsList] = useState<any[]>([]);
+
   // Pagination
   const [studentPage, setStudentPage] = useState(0);
   const [partnerPage, setPartnerPage] = useState(0);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!session) return;
@@ -93,17 +114,19 @@ export default function AdminDashboard() {
         const token = session.access_token || SUPABASE_KEY;
         const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${token}` };
 
-        const [uniRes, courseRes, partnerRes, studentRes, blogRes, partnerLookupRes] = await Promise.all([
+        const [uniRes, courseRes, partnerRes, studentRes, blogRes, partnerLookupRes, appsRes] = await Promise.all([
           supabase.from("universities").select("id", { count: "exact", head: true }),
           supabase.from("courses").select("id", { count: "exact", head: true }),
           supabase.from("partner_registrations").select("id, agency_name, contact_first_name, contact_last_name, status, created_at").order("created_at", { ascending: false }),
           supabase.from("students").select("id, full_name, status, partner_id, created_at").order("created_at", { ascending: false }),
           supabase.from("blogs").select("id", { count: "exact", head: true }),
           fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?select=user_id,agency_name`, { headers }).then(r => r.json()),
+          (supabase.from as any)("student_applications").select("id, status"),
         ]);
 
         const partners = partnerRes.data || [];
         const students = studentRes.data || [];
+        setApplicationsList(appsRes.data || []);
 
         setStats({
           universities: uniRes.count || 0,
@@ -130,6 +153,32 @@ export default function AdminDashboard() {
   const getPartnerName = (partnerId: string) => {
     const p = partnerLookup.find(pl => pl.user_id === partnerId);
     return p?.agency_name || "Unknown Agency";
+  };
+
+  const getCard0Count = () => {
+    if (card0Filter === "all") return allStudents.length;
+    return allStudents.filter(s => s.partner_id === card0Filter).length;
+  };
+
+  const getCard1Count = () => {
+    if (card1Filter === "all") return applicationsList.length;
+    return applicationsList.filter(a => a.status === card1Filter).length;
+  };
+
+  const getCard2Count = () => {
+    return applicationsList.filter(a => a.status === card2Filter).length;
+  };
+
+  const getCard3Count = () => {
+    return applicationsList.filter(a => a.status === card3Filter).length;
+  };
+
+  const getCard4Count = () => {
+    return applicationsList.filter(a => a.status === card4Filter).length;
+  };
+
+  const getCard5Count = () => {
+    return applicationsList.filter(a => a.status === card5Filter).length;
   };
 
   const metrics = [
@@ -201,21 +250,119 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* KPI Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {metrics.map((m, i) => (
-          <Card key={m.label} className="hover:shadow-lg transition-shadow animate-fade-in" style={{ animationDelay: `${i * 60}ms` }}>
-            <CardContent className="p-5 flex items-center gap-4">
-              <div className={`h-11 w-11 rounded-xl bg-muted flex items-center justify-center ${m.color}`}>
-                <m.icon className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-[12px] text-muted-foreground">{m.label}</p>
-                <p className="text-[12px] font-normal">{m.value}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      {/* Dynamic Status Cards (from Partner Dashboard) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        {/* Card 0: Total Students (Admin sees all, can filter by agency) */}
+        <div 
+          className="bg-white border-2 border-[#1d283a] shadow-sm rounded-xl p-4 transition-shadow relative group flex flex-col justify-between"
+        >
+          <div className="mb-4">
+            <Select value={card0Filter} onValueChange={setCard0Filter}>
+              <SelectTrigger className="h-8 w-full text-xs border-slate-200 bg-slate-50 focus:ring-[#1d283a]/20 focus:border-[#1d283a]/30">
+                <SelectValue placeholder="All Students" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all" className="text-xs focus:bg-[#1d283a] focus:text-white">All Students</SelectItem>
+                {partnerLookup.map(p => (
+                  <SelectItem key={p.user_id} value={p.user_id} className="text-xs focus:bg-[#1d283a] focus:text-white">{p.agency_name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <p className="text-4xl font-bold text-[#1d283a]">{getCard0Count()}</p>
+        </div>
+
+        {/* Card 1: Total Applications */}
+        <div 
+          className="bg-white border-2 border-[#1d283a] shadow-sm rounded-xl p-4 transition-shadow relative group flex flex-col justify-between"
+        >
+          <div className="mb-4">
+            <Select value={card1Filter} onValueChange={setCard1Filter}>
+              <SelectTrigger className="h-8 w-full text-xs border-slate-200 bg-slate-50 focus:ring-[#1d283a]/20 focus:border-[#1d283a]/30">
+                <SelectValue placeholder="Filter" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all" className="text-xs focus:bg-[#1d283a] focus:text-white">All Applications</SelectItem>
+                {statusPhases[0].steps.filter(s => s.id !== 'new').map(step => (
+                  <SelectItem key={step.id} value={step.id} className="text-xs focus:bg-[#1d283a] focus:text-white">{step.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <p className="text-4xl font-bold text-[#1d283a]">{getCard1Count()}</p>
+        </div>
+
+        {/* Card 2 */}
+        <div 
+          className="bg-white border-2 border-[#1d283a] shadow-sm rounded-xl p-4 transition-shadow relative group flex flex-col justify-between"
+        >
+          <div className="mb-4">
+            <Select value={card2Filter} onValueChange={setCard2Filter}>
+              <SelectTrigger className="h-8 w-full text-xs border-slate-200 bg-slate-50 focus:ring-[#1d283a]/20 focus:border-[#1d283a]/30">
+                <SelectValue placeholder="Filter" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="offer_letter_received_conditional" className="text-xs focus:bg-[#1d283a] focus:text-white">Offer Letter Received (Conditional)</SelectItem>
+                <SelectItem value="offer_letter_received_unconditional" className="text-xs focus:bg-[#1d283a] focus:text-white">Offer Letter Received (Unconditional)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <p className="text-4xl font-bold text-[#1d283a]">{getCard2Count()}</p>
+        </div>
+
+        {/* Card 3: Visa Applications */}
+        <div 
+          className="bg-white border-2 border-[#1d283a] shadow-sm rounded-xl p-4 transition-shadow relative group flex flex-col justify-between"
+        >
+          <div className="mb-4">
+            <Select value={card3Filter} onValueChange={setCard3Filter}>
+              <SelectTrigger className="h-8 w-full text-xs border-slate-200 bg-slate-50 focus:ring-[#1d283a]/20 focus:border-[#1d283a]/30">
+                <SelectValue placeholder="Filter" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ready_for_visa_application" className="text-xs focus:bg-[#1d283a] focus:text-white">Ready for Visa</SelectItem>
+                <SelectItem value="emgs_approval_pending" className="text-xs focus:bg-[#1d283a] focus:text-white">EMGS Pending</SelectItem>
+                <SelectItem value="rejected_by_visa_office" className="text-xs focus:bg-[#1d283a] focus:text-white">Rejected by Visa Office</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <p className="text-4xl font-bold text-[#1d283a]">{getCard3Count()}</p>
+        </div>
+
+        {/* Card 4: Rejected by University */}
+        <div 
+          className="bg-white border-2 border-[#1d283a] shadow-sm rounded-xl p-4 transition-shadow relative group flex flex-col justify-between"
+        >
+          <div className="mb-4">
+            <Select value={card4Filter} onValueChange={setCard4Filter}>
+              <SelectTrigger className="h-8 w-full text-xs border-slate-200 bg-slate-50 focus:ring-[#1d283a]/20 focus:border-[#1d283a]/30">
+                <SelectValue placeholder="Filter" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="rejected_by_university" className="text-xs focus:bg-[#1d283a] focus:text-white">Rejected by University</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <p className="text-4xl font-bold text-[#1d283a]">{getCard4Count()}</p>
+        </div>
+
+        {/* Card 5: Rejected by Visa */}
+        <div 
+          className="bg-white border-2 border-[#1d283a] shadow-sm rounded-xl p-4 transition-shadow relative group flex flex-col justify-between"
+        >
+          <div className="mb-4">
+            <Select value={card5Filter} onValueChange={setCard5Filter}>
+              <SelectTrigger className="h-8 w-full text-xs border-slate-200 bg-slate-50 focus:ring-[#1d283a]/20 focus:border-[#1d283a]/30">
+                <SelectValue placeholder="Filter" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="rejected_by_visa_office" className="text-xs focus:bg-[#1d283a] focus:text-white">Rejected by Visa Office</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <p className="text-4xl font-bold text-[#1d283a]">{getCard5Count()}</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

@@ -215,14 +215,15 @@ export default function AdminStudents() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end gap-2 text-xs">
-        {selectedIds.length > 0 && (
-          <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-6 text-xs px-2 py-0">
-            <Trash2 className="h-3 w-3 mr-1" /> Delete Selected ({selectedIds.length})
-          </Button>
-        )}
-        <Badge variant="secondary" className="px-2 py-0.5">{students.length} Total Students</Badge>
-        <Badge variant="secondary" className="px-2 py-0.5">{partners.length} Partners</Badge>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-slate-800">All Students</h1>
+        <div className="flex gap-2 text-xs">
+          {selectedIds.length > 0 && (
+            <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-6 text-xs px-2 py-0">
+              <Trash2 className="h-3 w-3 mr-1" /> Delete Selected ({selectedIds.length})
+            </Button>
+          )}
+        </div>
       </div>
 
 

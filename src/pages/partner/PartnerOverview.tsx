@@ -358,8 +358,8 @@ export default function PartnerOverview() {
                 <SelectValue placeholder="Filter" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="offer_letter_received_conditional" className="text-xs">Conditional</SelectItem>
-                <SelectItem value="offer_letter_received_unconditional" className="text-xs">Unconditional</SelectItem>
+                <SelectItem value="offer_letter_received_conditional" className="text-xs">Offer Letter Received (Conditional)</SelectItem>
+                <SelectItem value="offer_letter_received_unconditional" className="text-xs">Offer Letter Received (Unconditional)</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -379,7 +379,7 @@ export default function PartnerOverview() {
               <SelectContent>
                 <SelectItem value="ready_for_visa_application" className="text-xs">Ready for Visa</SelectItem>
                 <SelectItem value="emgs_approval_pending" className="text-xs">EMGS Pending</SelectItem>
-                <SelectItem value="rejected_by_visa_office" className="text-xs">Rejected by Visa</SelectItem>
+                <SelectItem value="rejected_by_visa_office" className="text-xs">Rejected by Visa Office</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -415,7 +415,7 @@ export default function PartnerOverview() {
                 <SelectValue placeholder="Filter" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="rejected_by_visa_office" className="text-xs">Rejected by Visa</SelectItem>
+                <SelectItem value="rejected_by_visa_office" className="text-xs">Rejected by Visa Office</SelectItem>
               </SelectContent>
             </Select>
           </div>

@@ -84,9 +84,14 @@ export default function AdminLayout() {
     fetchProfile();
   }, [user]);
 
+  useEffect(() => {
+    document.body.classList.add("admin-theme");
+    return () => document.body.classList.remove("admin-theme");
+  }, []);
+
   return (
     <SidebarProvider defaultOpen={false}>
-      <div className="min-h-screen flex flex-col w-full dashboard-theme admin-theme">
+      <div className="min-h-screen flex flex-col w-full dashboard-theme">
         <AdminHeader profile={profile} />
         <div className="flex flex-1 w-full relative">
           <AdminSidebar />

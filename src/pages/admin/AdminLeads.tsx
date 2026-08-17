@@ -163,30 +163,10 @@ export default function AdminLeads() {
 
   return (
     <div className="space-y-6">
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: "Total Leads", value: stats.total, icon: Users, color: "text-primary" },
-          { label: "New", value: stats.new, icon: UserPlus, color: "text-secondary" },
-          { label: "Contacted", value: stats.contacted, icon: Clock, color: "text-warning" },
-          { label: "Converted", value: stats.converted, icon: CheckCircle, color: "text-success" },
-        ].map((s) => (
-          <Card key={s.label}>
-            <CardContent className="p-4 flex items-center gap-3">
-              <s.icon className={`h-8 w-8 ${s.color}`} />
-              <div>
-                <p className="text-[12px] font-normal">{s.value}</p>
-                <p className="text-[12px] text-muted-foreground">{s.label}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
+      <h1 className="text-2xl font-bold text-slate-800">All Leads</h1>
       <div className="mb-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
-          <div className="flex items-center gap-3">
-            <h2 className="text-lg font-semibold">All Leads</h2>
+          <div className="flex items-center gap-4">
             {selectedIds.length > 0 && (
               <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-10 text-[13px] px-4 whitespace-nowrap">
                 <Trash2 className="h-4 w-4 mr-2" /> Delete Selected ({selectedIds.length})

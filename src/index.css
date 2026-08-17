@@ -651,7 +651,11 @@
 
 @layer base {
   .admin-theme {
-    --theme-primary: 29 40 58; /* #1d283a */
+    --primary: 217 33% 17%;
+    --primary-foreground: 0 0% 100%;
+    --accent: 217 33% 17%;
+    --accent-foreground: 0 0% 100%;
+    --ring: 217 33% 17%;
   }
 }
 

@@ -908,6 +908,9 @@ export default function AdminCrudTable({
 
   return (
     <div>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-slate-800">All {title}</h1>
+      </div>
       <div className="mb-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
           {/* Search Field */}
@@ -952,21 +955,21 @@ export default function AdminCrudTable({
                 </AlertDialogContent>
               </AlertDialog>
             )}
-            <Button variant="outline" onClick={handleDownloadTemplate} className="h-9 text-[12px] px-3 shadow-sm whitespace-nowrap hover:bg-[#FF7A00] hover:border-[#FF7A00] group transition-all gap-1.5">
+            <Button variant="outline" onClick={handleDownloadTemplate} className="h-9 text-[12px] px-3 shadow-sm whitespace-nowrap group transition-all gap-1.5">
               <Download className="h-3.5 w-3.5 text-muted-foreground group-hover:text-white transition-colors" />Template
             </Button>
-            <Button variant="outline" onClick={handleExportExcel} className="h-9 text-[12px] px-3 shadow-sm whitespace-nowrap hover:bg-[#FF7A00] hover:border-[#FF7A00] group transition-all gap-1.5">
+            <Button variant="outline" onClick={handleExportExcel} className="h-9 text-[12px] px-3 shadow-sm whitespace-nowrap group transition-all gap-1.5">
               <Download className="h-3.5 w-3.5 text-muted-foreground group-hover:text-white transition-colors" />Export
             </Button>
             <Button
               variant="outline"
               disabled={!onBulkUpsert || isImporting}
               onClick={() => fileInputRef.current?.click()}
-              className="h-9 text-[12px] px-3 shadow-sm whitespace-nowrap hover:bg-[#FF7A00] hover:border-[#FF7A00] group transition-all gap-1.5"
+              className="h-9 text-[12px] px-3 shadow-sm whitespace-nowrap group transition-all gap-1.5"
             >
               <Upload className="h-3.5 w-3.5 text-muted-foreground group-hover:text-white transition-colors" />{isImporting ? "Importing..." : "Import"}
             </Button>
-            <Button onClick={openCreate} className="h-9 text-[12px] px-3 hover:bg-[#FF7A00] shadow-sm whitespace-nowrap transition-all gap-1.5">
+            <Button onClick={openCreate} className="h-9 text-[12px] px-3 shadow-sm whitespace-nowrap transition-all gap-1.5">
               <Plus className="h-3.5 w-3.5" />Add {singularize(title)}
             </Button>
           </div>
@@ -986,9 +989,9 @@ export default function AdminCrudTable({
                 />
               </TableHead>
               {tableFields.map((f) => (
-                <TableHead key={f.key} className="h-10 text-xs text-muted-foreground">{f.label}</TableHead>
+                <TableHead key={f.key} className="h-10 text-xs">{f.label}</TableHead>
               ))}
-              <TableHead className="text-right h-10 text-xs text-muted-foreground">Actions</TableHead>
+              <TableHead className="text-right h-10 text-xs">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

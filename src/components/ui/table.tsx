@@ -16,8 +16,8 @@ const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttribut
     <thead
       ref={ref}
       className={cn(
-        "[&_tr]:border-b [&_tr]:bg-[#2F4F97] [&_tr:hover]:bg-[#2F4F97]",
-        "[&_[role=checkbox]]:border-white [&_[role=checkbox]]:bg-transparent [&_[role=checkbox][data-state=checked]]:bg-white [&_[role=checkbox][data-state=checked]]:text-[#2F4F97] [&_[role=checkbox][data-state=checked]]:border-white",
+        "[&_tr]:border-b [&_tr]:bg-primary [&_tr:hover]:bg-primary",
+        "[&_[role=checkbox]]:border-white [&_[role=checkbox]]:bg-transparent [&_[role=checkbox][data-state=checked]]:bg-white [&_[role=checkbox][data-state=checked]]:text-primary [&_[role=checkbox][data-state=checked]]:border-white",
         className,
       )}
       {...props}
