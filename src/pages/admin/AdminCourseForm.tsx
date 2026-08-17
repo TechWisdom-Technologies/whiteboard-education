@@ -131,7 +131,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={onCancel}>Cancel</Button>
-          <Button onClick={handleSave} className="bg-[#2F4F97] hover:bg-[#1E3A75]">
+          <Button onClick={handleSave}>
             {isEditing ? "Update Course" : "Save Course"}
           </Button>
         </div>
@@ -142,7 +142,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
         {/* SECTION: Basic Information */}
         <section className="space-y-6">
           <h3 className="text-lg font-bold text-[#1E293B] border-b pb-2 flex items-center gap-2">
-            <span className="bg-[#2F4F97] text-white rounded-full h-6 w-6 flex items-center justify-center text-xs">1</span>
+            <span className="bg-primary text-primary-foreground rounded-full h-6 w-6 flex items-center justify-center text-xs">1</span>
             Basic Information
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50/30 p-6 rounded-xl border border-gray-100">
@@ -226,7 +226,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
         {/* SECTION: Requirements */}
         <section className="space-y-6">
           <h3 className="text-lg font-bold text-[#1E293B] border-b pb-2 flex items-center gap-2">
-            <span className="bg-[#2F4F97] text-white rounded-full h-6 w-6 flex items-center justify-center text-xs">2</span>
+            <span className="bg-primary text-primary-foreground rounded-full h-6 w-6 flex items-center justify-center text-xs">2</span>
             Requirements & Applications
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50/30 p-6 rounded-xl border border-gray-100">
@@ -234,7 +234,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
             <div className="space-y-4 md:col-span-1">
               <div className="flex items-center justify-between">
                 <Label className="text-[13px] font-semibold text-gray-700">English Requirements</Label>
-                <Button variant="ghost" size="sm" onClick={addEnglishReq} className="text-xs h-7 px-2 text-[#2F4F97] hover:bg-blue-50">
+                <Button variant="ghost" size="sm" onClick={addEnglishReq} className="text-xs h-7 px-2 text-primary hover:bg-primary/10">
                   <Plus className="h-3 w-3 mr-1" /> Add Exam
                 </Button>
               </div>
@@ -288,7 +288,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
         {/* SECTION: Financials */}
         <section className="space-y-6">
           <h3 className="text-lg font-bold text-[#1E293B] border-b pb-2 flex items-center gap-2">
-            <span className="bg-[#2F4F97] text-white rounded-full h-6 w-6 flex items-center justify-center text-xs">3</span>
+            <span className="bg-primary text-primary-foreground rounded-full h-6 w-6 flex items-center justify-center text-xs">3</span>
             Financials (Fees)
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-gray-50/30 p-6 rounded-xl border border-gray-100">
@@ -297,7 +297,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label className="text-[13px] font-semibold text-gray-700">Yearly Tuition Fees</Label>
-                <Button variant="ghost" size="sm" className="text-xs h-7 px-2 text-[#2F4F97] hover:bg-blue-50" onClick={() => setForm(p => ({ ...p, yearly_fees: [...p.yearly_fees, { year: "", fee: "" }] }))}>
+                <Button variant="ghost" size="sm" className="text-xs h-7 px-2 text-primary hover:bg-primary/10" onClick={() => setForm(p => ({ ...p, yearly_fees: [...p.yearly_fees, { year: "", fee: "" }] }))}>
                   <Plus className="h-3 w-3 mr-1" /> Add Year
                 </Button>
               </div>
@@ -335,7 +335,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label className="text-[13px] font-semibold text-gray-700">Other Fees (One-time, Visa, etc.)</Label>
-                <Button variant="ghost" size="sm" className="text-xs h-7 px-2 text-[#2F4F97] hover:bg-blue-50" onClick={() => setForm(p => ({ ...p, other_fees: [...p.other_fees, { description: "", fee: "" }] }))}>
+                <Button variant="ghost" size="sm" className="text-xs h-7 px-2 text-primary hover:bg-primary/10" onClick={() => setForm(p => ({ ...p, other_fees: [...p.other_fees, { description: "", fee: "" }] }))}>
                   <Plus className="h-3 w-3 mr-1" /> Add Fee
                 </Button>
               </div>
@@ -375,7 +375,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
         {/* SECTION: Syllabus & Overview */}
         <section className="space-y-6">
           <h3 className="text-lg font-bold text-[#1E293B] border-b pb-2 flex items-center gap-2">
-            <span className="bg-[#2F4F97] text-white rounded-full h-6 w-6 flex items-center justify-center text-xs">4</span>
+            <span className="bg-primary text-primary-foreground rounded-full h-6 w-6 flex items-center justify-center text-xs">4</span>
             Syllabus & Career
           </h3>
           <div className="grid grid-cols-1 gap-8 bg-gray-50/30 p-6 rounded-xl border border-gray-100">
@@ -394,7 +394,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
             <div className="space-y-4">
               <div className="flex items-center justify-between border-b pb-2">
                 <Label className="text-[13px] font-semibold text-gray-700">Curriculum (By Year/Semester)</Label>
-                <Button variant="ghost" size="sm" className="text-xs h-8 px-3 text-[#2F4F97] bg-white border shadow-sm hover:bg-blue-50" onClick={() => setForm(p => ({ ...p, curriculum: [...p.curriculum, { year: `Year ${p.curriculum.length + 1}`, modules: [] }] }))}>
+                <Button variant="ghost" size="sm" className="text-xs h-8 px-3 text-primary bg-white border shadow-sm hover:bg-primary/10" onClick={() => setForm(p => ({ ...p, curriculum: [...p.curriculum, { year: `Year ${p.curriculum.length + 1}`, modules: [] }] }))}>
                   <Plus className="h-3 w-3 mr-1" /> Add Year/Semester
                 </Button>
               </div>

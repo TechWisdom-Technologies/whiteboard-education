@@ -512,15 +512,7 @@ if (isLoading) return <div className="min-h-screen flex flex-col bg-white"><Mega
             </div>
           </section>
 
-          {/* Register Now CTA */}
-          <section className="bg-white py-12">
-            <div className="w-full max-w-[1000px] mx-auto px-4 text-center">
-              <h2 className="text-xl md:text-2xl font-semibold text-[#1E293B] mb-2">Register Now and Secure Your Spot!</h2>
-              <p className="text-black text-[12px] md:text-[14px] mb-2">Your Future Starts Here: Register Today for the Upcoming Intake</p>
-              <Countdown />
-              <p className="text-black text-[12px] md:text-[14px]">Secure Your Seat Now! Join {uni.name} and Start Your Journey</p>
-            </div>
-          </section>
+
 
           {/* Courses & Fees by Category (MOST IMPORTANT) */}
           {groupedCourses.length > 0 && (

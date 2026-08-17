@@ -119,7 +119,7 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={onCancel}>Cancel</Button>
-          <Button onClick={handleSave} className="bg-[#2F4F97] hover:bg-[#1E3A75]">
+          <Button onClick={handleSave}>
             {isEditing ? "Update University" : "Save University"}
           </Button>
         </div>
@@ -197,7 +197,7 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
                 ) : (
                   <label className="cursor-pointer flex flex-col items-center justify-center gap-2">
                     <UploadCloud className="h-8 w-8 text-gray-400" />
-                    <span className="text-sm font-medium text-[#2F4F97]">Click to upload logo</span>
+                    <span className="text-sm font-medium text-primary">Click to upload logo</span>
                     <span className="text-xs text-muted-foreground">PNG, JPG up to 2MB</span>
                     <input 
                       type="file" 
@@ -208,7 +208,7 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
                     />
                   </label>
                 )}
-                {isUploadingLogo && <p className="text-xs text-[#2F4F97] mt-2 font-medium">Uploading...</p>}
+                {isUploadingLogo && <p className="text-xs text-primary mt-2 font-medium">Uploading...</p>}
               </div>
             </div>
 
@@ -229,7 +229,7 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
                 ) : (
                   <label className="cursor-pointer flex flex-col items-center justify-center gap-2">
                     <UploadCloud className="h-8 w-8 text-gray-400" />
-                    <span className="text-sm font-medium text-[#2F4F97]">Click to upload hero image</span>
+                    <span className="text-sm font-medium text-primary">Click to upload hero image</span>
                     <span className="text-xs text-muted-foreground">High-res JPG/PNG up to 5MB</span>
                     <input 
                       type="file" 
@@ -240,7 +240,7 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
                     />
                   </label>
                 )}
-                {isUploadingHero && <p className="text-xs text-[#2F4F97] mt-2 font-medium">Uploading...</p>}
+                {isUploadingHero && <p className="text-xs text-primary mt-2 font-medium">Uploading...</p>}
               </div>
             </div>
 
