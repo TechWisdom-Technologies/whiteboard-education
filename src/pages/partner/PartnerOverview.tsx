@@ -8,6 +8,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { 
   ChevronDown, 
   ChevronUp, 
@@ -45,6 +52,12 @@ export default function PartnerOverview() {
   const [webinars, setWebinars] = useState<any[]>([]);
   const [accountManager, setAccountManager] = useState<any>(null);
   const [tutorials, setTutorials] = useState<any[]>([]);
+  const [applicationsList, setApplicationsList] = useState<any[]>([]);
+
+  // Card dropdown states
+  const [card1Filter, setCard1Filter] = useState("all");
+  const [card2Filter, setCard2Filter] = useState("offer_letter_received_conditional");
+  const [card3Filter, setCard3Filter] = useState("ready_for_visa_application");
 
   useEffect(() => {
     if (!user || !session) return;
@@ -120,10 +133,11 @@ export default function PartnerOverview() {
         if (students.length > 0) {
           const studentIds = students.map((s: any) => s.id);
           try {
-            const { count } = await (supabase.from as any)("student_applications")
-              .select("*", { count: 'exact', head: true })
+            const { data, count } = await (supabase.from as any)("student_applications")
+              .select("id, status", { count: 'exact' })
               .in("student_id", studentIds);
             setApplicationsCount(count || 0);
+            if (data) setApplicationsList(data);
           } catch (err) { console.error(err); }
         }
 
@@ -175,6 +189,24 @@ export default function PartnerOverview() {
   // Students Breakdown
   const totalStudentsCount = studentsData.length;
 
+  // Dynamic Card Counts
+  const getCard1Count = () => {
+    if (card1Filter === "all") return applicationsList.length;
+    if (card1Filter === "received") return applicationsList.filter(a => a.status === 'received_application_at_wb').length;
+    if (card1Filter === "on_hold") return applicationsList.filter(a => ['application_on_hold_intake', 'application_on_hold_wb', 'application_on_hold_university', 'on_hold'].includes(a.status)).length;
+    if (card1Filter === "submitted") return applicationsList.filter(a => a.status === 'application_submitted').length;
+    if (card1Filter === "rejected") return applicationsList.filter(a => ['rejected_by_university', 'rejected_by_visa_office'].includes(a.status)).length;
+    return 0;
+  };
+
+  const getCard2Count = () => {
+    return applicationsList.filter(a => a.status === card2Filter).length;
+  };
+
+  const getCard3Count = () => {
+    return applicationsList.filter(a => a.status === card3Filter).length;
+  };
+
   // Utilities
   const extractYoutubeId = (url: string) => {
     if (!url) return null;
@@ -184,7 +216,7 @@ export default function PartnerOverview() {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in text-[#1E293B]">
+    <div className="max-w-[1400px] mx-auto space-y-6 animate-fade-in text-[#1E293B]">
 
             <div className="bg-white border-[#2F4F97]/10 shadow-sm rounded-xl p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 divide-y md:divide-y-0 md:divide-x divide-slate-100">
@@ -213,6 +245,73 @@ export default function PartnerOverview() {
             <p className="text-sm text-slate-500 font-medium mt-1">Search Programs</p>
           </div>
 
+        </div>
+      </div>
+
+      {/* Dynamic Status Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Card 1 */}
+        <div 
+          onClick={() => navigate(`/partner-dashboard/applications?status=${card1Filter === 'all' ? 'all' : card1Filter === 'received' ? 'received_application_at_wb' : card1Filter === 'on_hold' ? 'application_on_hold' : card1Filter === 'submitted' ? 'application_submitted' : 'rejected'}`)}
+          className="bg-white border border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
+        >
+          <div className="flex justify-between items-start mb-4" onClick={(e) => e.stopPropagation()}>
+            <p className="text-sm font-medium text-slate-500">Total Students</p>
+            <Select value={card1Filter} onValueChange={setCard1Filter}>
+              <SelectTrigger className="h-8 w-[140px] text-xs border-slate-200 bg-slate-50">
+                <SelectValue placeholder="Filter" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Applications</SelectItem>
+                <SelectItem value="received">Received at WB</SelectItem>
+                <SelectItem value="on_hold">On Hold</SelectItem>
+                <SelectItem value="submitted">Submitted</SelectItem>
+                <SelectItem value="rejected">Rejected</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <p className="text-4xl font-bold text-slate-800">{getCard1Count()}</p>
+        </div>
+
+        {/* Card 2 */}
+        <div 
+          onClick={() => navigate(`/partner-dashboard/applications?status=${card2Filter}`)}
+          className="bg-white border border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
+        >
+          <div className="flex justify-between items-start mb-4" onClick={(e) => e.stopPropagation()}>
+            <p className="text-sm font-medium text-slate-500">Offers</p>
+            <Select value={card2Filter} onValueChange={setCard2Filter}>
+              <SelectTrigger className="h-8 w-[140px] text-xs border-slate-200 bg-slate-50">
+                <SelectValue placeholder="Filter" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="offer_letter_received_conditional">Conditional</SelectItem>
+                <SelectItem value="offer_letter_received_unconditional">Unconditional</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <p className="text-4xl font-bold text-slate-800">{getCard2Count()}</p>
+        </div>
+
+        {/* Card 3 */}
+        <div 
+          onClick={() => navigate(`/partner-dashboard/applications?status=${card3Filter}`)}
+          className="bg-white border border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
+        >
+          <div className="flex justify-between items-start mb-4" onClick={(e) => e.stopPropagation()}>
+            <p className="text-sm font-medium text-slate-500">Visa Applications</p>
+            <Select value={card3Filter} onValueChange={setCard3Filter}>
+              <SelectTrigger className="h-8 w-[140px] text-xs border-slate-200 bg-slate-50">
+                <SelectValue placeholder="Filter" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ready_for_visa_application">Ready for Visa</SelectItem>
+                <SelectItem value="emgs_approval_pending">EMGS Pending</SelectItem>
+                <SelectItem value="rejected_by_visa_office">Rejected by Visa</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <p className="text-4xl font-bold text-slate-800">{getCard3Count()}</p>
         </div>
       </div>
 

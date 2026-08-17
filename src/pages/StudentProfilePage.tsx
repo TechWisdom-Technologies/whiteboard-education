@@ -76,7 +76,8 @@ const statusColors: Record<string, string> = {
   application_on_hold_wb: "bg-amber-500/10 text-amber-600 border-amber-500/20",
   application_on_hold_university: "bg-amber-500/10 text-amber-600 border-amber-500/20",
   application_submitted: "bg-theme/10 text-theme border-theme/20",
-  offer_letter_received: "bg-purple-500/10 text-purple-600 border-purple-500/30",
+  offer_letter_received_conditional: "bg-purple-500/10 text-purple-600 border-purple-500/30",
+  offer_letter_received_unconditional: "bg-purple-500/10 text-purple-600 border-purple-500/30",
   rejected_by_university: "bg-destructive/10 text-destructive border-destructive/20",
   ready_for_visa_application: "bg-teal-500/10 text-teal-600 border-teal-500/30",
   emgs_approval_pending: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
@@ -91,7 +92,8 @@ const statusLabels: Record<string, string> = {
   application_on_hold_wb: "Application on Hold \u2013 Wb team",
   application_on_hold_university: "Application on Hold \u2013 University",
   application_submitted: "Application Submitted",
-  offer_letter_received: "Offer Letter Received",
+  offer_letter_received_conditional: "Offer Letter Received (Conditional)",
+  offer_letter_received_unconditional: "Offer Letter Received (Unconditional)",
   rejected_by_university: "Rejected by University",
   ready_for_visa_application: "Ready for Visa Application",
   emgs_approval_pending: "EMGS Approval Pending",
@@ -1069,7 +1071,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                                     onValueChange={async (newStatus) => {
                                       try {
                                         const { error } = await supabase
-                                          .from("student_applications")
+                                          .from("student_applications" as any)
                                           .update({ status: newStatus })
                                           .eq("id", app.id);
                                         if (error) throw error;

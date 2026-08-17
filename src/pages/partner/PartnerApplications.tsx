@@ -36,6 +36,8 @@ const statusColors: Record<string, string> = {
   application_pending: "bg-purple-500/10 text-purple-600",
   university_accepted: "bg-emerald-500/10 text-emerald-600",
   offer_letter_signed: "bg-emerald-500/10 text-emerald-600",
+  offer_letter_received_conditional: "bg-purple-500/10 text-purple-600",
+  offer_letter_received_unconditional: "bg-purple-500/10 text-purple-600",
   emgs_application_submitted: "bg-[#2F4F97]/10 text-[#2F4F97]",
   emgs_fee_paid: "bg-[#2F4F97]/10 text-[#2F4F97]",
   pre_medical_clearance: "bg-[#2F4F97]/10 text-[#2F4F97]",
@@ -222,8 +224,11 @@ export default function PartnerApplications() {
           case "application_submitted":
             if (s !== 'application_submitted') return false;
             break;
-          case "offer_letter_received":
-            if (s !== 'offer_letter_received') return false;
+          case "offer_letter_received_conditional":
+            if (s !== 'offer_letter_received_conditional') return false;
+            break;
+          case "offer_letter_received_unconditional":
+            if (s !== 'offer_letter_received_unconditional') return false;
             break;
           case "rejected_by_university":
             if (s !== 'rejected_by_university') return false;
@@ -373,7 +378,8 @@ export default function PartnerApplications() {
                   <SelectItem value="application_in_progress">Application in Progress</SelectItem>
                   <SelectItem value="application_on_hold">Application on Hold</SelectItem>
                   <SelectItem value="application_submitted">Application Submitted</SelectItem>
-                  <SelectItem value="offer_letter_received">Offer Letter Received</SelectItem>
+                  <SelectItem value="offer_letter_received_conditional">Offer Letter (Conditional)</SelectItem>
+                  <SelectItem value="offer_letter_received_unconditional">Offer Letter (Unconditional)</SelectItem>
                   <SelectItem value="rejected_by_university">Rejected by University</SelectItem>
                   <SelectItem value="ready_for_visa_application">Ready for Visa</SelectItem>
                   <SelectItem value="emgs_approval_pending">EMGS Pending</SelectItem>
