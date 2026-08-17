@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, UploadCloud, X } from "lucide-react";
+import { ArrowLeft, UploadCloud, X, Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import ReactQuill from "react-quill";
@@ -35,6 +35,16 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
 
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [isUploadingHero, setIsUploadingHero] = useState(false);
+  const [isFaqOpen, setIsFaqOpen] = useState(true);
+
+  useEffect(() => {
+    if (countries && !form.country_id) {
+      const malaysia = countries.find((c: any) => c.name === "Malaysia");
+      if (malaysia) {
+        setForm(prev => ({ ...prev, country_id: malaysia.id }));
+      }
+    }
+  }, [countries]);
 
   useEffect(() => {
     if (initialData) {
@@ -76,7 +86,7 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
       } else {
         setForm(prev => ({ ...prev, hero_image: data.publicUrl }));
       }
-      
+
       toast.success(`${type === 'logo' ? 'Logo' : 'Hero Image'} uploaded successfully`);
     } catch (error: any) {
       toast.error(`Upload failed: ${error.message}`);
@@ -126,68 +136,17 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
       </div>
 
       <div className="p-6 md:p-8 space-y-10 overflow-y-auto">
-        
-        {/* Basic Information */}
         <div className="space-y-6">
-          <h3 className="text-base font-semibold text-gray-900 border-b pb-2">Basic Information</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label className="text-[13px] font-semibold text-gray-700">University Name *</Label>
-              <Input 
-                value={form.name} 
-                onChange={(e) => setForm({ ...form, name: e.target.value })} 
-                placeholder="e.g. Multimedia University (MMU)" 
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label className="text-[13px] font-semibold text-gray-700">Country *</Label>
-              <select
-                className="w-full rounded-xl border border-input bg-background px-3 h-10 text-sm"
-                value={form.country_id}
-                onChange={(e) => setForm({ ...form, country_id: e.target.value })}
-              >
-                <option value="">Select Country...</option>
-                {countries?.map((c: any) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
-            </div>
 
-            <div className="space-y-2">
-              <Label className="text-[13px] font-semibold text-gray-700">City</Label>
-              <Input 
-                value={form.city} 
-                onChange={(e) => setForm({ ...form, city: e.target.value })} 
-                placeholder="e.g. Cyberjaya" 
-              />
-            </div>
-            
-            <div className="space-y-2 md:col-span-2">
-              <Label className="text-[13px] font-semibold text-gray-700">Short Description</Label>
-              <Textarea 
-                value={form.description} 
-                onChange={(e) => setForm({ ...form, description: e.target.value })} 
-                placeholder="A brief 1-2 sentence description..." 
-                rows={2}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Media & Images */}
-        <div className="space-y-6">
-          <h3 className="text-base font-semibold text-gray-900 border-b pb-2">Media</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            
             {/* Logo Upload */}
             <div className="space-y-3">
               <Label className="text-[13px] font-semibold text-gray-700">University Logo</Label>
-              <div className="border-2 border-dashed rounded-xl p-6 text-center hover:bg-gray-50 transition-colors">
+              <div className="border-2 border-dashed rounded-xl p-6 text-center hover:bg-gray-50 transition-colors h-[180px] flex items-center justify-center">
                 {form.logo_url ? (
                   <div className="relative inline-block">
-                    <img src={form.logo_url} alt="Logo" className="h-24 object-contain" />
-                    <button 
+                    <img src={form.logo_url} alt="Logo" className="max-h-24 object-contain" />
+                    <button
                       onClick={() => setForm({ ...form, logo_url: "" })}
                       className="absolute -top-3 -right-3 bg-white text-red-500 rounded-full p-1 shadow-md border hover:bg-red-50"
                     >
@@ -199,10 +158,10 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
                     <UploadCloud className="h-8 w-8 text-gray-400" />
                     <span className="text-sm font-medium text-primary">Click to upload logo</span>
                     <span className="text-xs text-muted-foreground">PNG, JPG up to 2MB</span>
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      className="hidden" 
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
                       onChange={(e) => e.target.files && handleUpload(e.target.files[0], "logo")}
                       disabled={isUploadingLogo}
                     />
@@ -215,13 +174,13 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
             {/* Hero Image Upload */}
             <div className="space-y-3">
               <Label className="text-[13px] font-semibold text-gray-700">Campus Hero Image</Label>
-              <div className="border-2 border-dashed rounded-xl p-6 text-center hover:bg-gray-50 transition-colors">
+              <div className="border-2 border-dashed rounded-xl p-6 text-center hover:bg-gray-50 transition-colors h-[180px] flex items-center justify-center overflow-hidden">
                 {form.hero_image ? (
-                  <div className="relative inline-block w-full">
-                    <img src={form.hero_image} alt="Hero" className="w-full h-32 object-cover rounded-md" />
-                    <button 
+                  <div className="relative inline-block w-full h-full">
+                    <img src={form.hero_image} alt="Hero" className="w-full h-full object-cover rounded-md" />
+                    <button
                       onClick={() => setForm({ ...form, hero_image: "" })}
-                      className="absolute -top-3 -right-3 bg-white text-red-500 rounded-full p-1 shadow-md border hover:bg-red-50"
+                      className="absolute top-2 right-2 bg-white text-red-500 rounded-full p-1 shadow-md border hover:bg-red-50"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -229,12 +188,12 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
                 ) : (
                   <label className="cursor-pointer flex flex-col items-center justify-center gap-2">
                     <UploadCloud className="h-8 w-8 text-gray-400" />
-                    <span className="text-sm font-medium text-primary">Click to upload hero image</span>
-                    <span className="text-xs text-muted-foreground">High-res JPG/PNG up to 5MB</span>
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      className="hidden" 
+                    <span className="text-sm font-medium text-primary">Click to upload hero</span>
+                    <span className="text-xs text-muted-foreground">High-res JPG/PNG</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
                       onChange={(e) => e.target.files && handleUpload(e.target.files[0], "hero")}
                       disabled={isUploadingHero}
                     />
@@ -244,26 +203,134 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
               </div>
             </div>
 
-          </div>
-        </div>
-
-        {/* Detailed Content */}
-        <div className="space-y-6">
-          <h3 className="text-base font-semibold text-gray-900 border-b pb-2">Detailed Content</h3>
-          
-          <div className="space-y-3">
-            <Label className="text-[13px] font-semibold text-gray-700">About (Detailed Profile)</Label>
-            <div className="bg-white rounded-xl [&_.ql-container]:min-h-[250px] [&_.ql-editor]:text-sm">
-              <ReactQuill 
-                theme="snow" 
-                value={form.about_text} 
-                onChange={(val) => setForm({ ...form, about_text: val })}
-                className="bg-white text-gray-900 rounded-xl"
+            {/* University Name */}
+            <div className="space-y-2 md:col-span-2 mt-4">
+              <Label className="text-[13px] font-semibold text-gray-700">University Name *</Label>
+              <Input
+                value={form.name}
+                onChange={(e) => setForm(prev => ({ ...prev, name: e.target.value }))}
+                placeholder="e.g. Multimedia University (MMU)"
               />
             </div>
-            <p className="text-[11px] text-muted-foreground">Write a compelling profile about the university. Use formatting, lists, and headers.</p>
-          </div>
 
+            {/* Country and City */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:col-span-2">
+              <div className="space-y-3">
+                <Label className="text-[13px] font-semibold text-gray-700">Country *</Label>
+                <select
+                  className="w-full rounded-xl border border-input bg-gray-50 px-3 h-10 text-sm text-gray-500 cursor-not-allowed"
+                  value={form.country_id}
+                  disabled
+                >
+                  {countries?.map((c: any) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-3">
+                <Label className="text-[13px] font-semibold text-gray-700">City</Label>
+                <Input
+                  value={form.city}
+                  onChange={(e) => setForm(prev => ({ ...prev, city: e.target.value }))}
+                  placeholder="e.g. Cyberjaya"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-3 pt-4 md:col-span-2">
+              <Label className="text-[13px] font-semibold text-gray-700">Short Description</Label>
+              <Textarea
+                value={form.description}
+                onChange={(e) => setForm(prev => ({ ...prev, description: e.target.value }))}
+                placeholder="A brief description..."
+                rows={8}
+                className="bg-gray-50 rounded-xl resize-y"
+              />
+            </div>
+
+            <div className="space-y-3 pt-4 md:col-span-2">
+              <Label className="text-[13px] font-semibold text-gray-700">About (Detailed Profile)</Label>
+              <div className="border rounded-xl overflow-hidden [&_.ql-toolbar]:border-none [&_.ql-toolbar]:bg-gray-50 [&_.ql-container]:border-none [&_.ql-editor]:min-h-[250px]">
+                <ReactQuill
+                  theme="snow"
+                  value={form.about_text}
+                  onChange={(val) => setForm(prev => ({ ...prev, about_text: val }))}
+                  className="bg-white text-gray-900 rounded-xl"
+                />
+              </div>
+              <p className="text-[11px] text-muted-foreground">Write a compelling profile about the university. Use formatting, lists, and headers.</p>
+            </div>
+
+            {/* FAQs */}
+            <div className="space-y-4 md:col-span-2 mt-4">
+              <div
+                className="flex items-center justify-between cursor-pointer py-2 hover:bg-gray-50 rounded-md transition-colors"
+                onClick={() => setIsFaqOpen(!isFaqOpen)}
+              >
+                <Label className="text-[13px] font-semibold text-gray-700 cursor-pointer">Frequently Asked Questions (FAQs)</Label>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs h-7 px-2 text-primary hover:bg-primary/10"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setForm(p => ({ ...p, faqs: [...p.faqs, { question: "", answer: "" }] }));
+                      setIsFaqOpen(true);
+                    }}
+                  >
+                    <Plus className="h-3 w-3 mr-1" /> Add FAQ
+                  </Button>
+                  <div className="text-gray-400 p-1">
+                    {isFaqOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                  </div>
+                </div>
+              </div>
+
+              {isFaqOpen && (
+                <div className="space-y-4">
+                  {form.faqs.length === 0 && <p className="text-xs text-muted-foreground italic">No FAQs added yet.</p>}
+                  {form.faqs.map((faq, i) => (
+                    <div key={i} className="flex gap-3 bg-gray-50/50 p-4 rounded-xl border relative group">
+                      <div className="flex-1 space-y-3">
+                        <Input
+                          placeholder="Question (e.g. Do you offer scholarships?)"
+                          value={faq.question || ""}
+                          onChange={(e) => {
+                            const newArr = [...form.faqs];
+                            newArr[i].question = e.target.value;
+                            setForm({ ...form, faqs: newArr });
+                          }}
+                          className="bg-white"
+                        />
+                        <Textarea
+                          placeholder="Answer..."
+                          value={faq.answer || ""}
+                          onChange={(e) => {
+                            const newArr = [...form.faqs];
+                            newArr[i].answer = e.target.value;
+                            setForm({ ...form, faqs: newArr });
+                          }}
+                          rows={2}
+                          className="bg-white"
+                        />
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-red-500 shrink-0 hover:bg-red-50"
+                        onClick={() => setForm(p => ({ ...p, faqs: p.faqs.filter((_, idx) => idx !== i) }))}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+          </div>
         </div>
 
       </div>
