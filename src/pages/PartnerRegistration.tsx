@@ -260,71 +260,12 @@ export default function PartnerRegistration() {
   };
 
   const inputCls =
-    "w-full h-11 px-3 text-[13px] bg-gray-50 border border-transparent text-gray-900 placeholder:text-gray-400 outline-none focus:outline-none focus:ring-0 focus:border-transparent focus:bg-[#2F4F97] focus:text-white focus:placeholder:text-white/60 focus:caret-white transition-all duration-200 rounded-xl";
+    "w-full h-14 px-5 text-base bg-white border-2 border-gray-300 text-gray-900 placeholder:text-gray-400 outline-none focus:outline-none focus:ring-0 focus:border-transparent focus:bg-[#2F4F97] focus:text-white focus:placeholder:text-white/60 focus:caret-white transition-all duration-200 rounded-2xl shadow-sm";
 
   return (
     <div className="fixed inset-0 flex bg-[#F8FAFC]">
-      {/* ══════════════════════════════ LEFT PANEL ══════════════════════════════ */}
-      <div className="relative hidden lg:flex flex-col w-5/12 h-full overflow-hidden bg-gradient-to-br from-[#EEF4FF] to-[#F8FAFC] border-r border-[#2F4F97]/10">
-        
-        {/* Decorative organic background blobs */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] rounded-full bg-[#2F4F97]/5 blur-[100px]" />
-          <div className="absolute top-[40%] -right-[20%] w-[60%] h-[60%] rounded-full bg-[#2F4F97]/10 blur-[120px]" />
-        </div>
-
-        {/* Content - flex column spread */}
-        <div className="relative z-10 flex flex-col justify-between h-full px-8 py-6 lg:px-10 lg:py-8">
-          
-          <div className="flex flex-col">
-            {/* Logo */}
-            <Link to="/" className="inline-flex mb-6">
-              <img src="/logo.png" alt="Whiteboard Education" className="h-7 w-auto object-contain hover:opacity-80 transition-opacity" />
-            </Link>
-
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 mb-3 bg-white border border-[#2F4F97]/10 rounded-xl w-fit shadow-sm">
-              <Handshake className="h-3 w-3 text-[#2F4F97]" />
-              <span className="text-[10px] font-bold text-[#2F4F97] tracking-widest uppercase">Partner Network</span>
-            </div>
-
-            <h1 className="font-black text-[#1E293B] text-2xl xl:text-3xl tracking-tight leading-[1.15] mb-2.5">
-              Join Our Global <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2F4F97] to-[#1c2f5a]">
-                Agency Network.
-              </span>
-            </h1>
-
-            <p className="text-[#64748B] text-[12px] leading-relaxed mb-5 max-w-sm">
-              Gain access to Malaysia's top universities, streamlined application processing, and dedicated support to help your students succeed.
-            </p>
-
-            <div className="space-y-2">
-              <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1">Why Partner With Us?</h3>
-              {[
-                "Direct access to 50+ Malaysian Universities",
-                "Dedicated account manager for fast support",
-                "Full visa & compliance assistance",
-                "Transparent commission & high approval rates"
-              ].map((benefit, i) => (
-                <div key={i} className="flex items-center gap-3 bg-white/40 py-2 px-3 rounded-2xl border border-white/60 shadow-sm backdrop-blur-sm max-w-sm">
-                  <div className="h-5 w-5 rounded-full bg-[#2F4F97]/10 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-3 w-3 text-[#2F4F97]" />
-                  </div>
-                  <span className="text-[11px] text-[#1E293B] font-bold">{benefit}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Bottom strip */}
-          <div className="flex items-center justify-between pt-4 mt-4 border-t border-[#2F4F97]/10">
-            <p className="text-[#64748B] text-[11px] font-medium">© {new Date().getFullYear()} Whiteboard Education</p>
-          </div>
-        </div>
-      </div>
-
       {/* ══════════════════════════════ RIGHT PANEL ══════════════════════════════ */}
-      <div className="relative w-full lg:w-7/12 h-full flex flex-col bg-gradient-to-br from-[#EEF4FF] to-[#F8FAFC] lg:bg-none lg:bg-white overflow-hidden">
+      <div className="w-full h-full flex flex-col bg-white overflow-hidden items-center justify-center relative">
         
         {/* Mobile decorative blobs */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none lg:hidden">
@@ -505,7 +446,7 @@ export default function PartnerRegistration() {
                 {step > 1 && (
                   <Button 
                     variant="outline"
-                    className="h-12 text-gray-700 font-bold text-[14px] rounded-xl flex-1 max-w-[140px]"
+                    className="h-14 text-gray-700 font-bold text-base rounded-2xl flex-1 max-w-[140px]"
                     onClick={handleBack}
                     disabled={submitting}
                   >
@@ -515,7 +456,7 @@ export default function PartnerRegistration() {
 
                 {step < 3 ? (
                   <Button 
-                    className="flex-1 h-12 font-bold text-[14px] rounded-xl transition-all flex items-center justify-center gap-2"
+                    className="flex-1 h-14 font-bold text-base rounded-2xl transition-all flex items-center justify-center gap-2"
                     onClick={handleNext}
                     disabled={submitting}
                   >
@@ -523,7 +464,7 @@ export default function PartnerRegistration() {
                   </Button>
                 ) : (
                   <Button 
-                    className="flex-1 h-12 font-bold text-[14px] rounded-xl transition-all"
+                    className="flex-1 h-14 font-bold text-base rounded-2xl transition-all"
                     onClick={handleSubmit} 
                     disabled={submitting}
                   >
