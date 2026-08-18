@@ -394,7 +394,7 @@ ${window.location.href}`;
                       <Info className="hidden md:block w-4 h-4 text-[#2F4F97] shrink-0" />
                       <div className="text-gray-700 text-[12px] md:text-base font-semibold whitespace-nowrap">Class Type</div>
                     </div>
-                    <div className="text-gray-900 font-normal text-[12px] md:text-base text-left">Physical</div>
+                    <div className="text-gray-900 font-normal text-[12px] md:text-base text-left">{course.class_type || "Physical"}</div>
                   </div>
                 </div>
               </div>

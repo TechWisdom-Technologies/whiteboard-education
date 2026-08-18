@@ -1,147 +1,11 @@
-import { useState, useEffect } from "react";
-import { useTableData, useInsertRow, useUpdateRow } from "@/hooks/useSupabaseData";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Plus, Trash2 } from "lucide-react";
-import { toast } from "sonner";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+const fs = require('fs');
 
-interface AdminCourseFormProps {
-  initialData?: any;
-  onCancel: () => void;
-  onSuccess: () => void;
-}
-
-const DEGREE_LEVELS = ["Foundation", "Diploma", "Advanced Diploma", "Certificate", "Bachelor", "Master", "PhD"];
-
-export default function AdminCourseForm({ initialData, onCancel, onSuccess }: AdminCourseFormProps) {
-  const isEditing = !!initialData;
-  const insertRow = useInsertRow("courses");
-  const updateRow = useUpdateRow("courses");
-  const { data: universities } = useTableData("universities", { orderBy: "name" });
-
-  const [form, setForm] = useState({
-    title: "",
-    university_id: "",
-    degree_level: "",
-    intake_months: [] as string[],
-    offer_letter: "",
-    duration: "",
-    entry_requirements: {} as Record<string, string>,
-    entry_requirements_text: "",
-    class_type: "",
-    yearly_fees: [] as { year: string; fee: string }[],
-    other_fees: [] as { description: string; fee: string }[],
-    overview: "",
-    curriculum: [] as { year: string; modules: string[] }[],
-    career_outcomes: [] as string[],
-  });
-
-  const [newTag, setNewTag] = useState("");
-  const [newCareerTag, setNewCareerTag] = useState("");
-
-  useEffect(() => {
-    if (initialData) {
-      setForm({
-        title: initialData.title || "",
-        university_id: initialData.university_id || "",
-        degree_level: initialData.degree_level || "",
-        intake_months: Array.isArray(initialData.intake_months) ? initialData.intake_months : [],
-        offer_letter: initialData.offer_letter || "",
-        duration: initialData.duration || "",
-        entry_requirements: typeof initialData.entry_requirements === "object" && initialData.entry_requirements !== null ? initialData.entry_requirements : {},
-        entry_requirements_text: initialData.entry_requirements_text || "",
-        class_type: initialData.class_type || "",
-        yearly_fees: Array.isArray(initialData.yearly_fees) ? initialData.yearly_fees : [],
-        other_fees: Array.isArray(initialData.other_fees) ? initialData.other_fees : [],
-        overview: initialData.overview || "",
-        curriculum: Array.isArray(initialData.curriculum) ? initialData.curriculum : [],
-        career_outcomes: Array.isArray(initialData.career_outcomes) ? initialData.career_outcomes : [],
-      });
-    }
-  }, [initialData]);
-
-  const handleSave = async () => {
-    if (!form.title || !form.university_id) {
-      toast.error("Please fill in the required fields (Title and University)");
-      return;
-    }
-
-    try {
-      if (isEditing) {
-        await updateRow.mutateAsync({ id: initialData.id, ...form });
-        toast.success("Course updated successfully");
-      } else {
-        await insertRow.mutateAsync(form);
-        toast.success("Course created successfully");
-      }
-      onSuccess();
-    } catch (error: any) {
-      toast.error(`Save failed: ${error.message}`);
-    }
-  };
-
-  const addTag = (field: "intake_months" | "career_outcomes", val: string, setVal: (v: string) => void) => {
-    const trimmed = val.trim();
-    if (trimmed && !form[field].includes(trimmed)) {
-      setForm(prev => ({ ...prev, [field]: [...prev[field], trimmed] }));
-      setVal("");
-    }
-  };
-
-  const removeTag = (field: "intake_months" | "career_outcomes", idx: number) => {
-    setForm(prev => ({ ...prev, [field]: prev[field].filter((_, i) => i !== idx) }));
-  };
-
-  // English Requirements Handlers
-  const addEnglishReq = () => {
-    setForm(prev => ({ ...prev, entry_requirements: { ...prev.entry_requirements, "": "" } }));
-  };
-  const updateEnglishReq = (oldKey: string, newKey: string, val: string) => {
-    setForm(prev => {
-      const newReqs = { ...prev.entry_requirements };
-      if (oldKey !== newKey) {
-        delete newReqs[oldKey];
-      }
-      newReqs[newKey] = val;
-      return { ...prev, entry_requirements: newReqs };
-    });
-  };
-  const removeEnglishReq = (key: string) => {
-    setForm(prev => {
-      const newReqs = { ...prev.entry_requirements };
-      delete newReqs[key];
-      return { ...prev, entry_requirements: newReqs };
-    });
-  };
-
-  return (
-    <div className="bg-white rounded-xl border shadow-sm flex flex-col h-full max-w-5xl mx-auto my-6">
-      <div className="flex items-center justify-between p-6 border-b shrink-0 bg-gray-50/50 rounded-t-xl">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full bg-white shadow-sm border" onClick={onCancel}>
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h2 className="text-lg font-bold text-[#1E293B]">
-            {isEditing ? "Edit Course" : "Add New Course"}
-          </h2>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={onCancel}>Cancel</Button>
-          <Button onClick={handleSave}>
-            {isEditing ? "Update Course" : "Save Course"}
-          </Button>
-        </div>
-      </div>
-
+const replacement = `
       <div className="flex-1 overflow-y-auto p-6 space-y-8">
         
         {/* Group 1: Basic Info & Requirements */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
+          <div className="space-y-2 md:col-span-2">
             <Label className="text-[13px] font-semibold text-gray-700">Course Title *</Label>
             <Input 
               value={form.title} 
@@ -188,29 +52,20 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
           </div>
 
           <div className="space-y-2">
-            <div className="flex items-center justify-between mb-2">
-              <Label className="text-[13px] font-semibold text-gray-700">Intake Months</Label>
-              <Button size="sm" type="button" onClick={() => addTag("intake_months", newTag, setNewTag)} className="h-7 px-3 text-xs">
-                <Plus className="h-3 w-3 mr-1" /> Add
-              </Button>
-            </div>
+            <Label className="text-[13px] font-semibold text-gray-700">Intake Months</Label>
             <div className="flex gap-2">
-              <select
-                className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm"
+              <Input 
                 value={newTag}
                 onChange={(e) => setNewTag(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTag("intake_months", newTag, setNewTag))}
-              >
-                <option value="">Select Month...</option>
-                {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map(m => (
-                  <option key={m} value={m}>{m}</option>
-                ))}
-              </select>
+                placeholder="e.g. January, September"
+              />
+              <Button type="button" variant="secondary" onClick={() => addTag("intake_months", newTag, setNewTag)}>Add</Button>
             </div>
             <div className="flex flex-wrap gap-2 mt-2">
               {form.intake_months.map((m, i) => (
                 <span key={i} className="inline-flex items-center gap-1 bg-gray-100 text-sm px-3 py-1 rounded-full text-gray-700">
-                  {m} <button type="button" onClick={() => removeTag("intake_months", i)} className="text-red-500 font-bold ml-1 hover:text-red-700">&times;</button>
+                  {m} <button onClick={() => removeTag("intake_months", i)} className="text-red-500 font-bold ml-1 hover:text-red-700">&times;</button>
                 </span>
               ))}
             </div>
@@ -219,7 +74,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
           <div className="space-y-2">
             <div className="flex items-center justify-between mb-2">
               <Label className="text-[13px] font-semibold text-gray-700">English Requirements</Label>
-              <Button size="sm" onClick={addEnglishReq} className="h-7 px-3 text-xs">
+              <Button variant="ghost" size="sm" onClick={addEnglishReq} className="text-xs h-7 px-2 text-primary hover:bg-primary/10">
                 <Plus className="h-3 w-3 mr-1" /> Add
               </Button>
             </div>
@@ -273,7 +128,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Label className="text-[13px] font-semibold text-gray-700">Yearly Tuition Fees</Label>
-              <Button size="sm" className="h-7 px-3 text-xs" onClick={() => setForm(p => ({ ...p, yearly_fees: [...p.yearly_fees, { year: "", fee: "" }] }))}>
+              <Button variant="ghost" size="sm" className="text-xs h-7 px-2 text-primary hover:bg-primary/10" onClick={() => setForm(p => ({ ...p, yearly_fees: [...p.yearly_fees, { year: "", fee: "" }] }))}>
                 <Plus className="h-3 w-3 mr-1" /> Add Year
               </Button>
             </div>
@@ -310,7 +165,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Label className="text-[13px] font-semibold text-gray-700">Other Fees</Label>
-              <Button size="sm" className="h-7 px-3 text-xs" onClick={() => setForm(p => ({ ...p, other_fees: [...p.other_fees, { description: "", fee: "" }] }))}>
+              <Button variant="ghost" size="sm" className="text-xs h-7 px-2 text-primary hover:bg-primary/10" onClick={() => setForm(p => ({ ...p, other_fees: [...p.other_fees, { description: "", fee: "" }] }))}>
                 <Plus className="h-3 w-3 mr-1" /> Add Fee
               </Button>
             </div>
@@ -372,12 +227,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
 
         {/* Group 5: Career Opportunities */}
         <div className="space-y-2 pt-4">
-          <div className="flex items-center justify-between mb-2">
-            <Label className="text-[13px] font-semibold text-gray-700">Career Opportunities</Label>
-            <Button size="sm" type="button" onClick={() => addTag("career_outcomes", newCareerTag, setNewCareerTag)} className="h-7 px-3 text-xs">
-              <Plus className="h-3 w-3 mr-1" /> Add
-            </Button>
-          </div>
+          <Label className="text-[13px] font-semibold text-gray-700">Career Opportunities</Label>
           <div className="flex gap-2">
             <Input 
               value={newCareerTag}
@@ -385,11 +235,12 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
               onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTag("career_outcomes", newCareerTag, setNewCareerTag))}
               placeholder="e.g. Software Engineer, Data Analyst"
             />
+            <Button type="button" variant="secondary" onClick={() => addTag("career_outcomes", newCareerTag, setNewCareerTag)}>Add</Button>
           </div>
           <div className="flex flex-wrap gap-2 mt-2">
             {form.career_outcomes.map((m, i) => (
               <span key={i} className="inline-flex items-center gap-1 bg-green-50 text-green-700 text-sm px-3 py-1 rounded-full border border-green-200">
-                {m} <button type="button" onClick={() => removeTag("career_outcomes", i)} className="font-bold ml-1 hover:text-green-900">&times;</button>
+                {m} <button onClick={() => removeTag("career_outcomes", i)} className="font-bold ml-1 hover:text-green-900">&times;</button>
               </span>
             ))}
           </div>
@@ -399,7 +250,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
         <div className="space-y-4 pt-4">
           <div className="flex items-center justify-between">
             <Label className="text-[13px] font-semibold text-gray-700">Curriculum (By Year/Semester)</Label>
-            <Button size="sm" className="h-7 px-3 text-xs" onClick={() => setForm(p => ({ ...p, curriculum: [...p.curriculum, { year: `Year ${p.curriculum.length + 1}`, modules: [] }] }))}>
+            <Button variant="ghost" size="sm" className="text-xs h-7 px-2 text-primary hover:bg-primary/10" onClick={() => setForm(p => ({ ...p, curriculum: [...p.curriculum, { year: \`Year \${p.curriculum.length + 1}\`, modules: [] }] }))}>
               <Plus className="h-3 w-3 mr-1" /> Add Year/Semester
             </Button>
           </div>
@@ -473,3 +324,13 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
     </div>
   );
 }
+`;
+
+const file = 'src/pages/admin/AdminCourseForm.tsx';
+const content = fs.readFileSync(file, 'utf8');
+
+const regex = /<div className="p-6 md:p-8 space-y-12 overflow-y-auto">[\s\S]*\}\s*$/;
+const newContent = content.replace(regex, replacement.trim() + "\n");
+
+fs.writeFileSync(file, newContent);
+console.log("Successfully rebuilt layout");

@@ -218,7 +218,7 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
               <div className="space-y-3">
                 <Label className="text-[13px] font-semibold text-gray-700">Country *</Label>
                 <select
-                  className="w-full rounded-xl border border-input bg-gray-50 px-3 h-10 text-sm text-gray-500 cursor-not-allowed"
+                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 h-10 text-sm text-gray-500 cursor-not-allowed"
                   value={form.country_id}
                   disabled
                 >

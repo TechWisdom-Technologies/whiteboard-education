@@ -1,0 +1,6 @@
+ALTER TABLE courses 
+ADD COLUMN IF NOT EXISTS class_type TEXT,
+ADD COLUMN IF NOT EXISTS offer_letter TEXT,
+ADD COLUMN IF NOT EXISTS entry_requirements_text TEXT,
+ADD COLUMN IF NOT EXISTS yearly_fees JSONB DEFAULT '[]'::jsonb,
+ADD COLUMN IF NOT EXISTS other_fees JSONB DEFAULT '[]'::jsonb;

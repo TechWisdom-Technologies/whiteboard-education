@@ -182,48 +182,63 @@ export type Database = {
       courses: {
         Row: {
           career_outcomes: Json | null
+          class_type: string | null
           created_at: string
           curriculum: Json | null
           degree_level: string
           duration: string | null
           entry_requirements: Json | null
+          entry_requirements_text: string | null
           id: string
           intake_months: Json | null
+          offer_letter: string | null
+          other_fees: Json | null
           overview: string | null
           title: string
           tuition_fee: number
           university_id: string | null
           updated_at: string
+          yearly_fees: Json | null
         }
         Insert: {
           career_outcomes?: Json | null
+          class_type?: string | null
           created_at?: string
           curriculum?: Json | null
           degree_level?: string
           duration?: string | null
           entry_requirements?: Json | null
+          entry_requirements_text?: string | null
           id?: string
           intake_months?: Json | null
+          offer_letter?: string | null
+          other_fees?: Json | null
           overview?: string | null
           title: string
           tuition_fee?: number
           university_id?: string | null
           updated_at?: string
+          yearly_fees?: Json | null
         }
         Update: {
           career_outcomes?: Json | null
+          class_type?: string | null
           created_at?: string
           curriculum?: Json | null
           degree_level?: string
           duration?: string | null
           entry_requirements?: Json | null
+          entry_requirements_text?: string | null
           id?: string
           intake_months?: Json | null
+          offer_letter?: string | null
+          other_fees?: Json | null
           overview?: string | null
           title?: string
           tuition_fee?: number
           university_id?: string | null
           updated_at?: string
+          yearly_fees?: Json | null
         }
         Relationships: [
           {
