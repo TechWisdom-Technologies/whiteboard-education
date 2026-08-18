@@ -98,7 +98,7 @@ export default function Login() {
 
 
   const inputCls =
-    "w-full h-12 px-4 text-sm bg-gray-50 border border-transparent text-gray-900 placeholder:text-gray-400 outline-none focus:outline-none focus:ring-0 focus:border-transparent focus:bg-[#2F4F97] focus:text-white focus:placeholder:text-white/60 focus:caret-white transition-all duration-200 rounded-2xl";
+    "w-full h-14 px-5 text-base bg-white border-2 border-gray-300 text-gray-900 placeholder:text-gray-400 outline-none focus:outline-none focus:ring-0 focus:border-transparent focus:bg-[#2F4F97] focus:text-white focus:placeholder:text-white/60 focus:caret-white transition-all duration-200 rounded-2xl shadow-sm";
 
   // ─── Forgot Password Handlers ───
   const handleFpSendCode = async () => {
@@ -150,84 +150,9 @@ export default function Login() {
   return (
     <div className="fixed inset-0 flex bg-[#F8FAFC]">
 
-      {/* ══════════════════════════════ LEFT PANEL ══════════════════════════════ */}
-      <div className="relative hidden lg:flex flex-col w-1/2 h-full overflow-hidden bg-gradient-to-br from-[#EEF4FF] to-[#F8FAFC] border-r border-[#2F4F97]/10">
-
-        {/* Decorative organic background blobs */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] rounded-full bg-[#2F4F97]/5 blur-[100px]" />
-          <div className="absolute top-[40%] -right-[20%] w-[60%] h-[60%] rounded-full bg-[#2F4F97]/10 blur-[120px]" />
-        </div>
-
-        {/* Content - full height flex column spread */}
-        <div
-          className="relative z-10 flex flex-col justify-between h-full px-10 py-8 lg:px-14 lg:py-10"
-          style={{
-            opacity: mounted ? 1 : 0,
-            transform: mounted ? "none" : "translateY(10px)",
-            transition: "opacity 0.45s ease, transform 0.45s ease",
-          }}
-        >
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <Link to="/">
-              <img src="/logo.png" alt="Whiteboard Education" className="h-8 w-auto object-contain hover:opacity-80 transition-opacity" />
-            </Link>
-          </div>
-
-          {/* Middle hero */}
-          <div className="max-w-md">
-
-            <h1 className="font-black text-[#1E293B] text-3xl xl:text-4xl tracking-tight leading-[1.1] mb-4">
-              Manage Your <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2F4F97] to-[#1c2f5a]">
-                Admin Panel.
-              </span>
-            </h1>
-
-            <p className="text-[#64748B] text-[13px] leading-relaxed mb-6 max-w-sm">
-              Authorized personnel portal for managing student applications, university partnerships, and platform configurations.
-            </p>
-
-            {/* Role list */}
-            <div className="flex flex-col gap-3">
-              {[
-                { icon: ShieldCheck, label: "Super Admin", desc: "Full system and platform access" },
-                { icon: Layers, label: "Partner Agent", desc: "Student application management" },
-                { icon: Award, label: "B2B Partners", desc: "Agency portal and analytics" },
-              ].map(({ icon: Icon, label, desc }) => (
-                <div key={label} className="flex items-center gap-3 bg-white/40 p-2.5 rounded-2xl border border-white/60 shadow-sm backdrop-blur-sm">
-                  <div className="h-10 w-10 bg-white rounded-xl shadow-sm flex items-center justify-center flex-shrink-0 text-[#2F4F97]">
-                    <Icon className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <div className="text-[#1E293B] text-[13px] font-bold">{label}</div>
-                    <div className="text-[#64748B] text-[11px] mt-0.5">{desc}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Bottom strip */}
-          <div className="flex items-center justify-between">
-            <p className="text-[#64748B] text-[11px] font-medium">© {new Date().getFullYear()} Whiteboard Education</p>
-            <div className="flex gap-1.5">
-              {[...Array(3)].map((_, i) => (
-                <div
-                  key={i}
-                  className="h-1.5 rounded-full bg-[#2F4F97]"
-                  style={{ width: i === 0 ? 24 : i === 1 ? 12 : 6, opacity: 1 - i * 0.3 }}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* ══════════════════════════════ RIGHT PANEL ══════════════════════════════ */}
       <div
-        className="w-full lg:w-1/2 h-full flex flex-col bg-white overflow-hidden"
+        className="w-full h-full flex flex-col bg-white overflow-hidden items-center justify-center relative"
         style={{
           opacity: mounted ? 1 : 0,
           transform: mounted ? "none" : "translateX(10px)",
@@ -235,13 +160,7 @@ export default function Login() {
         }}
       >
         {/* Header bar */}
-        <div className="flex items-center justify-between px-8 py-6 flex-shrink-0 bg-white">
-          {/* Mobile logo */}
-          <div className="flex items-center gap-2 lg:hidden">
-            <img src="/logo.png" alt="Whiteboard Education" className="h-8 w-auto object-contain" />
-          </div>
-          {/* Desktop spacer to keep Close button aligned to the right */}
-          <div className="hidden lg:block"></div>
+        <div className="absolute top-0 left-0 w-full flex items-center justify-end px-8 py-6 flex-shrink-0 bg-transparent z-10">
           <button
             onClick={() => navigate(-1)}
             className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-[#EEF4FF] text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white transition-colors duration-300 shadow-sm"
@@ -251,13 +170,12 @@ export default function Login() {
           </button>
         </div>
 
-        {/* Form section - centered, takes all remaining height */}
-        <div className="flex-1 flex flex-col justify-center min-h-0 px-10 py-4">
-          <div className="w-full max-w-sm mx-auto">
-
+        {/* Form section */}
+        <div className="flex-1 flex flex-col justify-center min-h-0 py-4 z-10 w-full">
+          <div className="w-full max-w-md px-6 mx-auto text-left">
             {/* Heading */}
             <div className="mb-8">
-              <h2 className="font-medium tracking-tight text-[#0c0f16] text-2xl">
+              <h2 className="font-semibold tracking-tight text-[#0c0f16] text-3xl mb-2">
                 Sign in to your portal account
               </h2>
             </div>
@@ -322,7 +240,7 @@ export default function Login() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full h-12 text-sm font-bold flex items-center justify-center gap-2 rounded-2xl transition-all duration-300 hover:shadow-[0_8px_20px_-6px_rgba(47,79,151,0.5)] hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-none"
+                      className="w-full h-14 text-base font-bold flex items-center justify-center gap-2 rounded-2xl transition-all duration-300 hover:shadow-[0_8px_20px_-6px_rgba(47,79,151,0.5)] hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-none"
                       style={{ background: "#2F4F97", color: "#ffffff" }}
                     >
                       {loading ? (
@@ -356,7 +274,7 @@ export default function Login() {
                     
                     <Link
                       to="/partner/register"
-                      className="w-full h-12 text-[13px] font-bold flex items-center justify-center gap-2 rounded-2xl border-2 border-gray-100 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-200 transition-all active:scale-[0.98]"
+                      className="w-full h-14 text-[13px] font-bold flex items-center justify-center gap-2 rounded-2xl border-2 border-gray-100 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-200 transition-all active:scale-[0.98]"
                     >
                       Register as a partner
                     </Link>
@@ -387,12 +305,12 @@ export default function Login() {
                 <div className="flex gap-3">
                   <button
                     onClick={handleFpSendCode}
-                    className="flex-1 h-12 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
+                    className="flex-1 h-14 rounded-2xl text-base font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
                     style={{ background: "#2F4F97", color: "#0c0f16" }}
                   >
                     <KeyRound className="h-4 w-4" /> Send Code
                   </button>
-                  <button onClick={resetFpFlow} className="h-12 px-4 rounded-2xl text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">
+                  <button onClick={resetFpFlow} className="h-14 px-4 rounded-2xl text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">
                     Cancel
                   </button>
                 </div>
@@ -425,12 +343,12 @@ export default function Login() {
                   <button
                     onClick={handleFpVerify}
                     disabled={fpOtp.length < 6}
-                    className="flex-1 h-12 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-50"
+                    className="flex-1 h-14 rounded-2xl text-base font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-50"
                     style={{ background: "#0c0f16", color: "#fff" }}
                   >
                     <ArrowRight className="h-4 w-4" /> Verify Code
                   </button>
-                  <button onClick={resetFpFlow} className="h-12 px-4 rounded-2xl text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">
+                  <button onClick={resetFpFlow} className="h-14 px-4 rounded-2xl text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">
                     Cancel
                   </button>
                 </div>
@@ -471,12 +389,12 @@ export default function Login() {
                 <div className="flex gap-3">
                   <button
                     onClick={handleFpUpdatePw}
-                    className="flex-1 h-12 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
+                    className="flex-1 h-14 rounded-2xl text-base font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
                     style={{ background: "#2F4F97", color: "#0c0f16" }}
                   >
                     Update Password
                   </button>
-                  <button onClick={resetFpFlow} className="h-12 px-4 rounded-2xl text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">
+                  <button onClick={resetFpFlow} className="h-14 px-4 rounded-2xl text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">
                     Cancel
                   </button>
                 </div>
@@ -497,7 +415,7 @@ export default function Login() {
                 </div>
                 <button
                   onClick={resetFpFlow}
-                  className="w-full h-12 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
+                  className="w-full h-14 rounded-2xl text-base font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
                   style={{ background: "#2F4F97", color: "#0c0f16" }}
                 >
                   <LogIn className="h-4 w-4" /> Back to Sign In
