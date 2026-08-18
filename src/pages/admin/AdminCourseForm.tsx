@@ -150,7 +150,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
               <Label className="text-[13px] font-semibold text-gray-700">Course Title *</Label>
               <Input 
                 value={form.title} 
-                onChange={(e) => setForm({ ...form, title: e.target.value })} 
+                onChange={(e) => setForm(prev => ({ ...prev, title: e.target.value }))} 
                 placeholder="e.g. BSc (Hons) Computer Science" 
               />
             </div>
@@ -160,7 +160,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
               <select
                 className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm"
                 value={form.university_id}
-                onChange={(e) => setForm({ ...form, university_id: e.target.value })}
+                onChange={(e) => setForm(prev => ({ ...prev, university_id: e.target.value }))}
               >
                 <option value="">Select University...</option>
                 {universities?.map((u: any) => (
@@ -174,7 +174,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
               <select
                 className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm"
                 value={form.degree_level}
-                onChange={(e) => setForm({ ...form, degree_level: e.target.value })}
+                onChange={(e) => setForm(prev => ({ ...prev, degree_level: e.target.value }))}
               >
                 <option value="">Select Qualification...</option>
                 {DEGREE_LEVELS.map(lvl => (
@@ -187,7 +187,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
               <Label className="text-[13px] font-semibold text-gray-700">Duration</Label>
               <Input 
                 value={form.duration} 
-                onChange={(e) => setForm({ ...form, duration: e.target.value })} 
+                onChange={(e) => setForm(prev => ({ ...prev, duration: e.target.value }))} 
                 placeholder="e.g. 3 Years, 4 Years" 
               />
             </div>
@@ -196,7 +196,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
               <Label className="text-[13px] font-semibold text-gray-700">Class Type</Label>
               <Input 
                 value={form.class_type} 
-                onChange={(e) => setForm({ ...form, class_type: e.target.value })} 
+                onChange={(e) => setForm(prev => ({ ...prev, class_type: e.target.value }))} 
                 placeholder="e.g. Physical, Online, Blended" 
               />
             </div>
@@ -268,7 +268,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
               <Label className="text-[13px] font-semibold text-gray-700">Offer Letter Fee</Label>
               <Input 
                 value={form.offer_letter} 
-                onChange={(e) => setForm({ ...form, offer_letter: e.target.value })} 
+                onChange={(e) => setForm(prev => ({ ...prev, offer_letter: e.target.value }))} 
                 placeholder="e.g. Free, RM 250 Fees Applies" 
               />
             </div>
@@ -277,7 +277,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
               <Label className="text-[13px] font-semibold text-gray-700">Other Entry Requirements</Label>
               <Textarea 
                 value={form.entry_requirements_text} 
-                onChange={(e) => setForm({ ...form, entry_requirements_text: e.target.value })} 
+                onChange={(e) => setForm(prev => ({ ...prev, entry_requirements_text: e.target.value }))} 
                 placeholder="High school diploma, CGPA 3.0, etc..." 
                 rows={3}
               />
@@ -311,7 +311,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                       onChange={(e) => {
                         const newArr = [...form.yearly_fees];
                         newArr[i].year = e.target.value;
-                        setForm({ ...form, yearly_fees: newArr });
+                        setForm(prev => ({ ...prev, yearly_fees: newArr }));
                       }}
                     />
                     <Input 
@@ -320,7 +320,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                       onChange={(e) => {
                         const newArr = [...form.yearly_fees];
                         newArr[i].fee = e.target.value;
-                        setForm({ ...form, yearly_fees: newArr });
+                        setForm(prev => ({ ...prev, yearly_fees: newArr }));
                       }}
                     />
                     <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 shrink-0 hover:bg-red-50" onClick={() => setForm(p => ({ ...p, yearly_fees: p.yearly_fees.filter((_, idx) => idx !== i) }))}>
@@ -349,7 +349,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                       onChange={(e) => {
                         const newArr = [...form.other_fees];
                         newArr[i].description = e.target.value;
-                        setForm({ ...form, other_fees: newArr });
+                        setForm(prev => ({ ...prev, other_fees: newArr }));
                       }}
                     />
                     <Input 
@@ -358,7 +358,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                       onChange={(e) => {
                         const newArr = [...form.other_fees];
                         newArr[i].fee = e.target.value;
-                        setForm({ ...form, other_fees: newArr });
+                        setForm(prev => ({ ...prev, other_fees: newArr }));
                       }}
                     />
                     <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 shrink-0 hover:bg-red-50" onClick={() => setForm(p => ({ ...p, other_fees: p.other_fees.filter((_, idx) => idx !== i) }))}>
@@ -386,7 +386,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                 <ReactQuill 
                   theme="snow" 
                   value={form.overview} 
-                  onChange={(val) => setForm({ ...form, overview: val })}
+                  onChange={(val) => setForm(prev => ({ ...prev, overview: val }))}
                 />
               </div>
             </div>
@@ -418,7 +418,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                         onChange={(e) => {
                           const newArr = [...form.curriculum];
                           newArr[i].year = e.target.value;
-                          setForm({ ...form, curriculum: newArr });
+                          setForm(prev => ({ ...prev, curriculum: newArr }));
                         }}
                       />
                     </div>
@@ -429,7 +429,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                         <Button variant="ghost" size="sm" className="h-6 text-[11px]" onClick={() => {
                           const newArr = [...form.curriculum];
                           newArr[i].modules.push("");
-                          setForm({ ...form, curriculum: newArr });
+                          setForm(prev => ({ ...prev, curriculum: newArr }));
                         }}>
                           <Plus className="h-3 w-3 mr-1" /> Add Module
                         </Button>
@@ -445,13 +445,13 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                               onChange={(e) => {
                                 const newArr = [...form.curriculum];
                                 newArr[i].modules[j] = e.target.value;
-                                setForm({ ...form, curriculum: newArr });
+                                setForm(prev => ({ ...prev, curriculum: newArr }));
                               }}
                             />
                             <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:bg-red-50 shrink-0" onClick={() => {
                               const newArr = [...form.curriculum];
                               newArr[i].modules.splice(j, 1);
-                              setForm({ ...form, curriculum: newArr });
+                              setForm(prev => ({ ...prev, curriculum: newArr }));
                             }}>
                               <Trash2 className="h-3.5 w-3.5" />
                             </Button>
