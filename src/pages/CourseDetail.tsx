@@ -136,12 +136,8 @@ export default function CourseDetail() {
     if (!course) return;
 
     let engReq = 'Not Specified';
-    if (entryReqs && typeof entryReqs === 'object') {
-      const rawIelts = (entryReqs as any).IELTS || (entryReqs as any).ielts;
-      if (rawIelts) {
-        const parts = String(rawIelts).split(/[-–-]/);
-        engReq = `IELTS ${parts[parts.length - 1].trim()}`;
-      }
+    if (entryReqs && typeof entryReqs === 'object' && Object.keys(entryReqs).length > 0) {
+      engReq = Object.entries(entryReqs).map(([k, v]) => `${k.toUpperCase()} ${v}`).join(', ');
     }
 
     const intakeStr = intakeMonths.length > 0 ? intakeMonths.join(',') : 'Not Specified';
@@ -366,17 +362,22 @@ ${window.location.href}`;
                     </div>
                     <div className="text-gray-900 font-normal text-[12px] md:text-base text-left">
                       {(() => {
-                        const rawIelts = entryReqs && typeof entryReqs === 'object' 
-                          ? ((entryReqs as any).IELTS || (entryReqs as any).ielts) 
-                          : null;
+                        if (!entryReqs || typeof entryReqs !== 'object' || Object.keys(entryReqs).length === 0) return 'Not Specified';
                         
-                        if (!rawIelts) return 'Not Specified';
-                        
-                        // If it's a range like "6.0 - 6.5", take the last part
-                        const parts = String(rawIelts).split(/[-–-]/);
-                        const displayScore = parts[parts.length - 1].trim();
-                        
-                        return `IELTS ${displayScore}`;
+                        const entries = Object.entries(entryReqs).sort((a, b) => {
+                          if (a[0].toLowerCase() === 'ielts') return -1;
+                          if (b[0].toLowerCase() === 'ielts') return 1;
+                          return 0;
+                        });
+                        return (
+                          <div className="flex flex-wrap gap-2 max-w-lg">
+                            {entries.map(([key, val]) => (
+                              <span key={key} className="bg-[#EEF4FF] text-[#2F4F97] px-2 py-1 rounded-md text-sm border border-[#D6E4FF] w-fit">
+                                <span className="font-semibold">{key.toUpperCase()}</span> {String(val)}
+                              </span>
+                            ))}
+                          </div>
+                        );
                       })()}
                     </div>
                   </div>

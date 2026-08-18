@@ -241,9 +241,9 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                     className="w-1/2"
                     onChange={(e) => updateEnglishReq(key, key, e.target.value)}
                   />
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 shrink-0" onClick={() => removeEnglishReq(key)}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors shrink-0" onClick={() => removeEnglishReq(key)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                 </div>
               ))}
             </div>
@@ -299,9 +299,9 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                       setForm(prev => ({ ...prev, yearly_fees: newArr }));
                     }}
                   />
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 shrink-0 hover:bg-red-50" onClick={() => setForm(p => ({ ...p, yearly_fees: p.yearly_fees.filter((_, idx) => idx !== i) }))}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors shrink-0" onClick={() => setForm(p => ({ ...p, yearly_fees: p.yearly_fees.filter((_, idx) => idx !== i) }))}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                 </div>
               ))}
             </div>
@@ -336,9 +336,9 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                       setForm(prev => ({ ...prev, other_fees: newArr }));
                     }}
                   />
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 shrink-0 hover:bg-red-50" onClick={() => setForm(p => ({ ...p, other_fees: p.other_fees.filter((_, idx) => idx !== i) }))}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors shrink-0" onClick={() => setForm(p => ({ ...p, other_fees: p.other_fees.filter((_, idx) => idx !== i) }))}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                 </div>
               ))}
             </div>
@@ -365,8 +365,8 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
             value={form.entry_requirements_text} 
             onChange={(e) => setForm(prev => ({ ...prev, entry_requirements_text: e.target.value }))} 
             placeholder="High school diploma, CGPA 3.0, etc..." 
-            rows={4}
-            className="bg-gray-50 rounded-xl resize-y"
+            rows={8}
+            className="bg-gray-50 rounded-xl resize-y min-h-[180px]"
           />
         </div>
 
@@ -397,23 +397,25 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
 
         {/* Group 6: Curriculum */}
         <div className="space-y-4 pt-4">
-          <div className="flex items-center justify-between">
-            <Label className="text-[13px] font-semibold text-gray-700">Curriculum (By Year/Semester)</Label>
-            <Button size="sm" className="h-7 px-3 text-xs" onClick={() => setForm(p => ({ ...p, curriculum: [...p.curriculum, { year: `Year ${p.curriculum.length + 1}`, modules: [] }] }))}>
-              <Plus className="h-3 w-3 mr-1" /> Add Year/Semester
-            </Button>
-          </div>
-          
-          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label className="text-[13px] font-semibold text-gray-700">Curriculum (By Year/Semester)</Label>
+              <Button type="button" size="sm" className="h-7 px-3 text-xs" onClick={() => setForm(p => ({ ...p, curriculum: [...p.curriculum, { year: `Year ${p.curriculum.length + 1}`, modules: [] }] }))}>
+                <Plus className="h-3 w-3 mr-1" /> Add Year/Semester
+              </Button>
+            </div>
+            
+            <div className="space-y-4">
             {form.curriculum.length === 0 && <p className="text-xs text-muted-foreground italic">No curriculum added yet.</p>}
             {form.curriculum.map((curr, i) => (
               <div key={i} className="bg-gray-50/50 border rounded-xl p-4 space-y-3 relative group">
-                <button 
-                  onClick={() => setForm(p => ({ ...p, curriculum: p.curriculum.filter((_, idx) => idx !== i) }))}
-                  className="absolute top-4 right-4 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setForm(p => ({ ...p, curriculum: p.curriculum.filter((_, idx) => idx !== i) }))}
+                    className="absolute top-4 right-4 h-11 w-11 rounded-xl text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors shrink-0 opacity-0 group-hover:opacity-100"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 
                 <div>
                   <Label className="text-xs text-gray-500">Period Title</Label>
@@ -458,7 +460,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                           newArr[i].modules.splice(j, 1);
                           setForm(prev => ({ ...prev, curriculum: newArr }));
                         }}>
-                          <Trash2 className="h-3.5 w-3.5" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     ))}
