@@ -513,15 +513,15 @@ export default function AdminDashboard() {
                 <FilePlus className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
                 View new student applications
               </button>
-              <button onClick={() => navigate('/admin/partner-content?tab=events&action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
+              <button onClick={() => navigate('/admin/partner-content/webinars?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
                 <Video className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
                 Open a webinar
               </button>
-              <button onClick={() => navigate('/admin/partner-content?tab=tutorials&action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
+              <button onClick={() => navigate('/admin/partner-content/tutorials?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
                 <PlayCircle className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
                 Add a platform tutorial
               </button>
-              <button onClick={() => navigate('/admin/partner-content?tab=managers&action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
+              <button onClick={() => navigate('/admin/partner-content/account-managers?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
                 <UserCog className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
                 Add a manager
               </button>

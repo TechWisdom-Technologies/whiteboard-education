@@ -36,19 +36,28 @@ export default function AdminEvents() {
   }
 
   return (
-    <AdminCrudTable
-      title="Events"
-      data={data}
-      isLoading={isLoading}
-      fields={fields}
-      searchKey="title"
-      onInsert={(row) => insert.mutate(row)}
-      onUpdate={(row) => update.mutate(row)}
-      onDelete={(id) => del.mutate(id)}
-      onBulkUpsert={(rows) => bulkUpsert.mutateAsync(rows).then(() => undefined)}
-      onAddClick={() => setSearchParams({ action: "new" })}
-      onEditClick={(row) => setEditingRow(row)}
-      hideTitle
-    />
+    <div className="space-y-6 animate-fade-in">
+      <div className="flex flex-col gap-1 mb-2">
+        <h1 className="text-2xl font-bold text-[#1E293B]">Upcoming Webinars & Events</h1>
+        <p className="text-sm text-muted-foreground">
+          Webinars and events added here appear under <strong>Upcoming Webinars</strong> on the partner portal dashboard.
+        </p>
+      </div>
+
+      <AdminCrudTable
+        title="Events"
+        data={data}
+        isLoading={isLoading}
+        fields={fields}
+        searchKey="title"
+        onInsert={(row) => insert.mutate(row)}
+        onUpdate={(row) => update.mutate(row)}
+        onDelete={(id) => del.mutate(id)}
+        onBulkUpsert={(rows) => bulkUpsert.mutateAsync(rows).then(() => undefined)}
+        onAddClick={() => setSearchParams({ action: "new" })}
+        onEditClick={(row) => setEditingRow(row)}
+        hideTitle
+      />
+    </div>
   );
 }
