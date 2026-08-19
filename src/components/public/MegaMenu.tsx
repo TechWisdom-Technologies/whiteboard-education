@@ -268,14 +268,14 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
                         </p>
                       </div>
                       {hasRole("admin") && (
-                        <DropdownMenuItem onClick={() => navigate("/admin")} className="cursor-pointer rounded-lg py-2.5">
-                          <ShieldCheck className="mr-2 h-4 w-4 text-[#2F4F97]" />
+                        <DropdownMenuItem onClick={() => navigate("/admin")} className="group cursor-pointer rounded-lg py-2.5">
+                          <ShieldCheck className="mr-2 h-4 w-4 text-[#2F4F97] group-focus:text-white transition-colors" />
                           <span>Admin Panel</span>
                         </DropdownMenuItem>
                       )}
                       {hasRole("partner") && (
-                        <DropdownMenuItem onClick={() => navigate("/partner-dashboard")} className="cursor-pointer rounded-lg py-2.5">
-                          <LayoutDashboard className="mr-2 h-4 w-4 text-[#2F4F97]" />
+                        <DropdownMenuItem onClick={() => navigate("/partner-dashboard")} className="group cursor-pointer rounded-lg py-2.5">
+                          <LayoutDashboard className="mr-2 h-4 w-4 text-[#2F4F97] group-focus:text-white transition-colors" />
                           <span>Partner Dashboard</span>
                         </DropdownMenuItem>
                       )}

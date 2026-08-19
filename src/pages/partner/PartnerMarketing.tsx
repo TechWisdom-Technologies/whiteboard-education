@@ -16,10 +16,17 @@ const marketingAssets = [
 export default function PartnerMarketing() {
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 animate-fade-in p-2 sm:p-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-[#1E293B]">Documents</h1>
+          <p className="text-sm text-[#64748B] mt-0.5">Manage and download your marketing assets</p>
+        </div>
+      </div>
+
       {/* Downloadable Assets */}
       <div>
-        <h2 className="text-[12px] font-normal mb-4">Downloadable Assets</h2>
+        <h2 className="text-base font-semibold mb-4 text-[#1E293B]">Downloadable Assets</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {marketingAssets.map((asset, i) => (
             <Card key={asset.id} className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-fade-in" style={{ animationDelay: `${i * 80}ms` }}>
