@@ -538,7 +538,17 @@ export type Database = {
           trade_license_url: string | null
           updated_at: string
           user_id: string | null
-        }
+                    website_url: string | null
+            registration_number: string | null
+            agency_email: string | null
+            agency_phone: string | null
+            rep_email: string | null
+            rep_phone: string | null
+            facebook_url: string | null
+            linkedin_url: string | null
+            instagram_url: string | null
+            youtube_url: string | null
+}
         Insert: {
           admin_notes?: string | null
           agency_name: string
@@ -557,7 +567,17 @@ export type Database = {
           trade_license_url?: string | null
           updated_at?: string
           user_id?: string | null
-        }
+                    website_url?: string | null
+            registration_number?: string | null
+            agency_email?: string | null
+            agency_phone?: string | null
+            rep_email?: string | null
+            rep_phone?: string | null
+            facebook_url?: string | null
+            linkedin_url?: string | null
+            instagram_url?: string | null
+            youtube_url?: string | null
+}
         Update: {
           admin_notes?: string | null
           agency_name?: string
@@ -576,7 +596,17 @@ export type Database = {
           trade_license_url?: string | null
           updated_at?: string
           user_id?: string | null
-        }
+                    website_url?: string | null
+            registration_number?: string | null
+            agency_email?: string | null
+            agency_phone?: string | null
+            rep_email?: string | null
+            rep_phone?: string | null
+            facebook_url?: string | null
+            linkedin_url?: string | null
+            instagram_url?: string | null
+            youtube_url?: string | null
+}
         Relationships: []
       }
       profiles: {

@@ -34,6 +34,9 @@ interface PartnerData {
   status: string;
   admin_notes?: string;
   certificate_urls?: any;
+  registration_number?: string;
+  nid_document_url?: string;
+  trade_license_url?: string;
 }
 
 interface UserProfile {
