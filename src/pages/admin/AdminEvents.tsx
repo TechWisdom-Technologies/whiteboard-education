@@ -1,5 +1,8 @@
+import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import AdminCrudTable, { FieldConfig } from "@/components/admin/AdminCrudTable";
 import { useTableData, useInsertRow, useUpdateRow, useDeleteRow, useBulkUpsertRows } from "@/hooks/useSupabaseData";
+import AdminEventForm from "./AdminEventForm";
 
 export default function AdminEvents() {
   const { data, isLoading } = useTableData("events");
@@ -7,6 +10,15 @@ export default function AdminEvents() {
   const update = useUpdateRow("events");
   const del = useDeleteRow("events");
   const bulkUpsert = useBulkUpsertRows("events");
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [editingRow, setEditingRow] = useState<any | null>(null);
+  const action = searchParams.get("action");
+
+  const closeForm = () => {
+    setSearchParams(new URLSearchParams());
+    setEditingRow(null);
+  };
 
   const fields: FieldConfig[] = [
     { key: "title", label: "Title", showInTable: true },
@@ -19,6 +31,10 @@ export default function AdminEvents() {
     { key: "university_ids", label: "University IDs", type: "json_array", showInTable: false, placeholder: '["uuid-1","uuid-2"]' },
   ];
 
+  if (action === "new" || editingRow) {
+    return <AdminEventForm initialData={editingRow} onCancel={closeForm} onSuccess={closeForm} />;
+  }
+
   return (
     <AdminCrudTable
       title="Events"
@@ -30,6 +46,8 @@ export default function AdminEvents() {
       onUpdate={(row) => update.mutate(row)}
       onDelete={(id) => del.mutate(id)}
       onBulkUpsert={(rows) => bulkUpsert.mutateAsync(rows).then(() => undefined)}
+      onAddClick={() => setSearchParams({ action: "new" })}
+      onEditClick={(row) => setEditingRow(row)}
     />
   );
 }

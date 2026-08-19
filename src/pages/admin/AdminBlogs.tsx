@@ -1,5 +1,8 @@
+import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import AdminCrudTable, { FieldConfig } from "@/components/admin/AdminCrudTable";
 import { useTableData, useInsertRow, useUpdateRow, useDeleteRow, useBulkUpsertRows } from "@/hooks/useSupabaseData";
+import AdminBlogForm from "./AdminBlogForm";
 
 const fields: FieldConfig[] = [
   { key: "title", label: "Title", showInTable: true },
@@ -19,6 +22,19 @@ export default function AdminBlogs() {
   const del = useDeleteRow("blogs");
   const bulkUpsert = useBulkUpsertRows("blogs");
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [editingRow, setEditingRow] = useState<any | null>(null);
+  const action = searchParams.get("action");
+
+  const closeForm = () => {
+    setSearchParams(new URLSearchParams());
+    setEditingRow(null);
+  };
+
+  if (action === "new" || editingRow) {
+    return <AdminBlogForm initialData={editingRow} onCancel={closeForm} onSuccess={closeForm} />;
+  }
+
   return (
     <AdminCrudTable
       title="Blog Posts"
@@ -30,6 +46,8 @@ export default function AdminBlogs() {
       onUpdate={(row) => update.mutate({ ...row, date: new Date().toISOString().split('T')[0] })}
       onDelete={(id) => del.mutate(id)}
       onBulkUpsert={(rows) => bulkUpsert.mutateAsync(rows).then(() => undefined)}
+      onAddClick={() => setSearchParams({ action: "new" })}
+      onEditClick={(row) => setEditingRow(row)}
     />
   );
 }

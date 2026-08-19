@@ -1,6 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import AdminCrudTable, { FieldConfig } from "@/components/admin/AdminCrudTable";
 import { useTableData, useInsertRow, useUpdateRow, useDeleteRow, useBulkUpsertRows } from "@/hooks/useSupabaseData";
+import AdminAccommodationForm from "./AdminAccommodationForm";
 
 export default function AdminAccommodations() {
   const { data, isLoading } = useTableData("accommodations");
@@ -9,6 +11,15 @@ export default function AdminAccommodations() {
   const update = useUpdateRow("accommodations");
   const del = useDeleteRow("accommodations");
   const bulkUpsert = useBulkUpsertRows("accommodations");
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [editingRow, setEditingRow] = useState<any | null>(null);
+  const action = searchParams.get("action");
+
+  const closeForm = () => {
+    setSearchParams(new URLSearchParams());
+    setEditingRow(null);
+  };
 
   const fields = useMemo<FieldConfig[]>(() => [
     { key: "name", label: "Name", showInTable: true },
@@ -39,6 +50,16 @@ export default function AdminAccommodations() {
     },
   ], [universities]);
 
+  if (action === "new" || editingRow) {
+    return (
+      <AdminAccommodationForm
+        initialData={editingRow}
+        onCancel={closeForm}
+        onSuccess={closeForm}
+      />
+    );
+  }
+
   return (
     <AdminCrudTable
       title="Accommodations"
@@ -50,6 +71,8 @@ export default function AdminAccommodations() {
       onUpdate={(row) => update.mutate(row)}
       onDelete={(id) => del.mutate(id)}
       onBulkUpsert={(rows) => bulkUpsert.mutateAsync(rows).then(() => undefined)}
+      onAddClick={() => setSearchParams({ action: "new" })}
+      onEditClick={(row) => setEditingRow(row)}
     />
   );
 }

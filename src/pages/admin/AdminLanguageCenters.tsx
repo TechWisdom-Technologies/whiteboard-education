@@ -1,6 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import AdminCrudTable, { FieldConfig } from "@/components/admin/AdminCrudTable";
 import { useTableData, useInsertRow, useUpdateRow, useDeleteRow, useBulkUpsertRows } from "@/hooks/useSupabaseData";
+import AdminLanguageCenterForm from "./AdminLanguageCenterForm";
 
 const fields: FieldConfig[] = [
   { key: "name", label: "Center Name", showInTable: true },
@@ -21,61 +23,52 @@ export default function AdminLanguageCenters() {
   const del = useDeleteRow("language_centers");
   const bulkUpsert = useBulkUpsertRows("language_centers");
 
-  // Map JSONB fields to arrays for visual editing
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [editingRow, setEditingRow] = useState<any | null>(null);
+  const action = searchParams.get("action");
+
+  const closeForm = () => {
+    setSearchParams(new URLSearchParams());
+    setEditingRow(null);
+  };
+
   const mappedData = useMemo(() => {
     if (!data) return [];
-    return data.map((row: any) => {
-      return {
-        ...row,
-        more_info: Array.isArray(row.more_info) ? row.more_info : [],
-        tuition_fees: Array.isArray(row.tuition_fees) ? row.tuition_fees : [],
-        faqs: Array.isArray(row.faqs) ? row.faqs : [],
-      };
-    });
+    return data.map((row: any) => ({
+      ...row,
+      more_info: Array.isArray(row.more_info) ? row.more_info : [],
+      tuition_fees: Array.isArray(row.tuition_fees) ? row.tuition_fees : [],
+      faqs: Array.isArray(row.faqs) ? row.faqs : [],
+    }));
   }, [data]);
 
   const parseJsonField = (val: any) => {
     if (!val) return [];
     if (typeof val === "object") return val;
-    try {
-      return JSON.parse(val);
-    } catch {
-      return [];
-    }
+    try { return JSON.parse(val); } catch { return []; }
   };
 
   const handleInsert = (row: Record<string, any>) => {
     const { more_info, tuition_fees, faqs, ...rest } = row;
-    insert.mutate({
-      ...rest,
-      more_info: parseJsonField(more_info),
-      tuition_fees: parseJsonField(tuition_fees),
-      faqs: parseJsonField(faqs),
-    });
+    insert.mutate({ ...rest, more_info: parseJsonField(more_info), tuition_fees: parseJsonField(tuition_fees), faqs: parseJsonField(faqs) });
   };
 
   const handleUpdate = (row: Record<string, any>) => {
     const { more_info, tuition_fees, faqs, ...rest } = row;
-    update.mutate({
-      ...rest,
-      more_info: parseJsonField(more_info),
-      tuition_fees: parseJsonField(tuition_fees),
-      faqs: parseJsonField(faqs),
-    });
+    update.mutate({ ...rest, more_info: parseJsonField(more_info), tuition_fees: parseJsonField(tuition_fees), faqs: parseJsonField(faqs) });
   };
 
   const handleBulkUpsert = async (rows: Record<string, any>[]) => {
     const mapped = rows.map((row) => {
       const { more_info, tuition_fees, faqs, ...rest } = row;
-      return {
-        ...rest,
-        more_info: parseJsonField(more_info),
-        tuition_fees: parseJsonField(tuition_fees),
-        faqs: parseJsonField(faqs),
-      };
+      return { ...rest, more_info: parseJsonField(more_info), tuition_fees: parseJsonField(tuition_fees), faqs: parseJsonField(faqs) };
     });
     await bulkUpsert.mutateAsync(mapped);
   };
+
+  if (action === "new" || editingRow) {
+    return <AdminLanguageCenterForm initialData={editingRow} onCancel={closeForm} onSuccess={closeForm} />;
+  }
 
   return (
     <AdminCrudTable
@@ -88,6 +81,8 @@ export default function AdminLanguageCenters() {
       onUpdate={handleUpdate}
       onDelete={(id) => del.mutate(id)}
       onBulkUpsert={handleBulkUpsert}
+      onAddClick={() => setSearchParams({ action: "new" })}
+      onEditClick={(row) => setEditingRow(row)}
     />
   );
 }
