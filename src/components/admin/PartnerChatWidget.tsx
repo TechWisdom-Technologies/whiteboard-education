@@ -5,230 +5,129 @@ import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight,
   Loader2,
-  User,
   Shield,
-  Clock,
+  User,
   CheckCheck,
+  Clock,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-
-export interface ChatMessage {
-  id?: string;
-  student_id: string;
-  admin_name: string;
-  content: string;
-  created_at: string;
-}
-
-interface StudentChatWidgetProps {
-  student: {
-    id: string;
-    wb_student_id?: number;
-    full_name: string;
-    partner_id?: string;
-    status?: string;
-  };
+interface PartnerChatWidgetProps {
+  partnerId: string;
+  partnerName: string;
   session: any;
   user: any;
-  mode: "admin" | "partner";
-  partner?: any;
 }
 
-export function StudentChatWidget({
-  student,
-  session,
-  user,
-  mode,
-  partner,
-}: StudentChatWidgetProps) {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+export function PartnerChatWidget({ partnerId, partnerName, session, user }: PartnerChatWidgetProps) {
+  const [messages, setMessages] = useState<any[]>([]);
   const [inputText, setInputText] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const chatScrollRef = useRef<HTMLDivElement | null>(null);
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  const prevMsgCountRef = useRef<number>(0);
-
-  const headers = {
-    apikey: SUPABASE_KEY,
-    Authorization: `Bearer ${session?.access_token || SUPABASE_KEY}`,
-  };
-
-  // ─── Fetch Messages ────────────────────────────────────────
-  const fetchMessages = async (silent = false) => {
-    if (!student?.id || !session) return;
-    if (!silent) setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from("student_notes" as any)
-        .select("*")
-        .eq("student_id", student.id)
-        .order("created_at", { ascending: true });
-
-      if (error) throw error;
-      if (Array.isArray(data)) {
-        setMessages(data as unknown as ChatMessage[]);
-      }
-    } catch (err: any) {
-      if (!silent) {
-        console.error("Error loading chat messages:", err);
-      }
-    } finally {
-      if (!silent) setLoading(false);
-    }
-  };
+  const chatScrollRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
+    if (!partnerId) return;
+
     fetchMessages();
 
-    if (!student?.id) return;
-
-    // Realtime channel
-    const channelName = `student-chat-${student.id}`;
+    // Subscribe to realtime updates
     const channel = supabase
-      .channel(channelName)
+      .channel("partner_notes_changes")
       .on(
         "postgres_changes",
         {
-          event: "*",
+          event: "INSERT",
           schema: "public",
-          table: "student_notes",
-          filter: `student_id=eq.${student.id}`,
+          table: "partner_notes",
+          filter: `partner_id=eq.${partnerId}`,
         },
-        () => {
-          fetchMessages(true);
+        (payload) => {
+          setMessages((prev) => {
+            if (prev.find((m) => m.id === payload.new.id)) return prev;
+            return [...prev, payload.new];
+          });
+          scrollToBottom();
         }
       )
-      .on("broadcast", { event: "new_msg" }, (payload) => {
-        if (payload?.payload) {
-          setMessages((prev) => {
-            const exists = prev.some((m) => m.id === payload.payload.id);
-            if (exists) return prev;
-            return [...prev, payload.payload];
-          });
-        }
-      })
       .subscribe();
-
-    // Periodic poll fallback every 8 seconds
-    const poll = window.setInterval(() => {
-      fetchMessages(true);
-    }, 8000);
 
     return () => {
       supabase.removeChannel(channel);
-      window.clearInterval(poll);
     };
-  }, [student?.id, session?.access_token]);
+  }, [partnerId]);
 
-  // Scroll ONLY the internal chat container to bottom when new messages arrive (without moving window)
-  useEffect(() => {
-    if (chatScrollRef.current && messages.length > prevMsgCountRef.current) {
-      chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
-    }
-    prevMsgCountRef.current = messages.length;
-  }, [messages]);
-
-  // ─── Send Message ───────────────────────────────────────────
-  const handleSendMessage = async () => {
-    const text = inputText.trim();
-    if (!text || !student || !session || sending) return;
-
-    setSending(true);
+  const fetchMessages = async () => {
     try {
-      let adminNameField = "";
-      if (mode === "admin") {
-        adminNameField = "[Role:Admin]";
-      } else {
-        const agency = partner?.agency_name || "Partner Agency";
-        adminNameField = `[Role:Partner] ${agency}`;
-      }
-
-      const newRecord = {
-        student_id: student.id,
-        admin_name: adminNameField,
-        content: text,
-      };
-
       const { data, error } = await supabase
-        .from("student_notes" as any)
-        .insert(newRecord)
-        .select();
+        .from("partner_notes" as any)
+        .select("*")
+        .eq("partner_id", partnerId)
+        .order("created_at", { ascending: true });
 
       if (error) throw error;
-
-      const savedMsg: ChatMessage = (data?.[0] as unknown as ChatMessage) || {
-        ...newRecord,
-        id: `temp-${Date.now()}`,
-        created_at: new Date().toISOString(),
-      };
-
-      // Optimistic update
-      setMessages((prev) => [...prev, savedMsg]);
-      setInputText("");
-
-      // Broadcast via realtime channel
-      supabase.channel(`student-chat-${student.id}`).send({
-        type: "broadcast",
-        event: "new_msg",
-        payload: savedMsg,
-      });
-
-      // Send partner notification if admin sent it
-      if (mode === "admin" && student.partner_id) {
-        try {
-          await supabase.from("partner_notifications" as any).insert({
-            partner_id: student.partner_id,
-            student_id: student.id,
-            title: `New message on ${student.full_name}`,
-            message: text.length > 90 ? text.slice(0, 90) + "..." : text,
-            type: "info",
-          });
-        } catch (_) {
-          // ignore notification error
-        }
-      }
-    } catch (e: any) {
-      const msg = e?.message || "Failed to send message";
-      if (msg.includes("row-level security")) {
-        toast.error("Database RLS policy needed for student_notes. Please run the SQL policy setup in Supabase.");
-      } else {
-        toast.error(msg);
-      }
+      setMessages(data || []);
+      scrollToBottom();
+    } catch (err: any) {
+      console.error("Failed to load chat history:", err.message);
     } finally {
-      setSending(false);
-      if (textareaRef.current) {
-        textareaRef.current.focus();
-      }
+      setLoading(false);
     }
   };
 
-  // Helper to parse sender role & agency name
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      if (chatScrollRef.current) {
+        chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+      }
+    }, 50);
+  };
+
+  const handleSendMessage = async () => {
+    if (!inputText.trim() || !user || !session) return;
+    setSending(true);
+
+    const adminName = "System Admin";
+
+    try {
+      // 1. Insert chat message
+      const { error } = await supabase.from("partner_notes" as any).insert({
+        partner_id: partnerId,
+        content: inputText.trim(),
+        admin_name: adminName,
+      });
+
+      if (error) throw error;
+
+      setInputText("");
+      if (textareaRef.current) {
+        textareaRef.current.style.height = "auto";
+      }
+      scrollToBottom();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to send message");
+    } finally {
+      setSending(false);
+    }
+  };
+
   const parseSender = (admin_name: string) => {
     if (!admin_name) return { role: "admin", agencyName: "" };
-    if (admin_name.startsWith("[Role:Admin]")) {
+    if (admin_name === "System Admin" || admin_name === "Admin") {
       return { role: "admin", agencyName: "" };
-    }
-    if (admin_name.startsWith("[Role:Partner]")) {
-      const agency = admin_name.replace("[Role:Partner]", "").trim();
-      return { role: "partner", agencyName: agency || partner?.agency_name || "Partner Agency" };
     }
     const lower = admin_name.toLowerCase();
     if (lower.includes("partner")) {
       const cleaned = admin_name.replace(/partner:?/i, "").trim();
-      return { role: "partner", agencyName: cleaned || partner?.agency_name || "Partner Agency" };
+      return { role: "partner", agencyName: cleaned || partnerName || "Partner Agency" };
     }
     return { role: "admin", agencyName: "" };
   };
 
   const isOwn = (senderRole: string) => {
-    if (mode === "admin") return senderRole === "admin";
-    if (mode === "partner") return senderRole === "partner";
-    return false;
+    return senderRole === "admin";
   };
 
   const formatMsgTime = (dateStr: string) => {
@@ -262,9 +161,9 @@ export function StudentChatWidget({
       {/* ── Chat Header ── */}
       <CardHeader className="py-3 px-4 bg-[#1E293B] text-white flex flex-row items-center justify-between space-y-0 shrink-0 select-none shadow-sm">
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 inline-block" />
+          <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 inline-block animate-pulse" />
           <h3 className="text-xs font-semibold text-white tracking-wide">
-            {mode === "admin" ? "Chat with Partner" : "Chat With Whiteboard Admin"}
+            Internal Admin History
           </h3>
         </div>
       </CardHeader>
@@ -273,12 +172,12 @@ export function StudentChatWidget({
       <CardContent ref={chatScrollRef} className="flex-1 p-3.5 overflow-y-auto space-y-3 bg-[#F8FAFC]/50 custom-scrollbar">
         {loading ? (
           <div className="flex flex-col items-center justify-center h-full gap-2 text-gray-400 py-10">
-            <Loader2 className="w-5 h-5 animate-spin text-[#2F4F97]" />
+            <Loader2 className="w-5 h-5 animate-spin text-[#1d283a]" />
             <span className="text-xs">Loading...</span>
           </div>
         ) : messages.length === 0 ? (
           <div className="flex items-center justify-center h-full text-xs text-gray-400 py-8">
-            No messages yet
+            No history yet
           </div>
         ) : (
           <div className="space-y-3">
@@ -322,7 +221,7 @@ export function StudentChatWidget({
                         <div className="flex items-center gap-1.5">
                           <Badge
                             variant="outline"
-                            className="text-[9px] font-semibold h-4 px-1.5 bg-[#2F4F97] text-white border-transparent flex items-center gap-1 shadow-2xs"
+                            className="text-[9px] font-semibold h-4 px-1.5 bg-gray-500 text-white border-transparent flex items-center gap-1 shadow-2xs"
                           >
                             <User className="w-2.5 h-2.5" /> Partner
                           </Badge>
@@ -340,7 +239,7 @@ export function StudentChatWidget({
                       className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 shadow-xs text-xs leading-relaxed break-words whitespace-pre-wrap text-white ${
                         role === "admin"
                           ? `bg-[#1E293B] ${own ? "rounded-br-xs" : "rounded-bl-xs"}`
-                          : `bg-[#2F4F97] ${own ? "rounded-br-xs" : "rounded-bl-xs"}`
+                          : `bg-gray-600 ${own ? "rounded-br-xs" : "rounded-bl-xs"}`
                       }`}
                     >
                       {msg.content}
@@ -354,7 +253,7 @@ export function StudentChatWidget({
                     >
                       <Clock className="w-2.5 h-2.5" />
                       <span>{formatMsgTime(msg.created_at)}</span>
-                      {own && <CheckCheck className="w-3 h-3 text-[#2F4F97]" />}
+                      {own && <CheckCheck className="w-3 h-3 text-[#1E293B]" />}
                     </div>
                   </div>
                 </div>
@@ -383,7 +282,7 @@ export function StudentChatWidget({
                 handleSendMessage();
               }
             }}
-            placeholder="Type your message..."
+            placeholder="Type an internal note..."
             rows={1}
             className="flex-1 resize-none min-h-[38px] max-h-[72px] text-xs p-2 rounded-lg border border-gray-200 bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-gray-300 focus:bg-white focus:text-gray-900 focus:caret-gray-900 shadow-none transition-none"
           />
@@ -391,12 +290,8 @@ export function StudentChatWidget({
             type="submit"
             size="icon"
             disabled={sending || !inputText.trim()}
-            className={`h-9 w-9 rounded-full text-white shrink-0 shadow-sm transition-all ${
-              mode === "admin"
-                ? "bg-[#1E293B] hover:bg-[#0f172a]"
-                : "bg-[#2F4F97] hover:bg-[#243e78]"
-            }`}
-            title="Send Message"
+            className="h-9 w-9 rounded-full text-white shrink-0 shadow-sm transition-all bg-[#1E293B] hover:bg-[#0f172a]"
+            title="Save Note"
           >
             {sending ? (
               <Loader2 className="w-4 h-4 animate-spin" />
