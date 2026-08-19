@@ -18,7 +18,7 @@ const items = [
   { title: "Language Centers", url: "/admin/language-centers", icon: Languages },
   { title: "Blog Posts", url: "/admin/blogs", icon: FileText },
   { title: "Leads", url: "/admin/leads", icon: Target },
-  { title: "Settings", url: "/admin/settings", icon: Settings },
+  { title: "Profile Setting", url: "/admin/settings", icon: Settings },
 ];
 
 export function AdminSidebar() {

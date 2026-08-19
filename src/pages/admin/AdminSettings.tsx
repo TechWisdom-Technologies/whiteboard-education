@@ -1,12 +1,17 @@
 import { useState, useEffect, useRef } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Camera, Save, Loader2, Building2, User, Globe, Mail, Phone, Lock, KeyRound, ShieldCheck, ArrowRight, CheckCircle2, Trash2, Plus, Video, UserCircle } from "lucide-react";
+import {
+  Camera, Building2, Mail, Phone, Globe, Loader2,
+  User, KeyRound, ShieldCheck, CheckCircle2, Pencil,
+  AlertCircle, Save
+} from "lucide-react";
 import { toast } from "sonner";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 
@@ -15,32 +20,121 @@ interface UserProfile {
   avatar_url: string;
 }
 
+type PasswordStep = "idle" | "sending" | "code_sent" | "verifying" | "verified" | "updating";
+
+function OtpDigitBoxes({
+  value,
+  onChange,
+  disabled,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  disabled?: boolean;
+}) {
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const digits = Array.from({ length: 6 }, (_, i) => value[i] || "");
+
+  const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/\D/g, "");
+    if (!val) {
+      const newDigits = [...digits];
+      newDigits[index] = "";
+      onChange(newDigits.join(""));
+      return;
+    }
+    const char = val.slice(-1);
+    const newDigits = [...digits];
+    newDigits[index] = char;
+    const combined = newDigits.join("");
+    onChange(combined);
+    if (index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && !digits[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    if (pastedData) {
+      onChange(pastedData);
+      const nextFocus = Math.min(pastedData.length, 5);
+      inputRefs.current[nextFocus]?.focus();
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+      {digits.map((digit, idx) => (
+        <input
+          key={idx}
+          ref={(el) => { inputRefs.current[idx] = el; }}
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          maxLength={1}
+          value={digit}
+          disabled={disabled}
+          onChange={(e) => handleChange(idx, e)}
+          onKeyDown={(e) => handleKeyDown(idx, e)}
+          onPaste={handlePaste}
+          className="h-11 w-10 sm:w-11 text-center font-bold text-base bg-white text-rose-600 rounded-xl border border-slate-300 outline-none focus:outline-none focus:bg-white focus:text-rose-600 focus:border-rose-600 focus:ring-2 focus:ring-rose-500/20 focus:caret-rose-600 shadow-2xs transition-all select-none"
+        />
+      ))}
+    </div>
+  );
+}
+
+function InfoTile({ icon: Icon, label, value }: { icon: any; label: string; value?: string | null }) {
+  const isEmpty = !value || value.trim() === "";
+  const displayValue = isEmpty ? "Not provided" : value;
+
+  return (
+    <div className="p-4 sm:p-5 rounded-2xl border border-slate-200/80 bg-white flex items-start gap-4 shadow-2xs hover:border-slate-300 transition-colors">
+      <div className="p-2.5 rounded-xl bg-[#1E293B]/5 text-[#1E293B] shrink-0 mt-0.5">
+        <Icon className="h-5 w-5" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-xs sm:text-[13px] font-medium text-[#1E293B] uppercase tracking-wider mb-1">{label}</p>
+        <p className={`text-[16px] sm:text-[17px] font-normal truncate leading-snug ${isEmpty ? "text-black/60 italic" : "text-black"}`}>
+          {displayValue}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminSettings() {
   const { user, session, resetPassword, verifyResetOtp, updatePassword } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(true);
-  const [savingProfile, setSavingProfile] = useState(false);
-  const [savingSystem, setSavingSystem] = useState(false);
   const [uploading, setUploading] = useState(false);
-  
   const [profile, setProfile] = useState<UserProfile>({ display_name: "", avatar_url: "" });
 
-  type TabType = "profile" | "security" | "platform";
-  const [activeTab, setActiveTab] = useState<TabType>("profile");
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [editProfileData, setEditProfileData] = useState<UserProfile>({ display_name: "", avatar_url: "" });
 
-  // Password change state
-  type PwStep = "idle" | "sending" | "code_sent" | "verifying" | "verified" | "updating";
-  const [pwStep, setPwStep] = useState<PwStep>("idle");
-  const [otpCode, setOtpCode] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-
-  // System settings (legacy)
+  const [isEditingSystem, setIsEditingSystem] = useState(false);
+  const [savingSystem, setSavingSystem] = useState(false);
   const [systemSettings, setSystemSettings] = useState({
     companyName: "Whiteboard Education",
     contactEmail: "cambry.bd@gmail.com",
     phoneNumber: "+880 1730589112",
   });
+  const [editSystemData, setEditSystemData] = useState({ ...systemSettings });
+
+  // Password change state
+  const [pwStep, setPwStep] = useState<PasswordStep>("idle");
+  const [otpCode, setOtpCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [pwError, setPwError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!session || !user) return;
@@ -67,33 +161,18 @@ export default function AdminSettings() {
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
-
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error("File too large. Max 2MB.");
-      return;
-    }
+    if (file.size > 2 * 1024 * 1024) { toast.error("File too large. Max 2MB."); return; }
 
     setUploading(true);
     try {
       const ext = file.name.split(".").pop();
       const path = `admin_${user.id}/avatar_${Date.now()}.${ext}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("partner-documents")
-        .upload(path, file, { upsert: true });
+      const { error: uploadError } = await supabase.storage.from("partner-documents").upload(path, file, { upsert: true });
       if (uploadError) throw uploadError;
-
-      const { data: urlData } = supabase.storage
-        .from("partner-documents")
-        .getPublicUrl(path);
-
+      const { data: urlData } = supabase.storage.from("partner-documents").getPublicUrl(path);
       const avatarUrl = urlData.publicUrl + `?t=${Date.now()}`;
 
-      await supabase
-        .from("profiles")
-        .update({ avatar_url: avatarUrl })
-        .eq("user_id", user.id);
-
+      await supabase.from("profiles").update({ avatar_url: avatarUrl }).eq("user_id", user.id);
       setProfile(prev => ({ ...prev, avatar_url: avatarUrl }));
       toast.success("Profile picture updated!");
     } catch (err: any) {
@@ -102,329 +181,371 @@ export default function AdminSettings() {
     setUploading(false);
   };
 
+  const startEditingProfile = () => {
+    setEditProfileData({ ...profile });
+    setIsEditingProfile(true);
+  };
+
   const handleSaveProfile = async () => {
     if (!user) return;
     setSavingProfile(true);
     try {
-      await supabase
-        .from("profiles")
-        .update({ display_name: profile.display_name })
-        .eq("user_id", user.id);
-      toast.success("Profile saved successfully!");
+      await supabase.from("profiles").update({ display_name: editProfileData.display_name }).eq("user_id", user.id);
+      setProfile(editProfileData);
+      toast.success("Profile updated successfully!");
+      setIsEditingProfile(false);
     } catch {
-      toast.error("Failed to save profile");
+      toast.error("Failed to update profile.");
     }
     setSavingProfile(false);
+  };
+
+  const startEditingSystem = () => {
+    setEditSystemData({ ...systemSettings });
+    setIsEditingSystem(true);
   };
 
   const handleSaveSystem = async () => {
     setSavingSystem(true);
     setTimeout(() => {
+      setSystemSettings(editSystemData);
       toast.success("System settings updated successfully!");
       setSavingSystem(false);
+      setIsEditingSystem(false);
     }, 800);
   };
 
   // ─── Password Change Flow ───
   const handleSendCode = async () => {
     if (!user?.email) return;
+    setPwError(null);
     setPwStep("sending");
     const result = await resetPassword(user.email);
     if (result.success) {
       setPwStep("code_sent");
-      toast.success("A 6-digit code has been sent to your email.");
+      setPwError(null);
     } else {
-      toast.error(result.error || "Failed to send code.");
       setPwStep("idle");
+      setPwError(result.error || "Failed to send code. Please try again.");
     }
   };
 
   const handleVerifyCode = async () => {
-    if (!user?.email || otpCode.length < 6) { toast.error("Please enter the 6-digit code."); return; }
+    setPwError(null);
+    if (!user?.email || otpCode.length < 6) {
+      setPwError("Please enter the complete 6-digit verification code.");
+      return;
+    }
     setPwStep("verifying");
     const result = await verifyResetOtp(user.email, otpCode);
     if (result.success) {
       setPwStep("verified");
-      toast.success("Code verified! Set your new password.");
+      setPwError(null);
     } else {
-      toast.error(result.error || "Invalid code.");
       setPwStep("code_sent");
+      const rawErr = result.error || "";
+      if (rawErr.toLowerCase().includes("token") || rawErr.toLowerCase().includes("invalid") || rawErr.toLowerCase().includes("expired")) {
+        setPwError("The verification code has expired or is invalid. Please check your code or request a new one.");
+      } else {
+        setPwError(rawErr || "Invalid verification code. Please try again.");
+      }
     }
   };
 
-  const handleUpdatePw = async () => {
-    if (newPassword.length < 6) { toast.error("Password must be at least 6 characters."); return; }
-    if (newPassword !== confirmPassword) { toast.error("Passwords do not match."); return; }
+  const handleUpdatePassword = async () => {
+    setPwError(null);
+    if (newPassword.length < 6) { setPwError("Password must be at least 6 characters long."); return; }
+    if (newPassword !== confirmPassword) { setPwError("Passwords do not match. Please re-enter."); return; }
     setPwStep("updating");
     const result = await updatePassword(newPassword);
     if (result.success) {
       toast.success("Password updated successfully!");
-      setPwStep("idle"); setOtpCode(""); setNewPassword(""); setConfirmPassword("");
+      setPwStep("idle"); setOtpCode(""); setNewPassword(""); setConfirmPassword(""); setPwError(null);
     } else {
-      toast.error(result.error || "Failed to update password.");
       setPwStep("verified");
+      setPwError(result.error || "Failed to update password. Please try again.");
     }
   };
 
-  const resetPwFlow = () => { setPwStep("idle"); setOtpCode(""); setNewPassword(""); setConfirmPassword(""); };
+  const resetPwFlow = () => {
+    setPwStep("idle"); setOtpCode(""); setNewPassword(""); setConfirmPassword(""); setPwError(null);
+  };
 
   if (loading) return <LoadingScreen fullScreen />;
 
   const initials = (profile.display_name || user?.email || "A")
-    .split(" ")
-    .map(w => w[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
+    .split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+
+  const inputCls = "h-12 text-base bg-white text-black border border-slate-300 rounded-xl px-3.5 focus:bg-white focus:text-black focus:border-[#1E293B] focus:ring-2 focus:ring-[#1E293B]/20 focus:caret-black placeholder:text-gray-400 focus:placeholder:text-gray-400 transition-all shadow-none font-normal";
 
   return (
-    <div className="space-y-8 animate-fade-in pb-10">
+    <div className="space-y-6 animate-fade-in pb-12 max-w-7xl mx-auto">
+      <div className="flex flex-col gap-1 mb-2">
+        <h1 className="text-2xl font-bold text-[#1E293B]">Profile Setting</h1>
+        <p className="text-sm text-muted-foreground">Manage your admin profile, platform settings, and security.</p>
+      </div>
+      <Card className="rounded-2xl border border-slate-200/80 shadow-sm bg-white overflow-hidden">
+        
+        {/* 1. Header: Avatar & Basic Info */}
+        <div className="p-6 sm:p-8 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center sm:items-start gap-6">
+          <div className="relative group shrink-0">
+            <Avatar className="w-[105px] h-[135px] rounded-lg border border-slate-200 shadow-sm bg-white overflow-hidden p-1">
+              <AvatarImage src={profile.avatar_url} className="object-contain w-full h-full rounded-md" />
+              <AvatarFallback className="text-3xl font-bold bg-[#1E293B]/10 text-[#1E293B] rounded-md">{initials}</AvatarFallback>
+            </Avatar>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              title="Change Avatar"
+              className="absolute inset-0 rounded-lg bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-200 flex flex-col items-center justify-center cursor-pointer text-white gap-1.5"
+            >
+              {uploading ? <Loader2 className="h-6 w-6 animate-spin text-white" /> : <Camera className="h-6 w-6 text-white" />}
+              <span className="text-[10px] font-semibold tracking-wide uppercase">Change</span>
+            </button>
+            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+          </div>
 
-
-      <div className="flex flex-col md:flex-row gap-8 items-start">
-        {/* Sidebar Nav */}
-        <div className="w-full md:w-56 flex flex-col gap-1 shrink-0">
-          <Button 
-            variant="ghost" 
-            onClick={() => setActiveTab("profile")}
-            className={`justify-start h-10 px-4 text-[13px] font-normal transition-colors ${activeTab === "profile" ? "bg-[#1d283a]/10 text-[#1d283a] hover:bg-[#1d283a]/20" : "text-gray-500 hover:text-[#1E293B] hover:bg-gray-100/50"}`}
-          >
-            <User className="mr-3 h-4 w-4" /> Admin Profile
-          </Button>
-          <Button 
-            variant="ghost" 
-            onClick={() => setActiveTab("security")}
-            className={`justify-start h-10 px-4 text-[13px] font-normal transition-colors ${activeTab === "security" ? "bg-[#1d283a]/10 text-[#1d283a] hover:bg-[#1d283a]/20" : "text-gray-500 hover:text-[#1E293B] hover:bg-gray-100/50"}`}
-          >
-            <Lock className="mr-3 h-4 w-4" /> Security
-          </Button>
-          <Button 
-            variant="ghost" 
-            onClick={() => setActiveTab("platform")}
-            className={`justify-start h-10 px-4 text-[13px] font-normal transition-colors ${activeTab === "platform" ? "bg-[#1d283a]/10 text-[#1d283a] hover:bg-[#1d283a]/20" : "text-gray-500 hover:text-[#1E293B] hover:bg-gray-100/50"}`}
-          >
-            <Globe className="mr-3 h-4 w-4" /> Platform Settings
-          </Button>
-        </div>
-
-        {/* Content Area */}
-        <div className="flex-1 w-full max-w-3xl">
-          
-          {/* Profile Settings */}
-          {activeTab === "profile" && (
-            <Card className="border-sidebar-border shadow-sm animate-fade-in">
-              <CardHeader className="pb-4 border-b border-gray-100 mb-6">
-                <CardTitle className="flex items-center gap-2 text-sm font-semibold text-[#1E293B]">
-                  Admin Profile
-                </CardTitle>
-                <CardDescription>Update your personal information and avatar.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8">
-                  <div className="relative group shrink-0">
-                    <Avatar className="h-28 w-28 border-4 border-background shadow-md rounded-full overflow-hidden shrink-0">
-                      <AvatarImage src={profile.avatar_url} className="object-cover w-full h-full rounded-full" />
-                      <AvatarFallback className="text-sm font-semibold bg-[#1d283a]/10 text-[#1d283a] rounded-full">{initials}</AvatarFallback>
-                    </Avatar>
-                    <button
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={uploading}
-                      className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
-                    >
-                      {uploading ? (
-                        <Loader2 className="h-6 w-6 text-white animate-spin" />
-                      ) : (
-                        <Camera className="h-6 w-6 text-white" />
-                      )}
-                    </button>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleAvatarUpload}
-                    />
+          <div className="flex-1 text-center sm:text-left space-y-2.5 w-full">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+              <div>
+                <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#1E293B] mb-3">
+                  Whiteboard Education
+                </h1>
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center gap-2 text-sm sm:text-base text-[#1E293B] justify-center sm:justify-start">
+                    <span className="font-semibold text-[#1E293B]">Admin:</span> {profile.display_name || "System Admin"}
                   </div>
-                  <div className="flex-1 space-y-5 w-full">
-                    <div className="space-y-2">
-                      <Label htmlFor="displayName" className="text-[12px] font-medium text-gray-700">Display Name</Label>
-                      <Input
-                        id="displayName"
-                        value={profile.display_name}
-                        onChange={e => setProfile(prev => ({ ...prev, display_name: e.target.value }))}
-                        placeholder="E.g. John Doe"
-                        className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#1d283a] focus:ring-1 focus:ring-[#1d283a] transition-colors shadow-sm"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-[12px] font-medium text-gray-700">Login Email</Label>
-                      <Input value={user?.email || ""} disabled className="h-10 text-[13px] bg-gray-50 border-gray-200 cursor-not-allowed text-gray-500 shadow-sm" />
-                      <p className="text-[11px] text-gray-500 mt-1">Email cannot be changed here. Contact support if you need to update it.</p>
-                    </div>
+                  <div className="flex items-center gap-2 text-sm sm:text-base text-[#1E293B] justify-center sm:justify-start">
+                    <span className="font-semibold text-[#1E293B]">Admin Email:</span> {user?.email}
+                  </div>
+                  <div className="flex items-center gap-2 text-sm sm:text-base text-[#1E293B] justify-center sm:justify-start">
+                    <span className="font-semibold text-[#1E293B]">Phone:</span> {systemSettings.phoneNumber}
                   </div>
                 </div>
-                <div className="pt-6 border-t border-gray-100 mt-8 flex justify-end">
-                  <Button onClick={handleSaveProfile} disabled={savingProfile} className="w-full sm:w-auto gap-2 font-medium text-[13px] h-10 px-6">
-                    {savingProfile ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                    Save Profile
+              </div>
+              <Badge variant="outline" className="bg-[#1E293B]/10 text-[#1E293B] border-[#1E293B]/30 px-3 py-1 text-xs font-semibold rounded-full uppercase shadow-sm flex items-center gap-1.5 shrink-0 mx-auto sm:mx-0 w-fit">
+                <ShieldCheck className="h-3.5 w-3.5" /> Super Admin
+              </Badge>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 sm:p-8 space-y-10">
+          
+          {/* 1. Profile Information */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-medium text-black">Admin Profile Information</h3>
+              {isEditingProfile ? (
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" onClick={() => setIsEditingProfile(false)} className="h-9 px-3.5 text-xs font-semibold">Cancel</Button>
+                  <Button size="sm" onClick={handleSaveProfile} disabled={savingProfile} className="h-9 px-4 text-xs font-semibold shadow-sm">
+                    {savingProfile ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : <Save className="h-3.5 w-3.5 mr-1.5" />} Save
                   </Button>
                 </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Security / Change Password */}
-          {activeTab === "security" && (
-            <Card className="border-sidebar-border shadow-sm animate-fade-in">
-              <CardHeader className="pb-4 border-b border-gray-100 mb-6">
-                <CardTitle className="flex items-center gap-2 text-sm font-semibold text-[#1E293B]">
-                  Security
-                </CardTitle>
-                <CardDescription>Update your account password using email verification.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {pwStep === "idle" && (
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
-                    <div className="flex-1 space-y-1">
-                      <p className="text-[13px] font-medium text-[#1E293B]">Change Password</p>
-                      <p className="text-[12px] text-gray-500">To change your password, we'll send a 6-digit verification code to <span className="font-medium text-[#1E293B]">{user?.email}</span>.</p>
-                    </div>
-                    <Button onClick={handleSendCode} className="gap-2 font-medium text-[13px] h-10 shrink-0 px-6">
-                      <KeyRound className="h-4 w-4" />
-                      Send Code
-                    </Button>
-                  </div>
-                )}
-
-                {pwStep === "sending" && (
-                  <div className="flex items-center gap-3 text-[13px] text-gray-500 p-4">
-                    <Loader2 className="h-5 w-5 animate-spin text-[#1d283a]" />
-                    Sending verification code to your email...
-                  </div>
-                )}
-
-                {pwStep === "code_sent" && (
-                  <div className="space-y-5 max-w-md">
-                    <div className="flex items-start gap-3 p-4 bg-blue-50/50 border border-blue-100 rounded-xl">
-                      <ShieldCheck className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
-                      <p className="text-[12px] text-blue-800 leading-relaxed">A 6-digit code has been sent to <span className="font-semibold">{user?.email}</span>. Check your inbox (and spam folder).</p>
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-[12px] font-medium text-gray-700">Verification Code</Label>
-                      <Input
-                        value={otpCode}
-                        onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                        placeholder="000000"
-                        className="h-12 text-lg bg-white border-gray-200 focus:border-[#1d283a] focus:ring-1 focus:ring-[#1d283a] shadow-sm tracking-[0.5em] text-center font-medium"
-                        maxLength={6}
-                      />
-                    </div>
-                    <div className="flex gap-3 pt-2">
-                      <Button onClick={handleVerifyCode} disabled={otpCode.length < 6} className="gap-2 font-medium text-[13px] h-10 px-6 flex-1">
-                        Verify Code <ArrowRight className="h-4 w-4 ml-1" />
-                      </Button>
-                      <Button variant="outline" onClick={resetPwFlow} className="text-[13px] h-10 px-6 shadow-sm">Cancel</Button>
-                    </div>
-                  </div>
-                )}
-
-                {pwStep === "verifying" && (
-                  <div className="flex items-center gap-3 text-[13px] text-gray-500 p-4">
-                    <Loader2 className="h-5 w-5 animate-spin text-[#1d283a]" />
-                    Verifying code...
-                  </div>
-                )}
-
-                {pwStep === "verified" && (
-                  <div className="space-y-5 max-w-md">
-                    <div className="flex items-start gap-3 p-4 bg-green-50/50 border border-green-100 rounded-xl">
-                      <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
-                      <p className="text-[12px] text-green-800 font-medium">Code verified! Set your new password below.</p>
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-[12px] font-medium text-gray-700">New Password</Label>
-                      <Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Min. 6 characters" className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#1d283a] focus:ring-1 focus:ring-[#1d283a] shadow-sm" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-[12px] font-medium text-gray-700">Confirm Password</Label>
-                      <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat new password" className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#1d283a] focus:ring-1 focus:ring-[#1d283a] shadow-sm" />
-                    </div>
-                    <div className="flex gap-3 pt-4">
-                      <Button onClick={handleUpdatePw} className="gap-2 font-medium text-[13px] h-10 px-6 flex-1">
-                        <Save className="h-4 w-4" /> Update Password
-                      </Button>
-                      <Button variant="outline" onClick={resetPwFlow} className="text-[13px] h-10 px-6 shadow-sm">Cancel</Button>
-                    </div>
-                  </div>
-                )}
-
-                {pwStep === "updating" && (
-                  <div className="flex items-center gap-3 text-[13px] text-gray-500 p-4">
-                    <Loader2 className="h-5 w-5 animate-spin text-[#1d283a]" />
-                    Updating your password...
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Platform Settings */}
-          {activeTab === "platform" && (
-            <div className="space-y-6">
-              {/* System Contact Settings */}
-              <Card className="border-sidebar-border shadow-sm animate-fade-in">
-                <CardHeader className="pb-4 border-b border-gray-100 mb-6">
-                  <CardTitle className="flex items-center gap-2 text-sm font-semibold text-[#1E293B]">
-                    System Contact Info
-                  </CardTitle>
-                  <CardDescription>Manage global contact information shown on the public site.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label className="text-[12px] font-medium text-gray-700 flex items-center gap-1.5">
-                        <Building2 className="h-3.5 w-3.5 text-gray-400" /> Company Name
-                      </Label>
-                      <Input
-                        value={systemSettings.companyName}
-                        onChange={(e) => setSystemSettings(p => ({ ...p, companyName: e.target.value }))}
-                        className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#1d283a] focus:ring-1 focus:ring-[#1d283a] shadow-sm"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-[12px] font-medium text-gray-700 flex items-center gap-1.5">
-                        <Mail className="h-3.5 w-3.5 text-gray-400" /> Public Support Email
-                      </Label>
-                      <Input
-                        value={systemSettings.contactEmail}
-                        onChange={(e) => setSystemSettings(p => ({ ...p, contactEmail: e.target.value }))}
-                        className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#1d283a] focus:ring-1 focus:ring-[#1d283a] shadow-sm"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-[12px] font-medium text-gray-700 flex items-center gap-1.5">
-                        <Phone className="h-3.5 w-3.5 text-gray-400" /> Main Phone Number
-                      </Label>
-                      <Input
-                        value={systemSettings.phoneNumber}
-                        onChange={(e) => setSystemSettings(p => ({ ...p, phoneNumber: e.target.value }))}
-                        className="h-10 text-[13px] bg-white border-gray-200 focus:border-[#1d283a] focus:ring-1 focus:ring-[#1d283a] shadow-sm"
-                      />
-                    </div>
-                  </div>
-                  <div className="pt-6 border-t border-gray-100 mt-8 flex justify-end">
-                    <Button onClick={handleSaveSystem} disabled={savingSystem} className="w-full sm:w-auto gap-2 font-medium text-[13px] h-10 px-6">
-                      {savingSystem ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                      Update Settings
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+              ) : (
+                <Button variant="outline" size="sm" onClick={startEditingProfile} className="h-9 px-4 text-xs font-semibold text-slate-700">
+                  <Pencil className="h-3.5 w-3.5 mr-1.5 text-[#1E293B]" /> Edit Details
+                </Button>
+              )}
             </div>
-          )}
+
+            {isEditingProfile ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 bg-slate-50/50 p-6 rounded-2xl border border-slate-100 animate-fade-in">
+                <div className="space-y-2">
+                  <Label className="text-xs sm:text-[13px] font-medium text-[#1E293B] uppercase tracking-wider">Display Name</Label>
+                  <Input value={editProfileData.display_name} onChange={e => setEditProfileData({...editProfileData, display_name: e.target.value})} className={inputCls} placeholder="e.g. John Doe" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs sm:text-[13px] font-medium text-gray-400 uppercase tracking-wider">Login Email</Label>
+                  <Input value={user?.email || ""} disabled className={`${inputCls} bg-gray-50 text-gray-500 cursor-not-allowed`} />
+                  <p className="text-[11px] text-gray-500 mt-1">Email cannot be changed here.</p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                <InfoTile icon={User} label="Display Name" value={profile.display_name} />
+                <InfoTile icon={Mail} label="Login Email" value={user?.email} />
+              </div>
+            )}
+          </div>
+
+          {/* 2. System Platform Settings */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-medium text-black">System Contact Info</h3>
+              {isEditingSystem ? (
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" onClick={() => setIsEditingSystem(false)} className="h-9 px-3.5 text-xs font-semibold">Cancel</Button>
+                  <Button size="sm" onClick={handleSaveSystem} disabled={savingSystem} className="h-9 px-4 text-xs font-semibold shadow-sm">
+                    {savingSystem ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : <Save className="h-3.5 w-3.5 mr-1.5" />} Save
+                  </Button>
+                </div>
+              ) : (
+                <Button variant="outline" size="sm" onClick={startEditingSystem} className="h-9 px-4 text-xs font-semibold text-slate-700">
+                  <Pencil className="h-3.5 w-3.5 mr-1.5 text-[#1E293B]" /> Edit Details
+                </Button>
+              )}
+            </div>
+
+            {isEditingSystem ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 bg-slate-50/50 p-6 rounded-2xl border border-slate-100 animate-fade-in">
+                <div className="space-y-2">
+                  <Label className="text-xs sm:text-[13px] font-medium text-[#1E293B] uppercase tracking-wider">Company Name</Label>
+                  <Input value={editSystemData.companyName} onChange={e => setEditSystemData({...editSystemData, companyName: e.target.value})} className={inputCls} placeholder="e.g. Whiteboard Education" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs sm:text-[13px] font-medium text-[#1E293B] uppercase tracking-wider">Public Support Email</Label>
+                  <Input value={editSystemData.contactEmail} onChange={e => setEditSystemData({...editSystemData, contactEmail: e.target.value})} className={inputCls} placeholder="e.g. support@example.com" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs sm:text-[13px] font-medium text-[#1E293B] uppercase tracking-wider">Main Phone Number</Label>
+                  <Input value={editSystemData.phoneNumber} onChange={e => setEditSystemData({...editSystemData, phoneNumber: e.target.value})} className={inputCls} placeholder="e.g. +123456789" />
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                <InfoTile icon={Building2} label="Company Name" value={systemSettings.companyName} />
+                <InfoTile icon={Mail} label="Public Support Email" value={systemSettings.contactEmail} />
+                <InfoTile icon={Phone} label="Main Phone Number" value={systemSettings.phoneNumber} />
+              </div>
+            )}
+          </div>
+
+          {/* 3. Change Password / Security */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium text-black">Change Password</h3>
+            
+            <div className="bg-white p-6 sm:p-7 rounded-2xl border-2 border-rose-400 shadow-sm w-full max-w-4xl">
+              {pwStep === "idle" && (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-3 text-sm text-black font-normal">
+                    <ShieldCheck className="h-8 w-8 text-rose-600 shrink-0" />
+                    <p className="text-xs sm:text-sm leading-relaxed text-black font-normal">
+                      Your account uses email verification (OTP) for password updates to ensure maximum security.
+                    </p>
+                  </div>
+                  <Button
+                    onClick={handleSendCode}
+                    variant="outline"
+                    className="group w-full sm:w-auto shrink-0 gap-2 font-normal text-xs h-9.5 px-4 rounded-lg shadow-sm border border-rose-300 text-rose-700 bg-white hover:bg-rose-600 hover:text-white hover:border-rose-600 transition-all"
+                  >
+                    <KeyRound className="h-3.5 w-3.5 group-hover:!text-white !text-rose-600" /> Update Password
+                  </Button>
+                </div>
+              )}
+
+              {pwStep === "sending" && (
+                <div className="flex items-center justify-center py-6 gap-2.5 text-xs text-rose-600 font-normal">
+                  <Loader2 className="h-4 w-4 animate-spin text-rose-600" /> Sending code to your email...
+                </div>
+              )}
+
+              {pwStep === "code_sent" && (
+                <div className="space-y-4 animate-fade-in w-full">
+                  <p className="text-xs text-rose-600 font-normal leading-relaxed">
+                    A 6-digit code has been sent to <span className="font-semibold text-rose-700">{user?.email}</span>.
+                  </p>
+                  <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-4 pt-1 w-full">
+                    <Label className="text-xs sm:text-[13px] font-medium text-rose-600 uppercase shrink-0 whitespace-nowrap">Verification Code</Label>
+                    
+                    <OtpDigitBoxes value={otpCode} onChange={(val) => { setOtpCode(val); if (pwError) setPwError(null); }} />
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Button
+                        onClick={handleVerifyCode}
+                        disabled={otpCode.length < 6}
+                        className="font-normal text-xs h-11 px-4 sm:px-5 rounded-xl bg-rose-600 hover:bg-white text-white hover:text-rose-600 border border-rose-600 transition-all shadow-sm whitespace-nowrap"
+                      >
+                        Verify
+                      </Button>
+                      <Button
+                        onClick={resetPwFlow}
+                        className="font-normal text-xs h-11 px-4 rounded-xl bg-slate-100 hover:bg-white text-slate-700 hover:text-rose-600 border border-slate-200 hover:border-rose-600 transition-all shadow-none whitespace-nowrap"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+
+                  {pwError && (
+                    <div className="flex items-center gap-2 text-xs text-rose-600 font-medium pt-1 animate-fade-in">
+                      <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
+                      <span>{pwError}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {pwStep === "verifying" && (
+                <div className="flex items-center justify-center py-6 gap-2.5 text-xs text-rose-600 font-normal">
+                  <Loader2 className="h-4 w-4 animate-spin text-rose-600" /> Verifying code...
+                </div>
+              )}
+
+              {pwStep === "verified" && (
+                <div className="space-y-4 animate-fade-in max-w-xl">
+                  <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-100 text-xs text-emerald-700 font-medium flex items-center gap-1.5">
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" /> Code verified! Set your new password.
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-medium text-[#1E293B] uppercase">New Password</Label>
+                      <input
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => { setNewPassword(e.target.value); if (pwError) setPwError(null); }}
+                        placeholder="Min 6 chars"
+                        className="flex h-12 w-full text-sm bg-white text-rose-600 border border-slate-300 rounded-xl px-3.5 outline-none focus:outline-none focus:bg-white focus:text-rose-600 focus:border-rose-600 focus:ring-2 focus:ring-rose-500/20 focus:caret-rose-600 placeholder:text-gray-400 transition-all font-normal shadow-none"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-medium text-[#1E293B] uppercase">Confirm Password</Label>
+                      <input
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => { setConfirmPassword(e.target.value); if (pwError) setPwError(null); }}
+                        placeholder="Re-type password"
+                        className="flex h-12 w-full text-sm bg-white text-rose-600 border border-slate-300 rounded-xl px-3.5 outline-none focus:outline-none focus:bg-white focus:text-rose-600 focus:border-rose-600 focus:ring-2 focus:ring-rose-500/20 focus:caret-rose-600 placeholder:text-gray-400 transition-all font-normal shadow-none"
+                      />
+                    </div>
+                  </div>
+
+                  {pwError && (
+                    <div className="flex items-center gap-2 text-xs text-rose-600 font-medium pt-1 animate-fade-in">
+                      <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
+                      <span>{pwError}</span>
+                    </div>
+                  )}
+
+                  <div className="flex gap-2.5 pt-1">
+                    <Button
+                      onClick={handleUpdatePassword}
+                      disabled={newPassword.length < 6}
+                      className="flex-1 font-normal text-xs h-11 rounded-xl bg-rose-600 hover:bg-white text-white hover:text-rose-600 border border-rose-600 transition-all shadow-sm"
+                    >
+                      Update Password
+                    </Button>
+                    <Button
+                      onClick={resetPwFlow}
+                      className="font-normal text-xs h-11 px-4 rounded-xl bg-slate-100 hover:bg-white text-slate-700 hover:text-rose-600 border border-slate-200 hover:border-rose-600 transition-all shadow-none"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {pwStep === "updating" && (
+                <div className="flex items-center justify-center py-4 gap-2 text-xs text-black font-normal">
+                  <Loader2 className="h-4 w-4 animate-spin text-rose-600" /> Updating password...
+                </div>
+              )}
+            </div>
+          </div>
 
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
