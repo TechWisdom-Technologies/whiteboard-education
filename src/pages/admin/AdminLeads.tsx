@@ -167,11 +167,11 @@ export default function AdminLeads() {
       <div className="mb-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
           <div className="flex items-center gap-4">
-            {selectedIds.length > 0 && (
-              <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-10 text-[13px] px-4 whitespace-nowrap">
-                <Trash2 className="h-4 w-4 mr-2" /> Delete Selected ({selectedIds.length})
-              </Button>
-            )}
+              {selectedIds.length > 0 && (
+                <Button variant="outline" size="sm" className="h-10 px-4 text-[13px] font-semibold rounded-lg text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors whitespace-nowrap" onClick={handleBulkDelete}>
+                  <Trash2 className="h-4 w-4 mr-2" /> Delete Selected ({selectedIds.length})
+                </Button>
+              )}
           </div>
           <Select value={filter} onValueChange={setFilter}>
             <SelectTrigger className="w-full sm:w-[200px] h-10 bg-white shadow-sm border-slate-200"><SelectValue /></SelectTrigger>

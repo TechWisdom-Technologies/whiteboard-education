@@ -943,7 +943,7 @@ export default function AdminCrudTable({
             {selectedIds.length > 0 && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive" className="h-9 text-[12px] px-3 whitespace-nowrap">
+                  <Button variant="outline" className="h-9 px-3 text-[12px] font-semibold rounded-lg text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors whitespace-nowrap">
                     <Trash2 className="h-3.5 w-3.5 mr-1.5" />Delete Selected ({selectedIds.length})
                   </Button>
                 </AlertDialogTrigger>

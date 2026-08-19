@@ -186,39 +186,41 @@ export default function AdminPartners() {
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-slate-800">All B2B Partners</h1>
       </div>
-      {/* Tabs */}
-      <div className="flex items-center gap-1 mb-4 border-b">
-        {TABS.map(tab => (
-          <button
-            key={tab.key}
-            onClick={() => { setActiveTab(tab.key); setSelectedIds([]); }}
-            className={`relative px-4 py-2.5 text-[12px] font-normal transition-colors ${
-              activeTab === tab.key
-                ? "text-[#1E293B]"
-                : "text-gray-400 hover:text-gray-600"
-            }`}
-          >
-            {tab.label}
-            <span className={`ml-1.5 text-[12px] font-normal px-1.5 py-0.5 rounded-xl ${
-              activeTab === tab.key ? "bg-[#1d283a]/15 text-[#1d283a]" : "bg-gray-100 text-gray-400"
-            }`}>
-              {counts[tab.key]}
-            </span>
-            {activeTab === tab.key && (
-              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1d283a]" />
-            )}
-          </button>
-        ))}
-      </div>
-
-      {/* Bulk actions */}
-      {selectedIds.length > 0 && (
-        <div className="flex justify-end mb-3">
-          <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-7 text-[12px] px-3">
-            <Trash2 className="h-3 w-3 mr-1" /> Delete Selected ({selectedIds.length})
-          </Button>
+      {/* Tabs and Bulk Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 border-b">
+        <div className="flex items-center gap-1 overflow-x-auto hide-scrollbar">
+          {TABS.map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => { setActiveTab(tab.key); setSelectedIds([]); }}
+              className={`relative px-4 py-2.5 text-[12px] font-normal transition-colors whitespace-nowrap ${
+                activeTab === tab.key
+                  ? "text-[#1E293B]"
+                  : "text-gray-400 hover:text-gray-600"
+              }`}
+            >
+              {tab.label}
+              <span className={`ml-1.5 text-[12px] font-normal px-1.5 py-0.5 rounded-xl ${
+                activeTab === tab.key ? "bg-[#1d283a]/15 text-[#1d283a]" : "bg-gray-100 text-gray-400"
+              }`}>
+                {counts[tab.key]}
+              </span>
+              {activeTab === tab.key && (
+                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1d283a]" />
+              )}
+            </button>
+          ))}
         </div>
-      )}
+
+        {/* Bulk actions */}
+        {selectedIds.length > 0 && (
+          <div className="flex justify-end sm:pr-2 py-2 sm:py-0 sm:pb-1.5">
+            <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-semibold rounded-lg text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors" onClick={handleBulkDelete}>
+              <Trash2 className="h-4 w-4 mr-1.5" /> Delete Selected ({selectedIds.length})
+            </Button>
+          </div>
+        )}
+      </div>
 
       {filtered.length === 0 ? (
         <div className="rounded-xl border bg-card p-12 text-center text-muted-foreground">

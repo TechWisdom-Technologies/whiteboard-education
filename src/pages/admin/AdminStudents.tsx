@@ -219,8 +219,8 @@ export default function AdminStudents() {
         <h1 className="text-2xl font-bold text-slate-800">All Students</h1>
         <div className="flex gap-2 text-xs">
           {selectedIds.length > 0 && (
-            <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-6 text-xs px-2 py-0">
-              <Trash2 className="h-3 w-3 mr-1" /> Delete Selected ({selectedIds.length})
+            <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-semibold rounded-lg text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors" onClick={handleBulkDelete}>
+              <Trash2 className="h-4 w-4 mr-1.5" /> Delete Selected ({selectedIds.length})
             </Button>
           )}
         </div>
