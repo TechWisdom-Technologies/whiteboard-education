@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-type TableName = "countries" | "universities" | "courses" | "accommodations" | "scholarships" | "language_centers" | "blogs" | "events" | "leads" | "intake_reminders";
+type TableName = "countries" | "universities" | "courses" | "accommodations" | "scholarships" | "language_centers" | "blogs" | "events" | "leads" | "intake_reminders" | "account_managers" | "platform_tutorials";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -83,7 +83,7 @@ export function useInsertRow(table: TableName) {
   const { toast } = useToast();
   return useMutation({
     mutationFn: async (row: Record<string, any>) => {
-      const { data, error } = await (supabase.from(table) as any).insert(row).select().single();
+      const { data, error } = await (supabase.from as any)(table).insert(row).select().single();
       if (error) throw error;
       return data;
     },
@@ -100,7 +100,7 @@ export function useUpdateRow(table: TableName) {
   const { toast } = useToast();
   return useMutation({
     mutationFn: async ({ id, ...row }: Record<string, any>) => {
-      const { data, error } = await (supabase.from(table) as any).update(row).eq("id", id).select().single();
+      const { data, error } = await (supabase.from as any)(table).update(row).eq("id", id).select().single();
       if (error) throw error;
       return data;
     },
@@ -117,7 +117,7 @@ export function useDeleteRow(table: TableName) {
   const { toast } = useToast();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase.from(table) as any).delete().eq("id", id);
+      const { error } = await (supabase.from as any)(table).delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -148,7 +148,7 @@ export function useBulkUpsertRows(table: TableName) {
       let affected: any[] = [];
       for (let i = 0; i < prepared.length; i += chunkSize) {
         const chunk = prepared.slice(i, i + chunkSize);
-        const { data, error } = await (supabase.from(table) as any)
+        const { data, error } = await (supabase.from as any)(table)
           .upsert(chunk, { onConflict: "id" })
           .select("id");
 

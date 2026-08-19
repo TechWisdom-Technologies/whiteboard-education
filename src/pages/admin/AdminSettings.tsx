@@ -9,7 +9,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Camera, Save, Loader2, Building2, User, Globe, Mail, Phone, Lock, KeyRound, ShieldCheck, ArrowRight, CheckCircle2, Trash2, Plus, Video, UserCircle } from "lucide-react";
 import { toast } from "sonner";
 import { LoadingScreen } from "@/components/ui/loading-screen";
-import { AccountManagerSection, TutorialsSection } from "@/components/admin/PartnerContentSections";
 
 interface UserProfile {
   display_name: string;
@@ -372,12 +371,6 @@ export default function AdminSettings() {
           {/* Platform Settings */}
           {activeTab === "platform" && (
             <div className="space-y-6">
-              {/* Account Manager Management */}
-              <AccountManagerSection />
-
-              {/* Platform Tutorials Management */}
-              <TutorialsSection />
-
               {/* System Contact Settings */}
               <Card className="border-sidebar-border shadow-sm animate-fade-in">
                 <CardHeader className="pb-4 border-b border-gray-100 mb-6">
