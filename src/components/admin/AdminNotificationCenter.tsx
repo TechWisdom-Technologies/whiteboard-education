@@ -253,10 +253,14 @@ export function AdminNotificationCenter() {
           {items.length === 0 ? (
             <div className="p-6 text-center text-sm text-muted-foreground">No pending notifications.</div>
           ) : (
-            items.map((item) => (
-              <div key={item.key} className={`px-3 py-2.5 border-b last:border-0 hover:bg-muted/40 transition-colors ${!item.read ? "bg-muted/20" : "opacity-90"}`}>
+            items.map((item, i) => (
+              <div 
+                key={item.key} 
+                className={`px-3 py-2.5 border-b last:border-0 hover:bg-muted/40 transition-colors animate-fade-in ${!item.read ? "bg-muted/20" : "opacity-90"}`}
+                style={{ animationDelay: `${i * 50}ms` }}
+              >
                 <div className="flex items-start gap-2.5">
-                  <Circle className={`h-2 w-2 mt-1.5 flex-shrink-0 ${item.read ? "fill-muted text-muted" : "fill-primary text-primary"}`} />
+                  <div className={`h-2 w-2 rounded-xl mt-1.5 flex-shrink-0 ${item.read ? "bg-muted" : "bg-primary"}`} />
                   
                   <button
                     className="flex-1 text-left min-w-0 pr-2"
@@ -265,8 +269,8 @@ export function AdminNotificationCenter() {
                       navigate(item.href);
                     }}
                   >
-                    <p className={`text-[13px] leading-snug ${item.read ? "text-gray-700 font-semibold" : "text-black font-bold"}`}>{item.title}</p>
-                    <p className={`text-[12px] leading-snug line-clamp-2 mt-0.5 ${item.read ? "text-gray-600" : "text-gray-900 font-medium"}`}>{item.message}</p>
+                    <p className={`text-[13px] leading-snug mb-0.5 ${item.read ? "text-gray-700 font-semibold" : "text-black font-bold"}`}>{item.title}</p>
+                    <p className={`text-[12px] leading-snug line-clamp-2 ${item.read ? "text-gray-600" : "text-gray-900 font-medium"}`}>{item.message}</p>
                     <p className={`text-[10px] mt-1.5 ${item.read ? "text-gray-500" : "text-gray-700 font-medium"}`}>{formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}</p>
                   </button>
 

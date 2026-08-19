@@ -3,7 +3,8 @@ import {
   LogOut, FileText, Search, CreditCard, BookOpen, Home, ChevronDown, ChevronRight, FolderDown, ExternalLink 
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -204,13 +205,19 @@ export function PartnerSidebar() {
                 {!collapsed && alliedOpen && (
                   <div className="mt-1 ml-4 pl-3 border-l-2 border-slate-200 space-y-0.5">
                     {alliedSubItems.map((subItem) => (
-                      <div
-                        key={subItem.title}
-                        className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-slate-500 hover:text-[#2F4F97] hover:bg-blue-50/70 cursor-pointer transition-colors duration-150"
-                      >
-                        <subItem.icon className="h-4 w-4 flex-shrink-0" strokeWidth={1.8} />
-                        <span className="text-[13px] font-medium">{subItem.title}</span>
-                      </div>
+                      <Popover key={subItem.title}>
+                        <PopoverTrigger asChild>
+                          <div
+                            className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-slate-500 hover:text-[#2F4F97] hover:bg-blue-50/70 cursor-pointer transition-colors duration-150"
+                          >
+                            <subItem.icon className="h-4 w-4 flex-shrink-0" strokeWidth={1.8} />
+                            <span className="text-[13px] font-medium">{subItem.title}</span>
+                          </div>
+                        </PopoverTrigger>
+                        <PopoverContent side="right" className="w-auto p-3 text-sm font-medium text-slate-700 bg-white border shadow-sm">
+                          Feature coming soon
+                        </PopoverContent>
+                      </Popover>
                     ))}
                   </div>
                 )}
