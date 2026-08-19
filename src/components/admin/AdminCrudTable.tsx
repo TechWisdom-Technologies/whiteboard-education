@@ -64,6 +64,7 @@ interface AdminCrudTableProps {
   renderCell?: (row: any, key: string) => React.ReactNode;
   onAddClick?: () => void;
   onEditClick?: (row: any) => void;
+  hideTitle?: boolean;
 }
 
 function TagInput({ value, onChange, placeholder }: { value: string[]; onChange: (v: string[]) => void; placeholder?: string }) {
@@ -436,7 +437,7 @@ function RelationArrayEditor({ value = [], onChange, relationConfig }: { value: 
 }
 
 export default function AdminCrudTable({
-  title, data, isLoading, fields, searchKey, onInsert, onUpdate, onDelete, onBulkDelete, onBulkUpsert, renderCell, onAddClick, onEditClick,
+  title, data, isLoading, fields, searchKey, onInsert, onUpdate, onDelete, onBulkDelete, onBulkUpsert, renderCell, onAddClick, onEditClick, hideTitle,
 }: AdminCrudTableProps) {
   const { toast } = useToast();
   const [search, setSearch] = useState("");
@@ -912,9 +913,11 @@ export default function AdminCrudTable({
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-800">All {title}</h1>
-      </div>
+      {!hideTitle && (
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-slate-800">All {title}</h1>
+        </div>
+      )}
       <div className="mb-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
           {/* Search Field */}

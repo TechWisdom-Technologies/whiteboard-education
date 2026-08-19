@@ -53,6 +53,7 @@ export default function AdminPartnerAccountManagers() {
         onBulkUpsert={(rows) => bulkUpsert.mutateAsync(rows).then(() => undefined)}
         onAddClick={() => setSearchParams({ action: "new" })}
         onEditClick={(row) => setEditingRow(row)}
+        hideTitle
       />
     </div>
   );

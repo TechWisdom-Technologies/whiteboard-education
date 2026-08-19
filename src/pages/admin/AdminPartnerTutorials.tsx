@@ -54,6 +54,7 @@ export default function AdminPartnerTutorials() {
         onBulkUpsert={(rows) => bulkUpsert.mutateAsync(rows.map(r => ({ ...r, is_active: r.is_active === "true" || r.is_active === true }))).then(() => undefined)}
         onAddClick={() => setSearchParams({ action: "new" })}
         onEditClick={(row) => setEditingRow(row)}
+        hideTitle
       />
     </div>
   );
