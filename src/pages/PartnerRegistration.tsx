@@ -22,7 +22,7 @@ function FileUploadField({ label, accept = ".pdf,.jpg,.jpeg,.png", file, onFileC
     <div className="w-full">
       <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">{label} {required && <span className="text-red-500">*</span>}</Label>
       <div
-        className={`mt-1.5 border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-colors ${file ? 'border-[#2F4F97] bg-[#2F4F97]/5' : 'border-gray-200 bg-gray-50 hover:bg-white hover:border-[#2F4F97]'}`}
+        className={`mt-1.5 border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors ${file ? 'border-[#2F4F97] bg-[#2F4F97]/5' : 'border-gray-200 bg-gray-50 hover:bg-white hover:border-[#2F4F97]'}`}
         onClick={() => ref.current?.click()}
       >
         <input ref={ref} type="file" accept={accept} className="hidden" onChange={(e) => onFileChange(e.target.files?.[0] || null)} />
@@ -260,37 +260,30 @@ export default function PartnerRegistration() {
   };
 
   const inputCls =
-    "w-full h-14 px-5 text-base bg-white border-2 border-gray-300 text-gray-900 placeholder:text-gray-400 outline-none focus:outline-none focus:ring-0 focus:border-transparent focus:bg-[#2F4F97] focus:text-white focus:placeholder:text-white/60 focus:caret-white transition-all duration-200 rounded-2xl shadow-sm";
+    "w-full h-14 px-5 text-base bg-white border-2 border-gray-300 text-gray-900 placeholder:text-gray-400 outline-none focus:outline-none focus:ring-0 focus:border-transparent focus:bg-[#2F4F97] focus:text-white focus:placeholder:text-white/60 focus:caret-white transition-all duration-200 rounded-lg";
 
   return (
-    <div className="fixed inset-0 flex bg-[#F8FAFC]">
+    <div className="fixed inset-0 flex bg-gradient-to-br from-white via-[#2F4F97]/5 to-[#2F4F97]/10">
       {/* ══════════════════════════════ RIGHT PANEL ══════════════════════════════ */}
-      <div className="w-full h-full flex flex-col bg-white overflow-hidden items-center justify-center relative">
+      <div className="w-full h-full flex flex-col bg-transparent overflow-hidden items-center justify-center relative">
         
         {/* Mobile decorative blobs */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none lg:hidden">
-          <div className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] rounded-full bg-[#2F4F97]/10 blur-[100px]" />
-          <div className="absolute top-[40%] -right-[20%] w-[60%] h-[60%] rounded-full bg-[#2F4F97]/15 blur-[120px]" />
-        </div>
+        
 
         {/* Header bar */}
-        <div className="relative z-10 flex items-center justify-between px-8 py-6 flex-shrink-0 bg-transparent lg:bg-white border-b lg:border-none border-[#2F4F97]/10">
-          <div className="flex items-center gap-2 lg:hidden">
-            <img src="/logo.png" alt="Whiteboard Education" className="h-8 w-auto object-contain" />
+          <div className="absolute top-0 left-0 w-full flex items-center justify-end px-8 py-6 flex-shrink-0 bg-transparent z-50 pointer-events-none">
+            <Link
+              to="/"
+              className="inline-flex items-center justify-center h-10 w-10 rounded-full border-2 border-transparent bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] hover:border-[#2F4F97] transition-colors duration-200 pointer-events-auto"
+              aria-label="Close"
+            >
+              <X className="h-5 w-5 stroke-[2.5]" />
+            </Link>
           </div>
-          <div className="hidden lg:block"></div>
-          <button
-            onClick={() => navigate(-1)}
-            className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-[#EEF4FF] text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white transition-colors duration-300 shadow-sm"
-            aria-label="Close"
-          >
-            <X className="h-5 w-5 stroke-[2.5]" />
-          </button>
-        </div>
 
         {/* Scrollable Form section */}
-        <div className="relative z-10 flex-1 overflow-y-auto px-6 py-6 md:px-12 md:py-8 lg:px-16">
-          <div className="max-w-2xl mx-auto pb-12">
+        <div className="relative z-10 flex-1 flex overflow-y-auto px-6 py-6 md:px-12 md:py-8 lg:px-16 w-full">
+          <div className="w-full max-w-2xl m-auto bg-white rounded-xl border border-gray-100 px-8 py-10 shadow-sm">
             <h2 className="font-medium tracking-tight text-[#0c0f16] text-2xl mb-2">
               Agency Registration
             </h2>
@@ -446,7 +439,7 @@ export default function PartnerRegistration() {
                 {step > 1 && (
                   <Button 
                     variant="outline"
-                    className="h-14 text-gray-700 font-bold text-base rounded-2xl flex-1 max-w-[140px]"
+                    className="h-14 text-gray-700 font-bold text-base rounded-lg flex-1 max-w-[140px] hover:bg-gray-50"
                     onClick={handleBack}
                     disabled={submitting}
                   >
@@ -456,7 +449,7 @@ export default function PartnerRegistration() {
 
                 {step < 3 ? (
                   <Button 
-                    className="flex-1 h-14 font-bold text-base rounded-2xl transition-all flex items-center justify-center gap-2"
+                    className="flex-1 h-14 font-bold text-base rounded-lg transition-all flex items-center justify-center gap-2 border-2 border-transparent bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] hover:border-[#2F4F97] duration-200"
                     onClick={handleNext}
                     disabled={submitting}
                   >
@@ -464,7 +457,7 @@ export default function PartnerRegistration() {
                   </Button>
                 ) : (
                   <Button 
-                    className="flex-1 h-14 font-bold text-base rounded-2xl transition-all"
+                    className="flex-1 h-14 font-bold text-base rounded-lg transition-all flex items-center justify-center gap-2 border-2 border-transparent bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] hover:border-[#2F4F97] duration-200"
                     onClick={handleSubmit} 
                     disabled={submitting}
                   >

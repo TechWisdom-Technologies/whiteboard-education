@@ -98,7 +98,7 @@ export default function Login() {
 
 
   const inputCls =
-    "w-full h-14 px-5 text-base bg-white border-2 border-gray-300 text-gray-900 placeholder:text-gray-400 outline-none focus:outline-none focus:ring-0 focus:border-transparent focus:bg-[#2F4F97] focus:text-white focus:placeholder:text-white/60 focus:caret-white transition-all duration-200 rounded-2xl shadow-sm";
+    "w-full h-14 px-5 text-base bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 outline-none focus:outline-none focus:ring-0 focus:border-transparent focus:bg-[#2F4F97] focus:text-white focus:placeholder:text-white/60 focus:caret-white transition-all duration-200 rounded-lg";
 
   // ─── Forgot Password Handlers ───
   const handleFpSendCode = async () => {
@@ -148,11 +148,11 @@ export default function Login() {
   };
 
   return (
-    <div className="fixed inset-0 flex bg-[#F8FAFC]">
+    <div className="fixed inset-0 flex bg-gradient-to-br from-white via-[#2F4F97]/5 to-[#2F4F97]/10">
 
       {/* ══════════════════════════════ RIGHT PANEL ══════════════════════════════ */}
       <div
-        className="w-full h-full flex flex-col bg-white overflow-hidden items-center justify-center relative"
+        className="w-full h-full flex flex-col bg-transparent overflow-hidden items-center justify-center relative p-4 lg:p-8"
         style={{
           opacity: mounted ? 1 : 0,
           transform: mounted ? "none" : "translateX(10px)",
@@ -160,29 +160,30 @@ export default function Login() {
         }}
       >
         {/* Header bar */}
-        <div className="absolute top-0 left-0 w-full flex items-center justify-end px-8 py-6 flex-shrink-0 bg-transparent z-10">
-          <button
-            onClick={() => navigate(-1)}
-            className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-[#EEF4FF] text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white transition-colors duration-300 shadow-sm"
+        <div className="absolute top-0 left-0 w-full flex items-center justify-end px-8 py-6 flex-shrink-0 bg-transparent z-50">
+          <Link
+            to="/"
+            className="inline-flex items-center justify-center h-10 w-10 rounded-full border-2 border-transparent bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] hover:border-[#2F4F97] transition-colors duration-200"
             aria-label="Close"
           >
             <X className="h-5 w-5 stroke-[2.5]" />
-          </button>
+          </Link>
         </div>
 
         {/* Form section */}
         <div className="flex-1 flex flex-col justify-center min-h-0 py-4 z-10 w-full">
-          <div className="w-full max-w-md px-6 mx-auto text-left">
+          <div className="w-full max-w-md px-8 py-10 bg-white rounded-xl mx-auto text-left relative">
             {/* Heading */}
-            <div className="mb-8">
+            <div className="mb-8 text-center">
               <h2 className="font-semibold tracking-tight text-[#0c0f16] text-3xl mb-2">
-                Sign in to your portal account
+                Sign In
               </h2>
+              <p className="text-[#64748B] text-sm font-medium">Access your dashboard with valid credentials</p>
             </div>
 
             {/* Alerts */}
             {regStatus?.status === "pending" && (
-              <Alert className="border-amber-300 bg-amber-50 mb-4 py-2.5 px-3 rounded-2xl">
+              <Alert className="border-amber-300 bg-amber-50 mb-4 py-2.5 px-3 rounded-lg">
                 <Clock className="h-3.5 w-3.5 text-amber-600" />
                 <AlertTitle className="text-amber-700 text-xs font-semibold">Registration Pending</AlertTitle>
                 <AlertDescription className="text-[11px] text-amber-600">
@@ -191,7 +192,7 @@ export default function Login() {
               </Alert>
             )}
             {regStatus?.status === "rejected" && (
-              <Alert variant="destructive" className="mb-4 py-2.5 px-3 rounded-2xl">
+              <Alert variant="destructive" className="mb-4 py-2.5 px-3 rounded-lg">
                 <XCircle className="h-3.5 w-3.5" />
                 <AlertTitle className="text-xs font-semibold">Registration Rejected</AlertTitle>
                 <AlertDescription className="text-[11px]">
@@ -237,47 +238,44 @@ export default function Login() {
                     {loginError && <p className="text-red-500 text-[11px] mt-1.5 ml-1">{loginError}</p>}
                   </div>
                   <div className="flex flex-col gap-2 mt-4">
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="w-full h-14 text-base font-bold flex items-center justify-center gap-2 rounded-2xl transition-all duration-300 hover:shadow-[0_8px_20px_-6px_rgba(47,79,151,0.5)] hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-none"
-                      style={{ background: "#2F4F97", color: "#ffffff" }}
-                    >
-                      {loading ? (
-                        <>
-                          <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.37 0 0 5.37 0 12h4z" />
-                          </svg>
-                          Wait...
-                        </>
-                      ) : (
-                        <><LogIn className="h-4 w-4" /> Sign In</>
-                      )}
-                    </button>
-
-                    <div className="text-center my-1">
+                    <div className="flex items-center gap-4 mt-6">
                       <button
                         type="button"
                         onClick={() => { setFpStep("enter_email"); setFpEmail(email); }}
-                        className="text-[12px] font-semibold text-[#2F4F97] hover:text-[#1c2f5a] hover:underline transition-colors"
+                        className="flex-1 h-14 rounded-lg text-base font-bold flex items-center justify-center border-2 border-[#2F4F97] text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white transition-colors duration-200"
                       >
-                        Forgot password?
+                        Forgot password
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="flex-1 h-14 rounded-lg text-base font-bold flex items-center justify-center gap-2 border-2 border-transparent bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] hover:border-[#2F4F97] transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        {loading ? (
+                          <>
+                            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.37 0 0 5.37 0 12h4z" />
+                            </svg>
+                            Wait...
+                          </>
+                        ) : (
+                          <><LogIn className="h-4 w-4" /> Sign In</>
+                        )}
                       </button>
                     </div>
                     
-                    <div className="flex items-center w-full my-1">
-                      <div className="flex-1 h-px bg-gray-100"></div>
-                      <span className="text-[10px] text-gray-400 font-bold px-3 uppercase tracking-widest">OR</span>
-                      <div className="flex-1 h-px bg-gray-100"></div>
+                    <div className="mt-8 text-center">
+                      <p className="text-sm font-medium text-gray-500 mb-4">
+                        Don't have an account? Become a verified partner today
+                      </p>
+                      <Link
+                        to="/partner/register"
+                        className="w-full h-14 text-base font-bold flex items-center justify-center gap-2 rounded-lg border-2 border-[#2F4F97] bg-white text-[#2F4F97] hover:bg-[#2F4F97] hover:text-white transition-colors duration-200"
+                      >
+                        Register as a partner
+                      </Link>
                     </div>
-                    
-                    <Link
-                      to="/partner/register"
-                      className="w-full h-14 text-[13px] font-bold flex items-center justify-center gap-2 rounded-2xl border-2 border-gray-100 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-200 transition-all active:scale-[0.98]"
-                    >
-                      Register as a partner
-                    </Link>
                   </div>
                 </form>
 
@@ -305,12 +303,12 @@ export default function Login() {
                 <div className="flex gap-3">
                   <button
                     onClick={handleFpSendCode}
-                    className="flex-1 h-14 rounded-2xl text-base font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
+                    className="flex-1 h-14 rounded-lg text-base font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
                     style={{ background: "#2F4F97", color: "#0c0f16" }}
                   >
                     <KeyRound className="h-4 w-4" /> Send Code
                   </button>
-                  <button onClick={resetFpFlow} className="h-14 px-4 rounded-2xl text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">
+                  <button onClick={resetFpFlow} className="h-14 px-4 rounded-lg text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">
                     Cancel
                   </button>
                 </div>
@@ -325,7 +323,7 @@ export default function Login() {
 
             {fpStep === "code_sent" && (
               <div className="space-y-4">
-                <div className="flex items-start gap-3 p-3 bg-blue-50 border border-blue-100 rounded-2xl">
+                <div className="flex items-start gap-3 p-3 bg-blue-50 border border-blue-100 rounded-lg">
                   <ShieldCheck className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
                   <p className="text-[12px] text-blue-700">A 6-digit code was sent to <span className="font-bold">{fpEmail}</span>. Check your inbox and spam folder.</p>
                 </div>
@@ -343,12 +341,12 @@ export default function Login() {
                   <button
                     onClick={handleFpVerify}
                     disabled={fpOtp.length < 6}
-                    className="flex-1 h-14 rounded-2xl text-base font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-50"
+                    className="flex-1 h-14 rounded-lg text-base font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-50"
                     style={{ background: "#0c0f16", color: "#fff" }}
                   >
                     <ArrowRight className="h-4 w-4" /> Verify Code
                   </button>
-                  <button onClick={resetFpFlow} className="h-14 px-4 rounded-2xl text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">
+                  <button onClick={resetFpFlow} className="h-14 px-4 rounded-lg text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">
                     Cancel
                   </button>
                 </div>
@@ -363,7 +361,7 @@ export default function Login() {
 
             {fpStep === "verified" && (
               <div className="space-y-4">
-                <div className="flex items-start gap-3 p-3 bg-green-50 border border-green-100 rounded-2xl">
+                <div className="flex items-start gap-3 p-3 bg-green-50 border border-green-100 rounded-lg">
                   <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
                   <p className="text-[12px] text-green-700 font-medium">Code verified! Set your new password below.</p>
                 </div>
@@ -389,12 +387,12 @@ export default function Login() {
                 <div className="flex gap-3">
                   <button
                     onClick={handleFpUpdatePw}
-                    className="flex-1 h-14 rounded-2xl text-base font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
+                    className="flex-1 h-14 rounded-lg text-base font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
                     style={{ background: "#2F4F97", color: "#0c0f16" }}
                   >
                     Update Password
                   </button>
-                  <button onClick={resetFpFlow} className="h-14 px-4 rounded-2xl text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">
+                  <button onClick={resetFpFlow} className="h-14 px-4 rounded-lg text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors">
                     Cancel
                   </button>
                 </div>
@@ -409,13 +407,13 @@ export default function Login() {
 
             {fpStep === "done" && (
               <div className="space-y-4">
-                <div className="flex items-start gap-3 p-3 bg-green-50 border border-green-100 rounded-2xl">
+                <div className="flex items-start gap-3 p-3 bg-green-50 border border-green-100 rounded-lg">
                   <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
                   <p className="text-[12px] text-green-700 font-medium">Password updated successfully! You can now sign in with your new password.</p>
                 </div>
                 <button
                   onClick={resetFpFlow}
-                  className="w-full h-14 rounded-2xl text-base font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
+                  className="w-full h-14 rounded-lg text-base font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
                   style={{ background: "#2F4F97", color: "#0c0f16" }}
                 >
                   <LogIn className="h-4 w-4" /> Back to Sign In
