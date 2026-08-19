@@ -1,6 +1,7 @@
-import { LayoutDashboard, GraduationCap, BookOpen, Home, Users, Settings, Languages, FileText, UserCheck, Target, LogOut, PlaySquare, ExternalLink } from "lucide-react";
+import { LayoutDashboard, GraduationCap, BookOpen, Home, Users, Settings, Languages, FileText, UserCheck, Target, LogOut, PlaySquare, ExternalLink, ChevronDown, ChevronRight, Calendar, UserCircle, Video } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useState } from "react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar
 } from "@/components/ui/sidebar";
@@ -13,7 +14,6 @@ const items = [
   { title: "Courses", url: "/admin/courses", icon: BookOpen },
   { title: "B2B Partners", url: "/admin/partners", icon: Users },
   { title: "Students", url: "/admin/students", icon: UserCheck },
-  { title: "Partner Content", url: "/admin/partner-content", icon: PlaySquare },
   { title: "Accommodations", url: "/admin/accommodations", icon: Home },
   { title: "Language Centers", url: "/admin/language-centers", icon: Languages },
   { title: "Blog Posts", url: "/admin/blogs", icon: FileText },
@@ -22,6 +22,7 @@ const items = [
 ];
 
 export function AdminSidebar() {
+  const [partnerContentOpen, setPartnerContentOpen] = useState(false);
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
@@ -77,6 +78,51 @@ export function AdminSidebar() {
                   </SidebarMenuItem>
                 );
               })}
+
+              {/* Partner Content Dropdown */}
+              <SidebarMenuItem>
+                <div
+                  onClick={() => setPartnerContentOpen(!partnerContentOpen)}
+                  className={`flex items-center rounded-lg text-slate-300 hover:bg-white/10 hover:text-white transition-colors duration-150 cursor-pointer ${collapsed ? "justify-center p-2" : "gap-3 px-3 py-2.5"}`}
+                >
+                  <PlaySquare className="h-5 w-5 flex-shrink-0 text-slate-400" strokeWidth={1.8} />
+                  {!collapsed && (
+                    <>
+                      <span className="text-[15px] leading-5 font-medium">Partner Content</span>
+                      {partnerContentOpen ? (
+                        <ChevronDown className="ml-auto h-4 w-4 text-slate-400" />
+                      ) : (
+                        <ChevronRight className="ml-auto h-4 w-4 text-slate-400" />
+                      )}
+                    </>
+                  )}
+                </div>
+
+                {/* Sub-menu */}
+                {!collapsed && partnerContentOpen && (
+                  <div className="mt-1 ml-4 pl-3 border-l border-slate-700/50 space-y-0.5">
+                    {[
+                      { title: "Webinars & Events", icon: Calendar, url: "/admin/partner-content/webinars" },
+                      { title: "Account Managers", icon: UserCircle, url: "/admin/partner-content/account-managers" },
+                      { title: "Platform Tutorials", icon: Video, url: "/admin/partner-content/tutorials" },
+                    ].map((subItem) => {
+                      const isSubActive = location.pathname === subItem.url;
+                      return (
+                        <Link
+                          key={subItem.title}
+                          to={subItem.url}
+                          className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg transition-colors duration-150 ${
+                            isSubActive ? "bg-white text-[#1d283a] shadow-sm" : "text-slate-400 hover:text-white hover:bg-white/10"
+                          }`}
+                        >
+                          <subItem.icon className={`h-4 w-4 flex-shrink-0 ${isSubActive ? "text-[#1d283a]" : ""}`} strokeWidth={isSubActive ? 2.2 : 1.8} />
+                          <span className={`text-[13px] ${isSubActive ? "font-semibold" : "font-medium"}`}>{subItem.title}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </SidebarMenuItem>
 
               {/* Divider */}
               <div className="my-2 border-t border-slate-700/50" />

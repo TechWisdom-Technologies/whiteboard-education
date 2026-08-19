@@ -42,7 +42,9 @@ import AdminLanguageCenters from "./pages/admin/AdminLanguageCenters";
 import AdminBlogs from "./pages/admin/AdminBlogs";
 import AdminPartners from "./pages/admin/AdminPartners";
 import AdminPartnerProfile from "./pages/admin/AdminPartnerProfile";
-import AdminPartnerContent from "./pages/admin/AdminPartnerContent";
+import AdminPartnerWebinars from "./pages/admin/AdminPartnerWebinars";
+import AdminPartnerAccountManagers from "./pages/admin/AdminPartnerAccountManagers";
+import AdminPartnerTutorials from "./pages/admin/AdminPartnerTutorials";
 import AdminEvents from "./pages/admin/AdminEvents";
 
 import AdminSettings from "./pages/admin/AdminSettings";
@@ -201,7 +203,9 @@ const App = () => (
               <Route path="blogs" element={<AdminBlogs />} />
               <Route path="partners" element={<AdminPartners />} />
               <Route path="partners/:partnerId" element={<AdminPartnerProfile />} />
-              <Route path="partner-content" element={<AdminPartnerContent />} />
+              <Route path="partner-content/webinars" element={<AdminPartnerWebinars />} />
+              <Route path="partner-content/account-managers" element={<AdminPartnerAccountManagers />} />
+              <Route path="partner-content/tutorials" element={<AdminPartnerTutorials />} />
               <Route path="events" element={<AdminEvents />} />
               <Route path="students" element={<AdminStudents />} />
               <Route path="students/new" element={<PartnerAddStudent />} />
