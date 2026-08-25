@@ -122,6 +122,7 @@ interface Student {
   id: string;
   partner_id: string;
   wbe_student_id?: string;
+  wb_student_id?: number;
   full_name: string;
   email: string;
   phone: string;
@@ -265,7 +266,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
 
   const handleEditProfile = () => {
     if (!student) return;
-    const targetId = student.wbe_student_id ? student.wbe_student_id : student.id;
+    const targetId = student.wb_student_id ? `WB-${student.wb_student_id}` : (student.wbe_student_id ? student.wbe_student_id : student.id);
     if (mode === "admin") {
       navigate(`/admin/students/new?edit=${targetId}`);
     } else {
@@ -320,9 +321,17 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     setLoading(true);
     setError(null);
     try {
-      const isWbId = studentId.startsWith("WBE-STU-");
-      const queryField = isWbId ? "wbe_student_id" : "id";
-      const queryValue = studentId;
+      const isWbeId = studentId.startsWith("WBE-STU-");
+      const isWbId = studentId.startsWith("WB-");
+      let queryField = "id";
+      let queryValue = studentId;
+
+      if (isWbeId) {
+        queryField = "wbe_student_id";
+      } else if (isWbId) {
+        queryField = "wb_student_id";
+        queryValue = studentId.replace("WB-", "");
+      }
 
       const res = await fetch(
         `${SUPABASE_URL}/rest/v1/students?${queryField}=eq.${queryValue}&select=*`,
@@ -862,7 +871,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                   <div className="w-full">
                     <h2 className="text-lg sm:text-xl font-semibold text-[#1E293B] truncate">
                       {student.full_name}
-                      {student.wbe_student_id ? ` (${student.wbe_student_id})` : ""}
+                      {student.wb_student_id ? ` (WB-${student.wb_student_id})` : (student.wbe_student_id ? ` (${student.wbe_student_id})` : "")}
                     </h2>
                   </div>
 
