@@ -47,6 +47,7 @@ const statusColors: Record<string, string> = {
   sev_received: "bg-green-600/10 text-green-700",
   rejected: "bg-destructive/10 text-destructive",
   on_hold: "bg-amber-500/10 text-amber-600",
+  declined_by_wb: "bg-rose-500/10 text-rose-600 border-rose-500/30",
 };
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -243,6 +244,9 @@ export default function PartnerApplications() {
           case "rejected_by_visa_office":
             if (s !== 'rejected_by_visa_office') return false;
             break;
+          case "declined_by_wb":
+            if (s !== 'declined_by_wb') return false;
+            break;
         }
       }
 
@@ -385,6 +389,7 @@ export default function PartnerApplications() {
                   <SelectItem value="ready_for_visa_application">Ready for Visa</SelectItem>
                   <SelectItem value="emgs_approval_pending">EMGS Pending</SelectItem>
                   <SelectItem value="rejected_by_visa_office">Rejected by Visa Office</SelectItem>
+                  <SelectItem value="declined_by_wb">Declined by WB</SelectItem>
                 </SelectContent>
               </Select>
             </div>

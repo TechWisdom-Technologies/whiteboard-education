@@ -73,6 +73,7 @@ const statusTextColors: Record<string, string> = {
   ready_for_visa_application: "text-teal-600",
   emgs_approval_pending: "text-emerald-600",
   rejected_by_visa_office: "text-destructive",
+  declined_by_wb: "text-rose-600",
 };
 
 const PAGE_SIZE = 7;

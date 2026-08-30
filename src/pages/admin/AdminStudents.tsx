@@ -36,6 +36,7 @@ const statusColors: Record<string, string> = {
   ready_for_visa_application: "bg-teal-500/10 text-teal-600 border-teal-500/30",
   emgs_approval_pending: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
   rejected_by_visa_office: "bg-destructive/10 text-destructive border-destructive/20",
+  declined_by_wb: "bg-rose-500/10 text-rose-600 border-rose-500/30",
 };
 
 interface Student {
