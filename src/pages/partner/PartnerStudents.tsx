@@ -259,8 +259,8 @@ export default function PartnerStudents() {
       const nameMatch = s.full_name?.toLowerCase().includes(q);
       const createdByStr = (contactPerson || "Mr. Khondoker Fazle Rahman").toLowerCase();
       const createdByMatch = createdByStr.includes(q);
-      const wbIdStr = s.wb_student_id ? `wb-${s.wb_student_id}` : (s.id || "");
-      const wbIdMatch = wbIdStr.toLowerCase().includes(q) || String(s.wb_student_id || "").toLowerCase().includes(q);
+      const wbIdStr = s.wbe_student_id ? `wb-${s.wbe_student_id}` : (s.id || "");
+      const wbIdMatch = wbIdStr.toLowerCase().includes(q) || String(s.wbe_student_id || "").toLowerCase().includes(q);
       const emailMatch = s.email?.toLowerCase().includes(q);
       const phoneMatch = s.phone?.toLowerCase().includes(q);
       const statusLabel = getStatusLabel(s.status).toLowerCase();
