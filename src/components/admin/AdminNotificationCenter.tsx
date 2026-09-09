@@ -93,7 +93,7 @@ export function AdminNotificationCenter() {
     })) : [];
 
     // Fallback: derive notifications directly from source tables.
-    const [leadRes, partnerRes, studentRes] = await Promise.all([
+    const [leadRes, partnerRes, studentRes, appRes] = await Promise.all([
       supabase
         .from("leads")
         .select("id, full_name, email, created_at")
@@ -110,6 +110,11 @@ export function AdminNotificationCenter() {
         .from("students")
         .select("id, full_name, target_university, created_at")
         .eq("status", "document_review")
+        .order("created_at", { ascending: false })
+        .limit(10),
+      (supabase.from as any)("student_applications")
+        .select("id, application_code, wbe_application_id, status, created_at, student_id, students(id, full_name, wb_student_id, wbe_student_id), courses(title), universities(name)")
+        .eq("status", "application_in_progress")
         .order("created_at", { ascending: false })
         .limit(10),
     ]);
@@ -150,7 +155,21 @@ export function AdminNotificationCenter() {
       };
     });
 
-    const allItems = [...explicitItems, ...leadItems, ...partnerItems, ...studentItems]
+    const appItems: AdminNotificationItem[] = (((appRes as any)?.data || []) as any[]).map((app) => {
+      const key = `application:${app.id}`;
+      const student = app.students;
+      const studentTargetId = student?.wb_student_id ? `WB-${student.wb_student_id}` : (student?.wbe_student_id || student?.id || app.student_id);
+      return {
+        key,
+        title: "New Application in Progress",
+        message: `${student?.full_name || "Student"} applied for ${app.courses?.title || "Program"}${app.universities?.name ? ` at ${app.universities.name}` : ""}`,
+        createdAt: app.created_at,
+        href: `/admin/students/${studentTargetId}?tab=applications`,
+        read: !!readMap[key],
+      };
+    });
+
+    const allItems = [...explicitItems, ...leadItems, ...partnerItems, ...studentItems, ...appItems]
       .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt))
       .slice(0, 30);
 
@@ -163,6 +182,7 @@ export function AdminNotificationCenter() {
     const channel = supabase
       .channel("admin-notifications-feed")
       .on("postgres_changes", { event: "*", schema: "public", table: "admin_notifications" }, loadAdminNotifications)
+      .on("postgres_changes", { event: "*", schema: "public", table: "student_applications" }, loadAdminNotifications)
       .subscribe();
 
     return () => {

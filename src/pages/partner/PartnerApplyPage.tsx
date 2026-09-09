@@ -116,6 +116,7 @@ const statusColors: Record<string, string> = {
   ready_for_visa_application: "bg-teal-500/10 text-teal-600 border-teal-500/30",
   emgs_approval_pending: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
   rejected_by_visa_office: "bg-destructive/10 text-destructive border-destructive/20",
+  declined_by_wb: "bg-rose-500/10 text-rose-600 border-rose-500/30",
 };
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -301,7 +302,7 @@ export default function PartnerApplyPage() {
           university_id: course.university_id || null,
           course_id: course.id,
           application_code: appCode,
-          status: "received_application_at_wb",
+          status: "application_in_progress",
         }),
       });
 
@@ -312,7 +313,9 @@ export default function PartnerApplyPage() {
         return;
       }
 
-      // Also update the student's main status to received_application_at_wb
+      const appData = await res.json();
+
+      // Also update the student's main status to application_in_progress
       await fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${selectedStudentId}`, {
         method: "PATCH",
         headers: {
@@ -321,12 +324,41 @@ export default function PartnerApplyPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          status: "received_application_at_wb",
+          status: "application_in_progress",
         }),
       });
 
       const student = students.find((s) => s.id === selectedStudentId);
-      toast.success(`Application ${appCode} confirmed successfully!`, {
+
+      // Notify Admin Dashboard
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/admin_notifications`, {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${session.access_token}`,
+            "Content-Type": "application/json",
+            Prefer: "return=minimal",
+          },
+          body: JSON.stringify({
+            title: "New Application in Progress",
+            message: `${student?.full_name || "A student"} submitted an application for ${course.title}.`,
+            source_table: "student_applications",
+            source_id: (appData && appData[0]?.id) || appCode,
+            event_type: "application_submitted",
+            href: `/admin/students/${student?.wb_student_id ? `WB-${student.wb_student_id}` : student?.id}?tab=applications`,
+            metadata: {
+              application_code: appCode,
+              student_id: selectedStudentId,
+              course_id: course.id,
+            },
+          }),
+        });
+      } catch (notifErr) {
+        console.warn("Failed to dispatch admin notification:", notifErr);
+      }
+
+      toast.success(`Application ${appCode} submitted successfully!`, {
         description: `${student?.full_name} → ${course.title}`,
       });
 

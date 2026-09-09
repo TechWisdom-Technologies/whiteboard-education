@@ -59,19 +59,19 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { getStatusLabel } from "@/config/statusFlow";
+import { getStatusLabel, computeStudentStatusFromApplications } from "@/config/statusFlow";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { StudentChatWidget } from "@/components/student/StudentChatWidget";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-// â”€â”€â”€ Status configuration â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Status configuration ───────────────────────────────────────────
 
 const statusColors: Record<string, string> = {
   new: "bg-gray-100 text-gray-600 border-gray-200",
-  received_application_at_wb: "bg-blue-500/10 text-blue-600 border-blue-500/30",
   application_in_progress: "bg-indigo-500/10 text-indigo-600 border-indigo-500/30",
+  received_application_at_wb: "bg-blue-500/10 text-blue-600 border-blue-500/30",
   application_on_hold_intake: "bg-amber-500/10 text-amber-600 border-amber-500/20",
   application_on_hold_wb: "bg-amber-500/10 text-amber-600 border-amber-500/20",
   application_on_hold_university: "bg-amber-500/10 text-amber-600 border-amber-500/20",
@@ -82,15 +82,16 @@ const statusColors: Record<string, string> = {
   ready_for_visa_application: "bg-teal-500/10 text-teal-600 border-teal-500/30",
   emgs_approval_pending: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
   rejected_by_visa_office: "bg-destructive/10 text-destructive border-destructive/20",
+  declined_by_wb: "bg-rose-500/10 text-rose-600 border-rose-500/30",
 };
 
 const statusLabels: Record<string, string> = {
   new: "New",
-  received_application_at_wb: "Received Application at WB",
   application_in_progress: "Application in Progress",
-  application_on_hold_intake: "Application on Hold \u2013 Intake yet to open",
-  application_on_hold_wb: "Application on Hold \u2013 Wb team",
-  application_on_hold_university: "Application on Hold \u2013 University",
+  received_application_at_wb: "Received Application at WB",
+  application_on_hold_intake: "Application on Hold – Intake yet to open",
+  application_on_hold_wb: "Application on Hold – Wb team",
+  application_on_hold_university: "Application on Hold – University",
   application_submitted: "Application Submitted",
   offer_letter_received_conditional: "Offer Letter Received (Conditional)",
   offer_letter_received_unconditional: "Offer Letter Received (Unconditional)",
@@ -98,6 +99,7 @@ const statusLabels: Record<string, string> = {
   ready_for_visa_application: "Ready for Visa Application",
   emgs_approval_pending: "EMGS Approval Pending",
   rejected_by_visa_office: "Rejected by Visa Office",
+  declined_by_wb: "Declined by WB",
 };
 
 const statusOptions = Object.entries(statusLabels).map(([value, label]) => ({
@@ -122,6 +124,7 @@ interface Student {
   id: string;
   partner_id: string;
   wbe_student_id?: string;
+  wb_student_id?: number;
   full_name: string;
   email: string;
   phone: string;
@@ -265,7 +268,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
 
   const handleEditProfile = () => {
     if (!student) return;
-    const targetId = student.wbe_student_id ? student.wbe_student_id : student.id;
+    const targetId = student.wb_student_id ? `WB-${student.wb_student_id}` : (student.wbe_student_id ? student.wbe_student_id : student.id);
     if (mode === "admin") {
       navigate(`/admin/students/new?edit=${targetId}`);
     } else {
@@ -320,9 +323,17 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     setLoading(true);
     setError(null);
     try {
-      const isWbId = studentId.startsWith("WBE-STU-");
-      const queryField = isWbId ? "wbe_student_id" : "id";
-      const queryValue = studentId;
+      const isWbeId = studentId.startsWith("WBE-STU-");
+      const isWbId = studentId.startsWith("WB-");
+      let queryField = "id";
+      let queryValue = studentId;
+
+      if (isWbeId) {
+        queryField = "wbe_student_id";
+      } else if (isWbId) {
+        queryField = "wb_student_id";
+        queryValue = studentId.replace("WB-", "");
+      }
 
       const res = await fetch(
         `${SUPABASE_URL}/rest/v1/students?${queryField}=eq.${queryValue}&select=*`,
@@ -594,6 +605,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
       const applicationCode = code;
 
       
+      const defaultStatus = mode === "partner" ? "application_in_progress" : "received_application_at_wb";
       const res = await fetch(`${SUPABASE_URL}/rest/v1/student_applications`, {
         method: "POST",
         headers: {
@@ -606,13 +618,26 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
           university_id: newAppForm.university_id,
           course_id: newAppForm.course_id,
           application_code: applicationCode,
-          status: "received_application_at_wb"
+          status: defaultStatus
         })
       });
       
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message || "Failed to create application");
+      }
+
+      // Update student status if currently 'new'
+      if (student.status === "new") {
+        await fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${student.id}`, {
+          method: "PATCH",
+          headers: {
+            ...headers,
+            "Content-Type": "application/json",
+            Prefer: "return=minimal",
+          },
+          body: JSON.stringify({ status: defaultStatus }),
+        });
       }
       
       toast.success("Application created successfully");
@@ -623,6 +648,138 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
       toast.error(e.message || "Failed to create application");
     } finally {
       setAddingApp(false);
+    }
+  };
+
+  const handleAcceptApplication = async (app: Application) => {
+    if (!student || !session) return;
+    try {
+      const newStatus = "received_application_at_wb";
+      const { error } = await supabase
+        .from("student_applications" as any)
+        .update({ status: newStatus })
+        .eq("id", app.id);
+      if (error) throw error;
+
+      const updatedApps = applications.map(a => a.id === app.id ? { ...a, status: newStatus } : a);
+      setApplications(updatedApps);
+
+      const calculatedStatus = computeStudentStatusFromApplications(updatedApps);
+      await fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${student.id}`, {
+        method: "PATCH",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+          Prefer: "return=minimal",
+        },
+        body: JSON.stringify({ status: calculatedStatus }),
+      });
+
+      setStudent(prev => prev ? { ...prev, status: calculatedStatus } : null);
+
+      if (student.partner_id) {
+        await fetch(`${SUPABASE_URL}/rest/v1/partner_notifications`, {
+          method: "POST",
+          headers: {
+            ...headers,
+            "Content-Type": "application/json",
+            Prefer: "return=minimal",
+          },
+          body: JSON.stringify({
+            partner_id: student.partner_id,
+            student_id: student.id,
+            title: `Application Accepted - ${student.full_name}`,
+            message: `Application for ${app.courses?.title || "selected program"} has been accepted by WB team and is now Received Application at WB.`,
+            type: "success",
+          }),
+        });
+      }
+
+      toast.success("Application accepted and updated to Received Application at WB");
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Failed to accept application");
+    }
+  };
+
+  const handleDeclineApplication = async (app: Application) => {
+    if (!student || !session) return;
+    try {
+      const newStatus = "declined_by_wb";
+      const { error } = await supabase
+        .from("student_applications" as any)
+        .update({ status: newStatus })
+        .eq("id", app.id);
+      if (error) throw error;
+
+      const updatedApps = applications.map(a => a.id === app.id ? { ...a, status: newStatus } : a);
+      setApplications(updatedApps);
+
+      const calculatedStatus = computeStudentStatusFromApplications(updatedApps);
+      await fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${student.id}`, {
+        method: "PATCH",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+          Prefer: "return=minimal",
+        },
+        body: JSON.stringify({ status: calculatedStatus }),
+      });
+
+      setStudent(prev => prev ? { ...prev, status: calculatedStatus } : null);
+
+      if (student.partner_id) {
+        await fetch(`${SUPABASE_URL}/rest/v1/partner_notifications`, {
+          method: "POST",
+          headers: {
+            ...headers,
+            "Content-Type": "application/json",
+            Prefer: "return=minimal",
+          },
+          body: JSON.stringify({
+            partner_id: student.partner_id,
+            student_id: student.id,
+            title: `Application Declined - ${student.full_name}`,
+            message: `Application for ${app.courses?.title || "selected program"} was declined by WB.`,
+            type: "warning",
+          }),
+        });
+      }
+
+      toast.info(`Application declined. Student status set to: ${getStatusLabel(calculatedStatus)}`);
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Failed to decline application");
+    }
+  };
+
+  const handleAdminChangeAppStatus = async (app: Application, newStatus: string) => {
+    if (!student || !session) return;
+    try {
+      const { error } = await supabase
+        .from("student_applications" as any)
+        .update({ status: newStatus })
+        .eq("id", app.id);
+      if (error) throw error;
+
+      const updatedApps = applications.map(a => a.id === app.id ? { ...a, status: newStatus } : a);
+      setApplications(updatedApps);
+
+      const calculatedStatus = computeStudentStatusFromApplications(updatedApps);
+      await fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${student.id}`, {
+        method: "PATCH",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+          Prefer: "return=minimal",
+        },
+        body: JSON.stringify({ status: calculatedStatus }),
+      });
+
+      setStudent(prev => prev ? { ...prev, status: calculatedStatus } : null);
+      toast.success("Application status updated");
+    } catch (err: any) {
+      toast.error("Failed to update application status");
     }
   };
 
@@ -862,7 +1019,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                   <div className="w-full">
                     <h2 className="text-lg sm:text-xl font-semibold text-[#1E293B] truncate">
                       {student.full_name}
-                      {student.wbe_student_id ? ` (${student.wbe_student_id})` : ""}
+                      {student.wb_student_id ? ` (WB-${student.wb_student_id})` : (student.wbe_student_id ? ` (${student.wbe_student_id})` : "")}
                     </h2>
                   </div>
 
@@ -1068,33 +1225,45 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                               </TableCell>
                               <TableCell className="whitespace-nowrap">
                                 {mode === "admin" ? (
-                                  <Select
-                                    value={app.status}
-                                    onValueChange={async (newStatus) => {
-                                      try {
-                                        const { error } = await supabase
-                                          .from("student_applications" as any)
-                                          .update({ status: newStatus })
-                                          .eq("id", app.id);
-                                        if (error) throw error;
-                                        setApplications(applications.map(a => a.id === app.id ? { ...a, status: newStatus } : a));
-                                        toast.success("Application status updated");
-                                      } catch (err: any) {
-                                        toast.error("Failed to update application status");
-                                      }
-                                    }}
-                                  >
-                                    <SelectTrigger className={`h-7 min-w-[120px] text-[10px] font-semibold border-transparent shadow-sm ${statusColors[app.status] || "bg-gray-100 text-gray-800"}`}>
-                                      <SelectValue placeholder="Select Status" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      {statusOptions.filter(o => o.value !== "new").map((opt) => (
-                                        <SelectItem key={opt.value} value={opt.value} className="text-[10px]">
-                                          {opt.label}
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
+                                  <div className="flex items-center gap-2">
+                                    {app.status === "application_in_progress" && (
+                                      <div className="flex items-center gap-1.5 mr-1">
+                                        <Button
+                                          size="sm"
+                                          className="h-7 px-2.5 text-[11px] font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm gap-1 cursor-pointer"
+                                          onClick={() => handleAcceptApplication(app)}
+                                          title="Accept application and mark as Received Application at WB"
+                                        >
+                                          <Check className="w-3.5 h-3.5" />
+                                          Accept
+                                        </Button>
+                                        <Button
+                                          size="sm"
+                                          className="h-7 px-2.5 text-[11px] font-semibold bg-rose-600 hover:bg-rose-700 text-white shadow-sm gap-1 cursor-pointer"
+                                          onClick={() => handleDeclineApplication(app)}
+                                          title="Decline application"
+                                        >
+                                          <X className="w-3.5 h-3.5" />
+                                          Decline
+                                        </Button>
+                                      </div>
+                                    )}
+                                    <Select
+                                      value={app.status}
+                                      onValueChange={(newStatus) => handleAdminChangeAppStatus(app, newStatus)}
+                                    >
+                                      <SelectTrigger className={`h-7 min-w-[120px] text-[10px] font-semibold border-transparent shadow-sm ${statusColors[app.status] || "bg-gray-100 text-gray-800"}`}>
+                                        <SelectValue placeholder="Select Status" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {statusOptions.filter(o => o.value !== "new").map((opt) => (
+                                          <SelectItem key={opt.value} value={opt.value} className="text-[10px]">
+                                            {opt.label}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
                                 ) : (
                                   <Badge variant="outline" className={`${statusColors[app.status] || "bg-gray-100 text-gray-800"} text-[10px] px-2 border-transparent whitespace-nowrap`}>
                                     {getStatusLabel(app.status)}

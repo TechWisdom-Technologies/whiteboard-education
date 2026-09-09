@@ -36,12 +36,14 @@ const statusColors: Record<string, string> = {
   ready_for_visa_application: "bg-teal-500/10 text-teal-600 border-teal-500/30",
   emgs_approval_pending: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
   rejected_by_visa_office: "bg-destructive/10 text-destructive border-destructive/20",
+  declined_by_wb: "bg-rose-500/10 text-rose-600 border-rose-500/30",
 };
 
 interface Student {
   id: string;
   partner_id: string;
   wbe_student_id?: string;
+  wb_student_id?: number;
   full_name: string;
   email: string;
   phone: string;
@@ -104,7 +106,7 @@ export default function AdminStudents() {
     const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}` };
     try {
       const [studentsRes, partnersRes] = await Promise.all([
-        fetch(`${SUPABASE_URL}/rest/v1/students?select=id,partner_id,wbe_student_id,full_name,email,phone,passport_number,nationality,nid_number,date_of_birth,gender,previous_institution,previous_degree,major,gpa,ielts_score,language_test_name,target_university,target_course,intake_month,degree_level,status,admin_notes,passport_photo_url,passport_url,academic_transcript_url,ielts_certificate_url,personal_statement_url,recommendation_letter_url,other_documents,created_at&order=created_at.desc`, { headers }),
+        fetch(`${SUPABASE_URL}/rest/v1/students?select=id,partner_id,wbe_student_id,wb_student_id,full_name,email,phone,passport_number,nationality,nid_number,date_of_birth,gender,previous_institution,previous_degree,major,gpa,ielts_score,language_test_name,target_university,target_course,intake_month,degree_level,status,admin_notes,passport_photo_url,passport_url,academic_transcript_url,ielts_certificate_url,personal_statement_url,recommendation_letter_url,other_documents,created_at&order=created_at.desc`, { headers }),
         fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?select=id,agency_name,contact_first_name,contact_last_name,email,phone,user_id`, { headers }),
       ]);
       if (studentsRes.ok) setStudents(await studentsRes.json());
@@ -310,7 +312,7 @@ export default function AdminStudents() {
                   <TableRow 
                     key={s.id} 
                     className="hover:bg-muted/50 cursor-pointer transition-colors"
-                    onClick={() => navigate(`/admin/students/${s.wbe_student_id ? s.wbe_student_id : s.id}`)}
+                    onClick={() => navigate(`/admin/students/${s.wb_student_id ? `WB-${s.wb_student_id}` : (s.wbe_student_id ? s.wbe_student_id : s.id)}`)}
                   >
                     <TableCell className="text-center px-4 py-3 text-xs" onClick={(e) => e.stopPropagation()}>
                       <Checkbox 
@@ -318,7 +320,7 @@ export default function AdminStudents() {
                         onCheckedChange={(c) => handleSelectRow(s.id, c as boolean)}
                       />
                     </TableCell>
-                    <TableCell className="text-xs font-mono py-3">{s.wbe_student_id ? s.wbe_student_id : "-"}</TableCell>
+                    <TableCell className="text-xs font-mono py-3">{s.wb_student_id ? `WB-${s.wb_student_id}` : (s.wbe_student_id ? s.wbe_student_id : "-")}</TableCell>
                     <TableCell className="py-3 font-semibold text-xs text-[#1E293B] uppercase whitespace-nowrap">{s.full_name}</TableCell>
                     <TableCell className="text-xs py-3">{partner?.agency_name || "Unknown"}</TableCell>
                     <TableCell className="text-xs py-3"><Badge variant="outline" className={statusColors[s.status] || "bg-muted text-muted-foreground"}>{label}</Badge></TableCell>

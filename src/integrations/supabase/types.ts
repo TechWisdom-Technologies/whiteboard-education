@@ -718,6 +718,7 @@ export type Database = {
           target_university: string | null
           updated_at: string
           wbe_student_id: string | null
+          wb_student_id: number | null
         }
         Insert: {
           academic_transcript_url?: string | null
@@ -759,6 +760,7 @@ export type Database = {
           target_university?: string | null
           updated_at?: string
           wbe_student_id?: string | null
+          wb_student_id?: number | null
         }
         Update: {
           academic_transcript_url?: string | null
@@ -800,6 +802,7 @@ export type Database = {
           target_university?: string | null
           updated_at?: string
           wbe_student_id?: string | null
+          wb_student_id?: number | null
         }
         Relationships: []
       }

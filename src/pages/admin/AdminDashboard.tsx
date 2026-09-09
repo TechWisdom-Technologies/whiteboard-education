@@ -31,6 +31,7 @@ interface DashboardStats {
 interface RecentStudent {
   id: string;
   wbe_student_id?: string;
+  wb_student_id?: number;
   full_name: string;
   status: string;
   partner_id: string;
@@ -72,6 +73,7 @@ const statusTextColors: Record<string, string> = {
   ready_for_visa_application: "text-teal-600",
   emgs_approval_pending: "text-emerald-600",
   rejected_by_visa_office: "text-destructive",
+  declined_by_wb: "text-rose-600",
 };
 
 const PAGE_SIZE = 7;
@@ -126,7 +128,7 @@ export default function AdminDashboard() {
           supabase.from("universities").select("id", { count: "exact", head: true }),
           supabase.from("courses").select("id", { count: "exact", head: true }),
           supabase.from("partner_registrations").select("id, agency_name, contact_first_name, contact_last_name, status, created_at").order("created_at", { ascending: false }),
-          supabase.from("students").select("id, wbe_student_id, full_name, status, partner_id, created_at").order("created_at", { ascending: false }),
+          supabase.from("students").select("id, wbe_student_id, wb_student_id, full_name, status, partner_id, created_at").order("created_at", { ascending: false }),
           supabase.from("blogs").select("id", { count: "exact", head: true }),
           fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?select=user_id,agency_name`, { headers }).then(r => r.json()),
           (supabase.from as any)("student_applications").select("id, status"),
@@ -413,13 +415,13 @@ export default function AdminDashboard() {
                 {(studentAgencyFilter === 'all' ? allStudents : allStudents.filter(s => s.partner_id === studentAgencyFilter)).slice(0, 50).map(s => (
                   <div 
                     key={s.id} 
-                    onClick={() => navigate(`/admin/students/${s.wbe_student_id || s.id}`)}
+                    onClick={() => navigate(`/admin/students/${s.wb_student_id ? `WB-${s.wb_student_id}` : (s.wbe_student_id || s.id)}`)}
                     className="flex flex-col gap-1 py-3 px-4 hover:bg-[#1d283a] group cursor-pointer transition-colors"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
                         <p className="text-[14px] font-medium text-[#1E293B] group-hover:text-white">
-                          {s.full_name} <span className="italic text-[12px] font-normal text-muted-foreground group-hover:text-white/70">({s.wbe_student_id || 'Pending ID'})</span>
+                          {s.full_name} <span className="italic text-[12px] font-normal text-muted-foreground group-hover:text-white/70">({s.wb_student_id ? `WB-${s.wb_student_id}` : (s.wbe_student_id || 'Pending ID')})</span>
                         </p>
                         <p className="text-[11px] text-muted-foreground group-hover:text-white/70 mt-1">
                           <span className="text-[#1E293B] font-medium group-hover:text-white">{new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}, {new Date(s.created_at).toLocaleDateString('en-US', { weekday: 'short' })}</span> - {new Date(s.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
