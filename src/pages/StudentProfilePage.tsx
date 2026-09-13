@@ -71,6 +71,7 @@ const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const statusColors: Record<string, string> = {
   new: "bg-gray-100 text-gray-600 border-gray-200",
   application_in_progress: "bg-indigo-500/10 text-indigo-600 border-indigo-500/30",
+  application_in_review_by_wb: "bg-sky-500/10 text-sky-600 border-sky-500/30",
   received_application_at_wb: "bg-blue-500/10 text-blue-600 border-blue-500/30",
   application_on_hold_intake: "bg-amber-500/10 text-amber-600 border-amber-500/20",
   application_on_hold_wb: "bg-amber-500/10 text-amber-600 border-amber-500/20",
@@ -110,12 +111,14 @@ const statusOptions = Object.entries(statusLabels).map(([value, label]) => ({
 // â”€â”€â”€ Document fields â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const documentFields = [
-  { field: "passport_photo_url", label: "Passport Photo" },
-  { field: "passport_url", label: "Passport Copy" },
-  { field: "academic_transcript_url", label: "Academic Transcript" },
-  { field: "ielts_certificate_url", label: "IELTS Certificate" },
-  { field: "personal_statement_url", label: "Personal Statement" },
-  { field: "recommendation_letter_url", label: "Recommendation Letter" },
+  { field: "passport_photo_url", label: "Passport Photo", mandatory: false },
+  { field: "passport_url", label: "Passport Copy", mandatory: true },
+  { field: "academic_transcript_url", label: "Academic Transcript", mandatory: true },
+  { field: "ielts_certificate_url", label: "IELTS Certificate", mandatory: false },
+  { field: "personal_statement_url", label: "Personal Statement", mandatory: false },
+  { field: "recommendation_letter_url", label: "Recommendation Letter", mandatory: false },
+  { field: "cv_url", label: "Curriculum Vitae", mandatory: false },
+  { field: "research_proposal_url", label: "Research Proposal", mandatory: false },
 ] as const;
 
 // â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -162,11 +165,14 @@ interface Student {
   guardian_email?: string;
   emgs_application_number?: string | null;
   emgs_status_percentage?: number | null;
+  cv_url?: string;
+  research_proposal_url?: string;
 }
 
 interface Application {
   id: string;
   application_code: string;
+  custom_university_name?: string;
   wbe_application_id?: string;
   university_id: string;
   course_id: string;
@@ -246,6 +252,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
   const [newAppForm, setNewAppForm] = useState({
     university_id: "",
     course_id: "",
+    custom_university_name: "",
   });
   
   const [loading, setLoading] = useState(true);
@@ -586,8 +593,10 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
   // â”€â”€ Add Application â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const handleAddApplication = async () => {
-    if (!newAppForm.university_id || !newAppForm.course_id || !student || !session) {
-      toast.error("Please select a university and course.");
+    if ((newAppForm.university_id === "other" && !newAppForm.custom_university_name) || 
+        (newAppForm.university_id !== "other" && (!newAppForm.university_id || !newAppForm.course_id)) || 
+        !student || !session) {
+      toast.error("Please provide university and course details.");
       return;
     }
     
@@ -615,8 +624,9 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
         },
         body: JSON.stringify({
           student_id: student.id,
-          university_id: newAppForm.university_id,
-          course_id: newAppForm.course_id,
+          university_id: newAppForm.university_id === "other" ? null : newAppForm.university_id,
+          custom_university_name: newAppForm.university_id === "other" ? newAppForm.custom_university_name : null,
+          course_id: newAppForm.university_id === "other" ? null : newAppForm.course_id,
           application_code: applicationCode,
           status: defaultStatus
         })
@@ -901,7 +911,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
   // â”€â”€ Profile completeness â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const allDocsUploaded = student
-    ? documentFields.every((d) => !!(student as any)[d.field])
+    ? documentFields.filter(d => d.mandatory).every((d) => !!(student as any)[d.field])
     : false;
 
   const requiredFieldsFilled = student
@@ -1209,13 +1219,13 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                           {applications.map((app) => (
                             <TableRow key={app.id}>
                               <TableCell className="font-mono text-xs font-semibold text-[#1E293B] whitespace-nowrap">
-                                {app.wbe_application_id || app.application_code}
+                                {app.wbe_application_id || `WB/${student.wb_student_id || student.id.slice(0, 4)}/${new Date(app.created_at).getFullYear()}`}
                               </TableCell>
                               <TableCell className="text-xs text-gray-900 whitespace-nowrap">
                                 {new Date(app.created_at).toLocaleDateString()}
                               </TableCell>
                               <TableCell className="text-xs text-gray-900 break-words whitespace-normal leading-tight">
-                                {app.universities?.name || "—"}
+                                {app.universities?.name || app.custom_university_name || "—"}
                               </TableCell>
                               <TableCell className="text-xs text-gray-900 break-words whitespace-normal leading-tight">
                                 {app.courses?.title || "—"}
@@ -1770,6 +1780,138 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                     );
                   })()}
 
+                  {/* Curriculum Vitae (CV) */}
+                  {(() => {
+                    const docKey = "cv_url";
+                    const url = getDocUrl(docKey);
+                    const isUploading = uploading[docKey];
+                    return (
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between py-4 border-b border-gray-200 gap-4 hover:bg-gray-50/50 transition-colors">
+                        <div className="min-w-0 space-y-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="font-semibold text-sm text-[#1E293B]">Curriculum Vitae (CV)</h4>
+                            {url && <Check className="w-4 h-4 text-green-600 flex-shrink-0" />}
+                          </div>
+                          <p className="text-xs text-gray-500 italic">Detailed professional and academic resume</p>
+                        </div>
+
+                        <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                          <input
+                            type="file"
+                            accept=".pdf,.doc,.docx"
+                            className="hidden"
+                            ref={(el) => { fileInputRefs.current[docKey] = el; }}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleUploadDoc(docKey, file);
+                              e.target.value = "";
+                            }}
+                          />
+                          {url && (
+                            <a
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
+                            >
+                              Preview
+                            </a>
+                          )}
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            disabled={isUploading}
+                            onClick={() => fileInputRefs.current[docKey]?.click()}
+                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-[#1E293B] hover:border-[#1E293B] border-gray-200 shadow-sm transition-colors"
+                          >
+                            {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
+                            {url ? "Replace" : "Upload"}
+                          </Button>
+                          {url && (
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              disabled={isUploading}
+                              onClick={() => handleDeleteDoc(docKey)}
+                              className="h-8 px-3 text-xs font-semibold rounded-lg text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors"
+                            >
+                              <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                              Delete
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* Research Proposal */}
+                  {(() => {
+                    const docKey = "research_proposal_url";
+                    const url = getDocUrl(docKey);
+                    const isUploading = uploading[docKey];
+                    return (
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between py-4 border-b border-gray-200 gap-4 hover:bg-gray-50/50 transition-colors">
+                        <div className="min-w-0 space-y-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="font-semibold text-sm text-[#1E293B]">Research Proposal</h4>
+                            {url && <Check className="w-4 h-4 text-green-600 flex-shrink-0" />}
+                          </div>
+                          <p className="text-xs text-gray-500 italic">Required for research-based master's or PhD programs</p>
+                        </div>
+
+                        <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                          <input
+                            type="file"
+                            accept=".pdf,.doc,.docx"
+                            className="hidden"
+                            ref={(el) => { fileInputRefs.current[docKey] = el; }}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleUploadDoc(docKey, file);
+                              e.target.value = "";
+                            }}
+                          />
+                          {url && (
+                            <a
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
+                            >
+                              Preview
+                            </a>
+                          )}
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            disabled={isUploading}
+                            onClick={() => fileInputRefs.current[docKey]?.click()}
+                            className="h-8 px-3 text-xs font-semibold rounded-lg text-gray-700 hover:text-white hover:bg-[#1E293B] hover:border-[#1E293B] border-gray-200 shadow-sm transition-colors"
+                          >
+                            {isUploading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1.5" />}
+                            {url ? "Replace" : "Upload"}
+                          </Button>
+                          {url && (
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              disabled={isUploading}
+                              onClick={() => handleDeleteDoc(docKey)}
+                              className="h-8 px-3 text-xs font-semibold rounded-lg text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors"
+                            >
+                              <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                              Delete
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
                   {/* Job Experience (If any) */}
                   {(() => {
                     const docKey = "job_experience_url";
@@ -1990,7 +2132,32 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                     <InfoRow label="Institution" value={student.previous_institution} />
                     <InfoRow label="Major / Stream" value={student.major} />
                     <InfoRow label="GPA / CGPA" value={student.gpa || null} />
+                    {(student as any).program_start_date && (
+                      <InfoRow label="Program Start Date" value={new Date((student as any).program_start_date).toLocaleDateString()} />
+                    )}
+                    {(student as any).program_end_date && (
+                      <InfoRow label="Program End Date" value={new Date((student as any).program_end_date).toLocaleDateString()} />
+                    )}
                   </div>
+                  
+                  {/* Additional Education */}
+                  {(student as any).additional_education && (student as any).additional_education.length > 0 && (
+                    <div className="mt-6 pt-5 border-t border-gray-100/50">
+                      <h5 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Additional Educational Details</h5>
+                      <div className="space-y-4">
+                        {(student as any).additional_education.map((edu: any, index: number) => (
+                          <div key={index} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4 bg-gray-50/50 p-4 rounded-lg border border-gray-100">
+                            <InfoRow label="Level of Education" value={edu.degree_level} />
+                            <InfoRow label="Institution" value={edu.institution_name} />
+                            <InfoRow label="Major / Stream" value={edu.major} />
+                            <InfoRow label="GPA / CGPA" value={edu.gpa} />
+                            {edu.start_date && <InfoRow label="Start Date" value={new Date(edu.start_date).toLocaleDateString()} />}
+                            {edu.end_date && <InfoRow label="End Date" value={new Date(edu.end_date).toLocaleDateString()} />}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* ── Section 3: Language Proficiency ── */}
@@ -2112,41 +2279,55 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
               <Label htmlFor="university">University</Label>
               <Select
                 value={newAppForm.university_id}
-                onValueChange={(val) => setNewAppForm({ ...newAppForm, university_id: val, course_id: "" })}
+                onValueChange={(val) => setNewAppForm({ ...newAppForm, university_id: val, course_id: "", custom_university_name: "" })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select a university" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="other" className="font-semibold text-theme">Other (Type custom name)</SelectItem>
                   {universities.map(u => (
                     <SelectItem key={u.id} value={u.id}>{u.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="course">Course</Label>
-              <Select
-                value={newAppForm.course_id}
-                onValueChange={(val) => setNewAppForm({ ...newAppForm, course_id: val })}
-                disabled={!newAppForm.university_id}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={newAppForm.university_id ? "Select a course" : "Select university first"} />
-                </SelectTrigger>
-                <SelectContent>
-                  {courses.filter(c => c.university_id === newAppForm.university_id).map(c => (
-                    <SelectItem key={c.id} value={c.id}>{c.title}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {newAppForm.university_id === "other" && (
+              <div className="grid gap-2 animate-fade-in">
+                <Label htmlFor="custom_university">University Name</Label>
+                <Input
+                  id="custom_university"
+                  placeholder="Enter university name"
+                  value={newAppForm.custom_university_name}
+                  onChange={(e) => setNewAppForm({ ...newAppForm, custom_university_name: e.target.value })}
+                />
+              </div>
+            )}
+            {newAppForm.university_id !== "other" && (
+              <div className="grid gap-2">
+                <Label htmlFor="course">Course</Label>
+                <Select
+                  value={newAppForm.course_id}
+                  onValueChange={(val) => setNewAppForm({ ...newAppForm, course_id: val })}
+                  disabled={!newAppForm.university_id}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={newAppForm.university_id ? "Select a course" : "Select university first"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {courses.filter(c => c.university_id === newAppForm.university_id).map(c => (
+                      <SelectItem key={c.id} value={c.id}>{c.title}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsAppModalOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleAddApplication} disabled={addingApp || !newAppForm.university_id || !newAppForm.course_id} >
+            <Button onClick={handleAddApplication} disabled={addingApp || (newAppForm.university_id === "other" ? !newAppForm.custom_university_name : (!newAppForm.university_id || !newAppForm.course_id))} >
               {addingApp && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Create Application
             </Button>

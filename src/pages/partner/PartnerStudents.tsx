@@ -23,6 +23,7 @@ const statusColors: Record<string, string> = {
   new: "bg-gray-100 text-gray-600 border-gray-200",
   received_application_at_wb: "bg-blue-500/10 text-blue-600 border-blue-500/30",
   application_in_progress: "bg-indigo-500/10 text-indigo-600 border-indigo-500/30",
+  application_in_review_by_wb: "bg-sky-500/10 text-sky-600 border-sky-500/30",
   application_on_hold_intake: "bg-amber-500/10 text-amber-600 border-amber-500/20",
   application_on_hold_wb: "bg-amber-500/10 text-amber-600 border-amber-500/20",
   application_on_hold_university: "bg-amber-500/10 text-amber-600 border-amber-500/20",

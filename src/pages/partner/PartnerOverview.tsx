@@ -33,7 +33,11 @@ import {
   FileText,
   Search,
   ExternalLink,
-  Video
+  Video,
+  Bell,
+  Banknote,
+  Clock,
+  CreditCard
 } from "lucide-react";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -254,7 +258,7 @@ export default function PartnerOverview() {
       {/* Greeting and Clock Banner */}
       <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-6 flex flex-col lg:flex-row justify-between items-center bg-gradient-to-r from-blue-50 to-white gap-6 lg:gap-0">
         <div className="text-center lg:text-left">
-          <h2 className="text-2xl font-bold text-[#1E293B]">Good {getTimeOfDay()}, {getLastName()}!</h2>
+          <h2 className="text-2xl font-bold text-[#1E293B]">Welcome, {getLastName()}!</h2>
           <p className="text-slate-500 mt-1">Check your students and applications latest update</p>
         </div>
         
@@ -263,7 +267,7 @@ export default function PartnerOverview() {
           {/* Bangladesh Time */}
           <div className="flex flex-col items-end">
             <span className="text-[11px] sm:text-xs font-bold text-theme uppercase tracking-widest mb-1">Bangladesh</span>
-            <p className="text-3xl sm:text-4xl font-semibold text-theme whitespace-nowrap" style={{ fontVariantNumeric: 'tabular-nums' }}>
+            <p className="text-3xl sm:text-4xl font-bold text-theme whitespace-nowrap drop-shadow-sm font-mono tracking-tight" style={{ fontVariantNumeric: 'tabular-nums' }}>
               {(() => {
                 const d = new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Dhaka' }));
                 const h = d.getHours() % 12 || 12;
@@ -284,7 +288,7 @@ export default function PartnerOverview() {
           {/* Malaysia Time */}
           <div className="flex flex-col items-end">
             <span className="text-[11px] sm:text-xs font-bold text-[#CC0000] uppercase tracking-widest mb-1">Malaysia</span>
-            <p className="text-3xl sm:text-4xl font-semibold text-[#CC0000] whitespace-nowrap" style={{ fontVariantNumeric: 'tabular-nums' }}>
+            <p className="text-3xl sm:text-4xl font-bold text-[#CC0000] whitespace-nowrap drop-shadow-sm font-mono tracking-tight" style={{ fontVariantNumeric: 'tabular-nums' }}>
               {(() => {
                 const d = new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
                 const h = d.getHours() % 12 || 12;
@@ -421,6 +425,79 @@ export default function PartnerOverview() {
           </div>
           <p className="text-4xl font-bold text-theme">{getCard5Count()}</p>
         </div>
+      </div>
+
+      {/* Action & Notification Section */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        {/* Notifications & Updates */}
+        <Card className="bg-white border-[#2F4F97]/10 shadow-sm flex flex-col h-full md:col-span-2">
+          <CardHeader className="pb-3 border-b">
+            <CardTitle className="text-sm text-[#2F4F97] flex items-center gap-2 uppercase tracking-wider font-bold">
+              <Bell className="w-4 h-4" />
+              Recent Updates & Notifications
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-4 flex-grow">
+            <div className="space-y-3">
+              <div className="flex items-start gap-3 p-3 bg-blue-50/50 rounded-lg border border-blue-100">
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                  <Calendar className="w-4 h-4 text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-[#1E293B]">Application Deadline Approaching</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Fall 2026 intake applications for major universities close in 2 weeks.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 p-3 bg-amber-50/50 rounded-lg border border-amber-100">
+                <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+                  <Banknote className="w-4 h-4 text-amber-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-[#1E293B]">Tuition Fee Update</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Note a 5% increase in base tuition fees for new Engineering intakes.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 p-3 bg-emerald-50/50 rounded-lg border border-emerald-100">
+                <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                  <GraduationCap className="w-4 h-4 text-emerald-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-[#1E293B]">New Scholarship Opportunities</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Up to 30% merit-based scholarships available for eligible Business Management students.</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Quick Actions: Deferral & Payments */}
+        <div className="flex flex-col gap-6">
+          <Card className="bg-white border-[#2F4F97]/10 shadow-sm flex-1 hover:shadow-md transition-shadow cursor-pointer group">
+            <CardContent className="p-6 flex items-center gap-4 h-full">
+              <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center shrink-0 group-hover:bg-purple-100 transition-colors">
+                <Clock className="w-6 h-6 text-purple-600" />
+              </div>
+              <div>
+                <h3 className="font-bold text-[#1E293B] group-hover:text-purple-600 transition-colors">Request Deferral</h3>
+                <p className="text-xs text-muted-foreground mt-1">Manage intake deferrals</p>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-white border-[#2F4F97]/10 shadow-sm flex-1 hover:shadow-md transition-shadow cursor-pointer group">
+            <CardContent className="p-6 flex items-center gap-4 h-full">
+              <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center shrink-0 group-hover:bg-green-100 transition-colors">
+                <CreditCard className="w-6 h-6 text-green-600" />
+              </div>
+              <div>
+                <h3 className="font-bold text-[#1E293B] group-hover:text-green-600 transition-colors">Payments</h3>
+                <p className="text-xs text-muted-foreground mt-1">View invoices & history</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
       </div>
 
       {/* Section 6: Bottom Section (3 cards) */}

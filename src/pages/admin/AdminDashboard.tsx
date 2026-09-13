@@ -63,6 +63,7 @@ const statusTextColors: Record<string, string> = {
   new: "text-gray-600",
   received_application_at_wb: "text-blue-600",
   application_in_progress: "text-indigo-600",
+  application_in_review_by_wb: "text-sky-600",
   application_on_hold_intake: "text-amber-600",
   application_on_hold_wb: "text-amber-600",
   application_on_hold_university: "text-amber-600",
@@ -222,7 +223,7 @@ export default function AdminDashboard() {
       {/* Greeting and Clock Banner */}
       <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-6 flex flex-col lg:flex-row justify-between items-center bg-gradient-to-r from-slate-50 to-white gap-6 lg:gap-0">
         <div className="text-center lg:text-left">
-          <h2 className="text-2xl font-bold text-[#1E293B]">Good {getTimeOfDay()}, Admin!</h2>
+          <h2 className="text-2xl font-bold text-[#1E293B]">Welcome, Admin!</h2>
           <p className="text-slate-500 mt-1">Here is the latest update on the platform</p>
         </div>
         
@@ -231,7 +232,7 @@ export default function AdminDashboard() {
           {/* Bangladesh Time */}
           <div className="flex flex-col items-end">
             <span className="text-[11px] sm:text-xs font-bold text-[#1d283a] uppercase tracking-widest mb-1">Bangladesh</span>
-            <p className="text-3xl sm:text-4xl font-semibold text-[#1d283a] whitespace-nowrap" style={{ fontVariantNumeric: 'tabular-nums' }}>
+            <p className="text-3xl sm:text-4xl font-bold text-[#1d283a] whitespace-nowrap drop-shadow-sm font-mono tracking-tight" style={{ fontVariantNumeric: 'tabular-nums' }}>
               {(() => {
                 const d = new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Dhaka' }));
                 const h = d.getHours() % 12 || 12;
@@ -252,7 +253,7 @@ export default function AdminDashboard() {
           {/* Malaysia Time */}
           <div className="flex flex-col items-end">
             <span className="text-[11px] sm:text-xs font-bold text-[#CC0000] uppercase tracking-widest mb-1">Malaysia</span>
-            <p className="text-3xl sm:text-4xl font-semibold text-[#CC0000] whitespace-nowrap" style={{ fontVariantNumeric: 'tabular-nums' }}>
+            <p className="text-3xl sm:text-4xl font-bold text-[#CC0000] whitespace-nowrap drop-shadow-sm font-mono tracking-tight" style={{ fontVariantNumeric: 'tabular-nums' }}>
               {(() => {
                 const d = new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
                 const h = d.getHours() % 12 || 12;

@@ -12,6 +12,7 @@ export const statusPhases = [
     steps: [
       { id: "new", label: "New", description: "Student registered" },
       { id: "application_in_progress", label: "Application in Progress", description: "Partner applied to a university program" },
+      { id: "application_in_review_by_wb", label: "Application in review by WB", description: "Application is being reviewed by the Whiteboard Education team" },
       { id: "received_application_at_wb", label: "Received Application at WB", description: "Application accepted by WB team" },
       { id: "application_on_hold_intake", label: "Application on Hold – Intake yet to open", description: "Waiting for intake" },
       { id: "application_on_hold_wb", label: "Application on Hold – Wb team", description: "On hold by WB team" },

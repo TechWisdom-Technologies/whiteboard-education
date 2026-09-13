@@ -96,6 +96,8 @@ const emptyForm = {
   major: "",
   previous_institution: "",
   gpa: "",
+  program_start_date: "",
+  program_end_date: "",
   language_test_name: "",
   ielts_score: "",
 };
@@ -114,6 +116,7 @@ export default function PartnerAddStudent() {
   const [loadingStudent, setLoadingStudent] = useState(isEditMode);
   const [existingStudent, setExistingStudent] = useState<any>(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [additionalEducation, setAdditionalEducation] = useState<any[]>([]);
   const photoInputRef = useRef<HTMLInputElement | null>(null);
 
   // ─── Photo Upload Handlers ─────────────────────────────
@@ -265,9 +268,15 @@ export default function PartnerAddStudent() {
           major: s.major || "",
           previous_institution: s.previous_institution || "",
           gpa: s.gpa !== undefined && s.gpa !== null && s.gpa > 0 ? s.gpa.toString() : "",
+          program_start_date: s.program_start_date || "",
+          program_end_date: s.program_end_date || "",
           language_test_name: testName,
           ielts_score: scoreStr,
         });
+        
+        if (s.additional_education && Array.isArray(s.additional_education)) {
+          setAdditionalEducation(s.additional_education);
+        }
       } catch (err: any) {
         toast.error(err.message || "Error loading student");
       } finally {
@@ -347,6 +356,11 @@ export default function PartnerAddStudent() {
       }
     }
 
+    if (!form.education_level) {
+      toast.error("Academic Background is required");
+      return;
+    }
+
     setSubmitting(true);
     try {
       const fullName = `${firstName} ${lastName}`.trim();
@@ -375,6 +389,9 @@ export default function PartnerAddStudent() {
           previous_institution: form.previous_institution.trim(),
           major: majorValue,
           gpa: form.gpa ? parseFloat(form.gpa) : 0,
+          program_start_date: form.program_start_date || null,
+          program_end_date: form.program_end_date || null,
+          additional_education: additionalEducation,
           language_test_name: form.language_test_name,
           english_test_type: form.language_test_name,
           ielts_score: numericScore,
@@ -427,6 +444,9 @@ export default function PartnerAddStudent() {
             previous_institution: form.previous_institution.trim(),
             major: majorValue,
             gpa: form.gpa ? parseFloat(form.gpa) : 0,
+            program_start_date: form.program_start_date || null,
+            program_end_date: form.program_end_date || null,
+            additional_education: additionalEducation,
             language_test_name: form.language_test_name,
             english_test_type: form.language_test_name,
             ielts_score: numericScore,
@@ -582,6 +602,15 @@ export default function PartnerAddStudent() {
                     />
                   </div>
                   <div>
+                    <Label className="text-xs">Date of Birth</Label>
+                    <Input
+                      type="date"
+                      value={form.date_of_birth}
+                      onChange={e => setForm(f => ({ ...f, date_of_birth: e.target.value }))}
+                      className="h-9 mt-1"
+                    />
+                  </div>
+                  <div>
                     <Label className="text-xs">Email <span className="text-red-500">*</span></Label>
                     <Input
                       type="email"
@@ -599,13 +628,34 @@ export default function PartnerAddStudent() {
                   </div>
                   <div>
                     <Label className="text-xs">Phone</Label>
-                    <Input
-                      type="tel"
-                      value={form.phone}
-                      onChange={e => setForm(f => ({ ...f, phone: e.target.value.replace(/[^0-9+\-\s()]/g, "") }))}
-                      placeholder="+8801700000000"
-                      className="h-9 mt-1"
-                    />
+                    <div className="flex mt-1">
+                      <Select 
+                        value={form.phone.split(' ')[0] && form.phone.includes(' ') ? form.phone.split(' ')[0] : "+880"} 
+                        onValueChange={v => {
+                          const rest = form.phone.includes(' ') ? form.phone.split(' ').slice(1).join(' ') : form.phone;
+                          setForm(f => ({ ...f, phone: `${v} ${rest}`.trim() }));
+                        }}
+                      >
+                        <SelectTrigger className="h-9 w-[100px] rounded-r-none border-r-0 text-xs"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="+880">+880 (BD)</SelectItem>
+                          <SelectItem value="+60">+60 (MY)</SelectItem>
+                          <SelectItem value="+1">+1 (US/CA)</SelectItem>
+                          <SelectItem value="+44">+44 (UK)</SelectItem>
+                          <SelectItem value="+91">+91 (IN)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        type="tel"
+                        value={form.phone.includes(' ') ? form.phone.split(' ').slice(1).join(' ') : (form.phone.startsWith('+') ? '' : form.phone)}
+                        onChange={e => {
+                          const cc = form.phone.includes(' ') ? form.phone.split(' ')[0] : (form.phone.startsWith('+') ? form.phone.split(' ')[0] : "+880");
+                          setForm(f => ({ ...f, phone: `${cc} ${e.target.value.replace(/[^0-9\-\s()]/g, "")}` }));
+                        }}
+                        placeholder="1700000000"
+                        className="h-9 rounded-l-none"
+                      />
+                    </div>
                   </div>
                   <div>
                     <Label className="text-xs">Gender</Label>
@@ -662,15 +712,6 @@ export default function PartnerAddStudent() {
                       })()
                     )}
                   </div>
-                  <div>
-                    <Label className="text-xs">Date of Birth</Label>
-                    <Input
-                      type="date"
-                      value={form.date_of_birth}
-                      onChange={e => setForm(f => ({ ...f, date_of_birth: e.target.value }))}
-                      className="h-9 mt-1"
-                    />
-                  </div>
                 </div>
               </div>
 
@@ -680,11 +721,11 @@ export default function PartnerAddStudent() {
               <div>
                 <div className="flex items-center gap-2 mb-4">
                   <GraduationCap className="w-4 h-4 text-theme" />
-                  <h3 className="font-semibold text-sm text-gray-900">Academic Background</h3>
+                  <h3 className="font-semibold text-sm text-gray-900">Academic Background <span className="text-red-500">*</span></h3>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-xs">Level of Education</Label>
+                    <Label className="text-xs">Level of Education <span className="text-red-500">*</span></Label>
                     <Select value={form.education_level} onValueChange={v => setForm(f => ({ ...f, education_level: v, stream: "", program: "", major: "", gpa: "" }))}>
                       <SelectTrigger className="h-9 mt-1"><SelectValue placeholder="Select level" /></SelectTrigger>
                       <SelectContent>
@@ -760,6 +801,63 @@ export default function PartnerAddStudent() {
                       className="h-9 mt-1"
                     />
                   </div>
+                  <div>
+                    <Label className="text-xs">Start Date</Label>
+                    <Input
+                      type="date"
+                      value={form.program_start_date}
+                      onChange={e => setForm(f => ({ ...f, program_start_date: e.target.value }))}
+                      className="h-9 mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs">End Date</Label>
+                    <Input
+                      type="date"
+                      value={form.program_end_date}
+                      onChange={e => setForm(f => ({ ...f, program_end_date: e.target.value }))}
+                      className="h-9 mt-1"
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  {additionalEducation.map((edu, i) => (
+                    <div key={i} className="mb-4 p-4 border border-gray-200 rounded-lg relative">
+                      <Button variant="ghost" size="sm" onClick={() => setAdditionalEducation(prev => prev.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-500 hover:text-red-700 h-6 px-2">
+                        Remove
+                      </Button>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <Label className="text-xs">Level of Education</Label>
+                          <Input value={edu.level} onChange={e => { const newArr = [...additionalEducation]; newArr[i].level = e.target.value; setAdditionalEducation(newArr); }} className="h-9 mt-1" />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Institution</Label>
+                          <Input value={edu.institution} onChange={e => { const newArr = [...additionalEducation]; newArr[i].institution = e.target.value; setAdditionalEducation(newArr); }} className="h-9 mt-1" />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Program/Major</Label>
+                          <Input value={edu.program} onChange={e => { const newArr = [...additionalEducation]; newArr[i].program = e.target.value; setAdditionalEducation(newArr); }} className="h-9 mt-1" />
+                        </div>
+                        <div>
+                          <Label className="text-xs">GPA/Grade</Label>
+                          <Input value={edu.gpa} onChange={e => { const newArr = [...additionalEducation]; newArr[i].gpa = e.target.value; setAdditionalEducation(newArr); }} className="h-9 mt-1" />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Start Date</Label>
+                          <Input type="date" value={edu.start_date} onChange={e => { const newArr = [...additionalEducation]; newArr[i].start_date = e.target.value; setAdditionalEducation(newArr); }} className="h-9 mt-1" />
+                        </div>
+                        <div>
+                          <Label className="text-xs">End Date</Label>
+                          <Input type="date" value={edu.end_date} onChange={e => { const newArr = [...additionalEducation]; newArr[i].end_date = e.target.value; setAdditionalEducation(newArr); }} className="h-9 mt-1" />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <Button type="button" variant="outline" size="sm" onClick={() => setAdditionalEducation([...additionalEducation, { level: "", institution: "", program: "", gpa: "", start_date: "", end_date: "" }])}>
+                    + Add more educational details
+                  </Button>
                 </div>
               </div>
 
