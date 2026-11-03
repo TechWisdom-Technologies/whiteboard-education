@@ -72,6 +72,7 @@ interface Application {
   emgs_status_percentage: number | null;
   admin_notes: string | null;
   created_at: string;
+  custom_university_name?: string | null;
   universities?: { name: string } | null;
   courses?: { title: string; intake_months: string[] | null } | null;
 }
@@ -448,7 +449,7 @@ export default function PartnerApplications() {
                     <TableBody>
                       {filteredApplications.map((app) => {
                         const student = students[app.student_id];
-                        const universityName = app.universities?.name;
+                        const universityName = app.universities?.name || app.custom_university_name || "—";
                         const course = app.courses;
                         const badgeClass = statusColors[app.status] || "bg-gray-100 text-gray-800";
 

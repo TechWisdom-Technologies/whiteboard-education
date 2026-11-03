@@ -62,6 +62,7 @@ import { toast } from "sonner";
 import { getStatusLabel, computeStudentStatusFromApplications } from "@/config/statusFlow";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { StudentChatWidget } from "@/components/student/StudentChatWidget";
+import { openSecureDocument } from "@/lib/secureStorage";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -436,6 +437,11 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
       return student.academic_transcript_url;
     }
     return undefined;
+  };
+
+  const handlePreviewDoc = async (url?: string) => {
+    if (!url) return;
+    await openSecureDocument("student-documents", url);
   };
 
   const handleUploadDoc = async (field: string, file: File) => {
@@ -1329,14 +1335,13 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             }}
                           />
                           {url && (
-                            <a
-                              href={url}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <button
+                              type="button"
+                              onClick={() => handlePreviewDoc(url)}
                               className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                             >
                               Preview
-                            </a>
+                            </button>
                           )}
                           <Button
                             type="button"
@@ -1394,14 +1399,13 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             }}
                           />
                           {url && (
-                            <a
-                              href={url}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <button
+                              type="button"
+                              onClick={() => handlePreviewDoc(url)}
                               className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                             >
                               Preview
-                            </a>
+                            </button>
                           )}
                           <Button
                             type="button"
@@ -1467,14 +1471,13 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                               }}
                             />
                             {transcriptUrl && (
-                              <a
-                                href={transcriptUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                              <button
+                                type="button"
+                                onClick={() => handlePreviewDoc(transcriptUrl)}
                                 className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                               >
                                 Preview
-                              </a>
+                              </button>
                             )}
                             <Button
                               type="button"
@@ -1526,14 +1529,13 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                               }}
                             />
                             {certUrl && (
-                              <a
-                                href={certUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                              <button
+                                type="button"
+                                onClick={() => handlePreviewDoc(certUrl)}
                                 className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                               >
                                 Preview
-                              </a>
+                              </button>
                             )}
                             <Button
                               type="button"
@@ -1612,14 +1614,13 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             }}
                           />
                           {url && (
-                            <a
-                              href={url}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <button
+                              type="button"
+                              onClick={() => handlePreviewDoc(url)}
                               className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                             >
                               Preview
-                            </a>
+                            </button>
                           )}
                           <Button
                             type="button"
@@ -1677,14 +1678,13 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             }}
                           />
                           {url && (
-                            <a
-                              href={url}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <button
+                              type="button"
+                              onClick={() => handlePreviewDoc(url)}
                               className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                             >
                               Preview
-                            </a>
+                            </button>
                           )}
                           <Button
                             type="button"
@@ -1742,14 +1742,13 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             }}
                           />
                           {url && (
-                            <a
-                              href={url}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <button
+                              type="button"
+                              onClick={() => handlePreviewDoc(url)}
                               className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                             >
                               Preview
-                            </a>
+                            </button>
                           )}
                           <Button
                             type="button"
@@ -1808,14 +1807,13 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             }}
                           />
                           {url && (
-                            <a
-                              href={url}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <button
+                              type="button"
+                              onClick={() => handlePreviewDoc(url)}
                               className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                             >
                               Preview
-                            </a>
+                            </button>
                           )}
                           <Button
                             type="button"
@@ -1874,14 +1872,13 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             }}
                           />
                           {url && (
-                            <a
-                              href={url}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <button
+                              type="button"
+                              onClick={() => handlePreviewDoc(url)}
                               className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                             >
                               Preview
-                            </a>
+                            </button>
                           )}
                           <Button
                             type="button"
@@ -1940,14 +1937,13 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             }}
                           />
                           {url && (
-                            <a
-                              href={url}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <button
+                              type="button"
+                              onClick={() => handlePreviewDoc(url)}
                               className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                             >
                               Preview
-                            </a>
+                            </button>
                           )}
                           <Button
                             type="button"
@@ -2006,14 +2002,13 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             }}
                           />
                           {url && (
-                            <a
-                              href={url}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <button
+                              type="button"
+                              onClick={() => handlePreviewDoc(url)}
                               className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                             >
                               Preview
-                            </a>
+                            </button>
                           )}
                           <Button
                             type="button"

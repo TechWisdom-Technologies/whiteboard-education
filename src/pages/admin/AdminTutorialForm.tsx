@@ -42,7 +42,7 @@ export default function AdminTutorialForm({ initialData, onCancel, onSuccess }: 
 
   const handleSave = async () => {
     if (!form.title) return toast.error("Title is required");
-    if (!form.youtube_url) return toast.error("YouTube URL is required");
+    if (!form.youtube_url && !form.video_url) return toast.error("Please provide either a YouTube URL or a Direct Video URL");
     try {
       if (isEditing) {
         await updateRow.mutateAsync({ id: initialData.id, ...form });
@@ -80,9 +80,9 @@ export default function AdminTutorialForm({ initialData, onCancel, onSuccess }: 
             </div>
 
             <div className="space-y-2 md:col-span-2">
-              <Label className="text-[13px] font-semibold text-gray-700">YouTube URL *</Label>
+              <Label className="text-[13px] font-semibold text-gray-700">YouTube URL</Label>
               <Input value={form.youtube_url} onChange={(e) => setForm(prev => ({ ...prev, youtube_url: e.target.value }))} placeholder="https://youtube.com/watch?v=..." />
-              <p className="text-[11px] text-muted-foreground">The video will be embedded on the partner dashboard.</p>
+              <p className="text-[11px] text-muted-foreground">The YouTube embed URL or direct video URL below.</p>
             </div>
 
             {/* YouTube Preview */}

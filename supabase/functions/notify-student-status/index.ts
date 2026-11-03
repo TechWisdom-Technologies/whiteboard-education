@@ -22,10 +22,42 @@ serve(async (req) => {
       });
     }
 
+    // ── Authorization Check: Only admins can invoke this privileged status action ──
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Missing Authorization header" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const resendKey = Deno.env.get("RESEND_API_KEY") || "";
     const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const callerToken = authHeader.replace(/^Bearer\s+/i, "");
+    const { data: { user: callerUser }, error: userError } = await supabase.auth.getUser(callerToken);
+    if (userError || !callerUser) {
+      return new Response(JSON.stringify({ error: "Invalid credentials" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const { data: adminRole } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", callerUser.id)
+      .eq("role", "admin")
+      .maybeSingle();
+
+    if (!adminRole) {
+      return new Response(JSON.stringify({ error: "Forbidden: Admin role required" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const { data: student, error: studentError } = await supabase
       .from("students")

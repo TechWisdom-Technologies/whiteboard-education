@@ -19,6 +19,7 @@ const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 export interface ChatMessage {
   id?: string;
   student_id: string;
+  sender_user_id?: string;
   admin_name: string;
   content: string;
   created_at: string;
@@ -150,6 +151,7 @@ export function StudentChatWidget({
 
       const newRecord = {
         student_id: student.id,
+        sender_user_id: user?.id,
         admin_name: adminNameField,
         content: text,
       };

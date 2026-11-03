@@ -156,19 +156,30 @@ export default function PartnerOverview() {
           } catch (err) { console.error(err); }
         }
 
-        // Fetch platform settings and tutorials with fallbacks
+        // Fetch account managers from account_managers table (single source of truth)
         try {
-          const { data: amData } = await (supabase.from as any)('platform_settings')
+          const { data: amData, error: amError } = await (supabase.from as any)('account_managers')
             .select('*')
-            .eq('key', 'account_manager')
-            .maybeSingle();
+            .order('created_at', { ascending: true });
 
-          if (amData?.value) {
-            let val = amData.value;
-            if (typeof val === 'string') {
-              try { val = JSON.parse(val); } catch (e) { console.error(e); }
+          if (!amError && amData && amData.length > 0) {
+            setAccountManager(amData);
+          } else {
+            // Graceful fallback to platform_settings during migration transition
+            const { data: legacyAm } = await (supabase.from as any)('platform_settings')
+              .select('*')
+              .eq('key', 'account_manager')
+              .maybeSingle();
+
+            if (legacyAm?.value) {
+              let val = legacyAm.value;
+              if (typeof val === 'string') {
+                try { val = JSON.parse(val); } catch (e) { console.error(e); }
+              }
+              setAccountManager(val);
+            } else {
+              setAccountManager(null);
             }
-            setAccountManager(val);
           }
         } catch {
           setAccountManager(null);
