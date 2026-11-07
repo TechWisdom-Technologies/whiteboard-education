@@ -1,6 +1,6 @@
 import { 
   LayoutDashboard, Users, UserCircle, Bell, Layers,
-  LogOut, FileText, Search, CreditCard, BookOpen, Home, ChevronDown, ChevronRight, FolderDown, ExternalLink 
+  LogOut, FileText, Search, CreditCard, BookOpen, Home, ChevronDown, ChevronRight, FolderDown, ExternalLink, Lock 
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate, Link } from "react-router-dom";
@@ -8,6 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 import {
   Sidebar,
   SidebarContent,
@@ -35,7 +36,7 @@ const alliedSubItems = [
 ];
 
 export function PartnerSidebar() {
-  const { user, signOut } = useAuth();
+  const { user, signOut, partnerStatus } = useAuth();
   const navigate = useNavigate();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
@@ -44,6 +45,8 @@ export function PartnerSidebar() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [alliedOpen, setAlliedOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string>("");
+
+  const isPending = partnerStatus === "pending";
 
   const loadAvatar = async () => {
     if (!user) return;
@@ -139,6 +142,43 @@ export function PartnerSidebar() {
                     ? currentPath === "/partner-dashboard"
                     : currentPath.startsWith(item.url);
 
+                const isAccessibleWhilePending =
+                  item.url === "/partner-dashboard" || item.url === "/partner-dashboard/profile";
+                const isLocked = isPending && !isAccessibleWhilePending;
+
+                if (isLocked) {
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <div
+                        onClick={() => {
+                          toast.info("Account Pending Administrator Approval", {
+                            description: "This feature will unlock once your agency registration is verified by Whiteboard Education."
+                          });
+                        }}
+                        className={`
+                          flex items-center rounded-lg transition-colors duration-150 cursor-not-allowed opacity-60
+                          ${collapsed ? "justify-center p-2" : "gap-3 px-3 py-2.5"}
+                          text-slate-500 hover:bg-amber-50/60
+                        `}
+                        title="Locked — Pending Admin Approval"
+                      >
+                        <item.icon
+                          className="h-5 w-5 flex-shrink-0 text-slate-400"
+                          strokeWidth={1.8}
+                        />
+                        {!collapsed && (
+                          <span className="text-[15px] leading-5 font-medium text-slate-500">
+                            {item.title}
+                          </span>
+                        )}
+                        {!collapsed && (
+                          <Lock className="ml-auto h-3.5 w-3.5 text-amber-500 shrink-0" />
+                        )}
+                      </div>
+                    </SidebarMenuItem>
+                  );
+                }
+
                 return (
                   <SidebarMenuItem key={item.title}>
                     <NavLink
@@ -184,22 +224,42 @@ export function PartnerSidebar() {
 
               {/* Allied Services Dropdown */}
               <SidebarMenuItem>
-                <div
-                  onClick={() => setAlliedOpen(!alliedOpen)}
-                  className={`flex items-center rounded-lg text-slate-800 hover:bg-slate-100 hover:text-black transition-colors duration-150 cursor-pointer ${collapsed ? "justify-center p-2" : "gap-3 px-3 py-2.5"}`}
-                >
-                  <Layers className="h-5 w-5 flex-shrink-0 text-slate-600" strokeWidth={1.8} />
-                  {!collapsed && (
-                    <>
-                      <span className="text-[15px] leading-5 font-medium">Allied Services</span>
-                      {alliedOpen ? (
-                        <ChevronDown className="ml-auto h-4 w-4 text-slate-500" />
-                      ) : (
-                        <ChevronRight className="ml-auto h-4 w-4 text-slate-500" />
-                      )}
-                    </>
-                  )}
-                </div>
+                {isPending ? (
+                  <div
+                    onClick={() => {
+                      toast.info("Account Pending Administrator Approval", {
+                        description: "Allied services will unlock once your agency registration is verified."
+                      });
+                    }}
+                    className={`flex items-center rounded-lg text-slate-500 opacity-60 hover:bg-amber-50/60 transition-colors duration-150 cursor-not-allowed ${collapsed ? "justify-center p-2" : "gap-3 px-3 py-2.5"}`}
+                    title="Locked — Pending Admin Approval"
+                  >
+                    <Layers className="h-5 w-5 flex-shrink-0 text-slate-400" strokeWidth={1.8} />
+                    {!collapsed && (
+                      <>
+                        <span className="text-[15px] leading-5 font-medium">Allied Services</span>
+                        <Lock className="ml-auto h-3.5 w-3.5 text-amber-500 shrink-0" />
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  <div
+                    onClick={() => setAlliedOpen(!alliedOpen)}
+                    className={`flex items-center rounded-lg text-slate-800 hover:bg-slate-100 hover:text-black transition-colors duration-150 cursor-pointer ${collapsed ? "justify-center p-2" : "gap-3 px-3 py-2.5"}`}
+                  >
+                    <Layers className="h-5 w-5 flex-shrink-0 text-slate-600" strokeWidth={1.8} />
+                    {!collapsed && (
+                      <>
+                        <span className="text-[15px] leading-5 font-medium">Allied Services</span>
+                        {alliedOpen ? (
+                          <ChevronDown className="ml-auto h-4 w-4 text-slate-500" />
+                        ) : (
+                          <ChevronRight className="ml-auto h-4 w-4 text-slate-500" />
+                        )}
+                      </>
+                    )}
+                  </div>
+                )}
 
                 {/* Sub-menu */}
                 {!collapsed && alliedOpen && (

@@ -26,8 +26,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { mergePriorityUniversities, sortUniversitiesWithPriority } from "@/lib/universityPriority";
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 7;
 
 const DEGREE_LEVELS = [
   "All Levels",
@@ -151,9 +152,13 @@ export default function Universities() {
     return map;
   }, [courses]);
 
+  const allUniversities = useMemo(() => {
+    return mergePriorityUniversities(universities);
+  }, [universities]);
+
   const cities = useMemo(
-    () => [...new Set(universities.map((u: any) => u.city).filter(Boolean))].sort(),
-    [universities]
+    () => [...new Set(allUniversities.map((u: any) => u.city).filter(Boolean))].sort(),
+    [allUniversities]
   );
 
 
@@ -198,7 +203,7 @@ export default function Universities() {
 
   const filtered = useMemo(() => {
     const { search, selectedCity, selectedOfferLetter, selectedLevel, selectedField } = appliedFilters;
-    return universities.filter((u: any) => {
+    return allUniversities.filter((u: any) => {
       if (search && !u.name.toLowerCase().includes(search.toLowerCase())) return false;
       if (selectedCity !== "all" && u.city !== selectedCity) return false;
 
@@ -237,7 +242,7 @@ export default function Universities() {
 
       return true;
     });
-  }, [universities, courses, appliedFilters]);
+  }, [allUniversities, courses, appliedFilters]);
 
   const [sortBy, setSortBy] = useState("best_match");
 
@@ -247,6 +252,8 @@ export default function Universities() {
       result.sort((a, b) => a.name.localeCompare(b.name));
     } else if (sortBy === "name_z_a") {
       result.sort((a, b) => b.name.localeCompare(a.name));
+    } else {
+      result = sortUniversitiesWithPriority(result);
     }
     return result;
   }, [filtered, sortBy]);

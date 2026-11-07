@@ -72,28 +72,34 @@ export default function AdminPartners() {
     if (!window.confirm("Are you sure you want to delete this partner? This action cannot be undone.")) return;
 
     try {
-      const partner = registrations.find(r => r.id === id);
+      // 1. Try dedicated RPC which deletes partner_registrations AND purges auth.users
+      const { error: rpcErr } = await (supabase.rpc as any)('admin_delete_partner', { p_partner_id: id });
       
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?id=eq.${id}`, {
-        method: "DELETE",
-        headers: {
-          "apikey": SUPABASE_KEY,
-          "Authorization": `Bearer ${session.access_token}`,
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to delete partner");
-      }
-
-      if (partner?.user_id) {
-        await fetch(`${SUPABASE_URL}/rest/v1/user_roles?user_id=eq.${partner.user_id}`, {
+      if (rpcErr) {
+        console.warn("RPC admin_delete_partner fallback to direct delete:", rpcErr.message);
+        const partner = registrations.find(r => r.id === id);
+        
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?id=eq.${id}`, {
           method: "DELETE",
           headers: {
             "apikey": SUPABASE_KEY,
             "Authorization": `Bearer ${session.access_token}`,
           },
         });
+
+        if (!res.ok) {
+          throw new Error("Failed to delete partner");
+        }
+
+        if (partner?.user_id) {
+          await fetch(`${SUPABASE_URL}/rest/v1/user_roles?user_id=eq.${partner.user_id}`, {
+            method: "DELETE",
+            headers: {
+              "apikey": SUPABASE_KEY,
+              "Authorization": `Bearer ${session.access_token}`,
+            },
+          });
+        }
       }
 
       toast.success("Partner deleted successfully");
@@ -128,26 +134,29 @@ export default function AdminPartners() {
 
     try {
       await Promise.all(selectedIds.map(async id => {
-        const partner = registrations.find(r => r.id === id);
-        
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?id=eq.${id}`, {
-          method: "DELETE",
-          headers: {
-            "apikey": SUPABASE_KEY,
-            "Authorization": `Bearer ${session.access_token}`,
-          },
-        });
-        
-        if (!res.ok) throw new Error("Failed to delete partner");
-
-        if (partner?.user_id) {
-          await fetch(`${SUPABASE_URL}/rest/v1/user_roles?user_id=eq.${partner.user_id}`, {
+        const { error: rpcErr } = await (supabase.rpc as any)('admin_delete_partner', { p_partner_id: id });
+        if (rpcErr) {
+          const partner = registrations.find(r => r.id === id);
+          
+          const res = await fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?id=eq.${id}`, {
             method: "DELETE",
             headers: {
               "apikey": SUPABASE_KEY,
               "Authorization": `Bearer ${session.access_token}`,
             },
           });
+          
+          if (!res.ok) throw new Error("Failed to delete partner");
+
+          if (partner?.user_id) {
+            await fetch(`${SUPABASE_URL}/rest/v1/user_roles?user_id=eq.${partner.user_id}`, {
+              method: "DELETE",
+              headers: {
+                "apikey": SUPABASE_KEY,
+                "Authorization": `Bearer ${session.access_token}`,
+              },
+            });
+          }
         }
       }));
 

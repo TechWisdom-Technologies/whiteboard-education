@@ -34,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { sortUniversitiesWithPriority } from "@/lib/universityPriority";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -335,7 +336,7 @@ export default function Courses2() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all">All Universities</SelectItem>
-                          {universities.map((u: any) => (
+                          {sortUniversitiesWithPriority(universities).map((u: any) => (
                             <SelectItem key={u.id} value={String(u.id)}>{u.name}</SelectItem>
                           ))}
                         </SelectContent>

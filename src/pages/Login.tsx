@@ -28,7 +28,7 @@ const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 export default function Login() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { signIn, signOut, resetPassword, verifyResetOtp, updatePassword } = useAuth();
+  const { user, hasRole, partnerStatus, signIn, signOut, resetPassword, verifyResetOtp, updatePassword } = useAuth();
 
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
@@ -36,6 +36,16 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [regStatus, setRegStatus] = useState<{ status: string; admin_notes: string } | null>(null);
   const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      if (hasRole("admin")) {
+        navigate("/admin", { replace: true });
+      } else if (hasRole("partner") || partnerStatus) {
+        navigate("/partner-dashboard", { replace: true });
+      }
+    }
+  }, [user, hasRole, partnerStatus, navigate]);
 
   // Forgot password state
   type FpStep = "idle" | "enter_email" | "sending" | "code_sent" | "verifying" | "verified" | "updating" | "done";
@@ -50,6 +60,25 @@ export default function Login() {
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 30);
     return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    // Detect errors returned from Supabase Auth link redirects (e.g. otp_expired)
+    if (typeof window !== "undefined") {
+      const hash = window.location.hash;
+      if (hash) {
+        const hashParams = new URLSearchParams(hash.substring(1));
+        const errorDesc = hashParams.get("error_description");
+        if (errorDesc) {
+          setLoginError(decodeURIComponent(errorDesc.replace(/\+/g, " ")));
+        }
+      }
+      const searchParams = new URLSearchParams(window.location.search);
+      const searchError = searchParams.get("error_description");
+      if (searchError) {
+        setLoginError(decodeURIComponent(searchError.replace(/\+/g, " ")));
+      }
+    }
   }, []);
 
   const checkPartnerRegistration = async (userEmail: string) => {
@@ -75,21 +104,23 @@ export default function Login() {
     
     if (!result.success) {
       const reg = await checkPartnerRegistration(email);
-      if (reg && (reg.status === "pending" || reg.status === "rejected")) {
+      if (reg && reg.status === "rejected") {
         setRegStatus(reg);
       } else {
         setLoginError(result.error || "Invalid email or password");
       }
     } else {
-      // Login successful, but if they are supposed to be a partner and lack the role, check registration.
-      if (result.redirectTo === "/") {
-        const reg = await checkPartnerRegistration(email);
-        if (reg && (reg.status === "pending" || reg.status === "rejected")) {
-          setRegStatus(reg);
-          // Sign them back out since they shouldn't have access yet
-          await signOut();
-          return;
-        }
+      const reg = await checkPartnerRegistration(email);
+      if (reg && reg.status === "rejected") {
+        setRegStatus(reg);
+        await signOut();
+        return;
+      }
+      
+      // If partner account is pending or approved, route to partner dashboard
+      if (reg && (reg.status === "pending" || reg.status === "approved")) {
+        navigate("/partner-dashboard");
+        return;
       }
       
       navigate(result.redirectTo || "/");
@@ -115,7 +146,7 @@ export default function Login() {
   };
 
   const handleFpVerify = async () => {
-    if (fpOtp.length < 6) { setFpError("Enter the 6-digit code."); return; }
+    if (fpOtp.length < 6) { setFpError("Enter the verification code."); return; }
     setFpError("");
     setFpStep("verifying");
     const result = await verifyResetOtp(fpEmail, fpOtp);
@@ -235,7 +266,22 @@ export default function Login() {
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>
-                    {loginError && <p className="text-red-500 text-[11px] mt-1.5 ml-1">{loginError}</p>}
+                    {loginError && (
+                      <div className="space-y-2 mt-2">
+                        <p className="text-red-500 text-xs font-semibold">{loginError}</p>
+                        {loginError.toLowerCase().includes("not confirmed") && (
+                          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-xs text-[#2F4F97] space-y-1.5 animate-fade-in">
+                            <p className="font-medium text-gray-700">Your email has not been verified yet.</p>
+                            <Link
+                              to={`/partner/register?email=${encodeURIComponent(email)}&step=4`}
+                              className="inline-flex items-center gap-1 font-bold text-[#2F4F97] hover:underline"
+                            >
+                              Verify with 6-Digit Code →
+                            </Link>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                   <div className="flex flex-col gap-2 mt-4">
                     <div className="flex items-center gap-4 mt-6">
@@ -325,15 +371,15 @@ export default function Login() {
               <div className="space-y-4">
                 <div className="flex items-start gap-3 p-3 bg-blue-50 border border-blue-100 rounded-lg">
                   <ShieldCheck className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
-                  <p className="text-[12px] text-blue-700">A 6-digit code was sent to <span className="font-bold">{fpEmail}</span>. Check your inbox and spam folder.</p>
+                  <p className="text-[12px] text-blue-700">A verification code was sent to <span className="font-bold">{fpEmail}</span>. Check your inbox and spam folder.</p>
                 </div>
                 <div>
                   <input
                     value={fpOtp}
-                    onChange={(e) => { setFpOtp(e.target.value.replace(/\D/g, "").slice(0, 6)); setFpError(""); }}
-                    placeholder="Enter 6-digit code"
-                    className={inputCls + " tracking-[0.3em] text-center font-bold text-lg"}
-                    maxLength={6}
+                    onChange={(e) => { setFpOtp(e.target.value.replace(/\D/g, "").slice(0, 8)); setFpError(""); }}
+                    placeholder="Enter verification code"
+                    className={inputCls + " tracking-[0.25em] text-center font-bold text-lg"}
+                    maxLength={8}
                   />
                   {fpError && <p className="text-red-500 text-[11px] mt-1.5 ml-1 text-center">{fpError}</p>}
                 </div>

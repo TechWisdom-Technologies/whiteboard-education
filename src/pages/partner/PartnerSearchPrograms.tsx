@@ -31,6 +31,7 @@ import {
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { toast } from "sonner";
 import { getActiveIntake } from "@/lib/utils";
+import { mergePriorityUniversities, sortUniversitiesWithPriority, getUniversityPriorityIndex } from "@/lib/universityPriority";
 
 interface University {
   id: string;
@@ -133,12 +134,13 @@ export default function PartnerSearchPrograms() {
       try {
         setLoading(true);
 
-        // 1. Fetch universities
+        // 1. Fetch universities and merge top priority universities
         const { data: univsData } = await supabase
           .from("universities")
           .select("id, name, city, logo_url");
 
-        const univsMap = (univsData || []).reduce((acc, u) => {
+        const mergedUnis = mergePriorityUniversities(univsData || []);
+        const univsMap = mergedUnis.reduce((acc, u) => {
           acc[u.id] = u;
           return acc;
         }, {} as Record<string, University>);
@@ -234,9 +236,17 @@ export default function PartnerSearchPrograms() {
       result.sort((a, b) => (a.tuition_fee || 0) - (b.tuition_fee || 0));
     } else if (appliedFilters.sortBy === "tuition_high_low") {
       result.sort((a, b) => (b.tuition_fee || 0) - (a.tuition_fee || 0));
+    } else {
+      // Prioritize programs from the top 7 universities
+      result.sort((a, b) => {
+        const uniA = universities[a.university_id];
+        const uniB = universities[b.university_id];
+        const pA = getUniversityPriorityIndex(uniA?.name || "");
+        const pB = getUniversityPriorityIndex(uniB?.name || "");
+        if (pA !== pB) return pA - pB;
+        return (a.title || "").localeCompare(b.title || "");
+      });
     }
-
-    return result;
   }, [courses, universities, appliedFilters]);
 
   const handleSearch = () => {
@@ -307,8 +317,7 @@ export default function PartnerSearchPrograms() {
               </SelectTrigger>
               <SelectContent className="max-h-[300px]">
                 <SelectItem value="all">All Universities ({Object.keys(universities).length})</SelectItem>
-                {Object.values(universities)
-                  .sort((a, b) => a.name.localeCompare(b.name))
+                {sortUniversitiesWithPriority(Object.values(universities))
                   .map((u) => (
                     <SelectItem key={u.id} value={u.id}>
                       {u.name}

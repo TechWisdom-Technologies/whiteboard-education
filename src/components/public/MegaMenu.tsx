@@ -185,7 +185,13 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
             </Link>
           ) : (
             <div className="flex items-center gap-3">
-              <span className="text-[11px] font-medium text-gray-400 uppercase tracking-tight pr-3">Logged in as {user.email}</span>
+              <span className="text-[11px] font-medium text-gray-400 uppercase tracking-tight">Logged in as {user.email}</span>
+              <button
+                onClick={handleLogout}
+                className="text-[11px] font-semibold text-rose-400 hover:text-rose-300 underline tracking-wide pr-3 transition-colors"
+              >
+                LOG OUT
+              </button>
             </div>
           )}
         </div>

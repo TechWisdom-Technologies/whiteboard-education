@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { X, Loader2 } from "lucide-react";
+import { X, Loader2, ShieldCheck, ArrowRight, RotateCw } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 const COUNTRIES = [
   "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria",
@@ -43,6 +44,7 @@ const STUDENT_RANGES = [
 
 export default function PartnerRegistration() {
   const navigate = useNavigate();
+  const { refreshPartnerStatus } = useAuth();
   const [submitting, setSubmitting] = useState(false);
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -56,6 +58,33 @@ export default function PartnerRegistration() {
   const [website, setWebsite] = useState("");
   const [annualStudents, setAnnualStudents] = useState("");
   const [password, setPassword] = useState("");
+
+  // OTP State
+  const [otp, setOtp] = useState("");
+  const [otpError, setOtpError] = useState("");
+  const [verifying, setVerifying] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const timer = setInterval(() => setResendCooldown((c) => c - 1), 1000);
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const urlEmail = params.get("email");
+      const urlStep = params.get("step");
+      if (urlEmail) {
+        setEmail(urlEmail);
+      }
+      if (urlStep === "4" && urlEmail) {
+        setStep(4);
+      }
+    }
+  }, []);
 
   const handleNext = async () => {
     const newErrors: Record<string, string> = {};
@@ -100,86 +129,224 @@ export default function PartnerRegistration() {
     setSubmitting(true);
 
     try {
-      // Attempt immediate check via RPC
-      const { data, error } = await (supabase.rpc as any)('check_registration_exists', {
+      // 1. Check if email or phone is already registered
+      const { data, error: rpcError } = await (supabase.rpc as any)('check_registration_exists', {
         check_email: email,
         check_phone: phone
       });
 
-      if (!error && data) {
+      if (!rpcError && data) {
         const resData = data as { email_exists?: boolean; phone_exists?: boolean };
-        if (resData.email_exists) newErrors.email = "This email is already registered.";
+        if (resData.email_exists) newErrors.email = "This email is already registered and active. Please sign in.";
         if (resData.phone_exists) newErrors.phone = "This phone number is already registered.";
       }
       
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
         setSubmitting(false);
-        // If phone is duplicate, send them back to step 2
         if (newErrors.phone && !newErrors.email) {
-            setStep(2);
+          setStep(2);
         }
         return;
       }
 
-      // 1. Create user account
+      // 2. Create user account in Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: { first_name: contactFirstName, last_name: contactLastName, display_name: `${contactFirstName} ${contactLastName}` },
-          emailRedirectTo: `${window.location.origin}/login`,
+          data: {
+            first_name: contactFirstName,
+            last_name: contactLastName,
+            display_name: `${contactFirstName} ${contactLastName}`,
+          },
+          emailRedirectTo: `${window.location.origin}/partner-dashboard`,
         },
       });
-      if (authError) throw authError;
 
-      const userId = authData.user?.id;
+      if (authError) {
+        // If an unconfirmed account already exists from an earlier incomplete attempt,
+        // resend a fresh verification code and smoothly advance to Step 4.
+        const errMsg = authError.message.toLowerCase();
+        if (errMsg.includes("already registered") || errMsg.includes("already exists") || authError.status === 400 || authError.status === 422) {
+          const { error: resendErr } = await supabase.auth.resend({
+            type: 'signup',
+            email: email,
+            options: {
+              emailRedirectTo: `${window.location.origin}/partner-dashboard`,
+            }
+          });
 
-      // 2. Insert registration record using REST API
-      const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-      const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-      const token = authData.session?.access_token || SUPABASE_KEY;
-
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/partner_registrations`, {
-        method: "POST",
-        headers: {
-          "apikey": SUPABASE_KEY,
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-          "Prefer": "return=minimal",
-        },
-        body: JSON.stringify({
-          user_id: userId,
-          agency_name: agencyName,
-          contact_first_name: contactFirstName,
-          contact_last_name: contactLastName,
-          email,
-          phone,
-          country,
-          website_url: website,
-          annual_students: annualStudents,
-          status: "pending",
-        }),
-      });
-
-      if (!res.ok) {
-        const errText = await res.text();
-        if (errText.includes("partner_registrations_user_id_fkey") || errText.includes("Key is not present in table")) {
-          setErrors({ email: "This email is already registered." });
-          throw new Error("Validation_Error");
+          if (!resendErr) {
+            setStep(4);
+            setResendCooldown(60);
+            toast.info("A pending registration was found. A fresh verification code has been sent to your inbox!");
+            return;
+          }
         }
-        throw new Error(errText);
+        throw authError;
       }
 
-      await supabase.auth.signOut();
-      toast.success("Registration submitted! Your application is pending admin approval.");
-      navigate("/partner");
+      // Move to Step 4: OTP Verification Screen
+      setStep(4);
+      setResendCooldown(60);
+      toast.success("Verification code sent! Please check your email inbox.");
     } catch (err: any) {
-      if (err.message !== "Validation_Error") {
-        toast.error(err.message || "Registration failed. Please try again.");
-      }
+      toast.error(err.message || "Registration failed. Please try again.");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (otp.length < 6) {
+      setOtpError("Please enter the verification code.");
+      return;
+    }
+    setOtpError("");
+    setVerifying(true);
+
+    try {
+      let authSession = null;
+      let authUser = null;
+
+      // 1. Attempt OTP verification
+      const { data: vData, error: vErr } = await supabase.auth.verifyOtp({
+        email,
+        token: otp.trim(),
+        type: 'signup'
+      });
+
+      if (!vErr && vData?.user) {
+        authSession = vData.session;
+        authUser = vData.user;
+      } else {
+        // Fallback retry with type: 'email'
+        const retry = await supabase.auth.verifyOtp({
+          email,
+          token: otp.trim(),
+          type: 'email'
+        });
+        if (!retry.error && retry.data?.user) {
+          authSession = retry.data.session;
+          authUser = retry.data.user;
+        } else {
+          // If already verified or immediate session available, attempt sign-in
+          const sRes = await supabase.auth.signInWithPassword({ email, password });
+          if (sRes.data?.user) {
+            authSession = sRes.data.session;
+            authUser = sRes.data.user;
+          } else {
+            throw new Error(retry.error?.message || vErr?.message || "Invalid verification code. Please check and try again.");
+          }
+        }
+      }
+
+      if (password) {
+        await supabase.auth.updateUser({ password }).catch(() => {});
+      }
+
+      // 2. Ensure registration record exists in partner_registrations
+      let parsedAnnualStudents = 0;
+      if (annualStudents) {
+        const match = annualStudents.match(/\d+/);
+        parsedAnnualStudents = match ? parseInt(match[0], 10) : 0;
+      }
+
+      const contactPerson = `${contactFirstName || ""} ${contactLastName || ""}`.trim() || agencyName || "Partner Representative";
+
+      // 2a. Try RPC register_partner_agency first (runs with SECURITY DEFINER and bypasses client RLS)
+      const { error: rpcErr } = await (supabase.rpc as any)('register_partner_agency', {
+        p_agency_name: agencyName || "Partner Agency",
+        p_contact_first_name: contactFirstName || "",
+        p_contact_last_name: contactLastName || "",
+        p_email: email,
+        p_phone: phone || "",
+        p_country: country || "",
+        p_website_url: website || "",
+        p_annual_students: annualStudents || ""
+      });
+
+      if (rpcErr && authUser?.id) {
+        console.warn("Notice during RPC partner registration, attempting direct insert fallback:", rpcErr.message);
+        // 2b. Fallback to direct client insert with both contact_person and contact_first/last_name
+        const { data: existingReg } = await supabase
+          .from("partner_registrations")
+          .select("id")
+          .eq("user_id", authUser.id)
+          .maybeSingle();
+
+        if (!existingReg) {
+          const { error: insErr } = await supabase.from("partner_registrations").insert({
+            user_id: authUser.id,
+            agency_name: agencyName || "Partner Agency",
+            contact_person: contactPerson,
+            contact_first_name: contactFirstName || "",
+            contact_last_name: contactLastName || "",
+            email,
+            phone: phone || "",
+            country: country || "",
+            website_url: website || "",
+            annual_students: parsedAnnualStudents,
+            status: "pending",
+          });
+
+          if (insErr) {
+            console.warn("Direct insert with full fields returned:", insErr.message);
+            // Fallback without website_url in case that column is not in older schemas
+            try {
+              await supabase.from("partner_registrations").insert({
+                user_id: authUser.id,
+                agency_name: agencyName || "Partner Agency",
+                contact_person: contactPerson,
+                email,
+                phone: phone || "",
+                country: country || "",
+                annual_students: parsedAnnualStudents,
+                status: "pending",
+              } as any);
+            } catch (e) {
+              console.warn("Fallback minimal insert:", e);
+            }
+          }
+        }
+      }
+
+      // Pre-seed local cache so dashboard immediately recognizes pending status
+      if (authUser?.id) {
+        localStorage.setItem(`auth_partner_status_${authUser.id}`, "pending");
+        const existingRoles = JSON.parse(localStorage.getItem(`auth_roles_${authUser.id}`) || "[]");
+        if (!existingRoles.includes("partner")) {
+          existingRoles.push("partner");
+          localStorage.setItem(`auth_roles_${authUser.id}`, JSON.stringify(existingRoles));
+        }
+      }
+
+      await refreshPartnerStatus(authUser?.id, authSession?.access_token);
+      toast.success("Email verified! Welcome to your partner dashboard.");
+      navigate("/partner-dashboard");
+    } catch (err: any) {
+      setOtpError(err.message || "Failed to verify code. Please try again.");
+    } finally {
+      setVerifying(false);
+    }
+  };
+
+  const handleResendCode = async () => {
+    if (resendCooldown > 0 || resending) return;
+    setResending(true);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email,
+      });
+      if (error) throw error;
+      toast.success("A new verification code has been sent to your email.");
+      setResendCooldown(60);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to resend code.");
+    } finally {
+      setResending(false);
     }
   };
 
@@ -207,11 +374,11 @@ export default function PartnerRegistration() {
             <p className="text-sm text-[#64748B] mb-8 font-medium">Please fill in your details to apply for partnership.</p>
             
             <div className="flex items-center gap-2 mb-8">
-              {[1, 2, 3].map((s) => (
+              {[1, 2, 3, 4].map((s) => (
                 <div key={s} className="flex-1 flex flex-col gap-2">
                   <div className={`h-1.5 w-full rounded-full transition-colors duration-300 ${s <= step ? 'bg-[#2F4F97]' : 'bg-gray-200'}`} />
                   <span className={`text-[10px] font-bold uppercase tracking-widest transition-colors duration-300 ${s <= step ? 'text-[#2F4F97]' : 'text-gray-400'}`}>
-                    {s === 1 ? 'Agency Info' : s === 2 ? 'Rep Info' : 'Login Info'}
+                    {s === 1 ? 'Agency Info' : s === 2 ? 'Rep Info' : s === 3 ? 'Login Info' : 'Verify Email'}
                   </span>
                 </div>
               ))}
@@ -316,47 +483,133 @@ export default function PartnerRegistration() {
                       {errors.password && <p className="text-red-500 text-[10px] mt-0.5">{errors.password}</p>}
                     </div>
                   </div>
+                  <p className="text-[11px] text-gray-400 text-left mt-4 animate-fade-in">
+                    By submitting this form, you will receive a 6-digit confirmation code on your email to verify your account.
+                  </p>
                 </div>
               )}
 
-              <div className="pt-6 flex gap-3">
-                {step > 1 && (
-                  <Button 
-                    className="h-14 text-base font-bold rounded-lg flex-1 max-w-[140px] flex items-center justify-center border-2 border-[#2F4F97] text-[#2F4F97] bg-white hover:bg-[#2F4F97] hover:text-white transition-colors duration-200"
-                    onClick={handleBack}
-                    disabled={submitting}
-                  >
-                    ← Back
-                  </Button>
-                )}
+              {step === 4 && (
+                <div className="animate-fade-in space-y-6">
+                  <div className="text-center space-y-2">
+                    <div className="mx-auto w-12 h-12 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-[#2F4F97]">
+                      <ShieldCheck className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-xl font-bold text-[#1E293B]">
+                      Verify Your Email
+                    </h3>
+                    <p className="text-xs text-gray-500 max-w-md mx-auto leading-relaxed">
+                      We have sent a verification code to <span className="font-semibold text-gray-800">{email}</span>. Please enter the code below to complete registration and enter your partner dashboard.
+                    </p>
+                    <p className="text-[11px] text-amber-600 bg-amber-50 border border-amber-200/80 rounded-md py-1.5 px-3 max-w-md mx-auto font-medium">
+                      💡 Tip: Please check your <strong>Spam / Junk</strong> folder if the email does not appear in your primary inbox.
+                    </p>
+                  </div>
 
-                {step < 3 ? (
-                  <Button 
-                    className="flex-1 h-14 font-bold text-base rounded-lg transition-all flex items-center justify-center gap-2 border-2 border-transparent bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] hover:border-[#2F4F97] duration-200"
-                    onClick={handleNext}
-                    disabled={submitting}
-                  >
-                    {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Next →"}
-                  </Button>
-                ) : (
-                  <Button 
-                    className="flex-1 h-14 font-bold text-base rounded-lg transition-all flex items-center justify-center gap-2 border-2 border-transparent bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] hover:border-[#2F4F97] duration-200"
-                    onClick={handleSubmit} 
-                    disabled={submitting}
-                  >
-                    {submitting ? (
-                      <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Submitting Application...</>
-                    ) : (
-                      "Submit Application"
+                  <div className="space-y-2 max-w-sm mx-auto">
+                    <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block text-center">
+                      Verification Code
+                    </Label>
+                    <Input
+                      value={otp}
+                      onChange={(e) => {
+                        setOtp(e.target.value.replace(/\D/g, "").slice(0, 8));
+                        setOtpError("");
+                      }}
+                      placeholder="------"
+                      className="w-full h-14 text-center font-mono font-bold text-2xl tracking-[0.3em] bg-white border-2 border-gray-300 rounded-lg outline-none focus:border-[#2F4F97]"
+                      maxLength={8}
+                      autoFocus
+                    />
+                    {otpError && (
+                      <p className="text-red-500 text-xs text-center font-medium mt-1">
+                        {otpError}
+                      </p>
                     )}
-                  </Button>
-                )}
-              </div>
-              
-              {step === 3 && (
-                <p className="text-[11px] text-gray-400 text-left mt-4 animate-fade-in">
-                  By submitting this form, you agree to our Partnership Terms. Your account will be activated after admin verification.
-                </p>
+                  </div>
+
+                  <div className="pt-2 flex flex-col gap-3 max-w-sm mx-auto">
+                    <Button
+                      className="w-full h-14 font-bold text-base rounded-lg transition-all flex items-center justify-center gap-2 border-2 border-transparent bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] hover:border-[#2F4F97] duration-200 disabled:opacity-60"
+                      onClick={handleVerifyOtp}
+                      disabled={verifying || otp.length < 6}
+                    >
+                      {verifying ? (
+                        <>
+                          <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                          Verifying Code...
+                        </>
+                      ) : (
+                        "Verify & Enter Dashboard →"
+                      )}
+                    </Button>
+
+                    <div className="flex items-center justify-between text-xs text-gray-500 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setStep(3);
+                          setOtp("");
+                          setOtpError("");
+                        }}
+                        className="text-gray-500 hover:text-gray-800 underline"
+                      >
+                        ← Edit credentials
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleResendCode}
+                        disabled={resendCooldown > 0 || resending}
+                        className="text-[#2F4F97] hover:underline font-semibold disabled:text-gray-400 disabled:no-underline"
+                      >
+                        {resending ? (
+                          "Sending..."
+                        ) : resendCooldown > 0 ? (
+                          `Resend code in ${resendCooldown}s`
+                        ) : (
+                          "Resend Code"
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {step < 4 && (
+                <div className="pt-6 flex gap-3">
+                  {step > 1 && (
+                    <Button 
+                      className="h-14 text-base font-bold rounded-lg flex-1 max-w-[140px] flex items-center justify-center border-2 border-[#2F4F97] text-[#2F4F97] bg-white hover:bg-[#2F4F97] hover:text-white transition-colors duration-200"
+                      onClick={handleBack}
+                      disabled={submitting}
+                    >
+                      ← Back
+                    </Button>
+                  )}
+
+                  {step < 3 ? (
+                    <Button 
+                      className="flex-1 h-14 font-bold text-base rounded-lg transition-all flex items-center justify-center gap-2 border-2 border-transparent bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] hover:border-[#2F4F97] duration-200"
+                      onClick={handleNext}
+                      disabled={submitting}
+                    >
+                      {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Next →"}
+                    </Button>
+                  ) : (
+                    <Button 
+                      className="flex-1 h-14 font-bold text-base rounded-lg transition-all flex items-center justify-center gap-2 border-2 border-transparent bg-[#2F4F97] text-white hover:bg-white hover:text-[#2F4F97] hover:border-[#2F4F97] duration-200"
+                      onClick={handleSubmit} 
+                      disabled={submitting}
+                    >
+                      {submitting ? (
+                        <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Sending Verification Code...</>
+                      ) : (
+                        "Submit & Receive Code →"
+                      )}
+                    </Button>
+                  )}
+                </div>
               )}
 
               <div className="pt-8 border-t border-gray-100 flex flex-col items-start gap-4 mt-8">

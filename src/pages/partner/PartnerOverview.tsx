@@ -44,9 +44,19 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
 export default function PartnerOverview() {
-  const { session, user } = useAuth();
+  const { session, user, partnerStatus } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+
+  const handleFeatureClick = (targetPath: string) => {
+    if (partnerStatus === "pending") {
+      toast.info("Account Pending Administrator Approval", {
+        description: "This feature will unlock once your agency registration is verified by Whiteboard Education."
+      });
+      return;
+    }
+    navigate(targetPath);
+  };
 
   // Data states
   const [partnerInfo, setPartnerInfo] = useState<any>(null);
@@ -266,6 +276,39 @@ export default function PartnerOverview() {
   return (
     <div className="max-w-[1400px] mx-auto space-y-6 animate-fade-in text-[#1E293B]">
 
+      {/* Pending Approval Notice Banner */}
+      {partnerStatus === "pending" && (
+        <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 rounded-xl p-5 shadow-xs animate-fade-in">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="flex items-start gap-3.5">
+              <div className="p-2.5 bg-amber-500/15 rounded-xl text-amber-700 mt-0.5 shrink-0">
+                <Clock className="w-6 h-6 animate-pulse text-amber-600" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-base font-bold text-amber-950">
+                    Partner Account Under Review
+                  </h3>
+                  <Badge className="bg-amber-100 text-amber-800 border-amber-300 text-[10px] uppercase font-bold tracking-wider">
+                    Pending Verification
+                  </Badge>
+                </div>
+                <p className="text-xs text-amber-800/90 mt-1 max-w-2xl leading-relaxed">
+                  Welcome to Whiteboard Education! Your agency registration has been submitted and is currently being verified by our admissions team. 
+                  During this review period, you can complete and update your agency profile. Full recruitment and admissions tools (student submissions, course search, and applications) will unlock immediately upon administrator approval.
+                </p>
+              </div>
+            </div>
+            <Button
+              onClick={() => navigate("/partner-dashboard/profile")}
+              className="bg-[#2F4F97] hover:bg-[#1d3363] text-white text-xs font-semibold px-4 h-9 shadow-sm shrink-0"
+            >
+              Complete Profile →
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Greeting and Clock Banner */}
       <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-6 flex flex-col lg:flex-row justify-between items-center bg-gradient-to-r from-blue-50 to-white gap-6 lg:gap-0">
         <div className="text-center lg:text-left">
@@ -322,7 +365,7 @@ export default function PartnerOverview() {
         
         {/* Card 0: Total Students */}
         <div 
-          onClick={() => navigate(`/partner-dashboard/students?status=${card0Filter}`)}
+          onClick={() => handleFeatureClick(`/partner-dashboard/students?status=${card0Filter}`)}
           className="bg-white border-2 border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
         >
           <div className="mb-4" onClick={(e) => e.stopPropagation()}>
@@ -343,7 +386,7 @@ export default function PartnerOverview() {
 
         {/* Card 1: Total Applications */}
         <div 
-          onClick={() => navigate(`/partner-dashboard/applications?status=${card1Filter}`)}
+          onClick={() => handleFeatureClick(`/partner-dashboard/applications?status=${card1Filter}`)}
           className="bg-white border-2 border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
         >
           <div className="mb-4" onClick={(e) => e.stopPropagation()}>
@@ -364,7 +407,7 @@ export default function PartnerOverview() {
 
         {/* Card 2 */}
         <div 
-          onClick={() => navigate(`/partner-dashboard/applications?status=${card2Filter}`)}
+          onClick={() => handleFeatureClick(`/partner-dashboard/applications?status=${card2Filter}`)}
           className="bg-white border-2 border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
         >
           <div className="mb-4" onClick={(e) => e.stopPropagation()}>
@@ -383,7 +426,7 @@ export default function PartnerOverview() {
 
         {/* Card 3: Visa Applications */}
         <div 
-          onClick={() => navigate(`/partner-dashboard/applications?status=${card3Filter}`)}
+          onClick={() => handleFeatureClick(`/partner-dashboard/applications?status=${card3Filter}`)}
           className="bg-white border-2 border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
         >
           <div className="mb-4" onClick={(e) => e.stopPropagation()}>
@@ -403,7 +446,7 @@ export default function PartnerOverview() {
 
         {/* Card 4: Rejected by University */}
         <div 
-          onClick={() => navigate(`/partner-dashboard/applications?status=${card4Filter}`)}
+          onClick={() => handleFeatureClick(`/partner-dashboard/applications?status=${card4Filter}`)}
           className="bg-white border-2 border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
         >
           <div className="mb-4" onClick={(e) => e.stopPropagation()}>
@@ -421,7 +464,7 @@ export default function PartnerOverview() {
 
         {/* Card 5: Rejected by Visa */}
         <div 
-          onClick={() => navigate(`/partner-dashboard/applications?status=${card5Filter}`)}
+          onClick={() => handleFeatureClick(`/partner-dashboard/applications?status=${card5Filter}`)}
           className="bg-white border-2 border-theme shadow-sm rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow relative group flex flex-col justify-between"
         >
           <div className="mb-4" onClick={(e) => e.stopPropagation()}>

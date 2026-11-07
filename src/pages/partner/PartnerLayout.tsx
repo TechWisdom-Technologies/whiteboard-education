@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { PartnerSidebar } from "@/components/partner/PartnerSidebar";
 import { NotificationCenter } from "@/components/partner/NotificationCenter";
 import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,10 +18,23 @@ import {
 import { ChevronDown, LogOut } from "lucide-react";
 
 export default function PartnerLayout() {
-  const { user } = useAuth();
+  const { user, partnerStatus } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [avatarUrl, setAvatarUrl] = useState<string>("");
   const [displayName, setDisplayName] = useState<string>("");
+
+  useEffect(() => {
+    if (partnerStatus === "pending") {
+      const allowedPaths = ["/partner-dashboard", "/partner-dashboard/profile"];
+      if (!allowedPaths.includes(location.pathname)) {
+        toast.info("Account Pending Verification", {
+          description: "This feature will unlock once your agency registration is verified by Whiteboard Education."
+        });
+        navigate("/partner-dashboard", { replace: true });
+      }
+    }
+  }, [partnerStatus, location.pathname, navigate]);
 
   const loadProfile = async () => {
     if (!user) return;

@@ -1,18 +1,18 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
-// Top row of universities (10 items) - verified working links
+// Top row of universities (10 items) - top priority universities placed first
 const partnersRow1 = [
-  { name: "Multimedia University", logo: "https://en.your-uni.com/assets/images/university/mmu-university.webp" },
-  { name: "UCSI University", logo: "https://en.your-uni.com/assets/images/university/ucsi-university.webp" },
-  { name: "UTeM", logo: "https://en.your-uni.com/assets/images/university/utem-university.webp" },
-  { name: "UNIMY", logo: "https://en.your-uni.com/assets/images/university/university-malaysia-of-computer-science-and-engineering-unimy.webp" },
-  { name: "Taylor's University", logo: "https://en.your-uni.com/assets/images/university/taylor-university-malaysia.webp" },
-  { name: "MAHSA University", logo: "https://en.your-uni.com/assets/images/university/mahsa-university.webp" },
-  { name: "UTP University", logo: "https://en.your-uni.com/assets/images/university/utp-university.webp" },
+  { name: "INTI International University", logo: "https://en.your-uni.com/assets/images/university/inti-university.webp" },
   { name: "SEGi University", logo: "https://en.your-uni.com/assets/images/university/segi-university.webp" },
-  { name: "Limkokwing University", logo: "https://en.your-uni.com/assets/images/university/limkokwing-university.webp" },
-  { name: "IUKL", logo: "https://en.your-uni.com/assets/images/university/iukl-university.webp" },
+  { name: "Lincoln University College", logo: "https://en.your-uni.com/assets/images/university/lincoln-university-college.png" },
+  { name: "London School of Business and Finance (LSBF)", logo: "https://en.your-uni.com/assets/images/university/lsbf-malaysia.png" },
+  { name: "Universiti Tun Abdul Razak (UNIRAZAK)", logo: "https://en.your-uni.com/assets/images/university/unirazak-university.png" },
+  { name: "Universiti Kuala Lumpur (UniKL)", logo: "https://en.your-uni.com/assets/images/university/unikl-university.webp" },
+  { name: "Asia e University (AeU)", logo: "https://en.your-uni.com/assets/images/university/aeu-university.png" },
+  { name: "Multimedia University (MMU)", logo: "https://en.your-uni.com/assets/images/university/mmu-university.webp" },
+  { name: "UCSI University", logo: "https://en.your-uni.com/assets/images/university/ucsi-university.webp" },
+  { name: "Taylor's University", logo: "https://en.your-uni.com/assets/images/university/taylor-university-malaysia.webp" },
 ];
 
 // Bottom row of universities (10 items) - verified working links

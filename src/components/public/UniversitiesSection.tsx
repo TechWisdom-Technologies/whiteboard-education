@@ -5,9 +5,15 @@ import { Link } from "react-router-dom";
 import { useTableData } from "@/hooks/useSupabaseData";
 import { generateSlug } from "@/lib/utils";
 import { LoadingScreen } from "@/components/ui/loading-screen";
+import { mergePriorityUniversities } from "@/lib/universityPriority";
+import { useMemo } from "react";
 
 export function UniversitiesSection() {
   const { data: universities = [], isLoading } = useTableData("universities");
+
+  const top7Universities = useMemo(() => {
+    return mergePriorityUniversities(universities).slice(0, 7);
+  }, [universities]);
 
   if (isLoading) {
     return (
@@ -30,8 +36,8 @@ export function UniversitiesSection() {
         <p className="text-muted-foreground text-center mb-12 max-w-lg mx-auto">
           Explore our partnered universities worldwide
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {universities.slice(0, 6).map((uni: any) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {top7Universities.map((uni: any) => (
             <Link key={uni.id} to={`/universities/${generateSlug(uni.name)}`}>
               <Card className="group overflow-hidden hover:border-[#2F4F97] transition-all duration-300" style={{ borderRadius: "5px" }}>
                 <div className="h-44 overflow-hidden">

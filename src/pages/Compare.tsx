@@ -5,6 +5,7 @@ import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { sortUniversitiesWithPriority } from "@/lib/universityPriority";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, GraduationCap, X, GitCompare, BookOpen, Calendar, DollarSign, Building2, Globe, Wallet, Languages, Info, ExternalLink, ArrowRight } from "lucide-react";
@@ -187,7 +188,7 @@ export default function Compare() {
                             </SelectTrigger>
                             <SelectContent className="rounded-xl">
                               <SelectItem value="none" className="text-gray-500">Select a university</SelectItem>
-                              {liveUniversities.map((u: any) => (
+                              {sortUniversitiesWithPriority(liveUniversities).map((u: any) => (
                                 <SelectItem key={u.id} value={u.id} disabled={selected.includes(u.id)} className="font-medium text-xs">
                                   {u.name}
                                 </SelectItem>
