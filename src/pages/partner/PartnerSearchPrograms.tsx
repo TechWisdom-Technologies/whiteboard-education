@@ -247,6 +247,8 @@ export default function PartnerSearchPrograms() {
         return (a.title || "").localeCompare(b.title || "");
       });
     }
+
+    return result;
   }, [courses, universities, appliedFilters]);
 
   const handleSearch = () => {
@@ -267,12 +269,12 @@ export default function PartnerSearchPrograms() {
     setCurrentPage(1);
   };
 
-  const paginatedCourses = filteredCourses.slice(
+  const paginatedCourses = (filteredCourses || []).slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+  const totalPages = Math.ceil((filteredCourses || []).length / itemsPerPage);
   const hasActiveFilters = appliedFilters.searchQuery || appliedFilters.universityFilter !== "all" || appliedFilters.intake !== "all" || appliedFilters.level !== "all" || appliedFilters.studyArea !== "all";
 
   if (loading) return <LoadingScreen />;
