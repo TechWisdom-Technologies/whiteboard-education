@@ -84,7 +84,14 @@ export default function Application() {
           const { data: cData } = await supabase.from("language_centers").select("*").eq("id", centerId).single();
           if (cData) {
             setUni({ ...cData, isCenter: true });
-            const coursesList = Array.isArray(cData.more_info) ? cData.more_info.map((c: any) => c.title) : [];
+            // const coursesList = Array.isArray(cData.more_info) ? cData.more_info.map((c: any) => c.title) : [];
+            const moreInfo = (cData as unknown as {
+  more_info?: { title: string }[];
+}).more_info;
+
+const coursesList = Array.isArray(moreInfo)
+  ? moreInfo.map((c) => c.title)
+  : [];
             setCourses(coursesList.length > 0 ? coursesList : [cData.name]);
             setForm(f => ({ ...f, target_course: coursesList.length > 0 ? coursesList[0] : cData.name }));
             setLoadingInitial(false);
@@ -141,43 +148,71 @@ export default function Application() {
     return true;
   };
 
-  const uploadFile = async (file: File, pathPrefix: string) => {
-    const fileName = `${user?.id}/${Date.now()}_${pathPrefix}_${file.name}`;
-    const { error } = await supabase.storage.from("student-documents").upload(fileName, file);
-    if (error) throw error;
-    const { data: { publicUrl } } = supabase.storage.from("student-documents").getPublicUrl(fileName);
-    return publicUrl;
-  };
+  // const uploadFile = async (file: File, pathPrefix: string) => {
+  //   const fileName = `${user?.id}/${Date.now()}_${pathPrefix}_${file.name}`;
+  //   const { error } = await supabase.storage.from("student-documents").upload(fileName, file);
+  //   if (error) throw error;
+  //   const { data: { publicUrl } } = supabase.storage.from("student-documents").getPublicUrl(fileName);
+  //   return publicUrl;
+  // };
 
-  const handleSubmit = async () => {
-    if (!form.hs_certificate_file || !form.passport_file || !form.photo_file) {
-      toast.error("Please upload all required documents.");
-      return;
-    }
-    if (!agreed) {
-      toast.error("You must agree to the terms and conditions.");
-      return;
-    }
+  const uploadFile = async (
+  file: File,
+  pathPrefix: string,
+  recordId: string,
+  field: string
+) => {
+  const { data, error } = await supabase.functions.invoke("r2-storage", {
+    body: {
+      action: "create-upload",
+      recordType: "student",
+      recordId,
+      field,
+      fileName: file.name,
+      contentType: file.type,
+    },
+  });
 
-    setSubmitting(true);
-    setUploading(true);
+  if (error) throw error;
+  if (!data?.uploadUrl || !data?.objectKey) {
+    throw new Error("Could not generate R2 upload URL");
+  }
 
-    try {
-      const hsUrl = await uploadFile(form.hs_certificate_file, "hs_cert");
-      const photoUrl = await uploadFile(form.photo_file, "photo");
-      const passportUrl = await uploadFile(form.passport_file, "passport");
-      let additionalUrl = "";
-      if (form.additional_file) {
-        additionalUrl = await uploadFile(form.additional_file, "additional");
-      }
-      setUploading(false);
+  const uploadResponse = await fetch(data.uploadUrl, {
+    method: "PUT",
+    headers: { "Content-Type": file.type },
+    body: file,
+  });
 
-      // Save to students table
-      // We map the requested fields to the student table where possible.
-      // E.g. City/Country -> mapped to admin_notes or nationality for now if columns don't exist.
-      const extraInfo = `Guardian: ${form.guardian_name}, Email: ${form.guardian_email}, Phone: ${form.guardian_phone}, Income: ${form.guardian_income} | Residence: ${form.country_of_residence}, City: ${form.city}`;
+  if (!uploadResponse.ok) {
+    throw new Error(`R2 upload failed: ${pathPrefix}`);
+  }
 
-      const { error } = await supabase.from("students").insert({
+  return data.objectKey as string;
+};
+
+  
+const handleSubmit = async () => {
+  if (!form.hs_certificate_file || !form.passport_file || !form.photo_file) {
+    toast.error("Please upload all required documents.");
+    return;
+  }
+
+  if (!agreed) {
+    toast.error("You must agree to the terms and conditions.");
+    return;
+  }
+
+  setSubmitting(true);
+  setUploading(true);
+
+  try {
+    const extraInfo = `Guardian: ${form.guardian_name}, Email: ${form.guardian_email}, Phone: ${form.guardian_phone}, Income: ${form.guardian_income} | Residence: ${form.country_of_residence}, City: ${form.city}`;
+
+    // Create student record first
+    const { data: newStudent, error: insertError } = await supabase
+      .from("students")
+      .insert({
         partner_id: user?.id,
         full_name: form.full_name,
         email: form.email,
@@ -186,23 +221,73 @@ export default function Application() {
         target_university: uni?.name || "Any",
         target_course: form.target_course,
         status: "document_review",
-        academic_transcript_url: hsUrl,
-        passport_url: passportUrl,
-        passport_photo_url: photoUrl,
-        recommendation_letter_url: additionalUrl, // Using this for additional docs
         admin_notes: extraInfo,
-      });
+      })
+      .select("id")
+      .single();
 
-      if (error) throw error;
+    if (insertError) throw insertError;
 
-      setSuccess(true);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch (err: any) {
-      toast.error(err.message || "Failed to submit application.");
-      setUploading(false);
-      setSubmitting(false);
+    const studentId = newStudent.id;
+
+    // Upload required documents to R2
+    const hsUrl = await uploadFile(
+      form.hs_certificate_file,
+      "hs_cert",
+      studentId,
+      "academic_transcript_url"
+    );
+
+    const photoUrl = await uploadFile(
+      form.photo_file,
+      "photo",
+      studentId,
+      "passport_photo_url"
+    );
+
+    const passportUrl = await uploadFile(
+      form.passport_file,
+      "passport",
+      studentId,
+      "passport_url"
+    );
+
+    let additionalUrl: string | null = null;
+
+    if (form.additional_file) {
+      additionalUrl = await uploadFile(
+        form.additional_file,
+        "additional",
+        studentId,
+        "recommendation_letter_url"
+      );
     }
-  };
+
+    // Save R2 object keys in the existing database columns
+    const { error: updateError } = await supabase
+      .from("students")
+      .update({
+        academic_transcript_url: hsUrl,
+        passport_photo_url: photoUrl,
+        passport_url: passportUrl,
+        recommendation_letter_url: additionalUrl,
+      })
+      .eq("id", studentId);
+
+    if (updateError) throw updateError;
+
+    setUploading(false);
+    setSuccess(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch (err) {
+    toast.error(
+      err instanceof Error ? err.message : "Failed to submit application."
+    );
+    setUploading(false);
+    setSubmitting(false);
+  }
+};
+
 
   const logo = uni ? (LOGOS[uni.name] || uni.logo_url) : null;
 

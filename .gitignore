@@ -33,3 +33,6 @@ supabase/.temp/
 
 # Vite temporary config bundles
 vite.config.ts.timestamp-*.mjs
+
+# cloudflare r2 file storage
+supabase/.env.r2

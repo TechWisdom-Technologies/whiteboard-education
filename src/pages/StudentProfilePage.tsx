@@ -439,77 +439,195 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     return undefined;
   };
 
-  const handlePreviewDoc = async (url?: string) => {
-    if (!url) return;
-    await openSecureDocument("student-documents", url);
-  };
+  // const handlePreviewDoc = async (url?: string) => {
+  //   if (!url) return;
+  //   await openSecureDocument("student-documents", url);
+  // };
 
-  const handleUploadDoc = async (field: string, file: File) => {
-    if (!student || !session) return;
-    setUploading((p) => ({ ...p, [field]: true }));
-    try {
-      const path = `${user?.id}/${student.id}/${field}_${Date.now()}_${file.name}`;
-      const { error: uploadError } = await supabase.storage
-        .from("student-documents")
-        .upload(path, file);
-      if (uploadError) throw uploadError;
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("student-documents").getPublicUrl(path);
+  const handlePreviewDoc = async (field: string, url?: string) => {
+  if (!url || !student?.id) return;
 
-      const topLevelFields = [
-        "passport_photo_url",
-        "passport_url",
-        "academic_transcript_url",
-        "ielts_certificate_url",
-        "personal_statement_url",
-        "recommendation_letter_url",
-      ];
+  await openSecureDocument({
+    recordType: "student",
+    recordId: student.id,
+    field,
+    objectKey: url,
+  });
+};
 
-      if (topLevelFields.includes(field)) {
-        const res = await fetch(
-          `${SUPABASE_URL}/rest/v1/students?id=eq.${student.id}`,
-          {
-            method: "PATCH",
-            headers: {
-              ...headers,
-              "Content-Type": "application/json",
-              Prefer: "return=minimal",
-            },
-            body: JSON.stringify({ [field]: publicUrl }),
-          }
-        );
-        if (!res.ok) throw new Error("Failed to update student record");
-        setStudent((prev) => (prev ? { ...prev, [field]: publicUrl } : null));
-      } else {
-        const currentOther = (typeof student.other_documents === "object" && student.other_documents !== null && !Array.isArray(student.other_documents))
+  // const handleUploadDoc = async (field: string, file: File) => {
+  //   if (!student || !session) return;
+  //   setUploading((p) => ({ ...p, [field]: true }));
+  //   try {
+  //     const path = `${user?.id}/${student.id}/${field}_${Date.now()}_${file.name}`;
+  //     const { error: uploadError } = await supabase.storage
+  //       .from("student-documents")
+  //       .upload(path, file);
+  //     if (uploadError) throw uploadError;
+  //     const {
+  //       data: { publicUrl },
+  //     } = supabase.storage.from("student-documents").getPublicUrl(path);
+
+  //     const topLevelFields = [
+  //       "passport_photo_url",
+  //       "passport_url",
+  //       "academic_transcript_url",
+  //       "ielts_certificate_url",
+  //       "personal_statement_url",
+  //       "recommendation_letter_url",
+  //     ];
+
+  //     if (topLevelFields.includes(field)) {
+  //       const res = await fetch(
+  //         `${SUPABASE_URL}/rest/v1/students?id=eq.${student.id}`,
+  //         {
+  //           method: "PATCH",
+  //           headers: {
+  //             ...headers,
+  //             "Content-Type": "application/json",
+  //             Prefer: "return=minimal",
+  //           },
+  //           body: JSON.stringify({ [field]: publicUrl }),
+  //         }
+  //       );
+  //       if (!res.ok) throw new Error("Failed to update student record");
+  //       setStudent((prev) => (prev ? { ...prev, [field]: publicUrl } : null));
+  //     } else {
+  //       const currentOther = (typeof student.other_documents === "object" && student.other_documents !== null && !Array.isArray(student.other_documents))
+  //         ? student.other_documents
+  //         : {};
+  //       const updatedOther = { ...currentOther, [field]: publicUrl };
+
+  //       const res = await fetch(
+  //         `${SUPABASE_URL}/rest/v1/students?id=eq.${student.id}`,
+  //         {
+  //           method: "PATCH",
+  //           headers: {
+  //             ...headers,
+  //             "Content-Type": "application/json",
+  //             Prefer: "return=minimal",
+  //           },
+  //           body: JSON.stringify({ other_documents: updatedOther }),
+  //         }
+  //       );
+  //       if (!res.ok) throw new Error("Failed to update student record");
+  //       setStudent((prev) => (prev ? { ...prev, other_documents: updatedOther as any } : null));
+  //     }
+
+  //     toast.success("Document uploaded successfully!");
+  //   } catch (e: any) {
+  //     toast.error(e.message || "Upload failed");
+  //   } finally {
+  //     setUploading((p) => ({ ...p, [field]: false }));
+  //   }
+  // };
+
+  
+const handleUploadDoc = async (field: string, file: File) => {
+  if (!student || !session) return;
+
+  setUploading((p) => ({ ...p, [field]: true }));
+
+  try {
+    // 1. Request a temporary R2 upload URL
+    const { data, error } = await supabase.functions.invoke("r2-storage", {
+      body: {
+        action: "create-upload",
+        recordType: "student",
+        recordId: student.id,
+        field,
+        fileName: file.name,
+        contentType: file.type,
+      },
+    });
+
+    if (error) throw error;
+    if (!data?.uploadUrl || !data?.objectKey) {
+      throw new Error("Could not generate upload URL");
+    }
+
+    // 2. Upload the file directly to R2
+    const uploadResponse = await fetch(data.uploadUrl, {
+      method: "PUT",
+      headers: {
+        "Content-Type": file.type,
+      },
+      body: file,
+    });
+
+    if (!uploadResponse.ok) {
+      throw new Error("R2 upload failed");
+    }
+
+    const objectKey = data.objectKey;
+
+    // 3. Save the R2 object key in Supabase
+    const topLevelFields = [
+      "passport_photo_url",
+      "passport_url",
+      "academic_transcript_url",
+      "ielts_certificate_url",
+      "personal_statement_url",
+      "recommendation_letter_url",
+    ];
+
+    let updatedOther: Record<string, string> | undefined;
+
+    if (topLevelFields.includes(field)) {
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/students?id=eq.${student.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            ...headers,
+            "Content-Type": "application/json",
+            Prefer: "return=minimal",
+          },
+          body: JSON.stringify({ [field]: objectKey }),
+        }
+      );
+
+      if (!res.ok) throw new Error("Failed to update student record");
+
+      setStudent((prev) => prev ? { ...prev, [field]: objectKey } : null);
+    } else {
+      const currentOther =
+        typeof student.other_documents === "object" &&
+        student.other_documents !== null &&
+        !Array.isArray(student.other_documents)
           ? student.other_documents
           : {};
-        const updatedOther = { ...currentOther, [field]: publicUrl };
 
-        const res = await fetch(
-          `${SUPABASE_URL}/rest/v1/students?id=eq.${student.id}`,
-          {
-            method: "PATCH",
-            headers: {
-              ...headers,
-              "Content-Type": "application/json",
-              Prefer: "return=minimal",
-            },
-            body: JSON.stringify({ other_documents: updatedOther }),
-          }
-        );
-        if (!res.ok) throw new Error("Failed to update student record");
-        setStudent((prev) => (prev ? { ...prev, other_documents: updatedOther as any } : null));
-      }
+      updatedOther = { ...currentOther, [field]: objectKey };
 
-      toast.success("Document uploaded successfully!");
-    } catch (e: any) {
-      toast.error(e.message || "Upload failed");
-    } finally {
-      setUploading((p) => ({ ...p, [field]: false }));
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/students?id=eq.${student.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            ...headers,
+            "Content-Type": "application/json",
+            Prefer: "return=minimal",
+          },
+          body: JSON.stringify({ other_documents: updatedOther }),
+        }
+      );
+
+      if (!res.ok) throw new Error("Failed to update student record");
+
+      setStudent((prev) =>
+        prev ? { ...prev, other_documents: updatedOther as any } : null
+      );
     }
-  };
+
+    toast.success("Document uploaded successfully!");
+  } catch (e) {
+    toast.error(e instanceof Error ? e.message : "Upload failed");
+  } finally {
+    setUploading((p) => ({ ...p, [field]: false }));
+  }
+};
+
 
   const handleDeleteDoc = async (field: string) => {
     if (!student || !session) return;
@@ -658,7 +776,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
       
       toast.success("Application created successfully");
       setIsAppModalOpen(false);
-      setNewAppForm({ university_id: "", course_id: "" });
+      setNewAppForm({ university_id: "", course_id: "", custom_university_name: "" });
       fetchStudent(); // Refresh data
     } catch (e: any) {
       toast.error(e.message || "Failed to create application");
@@ -1337,7 +1455,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                           {url && (
                             <button
                               type="button"
-                              onClick={() => handlePreviewDoc(url)}
+                              onClick={() => handlePreviewDoc("passport_photo_url", url)}
                               className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                             >
                               Preview
@@ -1401,7 +1519,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                           {url && (
                             <button
                               type="button"
-                              onClick={() => handlePreviewDoc(url)}
+                              onClick={() => handlePreviewDoc("passport_url", url)}
                               className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                             >
                               Preview
@@ -1473,7 +1591,12 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             {transcriptUrl && (
                               <button
                                 type="button"
-                                onClick={() => handlePreviewDoc(transcriptUrl)}
+                                onClick={() => {
+                                  const field = transcriptUrl === student?.academic_transcript_url
+                                    ? "academic_transcript_url"
+                                    : transcriptDocKey;
+                                  handlePreviewDoc(field, transcriptUrl);
+                                }}
                                 className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                               >
                                 Preview
@@ -1531,7 +1654,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             {certUrl && (
                               <button
                                 type="button"
-                                onClick={() => handlePreviewDoc(certUrl)}
+                                onClick={() => handlePreviewDoc(certDocKey, certUrl)}
                                 className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                               >
                                 Preview
@@ -1616,7 +1739,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                           {url && (
                             <button
                               type="button"
-                              onClick={() => handlePreviewDoc(url)}
+                              onClick={() => handlePreviewDoc("ielts_certificate_url", url)}
                               className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                             >
                               Preview
@@ -1680,7 +1803,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                           {url && (
                             <button
                               type="button"
-                              onClick={() => handlePreviewDoc(url)}
+                              onClick={() => handlePreviewDoc("personal_statement_url", url)}
                               className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                             >
                               Preview
@@ -1744,7 +1867,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                           {url && (
                             <button
                               type="button"
-                              onClick={() => handlePreviewDoc(url)}
+                              onClick={() => handlePreviewDoc("recommendation_letter_url", url)}
                               className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                             >
                               Preview
@@ -1809,7 +1932,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                           {url && (
                             <button
                               type="button"
-                              onClick={() => handlePreviewDoc(url)}
+                              onClick={() => handlePreviewDoc("cv_url", url)}
                               className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                             >
                               Preview
@@ -1874,7 +1997,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                           {url && (
                             <button
                               type="button"
-                              onClick={() => handlePreviewDoc(url)}
+                              onClick={() => handlePreviewDoc("research_proposal_url", url)}
                               className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                             >
                               Preview
@@ -1939,7 +2062,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                           {url && (
                             <button
                               type="button"
-                              onClick={() => handlePreviewDoc(url)}
+                              onClick={() => handlePreviewDoc("job_experience_url", url)}
                               className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                             >
                               Preview
@@ -2004,7 +2127,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                           {url && (
                             <button
                               type="button"
-                              onClick={() => handlePreviewDoc(url)}
+                              onClick={() => handlePreviewDoc("study_gap_url", url)}
                               className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
                             >
                               Preview

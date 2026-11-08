@@ -116,58 +116,99 @@ export default function PartnerAddStudent() {
   const [loadingStudent, setLoadingStudent] = useState(isEditMode);
   const [existingStudent, setExistingStudent] = useState<any>(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [pendingPhoto, setPendingPhoto] = useState<File | null>(null);
+const [photoPreview, setPhotoPreview] = useState("");
   const [additionalEducation, setAdditionalEducation] = useState<any[]>([]);
   const photoInputRef = useRef<HTMLInputElement | null>(null);
 
   // ─── Photo Upload Handlers ─────────────────────────────
   const handleUploadPhoto = async (file: File) => {
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please select an image file (JPEG, PNG, WEBP)");
-      return;
+  if (!file) return;
+
+  if (!file.type.startsWith("image/")) {
+    toast.error("Please select an image file (JPEG, PNG, WEBP)");
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    toast.error("Photo size should be less than 5MB");
+    return;
+  }
+
+  // New student: keep the file until the student record is created.
+  if (!isEditMode || !existingStudent) {
+    setPendingPhoto(file);
+    setPhotoPreview(URL.createObjectURL(file));
+    toast.success("Photo selected successfully!");
+    return;
+  }
+
+  setUploadingPhoto(true);
+
+  try {
+    const { data, error } = await supabase.functions.invoke("r2-storage", {
+      body: {
+        action: "create-upload",
+        recordType: "student",
+        recordId: existingStudent.id,
+        field: "passport_photo_url",
+        fileName: file.name,
+        contentType: file.type,
+      },
+    });
+
+    if (error) throw error;
+
+    if (!data?.uploadUrl || !data?.objectKey) {
+      throw new Error("Could not generate R2 upload URL");
     }
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Photo size should be less than 5MB");
-      return;
+
+    const uploadResponse = await fetch(data.uploadUrl, {
+      method: "PUT",
+      headers: { "Content-Type": file.type },
+      body: file,
+    });
+
+    if (!uploadResponse.ok) {
+      throw new Error("R2 photo upload failed");
     }
-    setUploadingPhoto(true);
-    try {
-      const studentFolder = existingStudent?.id || "temp";
-      const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-      const path = `${user?.id || "partner"}/${studentFolder}/passport_photo_${Date.now()}_${cleanFileName}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from("student-documents")
-        .upload(path, file, { upsert: true });
+    const objectKey = data.objectKey;
 
-      if (uploadError) throw uploadError;
+    const { error: updateError } = await supabase
+      .from("students")
+      .update({ passport_photo_url: objectKey })
+      .eq("id", existingStudent.id);
 
-      const { data: { publicUrl } } = supabase.storage
-        .from("student-documents")
-        .getPublicUrl(path);
+    if (updateError) throw updateError;
 
-      setForm((f) => ({ ...f, passport_photo_url: publicUrl }));
+    setForm((f) => ({ ...f, passport_photo_url: objectKey }));
 
-      if (isEditMode && existingStudent) {
-        await fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${existingStudent.id}`, {
-          method: "PATCH",
-          headers: {
-            apikey: SUPABASE_KEY,
-            Authorization: `Bearer ${session?.access_token}`,
-            "Content-Type": "application/json",
-            Prefer: "return=minimal",
-          },
-          body: JSON.stringify({ passport_photo_url: publicUrl }),
-        });
-      }
+    // Generate a temporary URL for the image preview.
+    const { data: downloadData, error: downloadError } =
+      await supabase.functions.invoke("r2-storage", {
+        body: {
+          action: "create-download",
+          recordType: "student",
+          recordId: existingStudent.id,
+          field: "passport_photo_url",
+          objectKey,
+        },
+      });
 
-      toast.success("Profile photo updated!");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to upload photo");
-    } finally {
-      setUploadingPhoto(false);
-    }
-  };
+    if (downloadError) throw downloadError;
+
+    setPhotoPreview(downloadData.downloadUrl);
+
+    toast.success("Profile photo updated!");
+  } catch (err) {
+    toast.error(
+      err instanceof Error ? err.message : "Failed to upload photo"
+    );
+  } finally {
+    setUploadingPhoto(false);
+  }
+};
 
   const handleDeletePhoto = async () => {
     setForm((f) => ({ ...f, passport_photo_url: "" }));
@@ -184,6 +225,8 @@ export default function PartnerAddStudent() {
           body: JSON.stringify({ passport_photo_url: null }),
         });
         toast.success("Profile photo removed");
+        setPhotoPreview("");
+setPendingPhoto(null);
       } catch (err: any) {
         toast.error("Failed to remove photo");
       }
@@ -218,6 +261,25 @@ export default function PartnerAddStudent() {
         if (!data || data.length === 0) throw new Error("Student not found");
         const s = data[0];
         setExistingStudent(s);
+
+        if (s.passport_photo_url) {
+  const { data: previewData, error: previewError } =
+    await supabase.functions.invoke("r2-storage", {
+      body: {
+        action: "create-download",
+        recordType: "student",
+        recordId: s.id,
+        field: "passport_photo_url",
+        objectKey: s.passport_photo_url,
+      },
+    });
+
+  if (!previewError && previewData?.downloadUrl) {
+    setPhotoPreview(previewData.downloadUrl);
+  }
+} else {
+  setPhotoPreview("");
+}
 
         const nameParts = (s.full_name || "").trim().split(/\s+/);
         const firstName = nameParts.length > 1 ? nameParts.slice(0, -1).join(" ") : nameParts[0] || "";
@@ -459,6 +521,47 @@ export default function PartnerAddStudent() {
         const data = await res.json();
         if (!res.ok) throw new Error(data?.message || "Failed to save student");
         const newStudent = data[0];
+        if (pendingPhoto) {
+  try {
+    const { data: uploadData, error: uploadError } =
+      await supabase.functions.invoke("r2-storage", {
+        body: {
+          action: "create-upload",
+          recordType: "student",
+          recordId: newStudent.id,
+          field: "passport_photo_url",
+          fileName: pendingPhoto.name,
+          contentType: pendingPhoto.type,
+        },
+      });
+
+    if (uploadError) throw uploadError;
+
+    if (!uploadData?.uploadUrl || !uploadData?.objectKey) {
+      throw new Error("Could not generate R2 upload URL");
+    }
+
+    const uploadResponse = await fetch(uploadData.uploadUrl, {
+      method: "PUT",
+      headers: { "Content-Type": pendingPhoto.type },
+      body: pendingPhoto,
+    });
+
+    if (!uploadResponse.ok) {
+      throw new Error("R2 photo upload failed");
+    }
+
+    const { error: updateError } = await supabase
+      .from("students")
+      .update({ passport_photo_url: uploadData.objectKey })
+      .eq("id", newStudent.id);
+
+    if (updateError) throw updateError;
+  } catch (photoError) {
+    console.error("Photo upload failed:", photoError);
+    toast.error("Student registered, but the photo could not be uploaded.");
+  }
+}
         toast.success("Student registered successfully!");
         const targetId = newStudent.wb_student_id ? `WB-${newStudent.wb_student_id}` : newStudent.id;
         const isFromAdmin = window.location.pathname.startsWith("/admin");
@@ -515,7 +618,7 @@ export default function PartnerAddStudent() {
                     <div className="w-20 h-24 rounded-lg bg-white border border-gray-200 shadow-sm overflow-hidden flex items-center justify-center">
                       {form.passport_photo_url ? (
                         <img
-                          src={form.passport_photo_url}
+                          src={photoPreview}
                           alt="Passport Photo"
                           className="w-full h-full object-cover"
                         />
