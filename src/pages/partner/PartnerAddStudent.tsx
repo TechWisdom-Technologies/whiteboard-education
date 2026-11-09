@@ -235,7 +235,7 @@ setPendingPhoto(null);
 
   // ─── Load Student for Edit Mode ────────────────────────
   useEffect(() => {
-    if (!editId || !session) {
+    if (!editId || !user?.id) {
       setLoadingStudent(false);
       return;
     }
@@ -243,6 +243,7 @@ setPendingPhoto(null);
     const fetchStudentData = async () => {
       setLoadingStudent(true);
       try {
+        const token = session?.access_token || (await supabase.auth.getSession()).data.session?.access_token;
         const isWb = editId.startsWith("WB-");
         const filter = isWb
           ? `wb_student_id=eq.${editId.replace("WB-", "")}`
@@ -252,7 +253,7 @@ setPendingPhoto(null);
           {
             headers: {
               apikey: SUPABASE_KEY,
-              Authorization: `Bearer ${session.access_token}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -346,7 +347,7 @@ setPendingPhoto(null);
       }
     };
     fetchStudentData();
-  }, [editId, session]);
+  }, [editId, user?.id]);
 
   // ─── Derived State ─────────────────────────────────────
   const isSSCOrHSC = form.education_level === "SSC" || form.education_level === "HSC";
@@ -616,7 +617,7 @@ setPendingPhoto(null);
                 <div className="mb-6 p-4 rounded-xl bg-gray-50/80 border border-gray-200/80 flex flex-col sm:flex-row items-center gap-4">
                   <div className="relative group shrink-0">
                     <div className="w-20 h-24 rounded-lg bg-white border border-gray-200 shadow-sm overflow-hidden flex items-center justify-center">
-                      {form.passport_photo_url ? (
+                      {photoPreview || form.passport_photo_url ? (
                         <img
                           src={photoPreview}
                           alt="Passport Photo"
@@ -1065,9 +1066,9 @@ setPendingPhoto(null);
               <div className="h-20 bg-gradient-to-br from-theme to-[#1E3A6F] relative">
                 <div className="absolute -bottom-8 left-5">
                   <div className="w-16 h-16 rounded-xl bg-white shadow-lg border-2 border-white overflow-hidden flex items-center justify-center">
-                    {form.passport_photo_url ? (
+                    {photoPreview || form.passport_photo_url ? (
                       <img
-                        src={form.passport_photo_url}
+                        src={photoPreview || undefined}
                         alt={form.first_name || "Student"}
                         className="w-full h-full object-cover"
                       />

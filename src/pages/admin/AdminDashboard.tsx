@@ -80,7 +80,7 @@ const statusTextColors: Record<string, string> = {
 const PAGE_SIZE = 7;
 
 export default function AdminDashboard() {
-  const { session } = useAuth();
+  const { session, user } = useAuth();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [allStudents, setAllStudents] = useState<RecentStudent[]>([]);
   const [allPartners, setAllPartners] = useState<RecentPartner[]>([]);
@@ -119,10 +119,10 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!session) return;
+    if (!user?.id) return;
     const fetchAll = async () => {
       try {
-        const token = session.access_token || SUPABASE_KEY;
+        const token = session?.access_token || (await supabase.auth.getSession()).data.session?.access_token || SUPABASE_KEY;
         const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${token}` };
 
         const [uniRes, courseRes, partnerRes, studentRes, blogRes, partnerLookupRes, appsRes] = await Promise.all([
@@ -155,7 +155,7 @@ export default function AdminDashboard() {
       setLoading(false);
     };
     fetchAll();
-  }, [session]);
+  }, [user?.id]);
 
   if (loading) return <LoadingScreen fullScreen />;
 

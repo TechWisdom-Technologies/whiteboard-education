@@ -8,6 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { resolveAvatarUrl } from "@/lib/secureStorage";
 import { toast } from "sonner";
 import {
   Sidebar,
@@ -51,7 +52,10 @@ export function PartnerSidebar() {
   const loadAvatar = async () => {
     if (!user) return;
     const localAvatar = localStorage.getItem(`partner_avatar_${user.id}`);
-    if (localAvatar) setAvatarUrl(localAvatar);
+    if (localAvatar) {
+      const resolvedLocal = await resolveAvatarUrl(localAvatar, user.id);
+      setAvatarUrl(resolvedLocal || "");
+    }
 
     const { data } = await supabase
       .from("profiles")
@@ -60,8 +64,11 @@ export function PartnerSidebar() {
       .maybeSingle();
 
     if (data?.avatar_url) {
-      setAvatarUrl(data.avatar_url);
-      localStorage.setItem(`partner_avatar_${user.id}`, data.avatar_url);
+      const resolved = await resolveAvatarUrl(data.avatar_url, user.id);
+      if (resolved) {
+        setAvatarUrl(resolved);
+        localStorage.setItem(`partner_avatar_${user.id}`, data.avatar_url);
+      }
     }
   };
 

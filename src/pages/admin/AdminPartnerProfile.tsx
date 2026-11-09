@@ -115,9 +115,9 @@ export default function AdminPartnerProfile() {
   const [studentsMap, setStudentsMap] = useState<Record<string, any>>({});
 
   useEffect(() => {
-    if (!partnerId || !session) return;
+    if (!partnerId || !user?.id) return;
     fetchPartnerData();
-  }, [partnerId, session]);
+  }, [partnerId, user?.id]);
 
   const fetchPartnerData = async () => {
     try {

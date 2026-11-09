@@ -47,11 +47,11 @@ export default function PartnerNotifications() {
 
   useEffect(() => {
     fetchNotifications();
-  }, [user]);
+  }, [user?.id]);
 
   // Realtime subscription
   useEffect(() => {
-    if (!user) return;
+    if (!user?.id) return;
     const channel = supabase
       .channel(`partner-notifs-page-${user.id}`)
       .on(
@@ -69,7 +69,7 @@ export default function PartnerNotifications() {
       window.clearInterval(pollTimer);
       supabase.removeChannel(channel);
     };
-  }, [user]);
+  }, [user?.id]);
 
   const markAllRead = async () => {
     if (!user) return;

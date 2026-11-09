@@ -70,15 +70,14 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
       const fileName = `${type}-${Date.now()}.${fileExt}`;
       const filePath = `universities/${fileName}`;
 
-      // Using partner-documents bucket as a general fallback
       const { error: uploadError } = await supabase.storage
-        .from('partner-documents')
+        .from('universities')
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
       const { data } = supabase.storage
-        .from('partner-documents')
+        .from('universities')
         .getPublicUrl(filePath);
 
       if (type === "logo") {

@@ -148,14 +148,6 @@ const coursesList = Array.isArray(moreInfo)
     return true;
   };
 
-  // const uploadFile = async (file: File, pathPrefix: string) => {
-  //   const fileName = `${user?.id}/${Date.now()}_${pathPrefix}_${file.name}`;
-  //   const { error } = await supabase.storage.from("student-documents").upload(fileName, file);
-  //   if (error) throw error;
-  //   const { data: { publicUrl } } = supabase.storage.from("student-documents").getPublicUrl(fileName);
-  //   return publicUrl;
-  // };
-
   const uploadFile = async (
   file: File,
   pathPrefix: string,

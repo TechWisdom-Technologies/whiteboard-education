@@ -42,6 +42,7 @@ import { LoadingScreen } from "@/components/ui/loading-screen";
 import { toast } from "sonner";
 import { getStatusLabel } from "@/config/statusFlow";
 import { format } from "date-fns";
+import { getSecureImageUrl } from "@/lib/secureStorage";
 
 interface Course {
   id: string;
@@ -145,6 +146,7 @@ export default function PartnerApplyPage() {
   const [students, setStudents] = useState<Student[]>([]);
   const [contactPerson, setContactPerson] = useState<string>("");
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [isConfirming, setIsConfirming] = useState(false);
   const [applying, setApplying] = useState(false);
 
@@ -162,7 +164,7 @@ export default function PartnerApplyPage() {
   });
 
   useEffect(() => {
-    if (!user || !session || !courseId) {
+    if (!user?.id || !courseId) {
       setLoadingPage(false);
       return;
     }
@@ -170,6 +172,9 @@ export default function PartnerApplyPage() {
     const fetchData = async () => {
       setLoadingPage(true);
       try {
+        const token = session?.access_token || (await supabase.auth.getSession()).data.session?.access_token;
+        const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${token}` };
+
         // Fetch course
         const { data: courseData } = await supabase
           .from("courses")
@@ -193,7 +198,7 @@ export default function PartnerApplyPage() {
         // Fetch partner's students
         const res = await fetch(
           `${SUPABASE_URL}/rest/v1/students?select=*&partner_id=eq.${user.id}&order=created_at.desc`,
-          { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}` } }
+          { headers }
         );
 
         if (res.ok) {
@@ -204,7 +209,7 @@ export default function PartnerApplyPage() {
         // Fetch partner contact person
         const partnerRes = await fetch(
           `${SUPABASE_URL}/rest/v1/partner_registrations?select=contact_first_name,contact_last_name&user_id=eq.${user.id}&limit=1`,
-          { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}` } }
+          { headers }
         );
         if (partnerRes.ok) {
           const pData = await partnerRes.json();
@@ -218,7 +223,7 @@ export default function PartnerApplyPage() {
     };
 
     fetchData();
-  }, [user, session, courseId]);
+  }, [user?.id, courseId]);
 
   const handleSearch = () => {
     setAppliedFilters({ nameFilter, intakeFilter, yearFilter, statusFilter });
@@ -278,6 +283,39 @@ export default function PartnerApplyPage() {
     setSelectedStudentId((prev) => (prev === id ? null : id));
     setIsConfirming(false);
   };
+
+  const selectedStudent = students.find((s) => s.id === selectedStudentId);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    if (!selectedStudent?.id || !selectedStudent.passport_photo_url) {
+      setPhotoUrl(null);
+      return;
+    }
+
+    getSecureImageUrl(
+      "student",
+      selectedStudent.id,
+      "passport_photo_url",
+      selectedStudent.passport_photo_url
+    )
+      .then((url) => {
+        if (isMounted) {
+          setPhotoUrl(url);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load selected student photo URL:", err);
+        if (isMounted) {
+          setPhotoUrl(null);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedStudent?.id, selectedStudent?.passport_photo_url]);
 
   const handleConfirmApplication = async () => {
     if (!selectedStudentId) {
@@ -390,7 +428,6 @@ export default function PartnerApplyPage() {
   }
 
   const logoSrc = university?.logo_url || (university?.name ? UNIVERSITY_LOGOS[university.name] : null);
-  const selectedStudent = students.find((s) => s.id === selectedStudentId);
 
   return (
     <div className="animate-fade-in space-y-6 w-full pb-12">
@@ -723,9 +760,9 @@ export default function PartnerApplyPage() {
                   {/* Student Avatar + Name */}
                   <div className="flex items-start gap-3.5">
                     <div className="w-16 h-14 shrink-0 bg-blue-50/80 border border-blue-100 rounded-xl overflow-hidden p-1 flex items-center justify-center text-[#2F4F97] font-bold text-base">
-                      {selectedStudent.passport_photo_url ? (
+                      {photoUrl ? (
                         <img
-                          src={selectedStudent.passport_photo_url}
+                          src={photoUrl}
                           alt={selectedStudent.full_name}
                           className="w-full h-full object-cover rounded-lg"
                         />

@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { resolveAvatarUrl } from "@/lib/secureStorage";
 import {
   Camera, Building2, Mail, Phone, Globe, Loader2,
   User, KeyRound, ShieldCheck, CheckCircle2, Pencil,
@@ -137,48 +138,97 @@ export default function AdminSettings() {
   const [pwError, setPwError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!session || !user) return;
+    if (!user?.id) return;
     const fetchData = async () => {
       try {
         const { data: profileData } = await supabase
           .from("profiles")
           .select("display_name, avatar_url")
           .eq("user_id", user.id)
-          .single();
+          .maybeSingle();
           
         if (profileData) {
+          const resolvedAvatar = await resolveAvatarUrl(profileData.avatar_url, user.id);
           setProfile({
             display_name: profileData.display_name || "",
-            avatar_url: profileData.avatar_url || "",
+            avatar_url: resolvedAvatar || "",
           });
         }
       } catch { /* ignore */ }
       setLoading(false);
     };
     fetchData();
-  }, [session, user]);
+  }, [user?.id]);
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
-    if (file.size > 2 * 1024 * 1024) { toast.error("File too large. Max 2MB."); return; }
+    if (file.size > 5 * 1024 * 1024) { toast.error("File too large. Max 5MB."); return; }
 
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop();
-      const path = `admin_${user.id}/avatar_${Date.now()}.${ext}`;
-      const { error: uploadError } = await supabase.storage.from("partner-documents").upload(path, file, { upsert: true });
-      if (uploadError) throw uploadError;
-      const { data: urlData } = supabase.storage.from("partner-documents").getPublicUrl(path);
-      const avatarUrl = urlData.publicUrl + `?t=${Date.now()}`;
+      // Ensure profile record exists
+      const { data: existingProfile } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
 
-      await supabase.from("profiles").update({ avatar_url: avatarUrl }).eq("user_id", user.id);
-      setProfile(prev => ({ ...prev, avatar_url: avatarUrl }));
+      if (!existingProfile) {
+        await supabase.from("profiles").insert({
+          user_id: user.id,
+          display_name: profile.display_name || user.email?.split("@")[0] || "",
+        });
+      }
+
+      let contentType = file.type || "image/jpeg";
+      if (contentType === "image/jpg") contentType = "image/jpeg";
+
+      const { data: uploadData, error: uploadInvokeError } = await supabase.functions.invoke("r2-storage", {
+        body: {
+          action: "create-upload",
+          recordType: "profile",
+          recordId: user.id,
+          field: "avatar_url",
+          fileName: file.name,
+          contentType,
+        },
+      });
+
+      if (uploadInvokeError) throw uploadInvokeError;
+      if (!uploadData?.uploadUrl || !uploadData?.objectKey) {
+        throw new Error("Could not generate R2 upload URL");
+      }
+
+      const uploadResponse = await fetch(uploadData.uploadUrl, {
+        method: "PUT",
+        headers: { "Content-Type": contentType },
+        body: file,
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error("Avatar upload to R2 failed");
+      }
+
+      const objectKey = uploadData.objectKey;
+
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ avatar_url: objectKey })
+        .eq("user_id", user.id);
+
+      if (updateError) throw updateError;
+
+      const previewUrl = await resolveAvatarUrl(objectKey, user.id);
+      setProfile(prev => ({ ...prev, avatar_url: previewUrl || "" }));
+      window.dispatchEvent(new Event("profile-updated"));
       toast.success("Profile picture updated!");
     } catch (err: any) {
       toast.error("Upload failed: " + (err.message || "Unknown error"));
+    } finally {
+      if (e.target) e.target.value = "";
+      setUploading(false);
     }
-    setUploading(false);
   };
 
   const startEditingProfile = () => {
@@ -224,9 +274,20 @@ export default function AdminSettings() {
     if (result.success) {
       setPwStep("code_sent");
       setPwError(null);
+      toast.success("Verification code sent to your email!");
     } else {
       setPwStep("idle");
-      setPwError(result.error || "Failed to send code. Please try again.");
+      const errMsg = result.error || "Failed to send code. Please try again.";
+      const isRateLimited =
+        errMsg.toLowerCase().includes("rate limit") ||
+        errMsg.toLowerCase().includes("security purposes") ||
+        errMsg.toLowerCase().includes("too many") ||
+        errMsg.toLowerCase().includes("once every");
+      const friendlyErr = isRateLimited
+        ? "Too many password reset requests. For security, please wait a minute before requesting another code."
+        : errMsg;
+      setPwError(friendlyErr);
+      toast.error(friendlyErr);
     }
   };
 
@@ -418,20 +479,28 @@ export default function AdminSettings() {
             
             <div className="bg-white p-6 sm:p-7 rounded-2xl border-2 border-rose-400 shadow-sm w-full max-w-4xl">
               {pwStep === "idle" && (
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <div className="flex items-center gap-3 text-sm text-black font-normal">
-                    <ShieldCheck className="h-8 w-8 text-rose-600 shrink-0" />
-                    <p className="text-xs sm:text-sm leading-relaxed text-black font-normal">
-                      Your account uses email verification (OTP) for password updates to ensure maximum security.
-                    </p>
+                <div className="space-y-3">
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 text-sm text-black font-normal">
+                      <ShieldCheck className="h-8 w-8 text-rose-600 shrink-0" />
+                      <p className="text-xs sm:text-sm leading-relaxed text-black font-normal">
+                        Your account uses email verification (OTP) for password updates to ensure maximum security.
+                      </p>
+                    </div>
+                    <Button
+                      onClick={handleSendCode}
+                      variant="outline"
+                      className="group w-full sm:w-auto shrink-0 gap-2 font-normal text-xs h-9.5 px-4 rounded-lg shadow-sm border border-rose-300 text-rose-700 bg-white hover:bg-rose-600 hover:text-white hover:border-rose-600 transition-all"
+                    >
+                      <KeyRound className="h-3.5 w-3.5 group-hover:!text-white !text-rose-600" /> Update Password
+                    </Button>
                   </div>
-                  <Button
-                    onClick={handleSendCode}
-                    variant="outline"
-                    className="group w-full sm:w-auto shrink-0 gap-2 font-normal text-xs h-9.5 px-4 rounded-lg shadow-sm border border-rose-300 text-rose-700 bg-white hover:bg-rose-600 hover:text-white hover:border-rose-600 transition-all"
-                  >
-                    <KeyRound className="h-3.5 w-3.5 group-hover:!text-white !text-rose-600" /> Update Password
-                  </Button>
+                  {pwError && (
+                    <div className="flex items-center gap-2 text-xs text-rose-600 font-medium pt-1 animate-fade-in bg-rose-50 border border-rose-200 p-2.5 rounded-lg">
+                      <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
+                      <span>{pwError}</span>
+                    </div>
+                  )}
                 </div>
               )}
 

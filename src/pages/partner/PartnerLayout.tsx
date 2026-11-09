@@ -6,6 +6,7 @@ import { NotificationCenter } from "@/components/partner/NotificationCenter";
 import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
+import { resolveAvatarUrl } from "@/lib/secureStorage";
 import { toast } from "sonner";
 import {
   DropdownMenu,
@@ -39,7 +40,10 @@ export default function PartnerLayout() {
   const loadProfile = async () => {
     if (!user) return;
     const localAvatar = localStorage.getItem(`partner_avatar_${user.id}`);
-    if (localAvatar) setAvatarUrl(localAvatar);
+    if (localAvatar) {
+      const resolvedLocal = await resolveAvatarUrl(localAvatar, user.id);
+      setAvatarUrl(resolvedLocal || "");
+    }
 
     // 1. Fetch contact_first_name and contact_last_name from partner_registrations
     const { data: partnerData } = await supabase
@@ -61,8 +65,11 @@ export default function PartnerLayout() {
 
     if (data) {
       if (data.avatar_url) {
-        setAvatarUrl(data.avatar_url);
-        localStorage.setItem(`partner_avatar_${user.id}`, data.avatar_url);
+        const resolved = await resolveAvatarUrl(data.avatar_url, user.id);
+        if (resolved) {
+          setAvatarUrl(resolved);
+          localStorage.setItem(`partner_avatar_${user.id}`, data.avatar_url);
+        }
       }
       if (data.display_name && (!partnerData || (!partnerData.contact_first_name && !partnerData.contact_last_name))) {
         setDisplayName(data.display_name);
@@ -104,7 +111,15 @@ export default function PartnerLayout() {
         <header className="h-[60px] flex items-center bg-[#2F4F97] sticky top-0 z-30 w-full text-white shadow-sm">
           <div className="w-[16rem] flex items-center justify-center bg-transparent h-full flex-shrink-0">
             {avatarUrl ? (
-              <img src={avatarUrl} alt="Logo" className="w-[70%] max-h-12 object-contain shrink-0 mx-auto" />
+              <img
+                src={avatarUrl}
+                alt="Logo"
+                className="w-[70%] max-h-12 object-contain shrink-0 mx-auto"
+                onError={() => {
+                  setAvatarUrl("");
+                  if (user?.id) localStorage.removeItem(`partner_avatar_${user.id}`);
+                }}
+              />
             ) : (
               <img src="/logo.png" alt="Whiteboard Education" className="w-[70%] max-h-12 object-contain shrink-0 mx-auto" />
             )}

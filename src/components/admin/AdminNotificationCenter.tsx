@@ -70,7 +70,7 @@ export function AdminNotificationCenter() {
       next[row.notification_key] = !!row.is_read;
     });
     setReadMap(next);
-  }, [user]);
+  }, [user?.id]);
 
   useEffect(() => {
     loadReadMap();

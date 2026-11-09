@@ -70,7 +70,7 @@ export default function AdminLayout() {
   const [profile, setProfile] = useState<{ display_name?: string; avatar_url?: string } | null>(null);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user?.id) return;
     const fetchProfile = async () => {
       const { data } = await supabase
         .from("profiles")
@@ -82,7 +82,7 @@ export default function AdminLayout() {
       }
     };
     fetchProfile();
-  }, [user]);
+  }, [user?.id]);
 
   useEffect(() => {
     document.body.classList.add("admin-theme");

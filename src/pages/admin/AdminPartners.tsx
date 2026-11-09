@@ -41,7 +41,7 @@ const TABS: { key: TabKey; label: string }[] = [
 ];
 
 export default function AdminPartners() {
-  const { session } = useAuth();
+  const { session, user } = useAuth();
   const navigate = useNavigate();
   const [registrations, setRegistrations] = useState<PartnerRegistration[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,8 +49,9 @@ export default function AdminPartners() {
   const [activeTab, setActiveTab] = useState<TabKey>("all");
 
   const fetchRegistrations = async () => {
+    if (!user?.id) return;
     try {
-      const token = session?.access_token || SUPABASE_KEY;
+      const token = session?.access_token || (await supabase.auth.getSession()).data.session?.access_token || SUPABASE_KEY;
       const res = await fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?select=*&order=created_at.desc`, {
         headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${token}` },
       });
@@ -60,7 +61,7 @@ export default function AdminPartners() {
     } catch { /* ignore */ } finally { setLoading(false); }
   };
 
-  useEffect(() => { fetchRegistrations(); }, [session]);
+  useEffect(() => { fetchRegistrations(); }, [user?.id]);
 
   const openDetail = (reg: PartnerRegistration) => {
     navigate(`/admin/partners/${reg.id}`);

@@ -62,7 +62,7 @@ import { toast } from "sonner";
 import { getStatusLabel, computeStudentStatusFromApplications } from "@/config/statusFlow";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { StudentChatWidget } from "@/components/student/StudentChatWidget";
-import { openSecureDocument } from "@/lib/secureStorage";
+import { openSecureDocument, getSecureImageUrl } from "@/lib/secureStorage";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -242,6 +242,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
   const { session, user } = useAuth();
 
   const [student, setStudent] = useState<Student | null>(null);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [partner, setPartner] = useState<Partner | null>(null);
   const [applications, setApplications] = useState<Application[]>([]);
   const [universities, setUniversities] = useState<any[]>([]);
@@ -327,10 +328,15 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
   // â”€â”€ Fetch student data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const fetchStudent = async () => {
-    if (!session || !studentId) return;
+    if (!studentId || !user?.id) return;
     setLoading(true);
     setError(null);
     try {
+      const token = session?.access_token || (await supabase.auth.getSession()).data.session?.access_token;
+      const authHeaders = {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${token}`,
+      };
       const isWbeId = studentId.startsWith("WBE-STU-");
       const isWbId = studentId.startsWith("WB-");
       let queryField = "id";
@@ -345,7 +351,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
 
       const res = await fetch(
         `${SUPABASE_URL}/rest/v1/students?${queryField}=eq.${queryValue}&select=*`,
-        { headers }
+        { headers: authHeaders }
       );
       if (!res.ok) throw new Error("Failed to fetch student");
       const data = await res.json();
@@ -366,7 +372,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
         promises.push(
           fetch(
             `${SUPABASE_URL}/rest/v1/partner_registrations?user_id=eq.${s.partner_id}&select=id,agency_name,contact_first_name,contact_last_name,email,phone,user_id`,
-            { headers }
+            { headers: authHeaders }
           ).then(res => res.json()).then(data => {
             if (data && data.length > 0) setPartner(data[0]);
           })
@@ -376,7 +382,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
       promises.push(
         fetch(
           `${SUPABASE_URL}/rest/v1/student_applications?student_id=eq.${s.id}&select=*,universities(name),courses(title,intake_months)`,
-          { headers }
+          { headers: authHeaders }
         ).then(res => res.json()).then(data => {
           if (Array.isArray(data)) setApplications(data);
         }).catch(err => console.error("Error fetching applications:", err))
@@ -387,7 +393,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
         promises.push(
           fetch(
             `${SUPABASE_URL}/rest/v1/student_notes?student_id=eq.${studentId}&select=*&order=created_at.desc`,
-            { headers }
+            { headers: authHeaders }
           ).then(res => res.json()).then(data => {
             if (Array.isArray(data)) setActivityNotes(data);
           }).catch(err => console.error("Error fetching notes:", err))
@@ -397,14 +403,14 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
       // Fetch universities for the dropdown if admin
       if (mode === "admin") {
         promises.push(
-          fetch(`${SUPABASE_URL}/rest/v1/universities?select=id,name`, { headers })
+          fetch(`${SUPABASE_URL}/rest/v1/universities?select=id,name`, { headers: authHeaders })
             .then(res => res.json())
             .then(data => {
               if (Array.isArray(data)) setUniversities(data);
             }).catch(err => console.error("Error fetching universities:", err))
         );
         promises.push(
-          fetch(`${SUPABASE_URL}/rest/v1/courses?select=id,title,university_id`, { headers })
+          fetch(`${SUPABASE_URL}/rest/v1/courses?select=id,title,university_id`, { headers: authHeaders })
             .then(res => res.json())
             .then(data => {
               if (Array.isArray(data)) setCourses(data);
@@ -423,7 +429,32 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
   useEffect(() => {
     fetchStudent();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session, studentId]);
+  }, [user?.id, studentId]);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (!student?.id || !student.passport_photo_url) {
+      setPhotoUrl(null);
+      return;
+    }
+
+    getSecureImageUrl("student", student.id, "passport_photo_url", student.passport_photo_url)
+      .then((url) => {
+        if (isMounted) {
+          setPhotoUrl(url);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load student photo URL:", err);
+        if (isMounted) {
+          setPhotoUrl(null);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [student?.id, student?.passport_photo_url]);
 
   // â”€â”€ Upload document â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
@@ -439,94 +470,21 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     return undefined;
   };
 
-  // const handlePreviewDoc = async (url?: string) => {
-  //   if (!url) return;
-  //   await openSecureDocument("student-documents", url);
-  // };
-
   const handlePreviewDoc = async (field: string, url?: string) => {
-  if (!url || !student?.id) return;
+    if (!url || !student?.id) return;
 
-  await openSecureDocument({
-    recordType: "student",
-    recordId: student.id,
-    field,
-    objectKey: url,
-  });
-};
+    await openSecureDocument({
+      recordType: "student",
+      recordId: student.id,
+      field,
+      objectKey: url,
+    });
+  };
 
-  // const handleUploadDoc = async (field: string, file: File) => {
-  //   if (!student || !session) return;
-  //   setUploading((p) => ({ ...p, [field]: true }));
-  //   try {
-  //     const path = `${user?.id}/${student.id}/${field}_${Date.now()}_${file.name}`;
-  //     const { error: uploadError } = await supabase.storage
-  //       .from("student-documents")
-  //       .upload(path, file);
-  //     if (uploadError) throw uploadError;
-  //     const {
-  //       data: { publicUrl },
-  //     } = supabase.storage.from("student-documents").getPublicUrl(path);
+  const handleUploadDoc = async (field: string, file: File) => {
+    if (!student || !session) return;
 
-  //     const topLevelFields = [
-  //       "passport_photo_url",
-  //       "passport_url",
-  //       "academic_transcript_url",
-  //       "ielts_certificate_url",
-  //       "personal_statement_url",
-  //       "recommendation_letter_url",
-  //     ];
-
-  //     if (topLevelFields.includes(field)) {
-  //       const res = await fetch(
-  //         `${SUPABASE_URL}/rest/v1/students?id=eq.${student.id}`,
-  //         {
-  //           method: "PATCH",
-  //           headers: {
-  //             ...headers,
-  //             "Content-Type": "application/json",
-  //             Prefer: "return=minimal",
-  //           },
-  //           body: JSON.stringify({ [field]: publicUrl }),
-  //         }
-  //       );
-  //       if (!res.ok) throw new Error("Failed to update student record");
-  //       setStudent((prev) => (prev ? { ...prev, [field]: publicUrl } : null));
-  //     } else {
-  //       const currentOther = (typeof student.other_documents === "object" && student.other_documents !== null && !Array.isArray(student.other_documents))
-  //         ? student.other_documents
-  //         : {};
-  //       const updatedOther = { ...currentOther, [field]: publicUrl };
-
-  //       const res = await fetch(
-  //         `${SUPABASE_URL}/rest/v1/students?id=eq.${student.id}`,
-  //         {
-  //           method: "PATCH",
-  //           headers: {
-  //             ...headers,
-  //             "Content-Type": "application/json",
-  //             Prefer: "return=minimal",
-  //           },
-  //           body: JSON.stringify({ other_documents: updatedOther }),
-  //         }
-  //       );
-  //       if (!res.ok) throw new Error("Failed to update student record");
-  //       setStudent((prev) => (prev ? { ...prev, other_documents: updatedOther as any } : null));
-  //     }
-
-  //     toast.success("Document uploaded successfully!");
-  //   } catch (e: any) {
-  //     toast.error(e.message || "Upload failed");
-  //   } finally {
-  //     setUploading((p) => ({ ...p, [field]: false }));
-  //   }
-  // };
-
-  
-const handleUploadDoc = async (field: string, file: File) => {
-  if (!student || !session) return;
-
-  setUploading((p) => ({ ...p, [field]: true }));
+    setUploading((p) => ({ ...p, [field]: true }));
 
   try {
     // 1. Request a temporary R2 upload URL
@@ -1129,9 +1087,9 @@ const handleUploadDoc = async (field: string, file: File) => {
                 
                 {/* 1st Column: Image with uniform rounded corners */}
                 <div className="shrink-0">
-                  {student.passport_photo_url ? (
+                  {photoUrl ? (
                     <img
-                      src={student.passport_photo_url}
+                      src={photoUrl}
                       alt={student.full_name}
                       className="object-cover border border-gray-200 rounded-lg shadow-sm"
                       style={{ width: "35mm", height: "42mm" }}

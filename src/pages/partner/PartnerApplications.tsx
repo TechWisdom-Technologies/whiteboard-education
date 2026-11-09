@@ -123,13 +123,14 @@ export default function PartnerApplications() {
   });
 
   useEffect(() => {
-    if (!user || !session) return;
+    if (!user?.id) return;
 
     const fetchData = async () => {
       try {
         setLoading(true);
 
-        const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}` };
+        const token = session?.access_token || (await supabase.auth.getSession()).data.session?.access_token;
+        const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${token}` };
 
         // Fetch partner details
         const partnerRes = await fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?select=contact_first_name,contact_last_name&user_id=eq.${user.id}&limit=1`, { headers });
@@ -189,7 +190,7 @@ export default function PartnerApplications() {
     };
 
     fetchData();
-  }, [user, session]);
+  }, [user?.id]);
 
   const filteredApplications = useMemo(() => {
     return applications.filter((app) => {

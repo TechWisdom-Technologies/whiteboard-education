@@ -21,6 +21,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
+import { resolveAvatarUrl } from "@/lib/secureStorage";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -138,7 +139,8 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
 
       const directAvatar = (user.user_metadata?.avatar_url as string | undefined) || "";
       if (directAvatar) {
-        setAvatarUrl(directAvatar);
+        const resolvedDirect = await resolveAvatarUrl(directAvatar, user.id);
+        setAvatarUrl(resolvedDirect || directAvatar);
         return;
       }
 
@@ -146,12 +148,20 @@ export function MegaMenu({ disableSticky = false, hideBreadcrumbs = false }: { d
         .from("profiles")
         .select("avatar_url")
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
 
-      setAvatarUrl(data?.avatar_url || "");
+      if (data?.avatar_url) {
+        const resolved = await resolveAvatarUrl(data.avatar_url, user.id);
+        setAvatarUrl(resolved || "");
+      } else {
+        setAvatarUrl("");
+      }
     };
 
     loadAvatar();
+    const handleUpdate = () => loadAvatar();
+    window.addEventListener("profile-updated", handleUpdate);
+    return () => window.removeEventListener("profile-updated", handleUpdate);
   }, [user?.id]);
 
   const userInitial = user?.email?.charAt(0).toUpperCase() || "U";

@@ -124,7 +124,7 @@ export function StudentChatWidget({
       supabase.removeChannel(channel);
       window.clearInterval(poll);
     };
-  }, [student?.id, session?.access_token]);
+  }, [student?.id]);
 
   // Scroll ONLY the internal chat container to bottom when new messages arrive (without moving window)
   useEffect(() => {

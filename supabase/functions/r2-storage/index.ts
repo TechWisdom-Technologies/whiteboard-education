@@ -85,7 +85,7 @@ export default {
         } = body;
 
         if (
-          !["student", "partner"].includes(recordType) ||
+          !["student", "partner", "profile"].includes(recordType) ||
           typeof recordId !== "string" ||
           typeof field !== "string"
         ) {
@@ -137,7 +137,7 @@ export default {
               return response("Access denied", 403);
             }
           }
-        } else {
+        } else if (recordType === "partner") {
           if (!partnerFields.includes(field)) {
             return response("Unsupported partner document field");
           }
@@ -156,6 +156,25 @@ export default {
           if (!isAdmin && record.user_id !== userId) {
             return response("Access denied", 403);
           }
+        } else if (recordType === "profile") {
+          if (field !== "avatar_url") {
+            return response("Unsupported profile document field");
+          }
+
+          if (recordId !== userId) {
+            return response("Access denied", 403);
+          }
+
+          const { data, error } = await ctx.supabase
+            .from("profiles")
+            .select("id, user_id, avatar_url")
+            .eq("user_id", userId)
+            .maybeSingle();
+
+          if (error) throw error;
+          if (!data) return response("Profile not found or access denied", 403);
+
+          record = data;
         }
 
         // Generate a temporary upload URL.
@@ -175,10 +194,16 @@ export default {
             .replace(/[^a-zA-Z0-9._-]/g, "_");
 
           const prefix =
-            recordType === "student" ? "students" : "partners";
+            recordType === "student"
+              ? "students"
+              : recordType === "partner"
+              ? "partners"
+              : "profiles";
+
+          const targetId = recordType === "profile" ? record.user_id : recordId;
 
           const key =
-            `${prefix}/${recordId}/${field}/${crypto.randomUUID()}-${safeName}`;
+            `${prefix}/${targetId}/${field}/${crypto.randomUUID()}-${safeName}`;
 
           const command = new PutObjectCommand({
             Bucket: bucket,
@@ -214,9 +239,15 @@ export default {
           }
 
           const prefix =
-            recordType === "student" ? "students" : "partners";
+            recordType === "student"
+              ? "students"
+              : recordType === "partner"
+              ? "partners"
+              : "profiles";
 
-          if (!objectKey.startsWith(`${prefix}/${recordId}/${field}/`)) {
+          const targetId = recordType === "profile" ? record.user_id : recordId;
+
+          if (!objectKey.startsWith(`${prefix}/${targetId}/${field}/`)) {
             return response("Invalid document path", 403);
           }
 

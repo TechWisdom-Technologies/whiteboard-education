@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Users, Loader2, Trash2, X, Search, Mail, Phone } from "lucide-react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { statusPhases, exceptionalStatuses, getStatusLabel } from "@/config/statusFlow";
@@ -107,17 +108,18 @@ export default function PartnerStudents() {
   });
 
   const fetchStudents = async () => {
-    if (!session) return;
+    if (!user?.id) return;
     try {
+      const token = session?.access_token || (await supabase.auth.getSession()).data.session?.access_token;
       const res = await fetch(
         `${SUPABASE_URL}/rest/v1/students?select=*&partner_id=eq.${user?.id}&order=created_at.desc`,
-        { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}` } }
+        { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${token}` } }
       );
       if (res.ok) setStudents(await res.json());
 
       const partnerRes = await fetch(
         `${SUPABASE_URL}/rest/v1/partner_registrations?select=contact_first_name,contact_last_name&user_id=eq.${user?.id}&limit=1`,
-        { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}` } }
+        { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${token}` } }
       );
       if (partnerRes.ok) {
         const pData = await partnerRes.json();
@@ -126,7 +128,7 @@ export default function PartnerStudents() {
     } catch { /* ignore */ } finally { setLoading(false); }
   };
 
-  useEffect(() => { fetchStudents(); }, [session]);
+  useEffect(() => { fetchStudents(); }, [user?.id]);
 
   useEffect(() => {
     const studentIdFromQuery = searchParams.get("studentId");

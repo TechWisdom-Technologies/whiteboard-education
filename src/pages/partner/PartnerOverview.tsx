@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { resolveAvatarUrl } from "@/lib/secureStorage";
 import { toast } from "sonner";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -86,13 +87,14 @@ export default function PartnerOverview() {
   }, []);
 
   useEffect(() => {
-    if (!user || !session) return;
+    if (!user?.id) return;
     
     async function fetchData() {
       try {
+        const token = session?.access_token || (await supabase.auth.getSession()).data.session?.access_token;
         const headers = {
           apikey: SUPABASE_KEY,
-          Authorization: `Bearer ${session?.access_token}`
+          Authorization: `Bearer ${token}`
         };
 
         // Fetch partner & students & profile
@@ -119,13 +121,19 @@ export default function PartnerOverview() {
         }
 
         const localAvatar = localStorage.getItem(`partner_avatar_${user?.id}`) || "";
+        const rawAvatar = (profileRes && profileRes.length > 0 && profileRes[0].avatar_url) ? profileRes[0].avatar_url : localAvatar;
+        const resolvedAvatar = await resolveAvatarUrl(rawAvatar, user?.id);
+
         if (profileRes && profileRes.length > 0) {
           setProfile({
             display_name: profileRes[0].display_name || "",
-            avatar_url: profileRes[0].avatar_url || localAvatar || "",
+            avatar_url: resolvedAvatar || "",
           });
-        } else if (localAvatar) {
-          setProfile(prev => ({ ...prev, avatar_url: localAvatar }));
+          if (profileRes[0].avatar_url) {
+            localStorage.setItem(`partner_avatar_${user?.id}`, profileRes[0].avatar_url);
+          }
+        } else if (resolvedAvatar) {
+          setProfile(prev => ({ ...prev, avatar_url: resolvedAvatar }));
         }
 
         const students = Array.isArray(studentsRes) ? studentsRes : [];
@@ -214,7 +222,7 @@ export default function PartnerOverview() {
     }
 
     fetchData();
-  }, [user, session]);
+  }, [user?.id]);
 
   if (isLoading) {
     return <LoadingScreen />;

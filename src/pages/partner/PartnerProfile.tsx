@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { resolveAvatarUrl } from "@/lib/secureStorage";
 import {
   Camera, Building2, Mail, Phone, Globe, Users, Loader2,
   User, KeyRound, ShieldCheck, CheckCircle2, Pencil,
@@ -56,7 +57,7 @@ function OtpDigitBoxes({
   disabled?: boolean;
 }) {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const digits = Array.from({ length: 8 }, (_, i) => value[i] || "");
+  const digits = Array.from({ length: 6 }, (_, i) => value[i] || "");
 
   const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.replace(/\D/g, "");
@@ -71,7 +72,7 @@ function OtpDigitBoxes({
     newDigits[index] = char;
     const combined = newDigits.join("");
     onChange(combined);
-    if (index < 7) {
+    if (index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
   };
@@ -84,10 +85,10 @@ function OtpDigitBoxes({
 
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
-    const pastedData = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 8);
+    const pastedData = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
     if (pastedData) {
       onChange(pastedData);
-      const nextFocus = Math.min(pastedData.length, 7);
+      const nextFocus = Math.min(pastedData.length, 5);
       inputRefs.current[nextFocus]?.focus();
     }
   };
@@ -135,12 +136,13 @@ export default function PartnerProfile() {
   const [editAgencyData, setEditAgencyData] = useState<PartnerData | null>(null);
 
   useEffect(() => {
-    if (!session || !user) return;
+    if (!user?.id) return;
     const fetchData = async () => {
       try {
         const localAvatar = localStorage.getItem(`partner_avatar_${user.id}`);
         if (localAvatar) {
-          setProfile(prev => ({ ...prev, avatar_url: localAvatar }));
+          const resolvedLocal = await resolveAvatarUrl(localAvatar, user.id);
+          setProfile(prev => ({ ...prev, avatar_url: resolvedLocal || "" }));
         }
 
         const { data: partnerData } = await supabase
@@ -191,9 +193,11 @@ export default function PartnerProfile() {
           .maybeSingle();
 
         if (profileData) {
+          const rawKey = profileData.avatar_url || localAvatar;
+          const resolvedAvatar = await resolveAvatarUrl(rawKey, user.id);
           setProfile({
             display_name: profileData.display_name || "",
-            avatar_url: profileData.avatar_url || localAvatar || "",
+            avatar_url: resolvedAvatar || "",
           });
           if (profileData.avatar_url) {
             localStorage.setItem(`partner_avatar_${user.id}`, profileData.avatar_url);
@@ -203,7 +207,7 @@ export default function PartnerProfile() {
       setLoading(false);
     };
     fetchData();
-  }, [session, user]);
+  }, [user?.id]);
 
   useEffect(() => {
     if (!loading && location.hash === "#admin-notes-section") {
@@ -221,34 +225,80 @@ export default function PartnerProfile() {
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
-    if (file.size > 2 * 1024 * 1024) { toast.error("File too large. Max 2MB."); return; }
+    if (file.size > 5 * 1024 * 1024) { toast.error("File too large. Max 5MB."); return; }
 
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop();
-      const path = `${user.id}/avatar.${ext}`;
-      const { error: uploadError } = await supabase.storage.from("partner-documents").upload(path, file, { upsert: true });
-      if (uploadError) throw uploadError;
-      const { data: urlData } = supabase.storage.from("partner-documents").getPublicUrl(path);
-      const avatarUrl = urlData.publicUrl + `?t=${Date.now()}`;
-      
-      const { error: upsertErr } = await supabase
+      // Ensure profile record exists
+      const { data: existingProfile } = await supabase
         .from("profiles")
-        .upsert(
-          { user_id: user.id, avatar_url: avatarUrl, display_name: profile.display_name || "" },
-          { onConflict: "user_id" }
-        );
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
 
-      if (upsertErr) console.error("Profile upsert error:", upsertErr);
+      if (!existingProfile) {
+        const { error: insertErr } = await supabase
+          .from("profiles")
+          .insert({
+            user_id: user.id,
+            display_name: profile.display_name || user.email?.split("@")[0] || "",
+          });
+        if (insertErr) throw insertErr;
+      }
 
-      localStorage.setItem(`partner_avatar_${user.id}`, avatarUrl);
-      setProfile(prev => ({ ...prev, avatar_url: avatarUrl }));
+      let contentType = file.type || "image/jpeg";
+      if (contentType === "image/jpg") contentType = "image/jpeg";
+
+      const { data: uploadData, error: uploadInvokeError } = await supabase.functions.invoke("r2-storage", {
+        body: {
+          action: "create-upload",
+          recordType: "profile",
+          recordId: user.id,
+          field: "avatar_url",
+          fileName: file.name,
+          contentType,
+        },
+      });
+
+      if (uploadInvokeError) throw uploadInvokeError;
+      if (!uploadData?.uploadUrl || !uploadData?.objectKey) {
+        throw new Error("Could not generate R2 upload URL");
+      }
+
+      const uploadResponse = await fetch(uploadData.uploadUrl, {
+        method: "PUT",
+        headers: { "Content-Type": contentType },
+        body: file,
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error("Avatar upload to R2 failed");
+      }
+
+      const objectKey = uploadData.objectKey;
+
+      const { error: saveErr } = await supabase
+        .from("profiles")
+        .update({ avatar_url: objectKey })
+        .eq("user_id", user.id);
+
+      if (saveErr) throw saveErr;
+
+      // Obtain a signed download URL for immediate preview
+      const previewUrl = await resolveAvatarUrl(objectKey, user.id);
+
+      localStorage.setItem(`partner_avatar_${user.id}`, objectKey);
+      setProfile(prev => ({ ...prev, avatar_url: previewUrl || "" }));
       window.dispatchEvent(new Event("profile-updated"));
       toast.success("Profile picture updated!");
     } catch (err: any) {
       toast.error("Upload failed: " + (err.message || "Unknown error"));
+    } finally {
+      if (e.target) {
+        e.target.value = "";
+      }
+      setUploading(false);
     }
-    setUploading(false);
   };
 
   const startEditingAgency = () => {
@@ -306,16 +356,27 @@ export default function PartnerProfile() {
     if (result.success) {
       setPwStep("code_sent");
       setPwError(null);
+      toast.success("Verification code sent to your email!");
     } else {
       setPwStep("idle");
-      setPwError(result.error || "Failed to send code. Please try again.");
+      const errMsg = result.error || "Failed to send code. Please try again.";
+      const isRateLimited =
+        errMsg.toLowerCase().includes("rate limit") ||
+        errMsg.toLowerCase().includes("security purposes") ||
+        errMsg.toLowerCase().includes("too many") ||
+        errMsg.toLowerCase().includes("once every");
+      const friendlyErr = isRateLimited
+        ? "Too many password reset requests. For security, please wait a minute before requesting another code."
+        : errMsg;
+      setPwError(friendlyErr);
+      toast.error(friendlyErr);
     }
   };
 
   const handleVerifyCode = async () => {
     setPwError(null);
-    if (!user?.email || otpCode.length < 8) {
-      setPwError("Please enter the complete 8-digit verification code.");
+    if (!user?.email || otpCode.length < 6) {
+      setPwError("Please enter the complete 6-digit verification code.");
       return;
     }
     setPwStep("verifying");
@@ -560,20 +621,28 @@ export default function PartnerProfile() {
               
               <div className="bg-white p-6 sm:p-7 rounded-2xl border-2 border-rose-400 shadow-sm w-full max-w-4xl">
                 {pwStep === "idle" && (
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div className="flex items-center gap-3 text-sm text-black font-normal">
-                      <ShieldCheck className="h-8 w-8 text-rose-600 shrink-0" />
-                      <p className="text-xs sm:text-sm leading-relaxed text-black font-normal">
-                        Your account uses email verification (OTP) for password updates to ensure maximum security.
-                      </p>
+                  <div className="space-y-3">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                      <div className="flex items-center gap-3 text-sm text-black font-normal">
+                        <ShieldCheck className="h-8 w-8 text-rose-600 shrink-0" />
+                        <p className="text-xs sm:text-sm leading-relaxed text-black font-normal">
+                          Your account uses email verification (OTP) for password updates to ensure maximum security.
+                        </p>
+                      </div>
+                      <Button
+                        onClick={handleSendCode}
+                        variant="outline"
+                        className="group w-full sm:w-auto shrink-0 gap-2 font-normal text-xs h-9.5 px-4 rounded-lg shadow-sm border border-rose-300 text-rose-700 bg-white hover:bg-rose-600 hover:text-white hover:border-rose-600 transition-all"
+                      >
+                        <KeyRound className="h-3.5 w-3.5 group-hover:!text-white !text-rose-600" /> Update Password
+                      </Button>
                     </div>
-                    <Button
-                      onClick={handleSendCode}
-                      variant="outline"
-                      className="group w-full sm:w-auto shrink-0 gap-2 font-normal text-xs h-9.5 px-4 rounded-lg shadow-sm border border-rose-300 text-rose-700 bg-white hover:bg-rose-600 hover:text-white hover:border-rose-600 transition-all"
-                    >
-                      <KeyRound className="h-3.5 w-3.5 group-hover:!text-white !text-rose-600" /> Update Password
-                    </Button>
+                    {pwError && (
+                      <div className="flex items-center gap-2 text-xs text-rose-600 font-medium pt-1 animate-fade-in bg-rose-50 border border-rose-200 p-2.5 rounded-lg">
+                        <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
+                        <span>{pwError}</span>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -586,7 +655,7 @@ export default function PartnerProfile() {
                 {pwStep === "code_sent" && (
                   <div className="space-y-4 animate-fade-in w-full">
                     <p className="text-xs text-rose-600 font-normal leading-relaxed">
-                      An 8-digit code has been sent to <span className="font-semibold text-rose-700">{user?.email}</span>.
+                      A 6-digit code has been sent to <span className="font-semibold text-rose-700">{user?.email}</span>.
                     </p>
                     <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-4 pt-1 w-full">
                       <Label className="text-xs sm:text-[13px] font-medium text-rose-600 uppercase shrink-0 whitespace-nowrap">Verification Code</Label>
@@ -596,7 +665,7 @@ export default function PartnerProfile() {
                       <div className="flex items-center gap-2 shrink-0">
                         <Button
                           onClick={handleVerifyCode}
-                          disabled={otpCode.length < 8}
+                          disabled={otpCode.length < 6}
                           className="font-normal text-xs h-11 px-4 sm:px-5 rounded-xl bg-rose-600 hover:bg-white text-white hover:text-rose-600 border border-rose-600 transition-all shadow-sm whitespace-nowrap"
                         >
                           Verify

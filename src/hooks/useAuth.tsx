@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
+import { createContext, useContext, useState, useEffect, useRef, useMemo, ReactNode, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
 
@@ -91,6 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isRecoverySession, setIsRecoverySession] = useState(false);
   const [partnerStatus, setPartnerStatus] = useState<PartnerStatus>(null);
+  const initializedUserIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -122,6 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const { data: validUserData, error: userValidateErr } = await supabase.auth.getUser();
           if (userValidateErr || !validUserData?.user) {
             // User no longer exists in Supabase backend (e.g. wiped via Dashboard)
+            initializedUserIdRef.current = null;
             localStorage.removeItem(`auth_roles_${sess.user.id}`);
             localStorage.removeItem(`auth_partner_status_${sess.user.id}`);
             await supabase.auth.signOut().catch(() => {});
@@ -131,6 +133,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setPartnerStatus(null);
             return;
           }
+
+          initializedUserIdRef.current = sess.user.id;
 
           // Pre-populate with cached roles & partner status for instant flicker-free access
           const cached = localStorage.getItem(`auth_roles_${sess.user.id}`);
@@ -159,6 +163,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
           // If account is not admin and has no partner registration, it is an orphaned account
           if (!r.includes("admin") && !ps) {
+            initializedUserIdRef.current = null;
             localStorage.removeItem(`auth_roles_${sess.user.id}`);
             localStorage.removeItem(`auth_partner_status_${sess.user.id}`);
             await supabase.auth.signOut().catch(() => {});
@@ -179,6 +184,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             localStorage.removeItem(`auth_partner_status_${sess.user.id}`);
           }
         } else {
+          initializedUserIdRef.current = null;
           setRoles([]);
           setPartnerStatus(null);
           setSession(null);
@@ -199,41 +205,64 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsRecoverySession(true);
       }
 
-      if (sess?.user) {
-        setSession(sess);
-        const r = await fetchUserRoles(sess.user.id, sess.access_token);
-        const ps = await fetchPartnerStatus(sess.user.id, sess.access_token);
-
-        if (ps && !r.includes("partner")) {
-          r.push("partner");
-        }
-
-        // Orphan check: non-admin users without partner profile must be logged out
-        if (!r.includes("admin") && !ps) {
-          localStorage.removeItem(`auth_roles_${sess.user.id}`);
-          localStorage.removeItem(`auth_partner_status_${sess.user.id}`);
-          await supabase.auth.signOut().catch(() => {});
-          if (!mounted) return;
-          setSession(null);
-          setRoles([]);
-          setPartnerStatus(null);
-          return;
-        }
-
+      if (!sess?.user) {
         if (!mounted) return;
-        setRoles(r);
-        setPartnerStatus(ps);
-        localStorage.setItem(`auth_roles_${sess.user.id}`, JSON.stringify(r));
-        if (ps) {
-          localStorage.setItem(`auth_partner_status_${sess.user.id}`, ps);
-        } else {
-          localStorage.removeItem(`auth_partner_status_${sess.user.id}`);
-        }
-      } else {
-        if (!mounted) return;
+        initializedUserIdRef.current = null;
         setRoles([]);
         setSession(null);
         setPartnerStatus(null);
+        setLoading(false);
+        return;
+      }
+
+      // If this is the SAME user whose roles are already initialized,
+      // only update session if token/expiration changed.
+      // Do NOT re-fetch roles or partner status from the network on window focus / visibility change / token refresh.
+      if (initializedUserIdRef.current === sess.user.id) {
+        if (!mounted) return;
+        setSession((prev) => {
+          if (prev?.access_token === sess.access_token && prev?.expires_at === sess.expires_at) {
+            return prev;
+          }
+          return sess;
+        });
+        setLoading(false);
+        return;
+      }
+
+      // New user identity or first load via auth state listener
+      initializedUserIdRef.current = sess.user.id;
+      setSession(sess);
+
+      const r = await fetchUserRoles(sess.user.id, sess.access_token);
+      const ps = await fetchPartnerStatus(sess.user.id, sess.access_token);
+
+      if (ps && !r.includes("partner")) {
+        r.push("partner");
+      }
+
+      // Orphan check: non-admin users without partner profile must be logged out
+      if (!r.includes("admin") && !ps) {
+        initializedUserIdRef.current = null;
+        localStorage.removeItem(`auth_roles_${sess.user.id}`);
+        localStorage.removeItem(`auth_partner_status_${sess.user.id}`);
+        await supabase.auth.signOut().catch(() => {});
+        if (!mounted) return;
+        setSession(null);
+        setRoles([]);
+        setPartnerStatus(null);
+        setLoading(false);
+        return;
+      }
+
+      if (!mounted) return;
+      setRoles(r);
+      setPartnerStatus(ps);
+      localStorage.setItem(`auth_roles_${sess.user.id}`, JSON.stringify(r));
+      if (ps) {
+        localStorage.setItem(`auth_partner_status_${sess.user.id}`, ps);
+      } else {
+        localStorage.removeItem(`auth_partner_status_${sess.user.id}`);
       }
       setLoading(false);
     });
@@ -273,6 +302,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const redirectTo = r.includes("admin") ? "/admin" : (r.includes("partner") || ps) ? "/partner-dashboard" : "/";
+    initializedUserIdRef.current = data.user.id;
     return { success: true, redirectTo };
   }, []);
 
@@ -290,6 +320,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signOut = useCallback(async () => {
+    initializedUserIdRef.current = null;
     if (session?.user) {
       localStorage.removeItem(`auth_roles_${session.user.id}`);
       localStorage.removeItem(`auth_partner_status_${session.user.id}`);
@@ -340,26 +371,55 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const hasRole = useCallback((role: AppRole) => roles.includes(role), [roles]);
 
+  const user = useMemo(() => {
+    return session?.user ?? null;
+  }, [
+    session?.user?.id,
+    session?.user?.email,
+    session?.user?.role,
+    session?.user?.updated_at,
+    JSON.stringify(session?.user?.user_metadata),
+  ]);
+
+  const authContextValue = useMemo(
+    () => ({
+      session,
+      user,
+      roles,
+      loading,
+      hasRole,
+      partnerStatus,
+      refreshPartnerStatus,
+      signOut,
+      signIn,
+      signUp,
+      resetPassword,
+      verifyResetOtp,
+      updatePassword,
+      isRecoverySession,
+      clearRecovery,
+    }),
+    [
+      session,
+      user,
+      roles,
+      loading,
+      hasRole,
+      partnerStatus,
+      refreshPartnerStatus,
+      signOut,
+      signIn,
+      signUp,
+      resetPassword,
+      verifyResetOtp,
+      updatePassword,
+      isRecoverySession,
+      clearRecovery,
+    ]
+  );
+
   return (
-    <AuthContext.Provider
-      value={{
-        session,
-        user: session?.user ?? null,
-        roles,
-        loading,
-        hasRole,
-        partnerStatus,
-        refreshPartnerStatus,
-        signOut,
-        signIn,
-        signUp,
-        resetPassword,
-        verifyResetOtp,
-        updatePassword,
-        isRecoverySession,
-        clearRecovery,
-      }}
-    >
+    <AuthContext.Provider value={authContextValue}>
       {children}
     </AuthContext.Provider>
   );
