@@ -110,7 +110,7 @@ export function HeroSection() {
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 hidden sm:block" />
                   <Input
                     placeholder="Search..."
-                    className="w-full h-12 pl-2 sm:pl-10 border-none bg-transparent focus-visible:ring-0 text-sm md:text-base placeholder:text-gray-400 shadow-none rounded-none"
+                    className="w-full h-12 pl-2 sm:pl-10 border-none bg-transparent focus:bg-transparent focus:text-[#1E293B] focus:placeholder:text-gray-400 focus:caret-[#1E293B] focus-visible:ring-0 text-sm md:text-base text-[#1E293B] placeholder:text-gray-400 shadow-none rounded-none"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}

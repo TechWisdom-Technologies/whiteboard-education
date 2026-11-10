@@ -40,10 +40,10 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
                 Explore
               </h4>
               <ul className="space-y-2.5 text-[13px] text-blue-100/90 font-medium">
-                <li><Link to="/universities" className="hover:text-white hover:underline transition-all">Universities</Link></li>
-                <li><Link to="/courses" className="hover:text-white hover:underline transition-all">Courses</Link></li>
-                <li><Link to="/language-centers" className="hover:text-white hover:underline transition-all">Language Centers</Link></li>
-                <li><Link to="/housing" className="hover:text-white hover:underline transition-all">Housing</Link></li>
+                <li><Link to="/universities" className="hover:text-white transition-colors">Universities</Link></li>
+                <li><Link to="/courses" className="hover:text-white transition-colors">Courses</Link></li>
+                <li><Link to="/language-centers" className="hover:text-white transition-colors">Language Centers</Link></li>
+                <li><Link to="/housing" className="hover:text-white transition-colors">Housing</Link></li>
               </ul>
             </div>
 
@@ -53,9 +53,9 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
                 Other Resources
               </h4>
               <ul className="space-y-2.5 text-[13px] text-blue-100/90 font-medium">
-                <li><Link to="/blog" className="hover:text-white hover:underline transition-all">Blog</Link></li>
-                <li><Link to="/eligibility" className="hover:text-white hover:underline transition-all">Eligibility Test</Link></li>
-                <li><Link to="/compare" className="hover:text-white hover:underline transition-all">Compare Universities</Link></li>
+                <li><Link to="/blog" className="hover:text-white transition-colors">Blog</Link></li>
+                <li><Link to="/eligibility" className="hover:text-white transition-colors">Eligibility Test</Link></li>
+                <li><Link to="/compare" className="hover:text-white transition-colors">Compare Universities</Link></li>
               </ul>
             </div>
 
@@ -65,8 +65,8 @@ export function PublicFooter({ bannerVisible = false }: PublicFooterProps) {
                 Legal
               </h4>
               <ul className="space-y-2.5 text-[13px] text-blue-100/90 font-medium">
-                <li><Link to="/help" className="hover:text-white hover:underline transition-all">Privacy Policy</Link></li>
-                <li><Link to="/help" className="hover:text-white hover:underline transition-all">Terms & Conditions</Link></li>
+                <li><Link to="/help" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+                <li><Link to="/help" className="hover:text-white transition-colors">Terms & Conditions</Link></li>
               </ul>
             </div>
 

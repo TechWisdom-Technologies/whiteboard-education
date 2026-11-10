@@ -350,9 +350,9 @@ export default function AdminSettings() {
         {/* 1. Header: Avatar & Basic Info */}
         <div className="p-6 sm:p-8 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center sm:items-start gap-6">
           <div className="relative group shrink-0">
-            <Avatar className="w-[105px] h-[135px] rounded-lg border border-slate-200 shadow-sm bg-white overflow-hidden p-1">
-              <AvatarImage src={profile.avatar_url} className="object-contain w-full h-full rounded-md" />
-              <AvatarFallback className="text-3xl font-bold bg-[#1E293B]/10 text-[#1E293B] rounded-md">{initials}</AvatarFallback>
+            <Avatar className="w-[105px] h-[135px] rounded-lg border border-slate-200 shadow-sm bg-white overflow-hidden">
+              <AvatarImage src={profile.avatar_url} className="w-full h-full object-cover aspect-auto" />
+              <AvatarFallback className="text-3xl font-bold bg-[#1E293B]/10 text-[#1E293B] rounded-lg">{initials}</AvatarFallback>
             </Avatar>
             <button
               onClick={() => fileInputRef.current?.click()}

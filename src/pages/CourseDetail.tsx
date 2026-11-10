@@ -173,12 +173,12 @@ ${window.location.href}`;
   // We should just let it be empty instead of showing dummy data.
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-white">
       <MegaMenu disableSticky={isScrolledPastHero} />
 
-      <div className="w-full flex-1 flex flex-col">
+      <div className="w-full flex-1 flex flex-col bg-white">
         {/* ═══ HERO: Big Logo + Name + Buttons ═══ */}
-        <section className="pb-10 pt-4 md:pt-0">
+        <section className="pb-10 pt-4 md:pt-0 bg-white">
           <div className="container mx-auto px-4 lg:px-6">
             <div className="bg-[#EEF4FF] p-5 md:py-16 md:px-10 flex flex-col md:flex-row items-center md:items-start gap-8 rounded-2xl md:rounded-tl-md md:rounded-tr-[3rem] md:rounded-bl-[3rem] md:rounded-br-md min-h-[160px] md:min-h-[220px]">
               {/* Desktop Logo */}
@@ -224,7 +224,7 @@ ${window.location.href}`;
                     <Button className="rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
                       Apply Now
                     </Button>
-                    <Button variant="outline" className="hover:text-[#2F4F97] rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate("/contact")}>
+                    <Button variant="outline" className="hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate("/contact")}>
                       Ask Us
                     </Button>
                   </div>
@@ -234,7 +234,7 @@ ${window.location.href}`;
                     <Button className="rounded-[20px] font-semibold px-10 h-14 text-[15px]" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
                       Apply Now
                     </Button>
-                    <Button variant="outline" className="hover:text-[#2F4F97] rounded-[20px] font-semibold px-10 h-14 text-[15px]" onClick={() => navigate("/contact")}>
+                    <Button variant="outline" className="hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold px-10 h-14 text-[15px]" onClick={() => navigate("/contact")}>
                       Ask Us
                     </Button>
                   </div>
@@ -245,7 +245,7 @@ ${window.location.href}`;
         </section>
 
         {/* Sticky Tab Bar */}
-        <nav className="sticky top-0 z-40 shadow-sm transition-all duration-300 bg-gradient-to-r from-blue-50 to-white border-b border-blue-100">
+        <nav className="sticky top-0 z-40 shadow-sm transition-all duration-300 bg-white border-b border-gray-100">
           <div className="w-full max-w-[1000px] mx-auto px-4 flex items-center justify-between min-h-[60px] md:min-h-[80px] py-2">
             {/* Left: Logo + Tabs */}
             <div className="flex items-center gap-3 md:gap-6 min-w-0 overflow-hidden flex-1">
@@ -270,7 +270,7 @@ ${window.location.href}`;
                 <Button className="rounded-[20px] font-semibold px-5 h-10 text-[14px]" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
                   Apply
                 </Button>
-                <Button variant="outline" className="hover:text-[#2F4F97] rounded-[20px] font-semibold h-10 w-12 p-0 flex items-center justify-center shrink-0" onClick={() => navigate("/contact")}>
+                <Button variant="outline" className="hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold h-10 w-12 p-0 flex items-center justify-center shrink-0" onClick={() => navigate("/contact")}>
                   <span className="font-bold text-[16px]">?</span>
                 </Button>
               </div>
@@ -280,7 +280,7 @@ ${window.location.href}`;
                 <Button className="rounded-[20px] font-semibold px-6 h-10 text-[14px]" onClick={() => navigate(`/apply?courseId=${course.id}`)}>
                   Apply Now
                 </Button>
-                <Button variant="outline" className="hover:text-[#2F4F97] rounded-[20px] font-semibold px-6 h-10 text-[14px]" onClick={() => navigate("/contact")}>
+                <Button variant="outline" className="hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold px-6 h-10 text-[14px]" onClick={() => navigate("/contact")}>
                   Ask Us
                 </Button>
               </div>
