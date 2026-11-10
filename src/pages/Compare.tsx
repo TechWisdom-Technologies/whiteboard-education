@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { generateSlug } from "@/lib/utils";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
 import { useCurrency } from "@/contexts/CurrencyContext";
-import { sortUniversitiesWithPriority } from "@/lib/universityPriority";
+import { sortUniversitiesWithPriority, mergePriorityUniversities } from "@/lib/universityPriority";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, GraduationCap, X, GitCompare, BookOpen, Calendar, DollarSign, Building2, Globe, Wallet, Languages, Info, ExternalLink, ArrowRight } from "lucide-react";
@@ -16,6 +16,7 @@ import { UNIVERSITY_STATS } from "@/data/universityStats";
 
 export default function Compare() {
   const { data: liveUniversities = [] } = useTableData("universities", { orderBy: "name" });
+  const universities = useMemo(() => mergePriorityUniversities(liveUniversities), [liveUniversities]);
   const { data: liveCourses = [] } = useTableData("courses");
   const { currency, rates } = useCurrency();
 
@@ -34,7 +35,7 @@ export default function Compare() {
   };
 
   const activeUnis = selected
-    .map((id) => (id ? liveUniversities.find((u) => u.id === id) : null));
+    .map((id) => (id ? universities.find((u) => u.id === id) : null));
 
   const hasAny = activeUnis.some(Boolean);
 
@@ -188,7 +189,7 @@ export default function Compare() {
                             </SelectTrigger>
                             <SelectContent className="rounded-xl">
                               <SelectItem value="none" className="text-gray-500">Select a university</SelectItem>
-                              {sortUniversitiesWithPriority(liveUniversities).map((u: any) => (
+                              {sortUniversitiesWithPriority(universities).map((u: any) => (
                                 <SelectItem key={u.id} value={u.id} disabled={selected.includes(u.id)} className="font-medium text-xs">
                                   {u.name}
                                 </SelectItem>

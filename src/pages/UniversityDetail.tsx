@@ -25,6 +25,7 @@ import {
 import { toast } from "sonner";
 import { useCourseCompare } from "@/contexts/CourseCompareContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { mergePriorityUniversities, ALL_PRIORITY_UNIVERSITIES } from "@/lib/universityPriority";
 
 const LOGOS: Record<string, string> = {
   "Multimedia University Malaysia (MMU)": "https://en.your-uni.com/assets/images/university/mmu-university.webp",
@@ -235,13 +236,57 @@ export default function UniversityDetail() {
   const { data: liveA = [] } = useTableData("accommodations");
   const { addCourse, removeCourse, isComparing, compareList } = useCourseCompare();
 
-  const unis = liveU.length > 0 ? liveU : (mockU as any[]);
+  const baseUnis = liveU.length > 0 ? liveU : (mockU as any[]);
+  const unis = useMemo(() => mergePriorityUniversities(baseUnis), [baseUnis]);
   const courses = liveC.length > 0 ? liveC : (mockC as any[]);
   const accoms = liveA.length > 0 ? liveA : (mockA as any[]);
 
-  const uni = unis.find((u: any) => generateSlug(u.name) === universityId || String(u.id) === String(universityId));
+  const uni = useMemo(() => {
+    if (!universityId) return undefined;
+    const targetSlug = universityId.toLowerCase();
+
+    // 1. Direct slug or id or shortName match in merged unis
+    const direct = unis.find((u: any) => 
+      generateSlug(u.name) === targetSlug || 
+      String(u.id) === String(universityId) ||
+      (u.shortName && generateSlug(u.shortName) === targetSlug)
+    );
+    if (direct) return direct;
+
+    // 2. Fallback matching against ALL_PRIORITY_UNIVERSITIES
+    const priorityMatch = ALL_PRIORITY_UNIVERSITIES.find((p) => 
+      generateSlug(p.name) === targetSlug ||
+      generateSlug(p.shortName) === targetSlug ||
+      p.matchKeys.some((k) => {
+        const slugKey = generateSlug(k);
+        return slugKey === targetSlug || targetSlug.includes(slugKey);
+      })
+    );
+
+    if (priorityMatch) {
+      const existing = unis.find((u: any) => 
+        priorityMatch.matchKeys.some((k) => (u.name || "").toLowerCase().includes(k))
+      );
+      if (existing) return existing;
+
+      return {
+        id: priorityMatch.id,
+        name: priorityMatch.name,
+        city: priorityMatch.city,
+        description: priorityMatch.description,
+        about_text: priorityMatch.description,
+        logo_url: priorityMatch.logo_url,
+        hero_image: priorityMatch.hero_image,
+        faqs: [],
+        registration_steps: [],
+      };
+    }
+
+    return undefined;
+  }, [unis, universityId]);
+
   const uniCourses = courses.filter((c: any) => String(c.university_id) === String(uni?.id));
-  const similarUnis = uni ? unis.filter((u: any) => u.id !== uni.id).slice(0, 3) : [];
+  const similarUnis = uni ? unis.filter((u: any) => u.id !== uni.id && u.name !== uni.name).slice(0, 3) : [];
 
   const [tab, setTab] = useState<TabKey>("overview");
   // removed leadOpen and leadCtx
@@ -355,11 +400,11 @@ if (isLoading) return <div className="min-h-screen flex flex-col bg-white"><Mega
   const stepIcons = [FileText, CheckCircle, HomeIcon, Car, MapPinCheck];
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-white">
       <MegaMenu disableSticky />
 
       {/* ═══ HERO: Big Logo + Name + Buttons ═══ */}
-      <section className="pb-10 pt-4 md:pt-0">
+      <section className="pb-10 pt-4 md:pt-0 bg-white">
         <div className="container mx-auto px-4 lg:px-6">
           <div className="bg-[#EEF4FF] p-5 md:py-16 md:px-10 flex flex-col md:flex-row items-center md:items-start gap-8 rounded-2xl md:rounded-tl-md md:rounded-tr-[3rem] md:rounded-bl-[3rem] md:rounded-br-md min-h-[160px] md:min-h-[220px]">
             {/* Desktop Logo */}
@@ -397,7 +442,7 @@ if (isLoading) return <div className="min-h-screen flex flex-col bg-white"><Mega
                   <Button className="rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
                     Apply Now
                   </Button>
-                  <Button variant="outline" className="hover:text-[#2F4F97] rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate("/contact")}>
+                  <Button variant="outline" className="hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate("/contact")}>
                     Ask Us
                   </Button>
                 </div>
@@ -407,7 +452,7 @@ if (isLoading) return <div className="min-h-screen flex flex-col bg-white"><Mega
                   <Button className="rounded-[20px] font-semibold px-10 h-14 text-[15px]" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
                     Apply Now
                   </Button>
-                  <Button variant="outline" className="hover:text-[#2F4F97] rounded-[20px] font-semibold px-10 h-14 text-[15px]" onClick={() => navigate("/contact")}>
+                  <Button variant="outline" className="hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold px-10 h-14 text-[15px]" onClick={() => navigate("/contact")}>
                     Ask Us
                   </Button>
                 </div>
@@ -440,7 +485,7 @@ if (isLoading) return <div className="min-h-screen flex flex-col bg-white"><Mega
               <Button className="rounded-[20px] font-semibold px-5 h-10 text-[14px]" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
                 Apply
               </Button>
-              <Button variant="outline" className="hover:text-[#2F4F97] rounded-[20px] font-semibold h-10 w-12 p-0 flex items-center justify-center shrink-0" onClick={() => navigate("/contact")}>
+              <Button variant="outline" className="hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold h-10 w-12 p-0 flex items-center justify-center shrink-0" onClick={() => navigate("/contact")}>
                 <span className="font-bold text-[16px]">?</span>
               </Button>
             </div>
@@ -450,7 +495,7 @@ if (isLoading) return <div className="min-h-screen flex flex-col bg-white"><Mega
               <Button className="rounded-[20px] font-semibold px-6 h-10 text-[14px]" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
                 Apply Now
               </Button>
-              <Button variant="outline" className="hover:text-[#2F4F97] rounded-[20px] font-semibold px-6 h-10 text-[14px]" onClick={() => navigate("/contact")}>
+              <Button variant="outline" className="hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold px-6 h-10 text-[14px]" onClick={() => navigate("/contact")}>
                 Ask Us
               </Button>
             </div>
@@ -897,7 +942,7 @@ if (isLoading) return <div className="min-h-screen flex flex-col bg-white"><Mega
                         <Button className="flex-1 md:w-full rounded-[20px] font-bold h-11" onClick={e => { e.preventDefault(); navigate(`/apply?courseId=${c.id}`); }}>
                           Apply Now
                         </Button>
-                        <Button variant="outline" className="flex-1 md:w-full rounded-[20px] font-bold h-11" onClick={e => { e.preventDefault(); navigate("/contact"); }}>
+                        <Button variant="outline" className="flex-1 md:w-full rounded-[20px] font-bold h-11 hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97]" onClick={e => { e.preventDefault(); navigate("/contact"); }}>
                           Ask Us
                         </Button>
                       </div>

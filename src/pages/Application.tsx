@@ -12,6 +12,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LoadingScreen } from "@/components/ui/loading-screen";
+import { ALL_PRIORITY_UNIVERSITIES } from "@/lib/universityPriority";
+import { generateSlug } from "@/lib/utils";
 
 const LOGOS: Record<string, string> = {
   "Multimedia University Malaysia (MMU)": "https://en.your-uni.com/assets/images/university/mmu-university.webp",
@@ -111,8 +113,24 @@ const coursesList = Array.isArray(moreInfo)
         }
 
         if (uId) {
-          const { data: uData } = await supabase.from("universities").select("*").eq("id", uId).single();
-          setUni(uData);
+          const { data: uData } = await supabase.from("universities").select("*").eq("id", uId).maybeSingle();
+          if (uData) {
+            setUni(uData);
+          } else {
+            const fallbackPriority = ALL_PRIORITY_UNIVERSITIES.find(
+              (p) => p.id === uId || generateSlug(p.name) === uId || p.matchKeys.some((k) => generateSlug(k) === uId)
+            );
+            if (fallbackPriority) {
+              setUni({
+                id: fallbackPriority.id,
+                name: fallbackPriority.name,
+                city: fallbackPriority.city,
+                description: fallbackPriority.description,
+                logo_url: fallbackPriority.logo_url,
+                hero_image: fallbackPriority.hero_image,
+              });
+            }
+          }
 
           const { data: cList } = await supabase.from("courses").select("title").eq("university_id", uId);
           if (cList) {
