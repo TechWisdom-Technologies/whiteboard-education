@@ -232,6 +232,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // New user identity or first load via auth state listener
       initializedUserIdRef.current = sess.user.id;
+      setLoading(true);
       setSession(sess);
 
       const r = await fetchUserRoles(sess.user.id, sess.access_token);
@@ -274,8 +275,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signIn = useCallback(async (email: string, password: string) => {
+    setLoading(true);
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) return { success: false, error: error.message };
+    if (error) {
+      setLoading(false);
+      return { success: false, error: error.message };
+    }
     const r = await fetchUserRoles(data.user.id, data.session?.access_token);
     const ps = await fetchPartnerStatus(data.user.id, data.session?.access_token);
 
@@ -288,6 +293,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await supabase.auth.signOut();
       localStorage.removeItem(`auth_roles_${data.user.id}`);
       localStorage.removeItem(`auth_partner_status_${data.user.id}`);
+      setLoading(false);
       return {
         success: false,
         error: "Your partner registration is no longer active or has been removed. Please apply for partnership again."
@@ -303,6 +309,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const redirectTo = r.includes("admin") ? "/admin" : (r.includes("partner") || ps) ? "/partner-dashboard" : "/";
     initializedUserIdRef.current = data.user.id;
+    setLoading(false);
     return { success: true, redirectTo };
   }, []);
 

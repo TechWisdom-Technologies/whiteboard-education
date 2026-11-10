@@ -321,6 +321,15 @@ export default function Login() {
                       >
                         Register as a partner
                       </Link>
+
+                      <div className="mt-6 pt-5 border-t border-gray-100">
+                        <p className="text-xs text-gray-500">
+                          Whiteboard Education Administrator?{" "}
+                          <Link to="/admin/login" className="font-semibold text-[#2F4F97] hover:underline">
+                            Admin Portal →
+                          </Link>
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </form>

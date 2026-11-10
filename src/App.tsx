@@ -33,6 +33,7 @@ import PreDeparture from "./pages/PreDeparture";
 import HelpCenter from "./pages/HelpCenter";
 import ComingSoon from "./pages/ComingSoon";
 import Contact from "./pages/Contact";
+import AdminLogin from "./pages/admin/AdminLogin";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUniversities from "./pages/admin/AdminUniversities";
@@ -184,6 +185,9 @@ const App = () => (
             {/* Catch-all for coming soon */}
             <Route path="/virtual-tours" element={<ComingSoon />} />
             <Route path="/student-dashboard/*" element={<ComingSoon />} />
+
+            {/* Admin Login */}
+            <Route path="/admin/login" element={<AdminLogin />} />
 
             {/* Admin */}
             <Route

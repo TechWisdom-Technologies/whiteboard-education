@@ -18,18 +18,35 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
   }
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to={requiredRole === "admin" ? "/admin/login" : "/login"} replace />;
   }
 
-  const cachedStatus = user ? (localStorage.getItem(`auth_partner_status_${user.id}`) as any) : null;
-  const effectivePartnerStatus = partnerStatus || cachedStatus;
-  const cachedRoles: AppRole[] = user ? JSON.parse(localStorage.getItem(`auth_roles_${user.id}`) || "[]") : [];
-  const effectiveHasRole = (role: AppRole) => hasRole(role) || cachedRoles.includes(role);
+  // Once loading completes, server authorization is authoritative.
+  // Cached roles/status in localStorage must not independently grant security-sensitive access.
+  const isAuthorized = (() => {
+    if (!requiredRole) return true;
 
-  const isAuthorized =
-    !requiredRole ||
-    effectiveHasRole(requiredRole) ||
-    (requiredRole === "partner" && (effectivePartnerStatus === "pending" || effectivePartnerStatus === "approved"));
+    if (requiredRole === "admin") {
+      const isAdmin = hasRole("admin");
+      // If server verification shows user is NOT admin, sanitize any stale localStorage cache
+      if (!isAdmin && user) {
+        try {
+          const cached: AppRole[] = JSON.parse(localStorage.getItem(`auth_roles_${user.id}`) || "[]");
+          if (cached.includes("admin")) {
+            const sanitized = cached.filter((r) => r !== "admin");
+            localStorage.setItem(`auth_roles_${user.id}`, JSON.stringify(sanitized));
+          }
+        } catch (_) {}
+      }
+      return isAdmin;
+    }
+
+    if (requiredRole === "partner") {
+      return hasRole("partner") || partnerStatus === "pending" || partnerStatus === "approved";
+    }
+
+    return hasRole(requiredRole);
+  })();
 
   if (!isAuthorized) {
     if (requiredRole === "partner") {
@@ -46,6 +63,33 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
                 className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-[#2F4F97] text-white text-sm font-semibold hover:bg-[#2F4F97]/90 transition-colors"
               >
                 Complete Partner Registration →
+              </a>
+              <a
+                href="/"
+                className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg border border-gray-200 text-sm font-medium hover:bg-gray-50 transition-colors"
+              >
+                Go to Homepage
+              </a>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (requiredRole === "admin") {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-background animate-fade-in p-4">
+          <div className="text-center space-y-4 max-w-md bg-white border border-gray-100 p-8 rounded-xl shadow-sm">
+            <h1 className="text-2xl font-bold text-foreground">Administrator Access Required</h1>
+            <p className="text-sm text-muted-foreground">
+              You are signed in, but your account does not have administrator privileges to access this area.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+              <a
+                href="/admin/login"
+                className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-[#2F4F97] text-white text-sm font-semibold hover:bg-[#2F4F97]/90 transition-colors"
+              >
+                Admin Sign In →
               </a>
               <a
                 href="/"
