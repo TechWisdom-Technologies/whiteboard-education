@@ -11,7 +11,7 @@ import { resolveAvatarUrl } from "@/lib/secureStorage";
 import {
   Camera, Building2, Mail, Phone, Globe, Loader2,
   User, KeyRound, ShieldCheck, CheckCircle2, Pencil,
-  AlertCircle, Save
+  AlertCircle, Save, Trash2
 } from "lucide-react";
 import { toast } from "sonner";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -115,6 +115,7 @@ export default function AdminSettings() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [removingAvatar, setRemovingAvatar] = useState(false);
   const [profile, setProfile] = useState<UserProfile>({ display_name: "", avatar_url: "" });
 
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -228,6 +229,27 @@ export default function AdminSettings() {
     } finally {
       if (e.target) e.target.value = "";
       setUploading(false);
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    if (!user) return;
+    setRemovingAvatar(true);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ avatar_url: null })
+        .eq("user_id", user.id);
+
+      if (error) throw error;
+
+      setProfile(prev => ({ ...prev, avatar_url: "" }));
+      window.dispatchEvent(new Event("profile-updated"));
+      toast.success("Profile photo removed successfully");
+    } catch (err: any) {
+      toast.error("Failed to remove profile photo: " + (err.message || "Unknown error"));
+    } finally {
+      setRemovingAvatar(false);
     }
   };
 
@@ -349,21 +371,36 @@ export default function AdminSettings() {
         
         {/* 1. Header: Avatar & Basic Info */}
         <div className="p-6 sm:p-8 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center sm:items-start gap-6">
-          <div className="relative group shrink-0">
-            <Avatar className="w-[105px] h-[135px] rounded-lg border border-slate-200 shadow-sm bg-white overflow-hidden">
-              <AvatarImage src={profile.avatar_url} className="w-full h-full object-cover aspect-auto" />
-              <AvatarFallback className="text-3xl font-bold bg-[#1E293B]/10 text-[#1E293B] rounded-lg">{initials}</AvatarFallback>
-            </Avatar>
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploading}
-              title="Change Avatar"
-              className="absolute inset-0 rounded-lg bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-200 flex flex-col items-center justify-center cursor-pointer text-white gap-1.5"
-            >
-              {uploading ? <Loader2 className="h-6 w-6 animate-spin text-white" /> : <Camera className="h-6 w-6 text-white" />}
-              <span className="text-[10px] font-semibold tracking-wide uppercase">Change</span>
-            </button>
-            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+          <div className="flex flex-col items-center gap-2 shrink-0">
+            <div className="relative group shrink-0">
+              <Avatar className="w-[105px] h-[135px] rounded-lg border border-slate-200 shadow-sm bg-white overflow-hidden">
+                <AvatarImage src={profile.avatar_url} className="w-full h-full object-cover aspect-auto" />
+                <AvatarFallback className="text-3xl font-bold bg-[#1E293B]/10 text-[#1E293B] rounded-lg">{initials}</AvatarFallback>
+              </Avatar>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading || removingAvatar}
+                title="Change Avatar"
+                className="absolute inset-0 rounded-lg bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-200 flex flex-col items-center justify-center cursor-pointer text-white gap-1.5"
+              >
+                {uploading ? <Loader2 className="h-6 w-6 animate-spin text-white" /> : <Camera className="h-6 w-6 text-white" />}
+                <span className="text-[10px] font-semibold tracking-wide uppercase">Change</span>
+              </button>
+              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+            </div>
+
+            {profile.avatar_url && (
+              <button
+                type="button"
+                onClick={handleRemoveAvatar}
+                disabled={uploading || removingAvatar}
+                className="text-xs font-medium text-rose-600 hover:text-rose-700 transition-colors flex items-center gap-1 cursor-pointer"
+              >
+                {removingAvatar ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3 w-3" />}
+                Remove
+              </button>
+            )}
           </div>
 
           <div className="flex-1 text-center sm:text-left space-y-2.5 w-full">

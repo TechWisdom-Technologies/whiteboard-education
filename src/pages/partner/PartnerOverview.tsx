@@ -121,8 +121,10 @@ export default function PartnerOverview() {
         }
 
         const localAvatar = localStorage.getItem(`partner_avatar_${user?.id}`) || "";
-        const rawAvatar = (profileRes && profileRes.length > 0 && profileRes[0].avatar_url) ? profileRes[0].avatar_url : localAvatar;
-        const resolvedAvatar = await resolveAvatarUrl(rawAvatar, user?.id);
+        const rawAvatar = (profileRes && profileRes.length > 0)
+          ? (profileRes[0].avatar_url || "")
+          : localAvatar;
+        const resolvedAvatar = rawAvatar ? await resolveAvatarUrl(rawAvatar, user?.id) : "";
 
         if (profileRes && profileRes.length > 0) {
           setProfile({
@@ -131,9 +133,13 @@ export default function PartnerOverview() {
           });
           if (profileRes[0].avatar_url) {
             localStorage.setItem(`partner_avatar_${user?.id}`, profileRes[0].avatar_url);
+          } else {
+            localStorage.removeItem(`partner_avatar_${user?.id}`);
           }
         } else if (resolvedAvatar) {
           setProfile(prev => ({ ...prev, avatar_url: resolvedAvatar }));
+        } else {
+          setProfile(prev => ({ ...prev, avatar_url: "" }));
         }
 
         const students = Array.isArray(studentsRes) ? studentsRes : [];

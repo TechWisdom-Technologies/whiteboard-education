@@ -55,6 +55,8 @@ export function PartnerSidebar() {
     if (localAvatar) {
       const resolvedLocal = await resolveAvatarUrl(localAvatar, user.id);
       setAvatarUrl(resolvedLocal || "");
+    } else {
+      setAvatarUrl("");
     }
 
     const { data } = await supabase
@@ -69,6 +71,9 @@ export function PartnerSidebar() {
         setAvatarUrl(resolved);
         localStorage.setItem(`partner_avatar_${user.id}`, data.avatar_url);
       }
+    } else {
+      setAvatarUrl("");
+      localStorage.removeItem(`partner_avatar_${user.id}`);
     }
   };
 

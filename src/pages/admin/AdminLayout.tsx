@@ -25,7 +25,7 @@ function AdminHeader({ profile }: { profile: any }) {
   return (
     <header className="h-[60px] flex items-center bg-sidebar sticky top-0 z-30 w-full text-white shadow-sm border-b border-sidebar-border">
       <div className="w-[16rem] flex items-center justify-center bg-transparent h-full flex-shrink-0">
-        <img src="/logo-white.png" alt="Whiteboard Education" className="w-[70%] max-h-12 object-contain shrink-0 mx-auto" />
+        <img src="/logo-white.png" alt="Whiteboard Education" className="w-[180px] h-[50px] object-contain shrink-0 mx-auto" />
       </div>
       <div className="flex-1 flex items-center justify-between pl-3 sm:pl-4 pr-6 sm:pr-8 lg:pr-12 min-w-0 h-full">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">

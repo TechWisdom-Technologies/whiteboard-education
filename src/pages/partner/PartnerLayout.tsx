@@ -43,6 +43,8 @@ export default function PartnerLayout() {
     if (localAvatar) {
       const resolvedLocal = await resolveAvatarUrl(localAvatar, user.id);
       setAvatarUrl(resolvedLocal || "");
+    } else {
+      setAvatarUrl("");
     }
 
     // 1. Fetch contact_first_name and contact_last_name from partner_registrations
@@ -70,6 +72,9 @@ export default function PartnerLayout() {
           setAvatarUrl(resolved);
           localStorage.setItem(`partner_avatar_${user.id}`, data.avatar_url);
         }
+      } else {
+        setAvatarUrl("");
+        localStorage.removeItem(`partner_avatar_${user.id}`);
       }
       if (data.display_name && (!partnerData || (!partnerData.contact_first_name && !partnerData.contact_last_name))) {
         setDisplayName(data.display_name);
@@ -114,14 +119,14 @@ export default function PartnerLayout() {
               <img
                 src={avatarUrl}
                 alt="Logo"
-                className="w-[70%] max-h-12 object-contain shrink-0 mx-auto"
+                className="w-[180px] h-[50px] object-contain shrink-0 mx-auto"
                 onError={() => {
                   setAvatarUrl("");
                   if (user?.id) localStorage.removeItem(`partner_avatar_${user.id}`);
                 }}
               />
             ) : (
-              <img src="/logo.png" alt="Whiteboard Education" className="w-[70%] max-h-12 object-contain shrink-0 mx-auto" />
+              <img src="/logo-white.png" alt="Whiteboard Education" className="w-[180px] h-[50px] object-contain shrink-0 mx-auto" />
             )}
           </div>
           <div className="flex-1 flex items-center justify-between pl-3 sm:pl-4 pr-6 sm:pr-8 lg:pr-12 min-w-0 h-full">
