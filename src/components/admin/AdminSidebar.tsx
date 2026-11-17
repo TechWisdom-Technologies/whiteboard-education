@@ -1,4 +1,4 @@
-import { LayoutDashboard, GraduationCap, BookOpen, Home, Users, Settings, Languages, FileText, UserCheck, Target, LogOut, PlaySquare, ExternalLink, ChevronDown, ChevronRight, Calendar, UserCircle, Video } from "lucide-react";
+import { LayoutDashboard, GraduationCap, BookOpen, Home, Users, Settings, Languages, FileText, UserCheck, Target, LogOut, PlaySquare, ExternalLink, ChevronDown, ChevronRight, Calendar, UserCircle, Video, Megaphone, FolderDown } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
@@ -22,10 +22,10 @@ const items = [
 ];
 
 export function AdminSidebar() {
-  const [partnerContentOpen, setPartnerContentOpen] = useState(false);
+  const location = useLocation();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
-  const location = useLocation();
+  const [partnerContentOpen, setPartnerContentOpen] = useState(location.pathname.startsWith("/admin/partner-content"));
   const navigate = useNavigate();
   const { user, hasRole, signOut } = useAuth();
   const isActive = (url: string) => location.pathname === url;
@@ -102,6 +102,8 @@ export function AdminSidebar() {
                 {!collapsed && partnerContentOpen && (
                   <div className="mt-1 ml-4 pl-3 border-l border-slate-700/50 space-y-0.5">
                     {[
+                      { title: "Partner Documents", icon: FolderDown, url: "/admin/partner-content/documents" },
+                      { title: "Updates & Notices", icon: Megaphone, url: "/admin/partner-content/notices" },
                       { title: "Webinars & Events", icon: Calendar, url: "/admin/partner-content/webinars" },
                       { title: "Account Managers", icon: UserCircle, url: "/admin/partner-content/account-managers" },
                       { title: "Platform Tutorials", icon: Video, url: "/admin/partner-content/tutorials" },

@@ -329,15 +329,15 @@ export default function Universities() {
                   <div className="px-5 py-5 space-y-4">
                     <div className="w-full">
                       <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Search by University Name</label>
-                      <div className="relative w-full">
+                      <div className="relative w-full group/search">
                         <Input
                           placeholder="Enter University Name"
                           value={search}
                           onChange={(e) => setSearch(e.target.value)}
-                          className="pr-10 h-11 text-[12px] md:text-[14px]"
-                          style={{ borderColor: "#cacdd4", borderRadius: "12px", fontFamily: "Poppins, sans-serif", color: "#444444" }}
+                          className="pr-10 h-11 text-[12px] md:text-[14px] text-[#444444] focus:!text-white focus:placeholder:!text-white/70"
+                          style={{ borderColor: "#cacdd4", borderRadius: "12px", fontFamily: "Poppins, sans-serif" }}
                         />
-                        <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "#999999" }} />
+                        <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#999999] group-focus-within/search:!text-white transition-colors pointer-events-none" />
                       </div>
                     </div>
 

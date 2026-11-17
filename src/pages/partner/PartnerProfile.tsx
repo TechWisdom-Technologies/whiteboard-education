@@ -231,6 +231,12 @@ export default function PartnerProfile() {
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("File size exceeds 2MB. Please upload an image under 2MB.");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
     if (file.size > 5 * 1024 * 1024) { toast.error("File too large. Max 5MB."); return; }
 
     setUploading(true);
@@ -503,6 +509,10 @@ export default function PartnerProfile() {
                 Remove
               </button>
             )}
+
+            <p className="text-[11px] text-slate-500 text-center max-w-[190px] leading-tight">
+              Recommended: <strong>180 × 50 px</strong> (or 300 × 300 px). PNG, JPG or WebP up to 2MB.
+            </p>
           </div>
 
           <div className="flex-1 text-center sm:text-left space-y-2.5 w-full">

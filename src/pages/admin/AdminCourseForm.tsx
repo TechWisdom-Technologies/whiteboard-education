@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useTableData, useInsertRow, useUpdateRow } from "@/hooks/useSupabaseData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,17 @@ interface AdminCourseFormProps {
   onSuccess: () => void;
 }
 
-const DEGREE_LEVELS = ["Foundation", "Diploma", "Advanced Diploma", "Certificate", "Bachelor", "Master", "PhD"];
+export const DEGREE_LEVELS = ["Foundation", "Diploma", "Advanced Diploma", "Certificate", "Bachelor", "Master", "PhD"];
+export const STUDY_AREAS = [
+  "Business & Management",
+  "Engineering",
+  "Computer Science & IT",
+  "Medicine & Health",
+  "Arts & Design",
+  "Natural Sciences",
+  "Law",
+  "Social Sciences"
+];
 
 export default function AdminCourseForm({ initialData, onCancel, onSuccess }: AdminCourseFormProps) {
   const isEditing = !!initialData;
@@ -26,7 +36,9 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
   const [form, setForm] = useState({
     title: "",
     university_id: "",
+    campus: "",
     degree_level: "",
+    category: "",
     intake_months: [] as string[],
     offer_letter: "",
     duration: "",
@@ -43,12 +55,31 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
   const [newTag, setNewTag] = useState("");
   const [newCareerTag, setNewCareerTag] = useState("");
 
+  const selectedUni = universities?.find((u: any) => u.id === form.university_id);
+
+  // Extract campuses that were configured previously for the selected university
+  const availableCampuses: string[] = useMemo(() => {
+    if (!selectedUni) return [];
+    if (Array.isArray(selectedUni.campuses) && selectedUni.campuses.length > 0) {
+      return selectedUni.campuses.filter(Boolean);
+    }
+    if (typeof selectedUni.city === "string" && selectedUni.city.trim()) {
+      return selectedUni.city
+        .split(/[,;&]+/)
+        .map((s: string) => s.trim())
+        .filter(Boolean);
+    }
+    return [];
+  }, [selectedUni]);
+
   useEffect(() => {
     if (initialData) {
       setForm({
         title: initialData.title || "",
         university_id: initialData.university_id || "",
+        campus: initialData.campus || "",
         degree_level: initialData.degree_level || "",
+        category: initialData.category || "",
         intake_months: Array.isArray(initialData.intake_months) ? initialData.intake_months : [],
         offer_letter: initialData.offer_letter || "",
         duration: initialData.duration || "",
@@ -80,6 +111,23 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
       }
       onSuccess();
     } catch (error: any) {
+      // Gracefully handle if campus column does not exist in remote Supabase table yet
+      if (error?.message?.includes('column "campus"') || error?.message?.includes("column courses.campus")) {
+        const { campus: _, ...rest } = form;
+        try {
+          if (isEditing) {
+            await updateRow.mutateAsync({ id: initialData.id, ...rest });
+          } else {
+            await insertRow.mutateAsync(rest);
+          }
+          toast.success("Course saved! (Run latest Supabase migration to store the campus column)");
+          onSuccess();
+          return;
+        } catch (fallbackErr: any) {
+          toast.error(`Save failed: ${fallbackErr.message}`);
+          return;
+        }
+      }
       toast.error(`Save failed: ${error.message}`);
     }
   };
@@ -155,13 +203,60 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
             <select
               className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm"
               value={form.university_id}
-              onChange={(e) => setForm(prev => ({ ...prev, university_id: e.target.value }))}
+              onChange={(e) => {
+                const newUniId = e.target.value;
+                setForm(prev => ({
+                  ...prev,
+                  university_id: newUniId,
+                  campus: "", // reset campus when university changes
+                }));
+              }}
             >
               <option value="">Select University...</option>
               {universities?.map((u: any) => (
                 <option key={u.id} value={u.id}>{u.name}</option>
               ))}
             </select>
+          </div>
+
+          {/* Campus selection dropdown */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label className="text-[13px] font-semibold text-gray-700">Campus</Label>
+              {availableCampuses.length > 0 && (
+                <span className="text-[11px] text-muted-foreground">
+                  {availableCampuses.length} {availableCampuses.length === 1 ? "campus" : "campuses"} available
+                </span>
+              )}
+            </div>
+            <select
+              className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm"
+              value={form.campus}
+              onChange={(e) => setForm(prev => ({ ...prev, campus: e.target.value }))}
+              disabled={!form.university_id}
+            >
+              <option value="">
+                {!form.university_id
+                  ? "Select a university first..."
+                  : availableCampuses.length === 0
+                    ? "No campuses configured for this university"
+                    : "Select Campus..."}
+              </option>
+              {availableCampuses.map((camp: string) => (
+                <option key={camp} value={camp}>{camp}</option>
+              ))}
+              {availableCampuses.length > 1 && (
+                <option value="All Campuses">All Campuses</option>
+              )}
+              {form.campus && !availableCampuses.includes(form.campus) && form.campus !== "All Campuses" && (
+                <option value={form.campus}>{form.campus}</option>
+              )}
+            </select>
+            {form.university_id && availableCampuses.length === 0 && (
+              <p className="text-[11px] text-amber-600">
+                Tip: Configure campuses for this university in the Universities section.
+              </p>
+            )}
           </div>
           
           <div className="space-y-2">
@@ -174,6 +269,20 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
               <option value="">Select Qualification...</option>
               {DEGREE_LEVELS.map(lvl => (
                 <option key={lvl} value={lvl}>{lvl}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-[13px] font-semibold text-gray-700">Department / Study Area</Label>
+            <select
+              className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm"
+              value={form.category}
+              onChange={(e) => setForm(prev => ({ ...prev, category: e.target.value }))}
+            >
+              <option value="">Select Department / Study Area...</option>
+              {STUDY_AREAS.map(area => (
+                <option key={area} value={area}>{area}</option>
               ))}
             </select>
           </div>

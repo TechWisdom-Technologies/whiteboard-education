@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, BookOpen, Users, Clock, UserCheck, FileText, TrendingUp, Loader2, ChevronLeft, ChevronRight, UserPlus, FilePlus, Video, PlayCircle, UserCog, Building2, Library } from "lucide-react";
+import { GraduationCap, BookOpen, Users, Clock, UserCheck, FileText, TrendingUp, Loader2, ChevronLeft, ChevronRight, UserPlus, FilePlus, Video, PlayCircle, UserCog, Building2, Library, Megaphone, FolderDown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -515,6 +515,14 @@ export default function AdminDashboard() {
               <button onClick={() => navigate('/admin/students?filter=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
                 <FilePlus className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
                 View new student applications
+              </button>
+              <button onClick={() => navigate('/admin/partner-content/documents?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
+                <FolderDown className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
+                Upload a partner document
+              </button>
+              <button onClick={() => navigate('/admin/partner-content/notices?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
+                <Megaphone className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
+                Post an update or notice
               </button>
               <button onClick={() => navigate('/admin/partner-content/webinars?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
                 <Video className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />

@@ -181,7 +181,9 @@ export type Database = {
       }
       courses: {
         Row: {
+          campus: string | null
           career_outcomes: Json | null
+          category: string | null
           class_type: string | null
           created_at: string
           curriculum: Json | null
@@ -201,7 +203,9 @@ export type Database = {
           yearly_fees: Json | null
         }
         Insert: {
+          campus?: string | null
           career_outcomes?: Json | null
+          category?: string | null
           class_type?: string | null
           created_at?: string
           curriculum?: Json | null
@@ -221,7 +225,9 @@ export type Database = {
           yearly_fees?: Json | null
         }
         Update: {
+          campus?: string | null
           career_outcomes?: Json | null
+          category?: string | null
           class_type?: string | null
           created_at?: string
           curriculum?: Json | null
@@ -810,6 +816,7 @@ export type Database = {
         Row: {
           about_text: string | null
           campus_size: string | null
+          campuses: Json | null
           city: string
           country_id: string | null
           created_at: string
@@ -833,6 +840,7 @@ export type Database = {
         Insert: {
           about_text?: string | null
           campus_size?: string | null
+          campuses?: Json | null
           city?: string
           country_id?: string | null
           created_at?: string
@@ -856,6 +864,7 @@ export type Database = {
         Update: {
           about_text?: string | null
           campus_size?: string | null
+          campuses?: Json | null
           city?: string
           country_id?: string | null
           created_at?: string

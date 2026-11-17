@@ -58,6 +58,7 @@ export default function BlogPost() {
   }
 
   const related = blogPosts.filter((p: any) => p.id !== post.id).slice(0, 4);
+  const coverUrl = post.cover_image || post.image || post.image_url;
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f7f8fa]">
@@ -65,11 +66,13 @@ export default function BlogPost() {
       
       {/* Article Header & Hero Image Overlay */}
       <div className="relative w-full min-h-[320px] md:min-h-[400px] md:h-[50vh] flex flex-col justify-end bg-[#1E293B]">
-        {post.cover_image && (
+        {coverUrl ? (
           <div className="absolute inset-0">
-            <img src={post.cover_image} alt={post.title} className="w-full h-full object-cover" />
+            <img src={coverUrl} alt={post.title} className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#1E293B]/95 via-[#1E293B]/60 to-[#1E293B]/30" />
           </div>
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-[#1E293B] via-[#2F4F97]/40 to-[#1E293B]" />
         )}
         
         <div className="absolute top-0 left-0 w-full z-20">

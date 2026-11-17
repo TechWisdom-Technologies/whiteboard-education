@@ -62,7 +62,7 @@ import { toast } from "sonner";
 import { getStatusLabel, computeStudentStatusFromApplications } from "@/config/statusFlow";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { StudentChatWidget } from "@/components/student/StudentChatWidget";
-import { openSecureDocument, getSecureImageUrl } from "@/lib/secureStorage";
+import { openSecureDocument, getSecureImageUrl, downloadSecureDocument } from "@/lib/secureStorage";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -481,6 +481,29 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     });
   };
 
+  const handleDownloadDoc = async (field: string, label: string, url?: string) => {
+    if (!url || !student?.id) return;
+
+    const extension = url.includes(".") ? `.${url.split(".").pop()?.split("?")[0]}` : "";
+    const cleanStudentName = student.full_name?.replace(/[^a-zA-Z0-9_-]/g, "_") || "student";
+    const cleanDocLabel = label.replace(/[^a-zA-Z0-9_-]/g, "_");
+    const downloadFileName = `${cleanStudentName}_${cleanDocLabel}${extension}`;
+
+    toast.info("Preparing download...");
+    try {
+      await downloadSecureDocument({
+        recordType: "student",
+        recordId: student.id,
+        field,
+        objectKey: url,
+        fileName: downloadFileName,
+      });
+      toast.success("Download started");
+    } catch {
+      toast.error("Failed to download document");
+    }
+  };
+
   const handleUploadDoc = async (field: string, file: File) => {
     if (!student || !session) return;
 
@@ -845,6 +868,52 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
     }
   };
 
+  const notifyPartnerOfStatusChange = async (newStatus: string, customMessage?: string) => {
+    if (!student?.id || !student.partner_id) return;
+
+    const notifType =
+      newStatus.includes("rejected") || newStatus.includes("declined")
+        ? "warning"
+        : ["documents_verified", "offer_letter", "visa_approved", "enrolled", "offer_letter_received_conditional", "ready_for_visa_application"].some(s => newStatus.includes(s))
+        ? "success"
+        : "info";
+
+    const label = getStatusLabel(newStatus) || newStatus.replace(/_/g, " ");
+
+    try {
+      // 1. In-app notification for partner
+      await fetch(`${SUPABASE_URL}/rest/v1/partner_notifications`, {
+        method: "POST",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+          Prefer: "return=minimal",
+        },
+        body: JSON.stringify({
+          partner_id: student.partner_id,
+          student_id: student.id,
+          title: `Status Updated: ${student.full_name}`,
+          message: customMessage || `Status changed to "${label}".`,
+          type: notifType,
+        }),
+      });
+
+      // 2. Trigger notification edge function (which sends email via Resend)
+      if (mode === "admin" && session?.access_token) {
+        supabase.functions.invoke("notify-student-status", {
+          body: {
+            student_id: student.id,
+            new_status: newStatus,
+            admin_notes: customMessage || "",
+            email_only: true,
+          },
+        }).catch((err) => console.warn("Edge function email notify error:", err));
+      }
+    } catch (err) {
+      console.warn("Could not send partner notification:", err);
+    }
+  };
+
   const handleAdminChangeAppStatus = async (app: Application, newStatus: string) => {
     if (!student || !session) return;
     try {
@@ -869,6 +938,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
       });
 
       setStudent(prev => prev ? { ...prev, status: calculatedStatus } : null);
+      await notifyPartnerOfStatusChange(newStatus, `Application status for ${app.courses?.title || "selected program"} updated to "${getStatusLabel(newStatus) || newStatus}".`);
       toast.success("Application status updated");
     } catch (err: any) {
       toast.error("Failed to update application status");
@@ -887,6 +957,7 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
         .eq("id", student.id);
       if (error) throw error;
       setStudent({ ...student, status: updatedStatus });
+      await notifyPartnerOfStatusChange(updatedStatus, `Student overall status updated to "${getStatusLabel(updatedStatus) || updatedStatus}".`);
       toast.success("Status updated successfully");
     } catch (err: any) {
       toast.error(err.message || "Failed to update status");
@@ -1075,11 +1146,11 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
           </div>
         </div>
 
-        {/* Main Grid: Left (Student Info + Tabs) | Right (Live Discussion / Chat Widget) */}
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+        {/* Main Content: Full Width */}
+        <div className="grid grid-cols-1 gap-6 items-start">
           
-          {/* Main Left Column (9 cols on XL) */}
-          <div className="xl:col-span-9 space-y-6 min-w-0">
+          {/* Main Column (full width) */}
+          <div className="space-y-6 min-w-0">
 
             {/* Global Student Info Card / Brief Info Box */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-5 no-print">
@@ -1219,36 +1290,6 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                         <Printer className="w-3.5 h-3.5 text-[#1E293B] group-hover:text-white transition-colors duration-200" />
                         Print
                       </Button>
-                    </div>
-
-                    {/* Right: Status Box & Submit Application */}
-                    <div className="flex items-center gap-2 shrink-0">
-                      {mode === "admin" ? (
-                        <Select
-                          value={student.status}
-                          onValueChange={handleSaveStatusTracker}
-                          disabled={savingStatus}
-                        >
-                          <SelectTrigger className={`h-9 min-h-[36px] px-3.5 flex items-center justify-center text-xs font-semibold uppercase tracking-wider rounded-lg shadow-sm ${statusColors[student.status] || "bg-gray-50 border-gray-200 text-gray-700"}`}>
-                            {savingStatus ? (
-                              <div className="h-3 w-3 border-2 border-[#1E293B]/30 border-t-[#1E293B] animate-spin rounded-full mx-2" />
-                            ) : (
-                              <SelectValue placeholder="Select Status" />
-                            )}
-                          </SelectTrigger>
-                          <SelectContent>
-                            {statusOptions.map((opt) => (
-                              <SelectItem key={opt.value} value={opt.value} className="text-xs">
-                                {opt.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        <div className={`h-9 min-h-[36px] px-3.5 flex items-center justify-center text-xs font-semibold uppercase tracking-wider rounded-lg shadow-sm ${statusColors[student.status] || "bg-gray-50 border-gray-200 text-gray-700"}`}>
-                          {getStatusLabel(student.status) || student.status}
-                        </div>
-                      )}
                     </div>
 
                   </div>
@@ -1411,13 +1452,26 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             }}
                           />
                           {url && (
-                            <button
-                              type="button"
-                              onClick={() => handlePreviewDoc("passport_photo_url", url)}
-                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
-                            >
-                              Preview
-                            </button>
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => handlePreviewDoc("passport_photo_url", url)}
+                                className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors cursor-pointer"
+                              >
+                                Preview
+                              </button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleDownloadDoc("passport_photo_url", "Passport_Photo", url)}
+                                className="h-8 px-2.5 text-xs font-semibold rounded-lg text-[#1E293B] hover:text-white hover:bg-[#1E293B] hover:border-[#1E293B] border-gray-200 shadow-sm transition-colors cursor-pointer gap-1"
+                                title="Download Document"
+                              >
+                                <Download className="h-3.5 w-3.5" />
+                                Download
+                              </Button>
+                            </>
                           )}
                           <Button
                             type="button"
@@ -1475,13 +1529,26 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             }}
                           />
                           {url && (
-                            <button
-                              type="button"
-                              onClick={() => handlePreviewDoc("passport_url", url)}
-                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
-                            >
-                              Preview
-                            </button>
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => handlePreviewDoc("passport_url", url)}
+                                className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors cursor-pointer"
+                              >
+                                Preview
+                              </button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleDownloadDoc("passport_url", "Passport_Scan", url)}
+                                className="h-8 px-2.5 text-xs font-semibold rounded-lg text-[#1E293B] hover:text-white hover:bg-[#1E293B] hover:border-[#1E293B] border-gray-200 shadow-sm transition-colors cursor-pointer gap-1"
+                                title="Download Document"
+                              >
+                                <Download className="h-3.5 w-3.5" />
+                                Download
+                              </Button>
+                            </>
                           )}
                           <Button
                             type="button"
@@ -1547,18 +1614,36 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                               }}
                             />
                             {transcriptUrl && (
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const field = transcriptUrl === student?.academic_transcript_url
-                                    ? "academic_transcript_url"
-                                    : transcriptDocKey;
-                                  handlePreviewDoc(field, transcriptUrl);
-                                }}
-                                className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
-                              >
-                                Preview
-                              </button>
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const field = transcriptUrl === student?.academic_transcript_url
+                                      ? "academic_transcript_url"
+                                      : transcriptDocKey;
+                                    handlePreviewDoc(field, transcriptUrl);
+                                  }}
+                                  className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors cursor-pointer"
+                                >
+                                  Preview
+                                </button>
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => {
+                                    const field = transcriptUrl === student?.academic_transcript_url
+                                      ? "academic_transcript_url"
+                                      : transcriptDocKey;
+                                    handleDownloadDoc(field, `${lvl.label}_Transcript`, transcriptUrl);
+                                  }}
+                                  className="h-8 px-2.5 text-xs font-semibold rounded-lg text-[#1E293B] hover:text-white hover:bg-[#1E293B] hover:border-[#1E293B] border-gray-200 shadow-sm transition-colors cursor-pointer gap-1"
+                                  title="Download Document"
+                                >
+                                  <Download className="h-3.5 w-3.5" />
+                                  Download
+                                </Button>
+                              </>
                             )}
                             <Button
                               type="button"
@@ -1610,13 +1695,26 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                               }}
                             />
                             {certUrl && (
-                              <button
-                                type="button"
-                                onClick={() => handlePreviewDoc(certDocKey, certUrl)}
-                                className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
-                              >
-                                Preview
-                              </button>
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => handlePreviewDoc(certDocKey, certUrl)}
+                                  className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors cursor-pointer"
+                                >
+                                  Preview
+                                </button>
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleDownloadDoc(certDocKey, `${lvl.label}_Certificate`, certUrl)}
+                                  className="h-8 px-2.5 text-xs font-semibold rounded-lg text-[#1E293B] hover:text-white hover:bg-[#1E293B] hover:border-[#1E293B] border-gray-200 shadow-sm transition-colors cursor-pointer gap-1"
+                                  title="Download Document"
+                                >
+                                  <Download className="h-3.5 w-3.5" />
+                                  Download
+                                </Button>
+                              </>
                             )}
                             <Button
                               type="button"
@@ -1695,13 +1793,26 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             }}
                           />
                           {url && (
-                            <button
-                              type="button"
-                              onClick={() => handlePreviewDoc("ielts_certificate_url", url)}
-                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
-                            >
-                              Preview
-                            </button>
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => handlePreviewDoc("ielts_certificate_url", url)}
+                                className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors cursor-pointer"
+                              >
+                                Preview
+                              </button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleDownloadDoc("ielts_certificate_url", "Language_Certificate", url)}
+                                className="h-8 px-2.5 text-xs font-semibold rounded-lg text-[#1E293B] hover:text-white hover:bg-[#1E293B] hover:border-[#1E293B] border-gray-200 shadow-sm transition-colors cursor-pointer gap-1"
+                                title="Download Document"
+                              >
+                                <Download className="h-3.5 w-3.5" />
+                                Download
+                              </Button>
+                            </>
                           )}
                           <Button
                             type="button"
@@ -1759,13 +1870,26 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             }}
                           />
                           {url && (
-                            <button
-                              type="button"
-                              onClick={() => handlePreviewDoc("personal_statement_url", url)}
-                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
-                            >
-                              Preview
-                            </button>
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => handlePreviewDoc("personal_statement_url", url)}
+                                className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors cursor-pointer"
+                              >
+                                Preview
+                              </button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleDownloadDoc("personal_statement_url", "Statement_of_Purpose", url)}
+                                className="h-8 px-2.5 text-xs font-semibold rounded-lg text-[#1E293B] hover:text-white hover:bg-[#1E293B] hover:border-[#1E293B] border-gray-200 shadow-sm transition-colors cursor-pointer gap-1"
+                                title="Download Document"
+                              >
+                                <Download className="h-3.5 w-3.5" />
+                                Download
+                              </Button>
+                            </>
                           )}
                           <Button
                             type="button"
@@ -1823,13 +1947,26 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             }}
                           />
                           {url && (
-                            <button
-                              type="button"
-                              onClick={() => handlePreviewDoc("recommendation_letter_url", url)}
-                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
-                            >
-                              Preview
-                            </button>
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => handlePreviewDoc("recommendation_letter_url", url)}
+                                className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors cursor-pointer"
+                              >
+                                Preview
+                              </button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleDownloadDoc("recommendation_letter_url", "Recommendation_Letter", url)}
+                                className="h-8 px-2.5 text-xs font-semibold rounded-lg text-[#1E293B] hover:text-white hover:bg-[#1E293B] hover:border-[#1E293B] border-gray-200 shadow-sm transition-colors cursor-pointer gap-1"
+                                title="Download Document"
+                              >
+                                <Download className="h-3.5 w-3.5" />
+                                Download
+                              </Button>
+                            </>
                           )}
                           <Button
                             type="button"
@@ -1888,13 +2025,26 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             }}
                           />
                           {url && (
-                            <button
-                              type="button"
-                              onClick={() => handlePreviewDoc("cv_url", url)}
-                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
-                            >
-                              Preview
-                            </button>
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => handlePreviewDoc("cv_url", url)}
+                                className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors cursor-pointer"
+                              >
+                                Preview
+                              </button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleDownloadDoc("cv_url", "Curriculum_Vitae", url)}
+                                className="h-8 px-2.5 text-xs font-semibold rounded-lg text-[#1E293B] hover:text-white hover:bg-[#1E293B] hover:border-[#1E293B] border-gray-200 shadow-sm transition-colors cursor-pointer gap-1"
+                                title="Download Document"
+                              >
+                                <Download className="h-3.5 w-3.5" />
+                                Download
+                              </Button>
+                            </>
                           )}
                           <Button
                             type="button"
@@ -1953,13 +2103,26 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             }}
                           />
                           {url && (
-                            <button
-                              type="button"
-                              onClick={() => handlePreviewDoc("research_proposal_url", url)}
-                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
-                            >
-                              Preview
-                            </button>
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => handlePreviewDoc("research_proposal_url", url)}
+                                className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors cursor-pointer"
+                              >
+                                Preview
+                              </button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleDownloadDoc("research_proposal_url", "Research_Proposal", url)}
+                                className="h-8 px-2.5 text-xs font-semibold rounded-lg text-[#1E293B] hover:text-white hover:bg-[#1E293B] hover:border-[#1E293B] border-gray-200 shadow-sm transition-colors cursor-pointer gap-1"
+                                title="Download Document"
+                              >
+                                <Download className="h-3.5 w-3.5" />
+                                Download
+                              </Button>
+                            </>
                           )}
                           <Button
                             type="button"
@@ -2018,13 +2181,26 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             }}
                           />
                           {url && (
-                            <button
-                              type="button"
-                              onClick={() => handlePreviewDoc("job_experience_url", url)}
-                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
-                            >
-                              Preview
-                            </button>
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => handlePreviewDoc("job_experience_url", url)}
+                                className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors cursor-pointer"
+                              >
+                                Preview
+                              </button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleDownloadDoc("job_experience_url", "Job_Experience", url)}
+                                className="h-8 px-2.5 text-xs font-semibold rounded-lg text-[#1E293B] hover:text-white hover:bg-[#1E293B] hover:border-[#1E293B] border-gray-200 shadow-sm transition-colors cursor-pointer gap-1"
+                                title="Download Document"
+                              >
+                                <Download className="h-3.5 w-3.5" />
+                                Download
+                              </Button>
+                            </>
                           )}
                           <Button
                             type="button"
@@ -2083,13 +2259,26 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
                             }}
                           />
                           {url && (
-                            <button
-                              type="button"
-                              onClick={() => handlePreviewDoc("study_gap_url", url)}
-                              className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors"
-                            >
-                              Preview
-                            </button>
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => handlePreviewDoc("study_gap_url", url)}
+                                className="inline-flex h-8 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white hover:border-[#1E293B] shadow-sm transition-colors cursor-pointer"
+                              >
+                                Preview
+                              </button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleDownloadDoc("study_gap_url", "Study_Gap", url)}
+                                className="h-8 px-2.5 text-xs font-semibold rounded-lg text-[#1E293B] hover:text-white hover:bg-[#1E293B] hover:border-[#1E293B] border-gray-200 shadow-sm transition-colors cursor-pointer gap-1"
+                                title="Download Document"
+                              >
+                                <Download className="h-3.5 w-3.5" />
+                                Download
+                              </Button>
+                            </>
                           )}
                           <Button
                             type="button"
@@ -2330,19 +2519,18 @@ export default function StudentProfilePage({ mode }: { mode: "admin" | "partner"
 
           </div>
 
-          {/* Right Column: Chat & Discussion Widget (3 cols on XL) */}
-          <div className="xl:col-span-3 xl:sticky xl:top-[76px] xl:self-start no-print">
-            <StudentChatWidget
-              student={student}
-              session={session}
-              user={user}
-              mode={mode}
-              partner={partner}
-            />
-          </div>
 
         </div>
       </div>
+
+      {/* Floating Chat Bubble Widget */}
+      <StudentChatWidget
+        student={student}
+        session={session}
+        user={user}
+        mode={mode}
+        partner={partner}
+      />
 
       {/* Add Application Modal */}
       <Dialog open={isAppModalOpen} onOpenChange={setIsAppModalOpen}>

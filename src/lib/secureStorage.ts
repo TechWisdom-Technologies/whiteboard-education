@@ -44,6 +44,46 @@ export async function openSecureDocument({
   }
 }
 
+export async function downloadSecureDocument({
+  recordType,
+  recordId,
+  field,
+  objectKey,
+  fileName,
+}: DocumentRequest & { fileName?: string }): Promise<void> {
+  if (!objectKey) return;
+
+  const { data, error } = await supabase.functions.invoke("r2-storage", {
+    body: {
+      action: "create-download",
+      recordType,
+      recordId,
+      field,
+      objectKey,
+    },
+  });
+
+  if (error) throw error;
+  if (!data?.downloadUrl) throw new Error("Download URL unavailable");
+
+  try {
+    const res = await fetch(data.downloadUrl);
+    if (!res.ok) throw new Error("File fetch failed");
+    const blob = await res.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = fileName || objectKey.split("/").pop() || "document";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(blobUrl);
+  } catch (err) {
+    console.warn("Direct blob download failed, falling back to window.open", err);
+    window.open(data.downloadUrl, "_blank");
+  }
+}
+
 export async function getSecureImageUrl(
   recordType: "student" | "partner" | "profile",
   recordId: string,

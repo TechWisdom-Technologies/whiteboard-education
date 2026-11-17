@@ -288,23 +288,21 @@ export default function Universities() {
                 <div className="bg-white px-5 py-5 space-y-4">
                   {/* Search Input */}
                   <div>
-                    <div className="relative">
+                    <div className="relative group/search">
                       <Input
                         placeholder="Search by University Name"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="pr-10 h-11"
+                        className="pr-10 h-11 text-[#444444] focus:!text-white focus:placeholder:!text-white/70"
                         style={{
                           borderColor: "#cacdd4",
                           borderRadius: "5px",
                           fontFamily: "Poppins, sans-serif",
                           fontSize: "14px",
-                          color: "#444444",
                         }}
                       />
                       <Search
-                        className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4"
-                        style={{ color: "#999999" }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#999999] group-focus-within/search:!text-white transition-colors pointer-events-none"
                       />
                     </div>
                   </div>

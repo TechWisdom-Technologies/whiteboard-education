@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, Link } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { PartnerSidebar } from "@/components/partner/PartnerSidebar";
 import { NotificationCenter } from "@/components/partner/NotificationCenter";
@@ -115,19 +115,9 @@ export default function PartnerLayout() {
       <div className="min-h-screen flex flex-col w-full dashboard-theme">
         <header className="h-[60px] flex items-center bg-[#2F4F97] sticky top-0 z-30 w-full text-white shadow-sm">
           <div className="w-[16rem] flex items-center justify-center bg-transparent h-full flex-shrink-0">
-            {avatarUrl ? (
-              <img
-                src={avatarUrl}
-                alt="Logo"
-                className="w-[180px] h-[50px] object-contain shrink-0 mx-auto"
-                onError={() => {
-                  setAvatarUrl("");
-                  if (user?.id) localStorage.removeItem(`partner_avatar_${user.id}`);
-                }}
-              />
-            ) : (
+            <Link to="/partner-dashboard" className="flex items-center justify-center">
               <img src="/logo-white.png" alt="Whiteboard Education" className="w-[180px] h-[50px] object-contain shrink-0 mx-auto" />
-            )}
+            </Link>
           </div>
           <div className="flex-1 flex items-center justify-between pl-3 sm:pl-4 pr-6 sm:pr-8 lg:pr-12 min-w-0 h-full">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
@@ -138,6 +128,21 @@ export default function PartnerLayout() {
                 <div className="flex items-center gap-3">
                   <DropdownMenu>
                     <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
+                      {avatarUrl ? (
+                        <img
+                          src={avatarUrl}
+                          alt="Avatar"
+                          className="w-8 h-8 rounded-full object-cover border-2 border-white/40 shadow-sm"
+                          onError={() => {
+                            setAvatarUrl("");
+                            if (user?.id) localStorage.removeItem(`partner_avatar_${user.id}`);
+                          }}
+                        />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold text-white border border-white/30">
+                          {(displayName || "P").charAt(0).toUpperCase()}
+                        </div>
+                      )}
                       <span className="text-[14px] font-medium text-white hover:text-gray-200 transition-colors">
                         Hello, {displayName || "Partner"}
                       </span>

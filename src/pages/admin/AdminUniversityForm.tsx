@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useTableData, useInsertRow, useUpdateRow } from "@/hooks/useSupabaseData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,47 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+
+export const ALL_MALAYSIAN_CITIES = [
+  "Alor Setar",
+  "Arau (Perlis)",
+  "Bandar Saujana Putra",
+  "Bangi",
+  "Batu Caves",
+  "Cyberjaya",
+  "Durian Tunggal",
+  "George Town (Penang)",
+  "Glenmarie",
+  "Ipoh",
+  "Iskandar Puteri",
+  "Johor Bahru",
+  "Kajang",
+  "Kampar",
+  "Klang",
+  "Kota Damansara",
+  "Kota Kinabalu",
+  "Kuala Lumpur",
+  "Kuala Terengganu",
+  "Kuantan",
+  "Kuching",
+  "Melaka",
+  "Miri",
+  "Nilai",
+  "Penang",
+  "Petaling Jaya",
+  "Puchong",
+  "Putrajaya",
+  "Rawang",
+  "Semenyih",
+  "Serdang",
+  "Seri Iskandar",
+  "Shah Alam",
+  "Sintok",
+  "Skudai",
+  "Subang Jaya",
+  "Sungai Long",
+  "Tanjung Malim",
+];
 
 interface AdminUniversityFormProps {
   initialData?: any;
@@ -21,6 +62,7 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
   const insertRow = useInsertRow("universities");
   const updateRow = useUpdateRow("universities");
   const { data: countries } = useTableData("countries", { orderBy: "name" });
+  const { data: allUnis } = useTableData("universities");
 
   const [form, setForm] = useState({
     name: "",
@@ -33,9 +75,30 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
     faqs: [] as any[],
   });
 
+  const [campuses, setCampuses] = useState<string[]>([""]);
+
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [isUploadingHero, setIsUploadingHero] = useState(false);
   const [isFaqOpen, setIsFaqOpen] = useState(true);
+
+  // Dynamic set of all cities (master list + any custom cities in the DB)
+  const cityOptions = useMemo(() => {
+    const set = new Set<string>(ALL_MALAYSIAN_CITIES);
+    if (allUnis && Array.isArray(allUnis)) {
+      allUnis.forEach((u: any) => {
+        if (Array.isArray(u.campuses)) {
+          u.campuses.forEach((c: any) => c && typeof c === "string" && set.add(c.trim()));
+        }
+        if (typeof u.city === "string" && u.city.trim()) {
+          u.city.split(/[,;&]+/).forEach((c: string) => {
+            const trimmed = c.trim();
+            if (trimmed) set.add(trimmed);
+          });
+        }
+      });
+    }
+    return Array.from(set).filter(Boolean).sort();
+  }, [allUnis]);
 
   useEffect(() => {
     if (countries && !form.country_id) {
@@ -58,10 +121,46 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
         hero_image: initialData.hero_image || "",
         faqs: Array.isArray(initialData.faqs) ? initialData.faqs : [],
       });
+
+      let loadedCampuses: string[] = [];
+      if (Array.isArray(initialData.campuses) && initialData.campuses.length > 0) {
+        loadedCampuses = initialData.campuses.filter(Boolean);
+      } else if (typeof initialData.city === "string" && initialData.city.trim()) {
+        loadedCampuses = initialData.city
+          .split(/[,;&]+/)
+          .map((s: string) => s.trim())
+          .filter(Boolean);
+      }
+      setCampuses(loadedCampuses.length > 0 ? loadedCampuses : [""]);
     }
   }, [initialData]);
 
+  const handleAddCampus = () => {
+    setCampuses(prev => [...prev, ""]);
+  };
+
+  const handleUpdateCampus = (index: number, val: string) => {
+    setCampuses(prev => {
+      const next = [...prev];
+      next[index] = val;
+      return next;
+    });
+  };
+
+  const handleRemoveCampus = (index: number) => {
+    setCampuses(prev => {
+      const next = prev.filter((_, i) => i !== index);
+      return next.length > 0 ? next : [""];
+    });
+  };
+
   const handleUpload = async (file: File, type: "logo" | "hero") => {
+    const maxSize = type === "logo" ? 2 * 1024 * 1024 : 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      toast.error(`File size exceeds limit (${type === "logo" ? "2MB" : "5MB"}). Please upload a smaller image.`);
+      return;
+    }
+
     try {
       if (type === "logo") setIsUploadingLogo(true);
       else setIsUploadingHero(true);
@@ -101,16 +200,46 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
       return;
     }
 
+    const cleanCampuses = campuses.map(c => c.trim()).filter(Boolean);
+    if (cleanCampuses.length === 0) {
+      toast.error("Please select at least one campus for this university");
+      return;
+    }
+
+    const computedCity = cleanCampuses.join(", ");
+    const payload = {
+      ...form,
+      city: computedCity,
+      campuses: cleanCampuses,
+    };
+
     try {
       if (isEditing) {
-        await updateRow.mutateAsync({ id: initialData.id, ...form });
+        await updateRow.mutateAsync({ id: initialData.id, ...payload });
         toast.success("University updated successfully");
       } else {
-        await insertRow.mutateAsync(form);
+        await insertRow.mutateAsync(payload);
         toast.success("University created successfully");
       }
       onSuccess();
     } catch (error: any) {
+      // Gracefully handle if campuses column is not yet present in remote Supabase table
+      if (error?.message?.includes('column "campuses"') || error?.message?.includes("column universities.campuses")) {
+        const { campuses: _, ...rest } = payload;
+        try {
+          if (isEditing) {
+            await updateRow.mutateAsync({ id: initialData.id, ...rest });
+          } else {
+            await insertRow.mutateAsync(rest);
+          }
+          toast.success("University saved! (Run latest migration to store campuses column in DB)");
+          onSuccess();
+          return;
+        } catch (fallbackErr: any) {
+          toast.error(`Save failed: ${fallbackErr.message}`);
+          return;
+        }
+      }
       toast.error(`Save failed: ${error.message}`);
     }
   };
@@ -156,7 +285,7 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
                   <label className="cursor-pointer flex flex-col items-center justify-center gap-2">
                     <UploadCloud className="h-8 w-8 text-gray-400" />
                     <span className="text-sm font-medium text-primary">Click to upload logo</span>
-                    <span className="text-xs text-muted-foreground">PNG, JPG up to 2MB</span>
+                    <span className="text-xs text-muted-foreground text-center">Recommended: 400×200px (or 300×300px), transparent PNG/WebP up to 2MB</span>
                     <input
                       type="file"
                       accept="image/*"
@@ -188,7 +317,7 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
                   <label className="cursor-pointer flex flex-col items-center justify-center gap-2">
                     <UploadCloud className="h-8 w-8 text-gray-400" />
                     <span className="text-sm font-medium text-primary">Click to upload hero</span>
-                    <span className="text-xs text-muted-foreground">High-res JPG/PNG</span>
+                    <span className="text-xs text-muted-foreground text-center">Recommended: 16:9 ratio (min 1280×720px, ideal 1920×1080px), JPG/WebP up to 5MB</span>
                     <input
                       type="file"
                       accept="image/*"
@@ -212,28 +341,73 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
               />
             </div>
 
-            {/* Country and City */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:col-span-2">
-              <div className="space-y-3">
-                <Label className="text-[13px] font-semibold text-gray-700">Country *</Label>
-                <select
-                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 h-10 text-sm text-gray-500 cursor-not-allowed"
-                  value={form.country_id}
-                  disabled
+            {/* Country */}
+            <div className="space-y-2 md:col-span-2">
+              <Label className="text-[13px] font-semibold text-gray-700">Country *</Label>
+              <select
+                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 h-10 text-sm text-gray-500 cursor-not-allowed"
+                value={form.country_id}
+                disabled
+              >
+                {countries?.map((c: any) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Campuses (Multiple campuses with cities dropdown) */}
+            <div className="space-y-3 md:col-span-2">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-[13px] font-semibold text-gray-700">Campuses *</Label>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Add one or more campuses for this university. Choose each campus location from the cities dropdown.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAddCampus}
+                  className="h-8 px-3 text-xs font-medium text-[#2F4F97] border-[#2F4F97]/30 hover:bg-[#2F4F97]/5"
                 >
-                  {countries?.map((c: any) => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-                </select>
+                  <Plus className="h-3.5 w-3.5 mr-1" /> Add Campus
+                </Button>
               </div>
 
-              <div className="space-y-3">
-                <Label className="text-[13px] font-semibold text-gray-700">City</Label>
-                <Input
-                  value={form.city}
-                  onChange={(e) => setForm(prev => ({ ...prev, city: e.target.value }))}
-                  placeholder="e.g. Cyberjaya"
-                />
+              <div className="space-y-2.5 bg-slate-50/70 p-4 rounded-xl border border-slate-200">
+                {campuses.map((campus, idx) => (
+                  <div key={idx} className="flex items-center gap-2">
+                    <span className="text-xs font-semibold text-slate-500 w-20 shrink-0">
+                      Campus {idx + 1}:
+                    </span>
+                    <select
+                      className="flex-1 rounded-lg border border-slate-300 bg-white px-3 h-10 text-sm text-slate-800 shadow-sm focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97]"
+                      value={campus}
+                      onChange={(e) => handleUpdateCampus(idx, e.target.value)}
+                    >
+                      <option value="">Select City / Location...</option>
+                      {cityOptions.map((city) => (
+                        <option key={city} value={city}>{city}</option>
+                      ))}
+                      {campus && !cityOptions.includes(campus) && (
+                        <option value={campus}>{campus}</option>
+                      )}
+                    </select>
+                    {campuses.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleRemoveCampus(idx)}
+                        className="h-9 w-9 text-red-500 hover:text-red-700 hover:bg-red-50 shrink-0 rounded-lg"
+                        title="Remove campus"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -279,7 +453,7 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
                       setIsFaqOpen(true);
                     }}
                   >
-                    <Plus className="h-3 w-3 mr-1" /> Add FAQ
+                    <Plus className="h-3.5 w-3.5 mr-1" /> Add FAQ
                   </Button>
                   <div className="text-gray-400 p-1">
                     {isFaqOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}

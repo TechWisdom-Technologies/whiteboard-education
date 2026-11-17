@@ -65,6 +65,7 @@ interface AdminCrudTableProps {
   onAddClick?: () => void;
   onEditClick?: (row: any) => void;
   hideTitle?: boolean;
+  filterSlot?: React.ReactNode;
 }
 
 function TagInput({ value, onChange, placeholder }: { value: string[]; onChange: (v: string[]) => void; placeholder?: string }) {
@@ -437,7 +438,7 @@ function RelationArrayEditor({ value = [], onChange, relationConfig }: { value: 
 }
 
 export default function AdminCrudTable({
-  title, data, isLoading, fields, searchKey, onInsert, onUpdate, onDelete, onBulkDelete, onBulkUpsert, renderCell, onAddClick, onEditClick, hideTitle,
+  title, data, isLoading, fields, searchKey, onInsert, onUpdate, onDelete, onBulkDelete, onBulkUpsert, renderCell, onAddClick, onEditClick, hideTitle, filterSlot,
 }: AdminCrudTableProps) {
   const { toast } = useToast();
   const [search, setSearch] = useState("");
@@ -859,7 +860,12 @@ export default function AdminCrudTable({
 
   const formatCellValue = (row: any, key: string) => {
     const val = row[key];
-    if (val === null || val === undefined) return "-";
+    if (val === null || val === undefined || val === "") return "-";
+    const field = fields.find((f) => f.key === key);
+    if (field?.type === "relation" && field.relationConfig) {
+      const match = field.relationConfig.data?.find((d: any) => String(d[field.relationConfig!.valueKey]) === String(val));
+      if (match) return String(match[field.relationConfig.labelKey] || val);
+    }
     if (Array.isArray(val)) return val.length > 0 ? val.slice(0, 3).join(", ") + (val.length > 3 ? "…" : "") : "-";
     if (typeof val === "object") return JSON.stringify(val).slice(0, 50) + "…";
     return String(val);
@@ -981,6 +987,12 @@ export default function AdminCrudTable({
             </Button>
           </div>
         </div>
+
+        {filterSlot && (
+          <div className="pt-2">
+            {filterSlot}
+          </div>
+        )}
       </div>
 
 
@@ -1023,7 +1035,7 @@ export default function AdminCrudTable({
                   </TableCell>
                   {tableFields.map((f) => (
                     <TableCell key={f.key} className={`${f.key === searchKey ? "font-semibold text-[#1E293B] uppercase" : ""} py-3 text-xs md:text-[13px]`}>
-                    {renderCell ? renderCell(row, f.key) : formatCellValue(row, f.key)}
+                    {renderCell ? (renderCell(row, f.key) ?? formatCellValue(row, f.key)) : formatCellValue(row, f.key)}
                   </TableCell>
                 ))}
                 <TableCell className="text-left py-3" onClick={(e) => e.stopPropagation()}>

@@ -28,7 +28,7 @@ export function FeaturesSection() {
       image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=600&q=80",
       label: "AI Eligibility Test",
       sublabel: "Instantly check your admission chances using our AI engine.",
-      href: "/ai-eligibility",
+      href: "/eligibility",
       accentColor: "#8b5cf6",
     },
     {

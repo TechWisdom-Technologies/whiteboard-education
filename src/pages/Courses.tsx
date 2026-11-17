@@ -37,7 +37,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
 const DEGREE_LEVELS = [
   "All Levels",
@@ -195,38 +195,62 @@ export default function Courses() {
     const { search, selectedLevel, selectedArea, selectedLocation, selectedIntake, selectedFee } = appliedFilters;
     return courses.filter((c: any) => {
       const titleLower = c.title?.toLowerCase() || "";
+      const uni = universities?.find((u: any) => u.id === c.university_id);
+      const uniNameLower = uni?.name?.toLowerCase() || "";
+      const catStr = typeof c.category === 'string' ? c.category.trim() : "";
+      const catLower = catStr.toLowerCase();
+
+      // Qualification matching with smart keyword fallbacks
       let effLevel = c.degree_level || "";
       if (titleLower.includes("advanced diploma")) effLevel = "Advanced Diploma";
       else if (titleLower.includes("diploma")) effLevel = "Diploma";
       else if (titleLower.includes("certificate")) effLevel = "Certificate";
       else if (titleLower.includes("foundation")) effLevel = "Foundation";
+      else if (titleLower.includes("bachelor") || titleLower.includes("degree")) effLevel = "Bachelor";
+      else if (titleLower.includes("master") || titleLower.includes("mba") || titleLower.includes("msc")) effLevel = "Master";
+      else if (titleLower.includes("phd") || titleLower.includes("doctor")) effLevel = "PhD";
 
-      if (search && !titleLower.includes(search.toLowerCase())) return false;
-      if (selectedLevel !== "All Levels" && !effLevel.toLowerCase().includes(selectedLevel.toLowerCase())) return false;
-
-      if (selectedArea !== "All Areas") {
-        const keywords = AREA_KEYWORDS[selectedArea];
-        if (keywords) {
-          const title = c.title?.toLowerCase() || "";
-          const category = typeof c.category === 'string' ? c.category.toLowerCase() : "";
-          const matches = keywords.some(kw => title.includes(kw) || category.includes(kw));
-          if (!matches) return false;
-        }
+      // 1. Search Query
+      if (search) {
+        const q = search.toLowerCase().trim();
+        const matchesQuery = 
+          titleLower.includes(q) || 
+          uniNameLower.includes(q) || 
+          catLower.includes(q);
+        if (!matchesQuery) return false;
       }
 
-      const uni = universities?.find((u: any) => u.id === c.university_id);
+      // 2. Degree / Qualification Level
+      if (selectedLevel !== "All Levels") {
+        const lvlLower = selectedLevel.toLowerCase();
+        const effLower = effLevel.toLowerCase();
+        const rawLower = (c.degree_level || "").toLowerCase();
+        const matchesLevel = effLower.includes(lvlLower) || rawLower.includes(lvlLower) || titleLower.includes(lvlLower);
+        if (!matchesLevel) return false;
+      }
 
+      // 3. Department / Study Area
+      if (selectedArea !== "All Areas") {
+        const matchesExact = catLower === selectedArea.toLowerCase();
+        const keywords = AREA_KEYWORDS[selectedArea];
+        const matchesKeywords = keywords ? keywords.some(kw => titleLower.includes(kw) || catLower.includes(kw)) : false;
+        if (!matchesExact && !matchesKeywords) return false;
+      }
+
+      // 4. Location / State
       if (selectedLocation !== "All States") {
         if (!uni) return false;
         const stateStr = uni.state || uni.city || "";
         if (!stateStr.toLowerCase().includes(selectedLocation.toLowerCase())) return false;
       }
 
+      // 5. Intake Month
       if (selectedIntake !== "All Intakes") {
         const intakes = Array.isArray(c.intake_months) ? c.intake_months.join(" ") : (c.intake_months || "");
         if (!intakes.toLowerCase().includes(selectedIntake.toLowerCase())) return false;
       }
 
+      // 6. Offer Letter Fee
       if (selectedFee !== "All Fees") {
         if (!uni) return false;
         const isPaid = PAID_OFFER_LETTER_UNIS.includes(uni.name);
@@ -340,23 +364,21 @@ export default function Courses() {
                     {/* Search Input */}
                     <div>
                       <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Search by Program Title</label>
-                      <div className="relative">
+                      <div className="relative group/search">
                         <Input
                           placeholder="Enter Program Title"
                           value={search}
                           onChange={(e) => setSearch(e.target.value)}
-                          className="pr-10 h-11"
+                          className="pr-10 h-11 text-[#444444] focus:!text-white focus:placeholder:!text-white/70"
                           style={{
                             borderColor: "#cacdd4",
                             borderRadius: "12px",
                             fontFamily: "Poppins, sans-serif",
                             fontSize: "14px",
-                            color: "#444444",
                           }}
                         />
                         <Search
-                          className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4"
-                          style={{ color: "#999999" }}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#999999] group-focus-within/search:!text-white transition-colors pointer-events-none"
                         />
                       </div>
                     </div>

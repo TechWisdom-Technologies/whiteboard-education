@@ -46,6 +46,8 @@ import AdminPartnerProfile from "./pages/admin/AdminPartnerProfile";
 import AdminPartnerWebinars from "./pages/admin/AdminPartnerWebinars";
 import AdminPartnerAccountManagers from "./pages/admin/AdminPartnerAccountManagers";
 import AdminPartnerTutorials from "./pages/admin/AdminPartnerTutorials";
+import AdminPartnerNotices from "./pages/admin/AdminPartnerNotices";
+import AdminPartnerDocuments from "./pages/admin/AdminPartnerDocuments";
 import AdminEvents from "./pages/admin/AdminEvents";
 
 import AdminSettings from "./pages/admin/AdminSettings";
@@ -180,6 +182,7 @@ const App = () => (
             <Route path="/country/:countryId" element={<Navigate to="/" replace />} />
             <Route path="/university/:universityId" element={<LegacyUniversityRedirect />} />
             <Route path="/eligibility-test" element={<Navigate to="/eligibility" replace />} />
+            <Route path="/ai-eligibility" element={<Navigate to="/eligibility" replace />} />
             <Route path="/b2b" element={<Navigate to="/partner" replace />} />
 
             {/* Catch-all for coming soon */}
@@ -210,6 +213,8 @@ const App = () => (
               <Route path="partner-content/webinars" element={<AdminPartnerWebinars />} />
               <Route path="partner-content/account-managers" element={<AdminPartnerAccountManagers />} />
               <Route path="partner-content/tutorials" element={<AdminPartnerTutorials />} />
+              <Route path="partner-content/notices" element={<AdminPartnerNotices />} />
+              <Route path="partner-content/documents" element={<AdminPartnerDocuments />} />
               <Route path="events" element={<AdminEvents />} />
               <Route path="students" element={<AdminStudents />} />
               <Route path="students/new" element={<PartnerAddStudent />} />

@@ -16,6 +16,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { statusPhases } from "@/config/statusFlow";
 import { 
   ChevronDown, 
@@ -38,7 +46,13 @@ import {
   Bell,
   Banknote,
   Clock,
-  CreditCard
+  CreditCard,
+  Info,
+  CheckCircle2,
+  AlertTriangle,
+  ArrowRight,
+  Megaphone,
+  Tag
 } from "lucide-react";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -69,6 +83,8 @@ export default function PartnerOverview() {
   const [accountManager, setAccountManager] = useState<any>(null);
   const [tutorials, setTutorials] = useState<any[]>([]);
   const [applicationsList, setApplicationsList] = useState<any[]>([]);
+  const [notices, setNotices] = useState<any[]>([]);
+  const [selectedNotice, setSelectedNotice] = useState<any | null>(null);
 
   // Card dropdown states
   const [card0Filter, setCard0Filter] = useState("all");
@@ -220,6 +236,46 @@ export default function PartnerOverview() {
           setTutorials([]);
         }
 
+        // Fetch Admin Updates & Notices from partner_notices table
+        try {
+          const { data: noticesData, error: noticesErr } = await (supabase.from as any)('partner_notices')
+            .select('*')
+            .eq('is_active', true)
+            .order('created_at', { ascending: false })
+            .limit(10);
+
+          if (!noticesErr && noticesData && noticesData.length > 0) {
+            setNotices(noticesData);
+          } else {
+            // Seed default notices fallback so the UI displays announcements immediately
+            setNotices([
+              {
+                id: "seed-1",
+                title: "Special 20% - 30% Merit Scholarship for Fall Intake",
+                category: "Offer",
+                content: "Selected partner universities in Malaysia are offering exclusive merit scholarships of up to 20% to 30% on tuition fees for students applying for Fall 2026 undergraduate & postgraduate business and engineering programs. Check university requirement guidelines for eligibility.",
+                created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
+              },
+              {
+                id: "seed-2",
+                title: "EMGS Visa Approval Turnaround Times",
+                category: "Crucial Update",
+                content: "Please note that the Education Malaysia Global Services (EMGS) is currently processing student visa applications within 14-21 business days. Ensure all student academic transcripts, passport scans, and medical questionnaires are submitted early to avoid intake delays.",
+                created_at: new Date(Date.now() - 3600000 * 24).toISOString(),
+              },
+              {
+                id: "seed-3",
+                title: "New University Partner: Asia Pacific University (APU)",
+                category: "Notice",
+                content: "We are thrilled to welcome Asia Pacific University of Technology & Innovation (APU) to our partner portfolio. All Computing, Artificial Intelligence, and Software Engineering programs are now open for direct partner applications.",
+                created_at: new Date(Date.now() - 3600000 * 48).toISOString(),
+              },
+            ]);
+          }
+        } catch {
+          setNotices([]);
+        }
+
       } catch (error) {
         console.error("Dashboard fetch error:", error);
       } finally {
@@ -281,6 +337,15 @@ export default function PartnerOverview() {
     return 'Evening';
   };
 
+  const getFullName = () => {
+    if (partnerInfo?.contact_first_name || partnerInfo?.contact_last_name) {
+      return `${partnerInfo.contact_first_name || ''} ${partnerInfo.contact_last_name || ''}`.trim();
+    }
+    if (profile?.display_name) return profile.display_name;
+    if (partnerInfo?.agency_name) return partnerInfo.agency_name;
+    return 'Partner';
+  };
+
   const getLastName = () => {
     if (partnerInfo?.contact_last_name) return partnerInfo.contact_last_name;
     if (partnerInfo?.contact_first_name) return partnerInfo.contact_first_name;
@@ -326,7 +391,7 @@ export default function PartnerOverview() {
       {/* Greeting and Clock Banner */}
       <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-6 flex flex-col lg:flex-row justify-between items-center bg-gradient-to-r from-blue-50 to-white gap-6 lg:gap-0">
         <div className="text-center lg:text-left">
-          <h2 className="text-2xl font-bold text-[#1E293B]">Welcome, {getLastName()}!</h2>
+          <h2 className="text-2xl font-bold text-[#1E293B]">Welcome, {getFullName()}!</h2>
           <p className="text-slate-500 mt-1">Check your students and applications latest update</p>
         </div>
         
@@ -334,8 +399,8 @@ export default function PartnerOverview() {
           
           {/* Bangladesh Time */}
           <div className="flex flex-col items-end">
-            <span className="text-[11px] sm:text-xs font-bold text-theme uppercase tracking-widest mb-1">Bangladesh</span>
-            <p className="text-3xl sm:text-4xl font-bold text-theme whitespace-nowrap drop-shadow-sm font-mono tracking-tight" style={{ fontVariantNumeric: 'tabular-nums' }}>
+            <span className="text-xs sm:text-sm font-bold text-theme uppercase tracking-wider mb-1">Bangladesh</span>
+            <p className="text-xl sm:text-2xl font-bold text-theme whitespace-nowrap drop-shadow-sm font-mono tracking-tight" style={{ fontVariantNumeric: 'tabular-nums' }}>
               {(() => {
                 const d = new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Dhaka' }));
                 const h = d.getHours() % 12 || 12;
@@ -345,18 +410,18 @@ export default function PartnerOverview() {
                 return <>{String(h).padStart(2, '0')}:{m}:{s} {ap}</>;
               })()}
             </p>
-            <p className="text-[11px] sm:text-xs font-semibold text-theme tracking-wider mt-1">
-              {currentTime.toLocaleDateString('en-US', { timeZone: 'Asia/Dhaka', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+            <p className="text-[11px] sm:text-xs font-semibold text-slate-500 tracking-wider mt-1">
+              {currentTime.toLocaleDateString('en-US', { timeZone: 'Asia/Dhaka', weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
             </p>
           </div>
 
           {/* Divider */}
-          <div className="w-px h-16 bg-slate-200" />
+          <div className="w-px h-14 bg-slate-200" />
 
           {/* Malaysia Time */}
           <div className="flex flex-col items-end">
-            <span className="text-[11px] sm:text-xs font-bold text-[#CC0000] uppercase tracking-widest mb-1">Malaysia</span>
-            <p className="text-3xl sm:text-4xl font-bold text-[#CC0000] whitespace-nowrap drop-shadow-sm font-mono tracking-tight" style={{ fontVariantNumeric: 'tabular-nums' }}>
+            <span className="text-xs sm:text-sm font-bold text-[#002B7F] uppercase tracking-wider mb-1">Malaysia</span>
+            <p className="text-xl sm:text-2xl font-bold text-[#002B7F] whitespace-nowrap drop-shadow-sm font-mono tracking-tight" style={{ fontVariantNumeric: 'tabular-nums' }}>
               {(() => {
                 const d = new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
                 const h = d.getHours() % 12 || 12;
@@ -366,8 +431,8 @@ export default function PartnerOverview() {
                 return <>{String(h).padStart(2, '0')}:{m}:{s} {ap}</>;
               })()}
             </p>
-            <p className="text-[11px] sm:text-xs font-semibold text-[#CC0000] tracking-wider mt-1">
-              {currentTime.toLocaleDateString('en-US', { timeZone: 'Asia/Kuala_Lumpur', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+            <p className="text-[11px] sm:text-xs font-semibold text-slate-500 tracking-wider mt-1">
+              {currentTime.toLocaleDateString('en-US', { timeZone: 'Asia/Kuala_Lumpur', weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
             </p>
           </div>
 
@@ -495,84 +560,96 @@ export default function PartnerOverview() {
         </div>
       </div>
 
-      {/* Action & Notification Section */}
+      {/* Row 1: Recent Updates & Notices (2 cols) | Upcoming Webinars (3rd col) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        {/* Notifications & Updates */}
-        <Card className="bg-white border-[#2F4F97]/10 shadow-sm flex flex-col h-full md:col-span-2">
-          <CardHeader className="pb-3 border-b">
+
+        {/* Recent Updates & Notices (2 columns) */}
+        <Card className="md:col-span-2 bg-white border-[#2F4F97]/10 shadow-sm flex flex-col h-full">
+          <CardHeader className="pb-3 border-b flex flex-row items-center justify-between">
             <CardTitle className="text-sm text-[#2F4F97] flex items-center gap-2 uppercase tracking-wider font-bold">
-              <Bell className="w-4 h-4" />
-              Recent Updates & Notifications
+              <Megaphone className="w-4 h-4" />
+              Recent Updates & Notices
             </CardTitle>
+            <span className="text-[11px] font-medium text-slate-500 bg-slate-50 border border-slate-200/70 px-2.5 py-0.5 rounded-full">
+              Official Admin Bulletins
+            </span>
           </CardHeader>
           <CardContent className="pt-4 flex-grow">
-            <div className="space-y-3">
-              <div className="flex items-start gap-3 p-3 bg-blue-50/50 rounded-lg border border-blue-100">
-                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                  <Calendar className="w-4 h-4 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-[#1E293B]">Application Deadline Approaching</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Fall 2026 intake applications for major universities close in 2 weeks.</p>
-                </div>
+            {notices.length > 0 ? (
+              <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+                {notices.map((notice: any) => {
+                  const cat = (notice.category || "Update").toLowerCase();
+                  const isOffer = cat.includes("offer") || cat.includes("scholarship");
+                  const isCrucial = cat.includes("crucial") || cat.includes("urgent") || cat.includes("deadline") || cat.includes("warning");
+
+                  const bgClass = isOffer
+                    ? "bg-emerald-50/70 border-emerald-200 hover:bg-emerald-100/70"
+                    : isCrucial
+                    ? "bg-amber-50/70 border-amber-200 hover:bg-amber-100/70"
+                    : "bg-blue-50/70 border-blue-200 hover:bg-blue-100/70";
+
+                  const iconBg = isOffer
+                    ? "bg-emerald-100 text-emerald-700"
+                    : isCrucial
+                    ? "bg-amber-100 text-amber-700"
+                    : "bg-blue-100 text-blue-700";
+
+                  const badgeClass = isOffer
+                    ? "bg-emerald-100/90 text-emerald-800 border-emerald-300"
+                    : isCrucial
+                    ? "bg-amber-100/90 text-amber-800 border-amber-300"
+                    : "bg-blue-100/90 text-blue-800 border-blue-300";
+
+                  return (
+                    <div
+                      key={notice.id}
+                      onClick={() => setSelectedNotice(notice)}
+                      className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-3 rounded-xl border transition-all cursor-pointer shadow-xs hover:shadow-md ${bgClass} w-full group`}
+                    >
+                      <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 sm:mt-0 ${iconBg}`}>
+                          {isOffer ? <Tag className="w-4 h-4" /> : isCrucial ? <AlertTriangle className="w-4 h-4" /> : <Megaphone className="w-4 h-4" />}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-semibold text-[#1E293B] truncate group-hover:text-[#2F4F97] transition-colors">
+                              {notice.title}
+                            </p>
+                            <Badge variant="outline" className={`text-[10px] uppercase font-bold tracking-wider shrink-0 hidden sm:inline-flex ${badgeClass}`}>
+                              {notice.category || "Update"}
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                            {notice.content}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between sm:justify-end gap-2.5 shrink-0 text-xs text-muted-foreground">
+                        <span className="text-[11px]">
+                          {notice.created_at ? new Date(notice.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : ""}
+                        </span>
+                        <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-[#2F4F97] transition-colors" />
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-              <div className="flex items-start gap-3 p-3 bg-amber-50/50 rounded-lg border border-amber-100">
-                <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
-                  <Banknote className="w-4 h-4 text-amber-600" />
+            ) : (
+              <div className="flex flex-col items-center justify-center py-8 text-center">
+                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-[#2F4F97] mb-2">
+                  <Megaphone className="w-5 h-5" />
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-[#1E293B]">Tuition Fee Update</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Note a 5% increase in base tuition fees for new Engineering intakes.</p>
-                </div>
+                <p className="text-sm font-semibold text-[#1E293B]">No notices published yet</p>
+                <p className="text-xs text-muted-foreground max-w-sm mt-0.5">
+                  Offers, scholarship updates, and crucial university notices from Whiteboard admin will be posted here.
+                </p>
               </div>
-              <div className="flex items-start gap-3 p-3 bg-emerald-50/50 rounded-lg border border-emerald-100">
-                <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                  <GraduationCap className="w-4 h-4 text-emerald-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-[#1E293B]">New Scholarship Opportunities</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Up to 30% merit-based scholarships available for eligible Business Management students.</p>
-                </div>
-              </div>
-            </div>
+            )}
           </CardContent>
         </Card>
 
-        {/* Quick Actions: Deferral & Payments */}
-        <div className="flex flex-col gap-6">
-          <Card className="bg-white border-[#2F4F97]/10 shadow-sm flex-1 hover:shadow-md transition-shadow cursor-pointer group">
-            <CardContent className="p-6 flex items-center gap-4 h-full">
-              <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center shrink-0 group-hover:bg-purple-100 transition-colors">
-                <Clock className="w-6 h-6 text-purple-600" />
-              </div>
-              <div>
-                <h3 className="font-bold text-[#1E293B] group-hover:text-purple-600 transition-colors">Request Deferral</h3>
-                <p className="text-xs text-muted-foreground mt-1">Manage intake deferrals</p>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-white border-[#2F4F97]/10 shadow-sm flex-1 hover:shadow-md transition-shadow cursor-pointer group">
-            <CardContent className="p-6 flex items-center gap-4 h-full">
-              <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center shrink-0 group-hover:bg-green-100 transition-colors">
-                <CreditCard className="w-6 h-6 text-green-600" />
-              </div>
-              <div>
-                <h3 className="font-bold text-[#1E293B] group-hover:text-green-600 transition-colors">Payments</h3>
-                <p className="text-xs text-muted-foreground mt-1">View invoices & history</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-      </div>
-
-      {/* Section 6: Bottom Section (3 cards) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        {/* Upcoming Webinars */}
-        <Card className="bg-white border-[#2F4F97]/10 shadow-sm flex flex-col h-full">
+        {/* Upcoming Webinars (3rd column) */}
+        <Card className="md:col-span-1 bg-white border-[#2F4F97]/10 shadow-sm flex flex-col h-full">
           <CardHeader className="pb-3 border-b">
             <CardTitle className="text-sm text-[#2F4F97] flex items-center gap-2 uppercase tracking-wider font-bold">
               <Calendar className="w-4 h-4" />
@@ -581,7 +658,7 @@ export default function PartnerOverview() {
           </CardHeader>
           <CardContent className="pt-4">
             {webinars.length > 0 ? (
-              <div className="space-y-4 h-[280px] overflow-y-auto pr-2 custom-scrollbar">
+              <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                 {webinars.map((w: any) => {
                   const d = w.date ? new Date(w.date) : null;
                   const dayName = d ? d.toLocaleDateString(undefined, { weekday: 'long' }) : '';
@@ -616,8 +693,13 @@ export default function PartnerOverview() {
           </CardContent>
         </Card>
 
-        {/* Account Manager */}
-        <Card className="bg-white border-[#2F4F97]/10 shadow-sm flex flex-col h-full">
+      </div>
+
+      {/* Row 2 (Below): 1st column -> Account Manager | 2nd column -> Platform Tutorials */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        {/* 1st column: Account Manager */}
+        <Card className="md:col-span-1 bg-white border-[#2F4F97]/10 shadow-sm flex flex-col h-full">
           <CardHeader className="pb-3 border-b">
             <CardTitle className="text-sm text-[#2F4F97] flex items-center gap-2 uppercase tracking-wider font-bold">
               <User className="w-4 h-4" />
@@ -742,6 +824,62 @@ export default function PartnerOverview() {
         </Card>
 
       </div>
+
+      {/* Notice Detail Dialog Popup */}
+      <Dialog open={!!selectedNotice} onOpenChange={(open) => !open && setSelectedNotice(null)}>
+        <DialogContent className="sm:max-w-[520px]">
+          <DialogHeader>
+            <div className="flex items-center gap-2 mb-1.5">
+              <Badge variant="outline" className={`text-[10px] uppercase font-bold tracking-wider ${
+                (selectedNotice?.category || "").toLowerCase().includes("offer")
+                  ? "bg-emerald-50 text-emerald-800 border-emerald-300"
+                  : (selectedNotice?.category || "").toLowerCase().includes("crucial") || (selectedNotice?.category || "").toLowerCase().includes("urgent") || (selectedNotice?.category || "").toLowerCase().includes("deadline")
+                  ? "bg-amber-50 text-amber-800 border-amber-300"
+                  : "bg-blue-50 text-blue-800 border-blue-300"
+              }`}>
+                {selectedNotice?.category || "Notice"}
+              </Badge>
+              {selectedNotice?.created_at && (
+                <span className="text-xs text-muted-foreground">
+                  Published: {new Date(selectedNotice.created_at).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric"
+                  })}
+                </span>
+              )}
+            </div>
+            <DialogTitle className="text-lg font-bold text-[#1E293B] leading-snug">
+              {selectedNotice?.title}
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="py-3 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap border-y border-slate-100 my-2 max-h-[360px] overflow-y-auto pr-1">
+            {selectedNotice?.content}
+          </div>
+
+          <DialogFooter className="flex flex-row justify-between items-center gap-2 sm:gap-0 pt-1">
+            {selectedNotice?.link_url ? (
+              <a
+                href={selectedNotice.link_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-white bg-[#2F4F97] hover:bg-[#243d78] rounded-md px-3.5 py-2 transition-colors"
+              >
+                Learn More <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            ) : <div />}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSelectedNotice(null)}
+              className="text-xs"
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

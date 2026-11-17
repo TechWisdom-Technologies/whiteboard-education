@@ -67,7 +67,7 @@ export default function AdminUniversities() {
   // Only keep columns that actually exist in the local public.universities table schema
   const fields: FieldConfig[] = [
     { key: "name", label: "Name", showInTable: true },
-    { key: "city", label: "City", showInTable: true },
+    { key: "city", label: "Campuses / City", showInTable: true },
     { key: "country_id", label: "Country", type: "relation", showInTable: false, relationConfig: { data: countries || [], valueKey: "id", labelKey: "name" } },
     { key: "description", label: "Short Description", type: "textarea", showInTable: false },
     { key: "about_text", label: "About (detailed)", type: "textarea", showInTable: false },
@@ -144,6 +144,29 @@ export default function AdminUniversities() {
         onBulkUpsert={(rows) => bulkUpsert.mutateAsync(rows).then(() => undefined)}
         onAddClick={() => setSearchParams({ action: "new" })}
         onEditClick={(row) => setEditingRow(row)}
+        renderCell={(row, key) => {
+          if (key === "name") {
+            return <span className="font-semibold text-slate-900">{row.name || "-"}</span>;
+          }
+          if (key === "city") {
+            const campusList = Array.isArray(row.campuses) && row.campuses.length > 0 
+              ? row.campuses 
+              : (typeof row.city === "string" ? row.city.split(/[,;&]+/).map((s: string) => s.trim()).filter(Boolean) : []);
+            if (campusList.length > 0) {
+              return (
+                <div className="flex flex-wrap gap-1">
+                  {campusList.map((c: string, idx: number) => (
+                    <span key={idx} className="inline-block bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[11px] font-medium border border-slate-200">
+                      {c}
+                    </span>
+                  ))}
+                </div>
+              );
+            }
+            return <span className="text-muted-foreground text-xs">{row.city || "-"}</span>;
+          }
+          return undefined;
+        }}
       />
     </div>
   );

@@ -406,55 +406,69 @@ if (isLoading) return <div className="min-h-screen flex flex-col bg-white"><Mega
       {/* ═══ HERO: Big Logo + Name + Buttons ═══ */}
       <section className="pb-10 pt-4 md:pt-0 bg-white">
         <div className="container mx-auto px-4 lg:px-6">
-          <div className="bg-[#EEF4FF] p-5 md:py-16 md:px-10 flex flex-col md:flex-row items-center md:items-start gap-8 rounded-2xl md:rounded-tl-md md:rounded-tr-[3rem] md:rounded-bl-[3rem] md:rounded-br-md min-h-[160px] md:min-h-[220px]">
-            {/* Desktop Logo */}
-            <img src={logo} alt={uni.name} className="hidden md:block h-40 w-40 object-contain rounded-xl bg-white p-4 shadow shrink-0" />
-            
-            <div className="flex-1 flex flex-col w-full">
-              {/* Mobile Header Block (Logo + Name + Location) */}
-              <div className="flex flex-row items-start gap-4 mb-5 md:hidden">
-                <img src={logo} alt={uni.name} className="h-[84px] w-[84px] object-contain rounded-xl bg-white p-2 shadow-sm shrink-0" />
-                <div className="flex flex-col pt-1">
-                  <h1 className="text-[20px] font-semibold text-[#1E293B] leading-tight">{uni.name}</h1>
+          <div className="relative overflow-hidden bg-[#EEF4FF] p-5 md:py-16 md:px-10 rounded-2xl md:rounded-tl-md md:rounded-tr-[3rem] md:rounded-bl-[3rem] md:rounded-br-md min-h-[160px] md:min-h-[220px]">
+            {/* Background Hero Banner Image (if available) */}
+            {(uni.hero_image || CAMPUS_IMAGES[uni.name]) && (
+              <div className="absolute inset-0 z-0 pointer-events-none">
+                <img
+                  src={uni.hero_image || CAMPUS_IMAGES[uni.name]}
+                  alt={`${uni.name} Campus Hero`}
+                  className="w-full h-full object-cover opacity-25"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#EEF4FF] via-[#EEF4FF]/95 to-[#EEF4FF]/80" />
+              </div>
+            )}
+
+            <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-8 w-full">
+              {/* Desktop Logo */}
+              <img src={logo} alt={uni.name} className="hidden md:block h-40 w-40 object-contain rounded-xl bg-white p-4 shadow shrink-0" />
+              
+              <div className="flex-1 flex flex-col w-full">
+                {/* Mobile Header Block (Logo + Name + Location) */}
+                <div className="flex flex-row items-start gap-4 mb-5 md:hidden">
+                  <img src={logo} alt={uni.name} className="h-[84px] w-[84px] object-contain rounded-xl bg-white p-2 shadow-sm shrink-0" />
+                  <div className="flex flex-col pt-1">
+                    <h1 className="text-[20px] font-semibold text-[#1E293B] leading-tight">{uni.name}</h1>
+                    {uni.city && (
+                      <p className="flex text-black items-center justify-start gap-1.5 text-[13px] mt-1.5">
+                        <MapPin className="h-3.5 w-3.5 text-[#2F4F97]" />
+                        {uni.city}, Malaysia
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Desktop Header Text */}
+                <h1 className="hidden md:block text-4xl font-semibold text-[#1E293B] mb-4 text-left">{uni.name}</h1>
+                
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                  {/* Desktop Location */}
                   {uni.city && (
-                    <p className="flex text-black items-center justify-start gap-1.5 text-[13px] mt-1.5">
-                      <MapPin className="h-3.5 w-3.5 text-[#2F4F97]" />
+                    <p className="hidden md:flex text-black items-center justify-start gap-2 text-lg">
+                      <MapPin className="h-5 w-5 text-[#2F4F97]" />
                       {uni.city}, Malaysia
                     </p>
                   )}
-                </div>
-              </div>
+                  
+                  {/* Mobile Buttons */}
+                  <div className="flex md:hidden flex-row gap-3 w-full justify-center">
+                    <Button className="rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
+                      Apply Now
+                    </Button>
+                    <Button variant="outline" className="hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate("/contact")}>
+                      Ask Us
+                    </Button>
+                  </div>
 
-              {/* Desktop Header Text */}
-              <h1 className="hidden md:block text-4xl font-semibold text-[#1E293B] mb-4 text-left">{uni.name}</h1>
-              
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                {/* Desktop Location */}
-                {uni.city && (
-                  <p className="hidden md:flex text-black items-center justify-start gap-2 text-lg">
-                    <MapPin className="h-5 w-5 text-[#2F4F97]" />
-                    {uni.city}, Malaysia
-                  </p>
-                )}
-                
-                {/* Mobile Buttons */}
-                <div className="flex md:hidden flex-row gap-3 w-full justify-center">
-                  <Button className="rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
-                    Apply Now
-                  </Button>
-                  <Button variant="outline" className="hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold h-[52px] flex-1 text-[14px]" onClick={() => navigate("/contact")}>
-                    Ask Us
-                  </Button>
-                </div>
-
-                {/* Desktop Buttons */}
-                <div className="hidden md:flex flex-row gap-3 w-auto justify-end">
-                  <Button className="rounded-[20px] font-semibold px-10 h-14 text-[15px]" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
-                    Apply Now
-                  </Button>
-                  <Button variant="outline" className="hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold px-10 h-14 text-[15px]" onClick={() => navigate("/contact")}>
-                    Ask Us
-                  </Button>
+                  {/* Desktop Buttons */}
+                  <div className="hidden md:flex flex-row gap-3 w-auto justify-end">
+                    <Button className="rounded-[20px] font-semibold px-10 h-14 text-[15px]" onClick={() => navigate(`/apply?universityId=${uni.id}`)}>
+                      Apply Now
+                    </Button>
+                    <Button variant="outline" className="hover:text-white hover:bg-[#2F4F97] hover:border-[#2F4F97] rounded-[20px] font-semibold px-10 h-14 text-[15px]" onClick={() => navigate("/contact")}>
+                      Ask Us
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -827,13 +841,13 @@ if (isLoading) return <div className="min-h-screen flex flex-col bg-white"><Mega
                       </Select>
                     </div>
 
-                    <div className="w-full md:flex-[1.5] relative">
-                      <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <div className="w-full md:flex-[1.5] relative group/search">
+                      <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within/search:!text-white transition-colors pointer-events-none" />
                       <Input 
                         placeholder="Search by Program Title" 
                         value={tempSearch} 
                         onChange={e => setTempSearch(e.target.value)} 
-                        className="pr-9 bg-white border border-gray-300 h-11 rounded-lg text-gray-500" 
+                        className="pr-9 bg-white border border-gray-300 h-11 rounded-lg text-gray-700 focus:!text-white focus:placeholder:!text-white/70" 
                       />
                     </div>
                   </div>
