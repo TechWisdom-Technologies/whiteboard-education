@@ -151,17 +151,24 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
           .single()
           .then(({ data, error }) => {
             if (data && !error) {
+              const d = data as any;
               setForm(prev => ({
-                ...prev,
-                ...data,
-                intake_months: Array.isArray(data.intake_months) ? data.intake_months : prev.intake_months,
-                yearly_fees: Array.isArray(data.yearly_fees) ? data.yearly_fees : prev.yearly_fees,
-                other_fees: Array.isArray(data.other_fees) ? data.other_fees : prev.other_fees,
-                curriculum: Array.isArray(data.curriculum) ? data.curriculum : prev.curriculum,
-                career_outcomes: Array.isArray(data.career_outcomes) ? data.career_outcomes : prev.career_outcomes,
-                entry_requirements: typeof data.entry_requirements === "object" && data.entry_requirements ? data.entry_requirements : prev.entry_requirements,
-                entry_requirements_text: data.entry_requirements_text || prev.entry_requirements_text || "",
-                overview: data.overview || prev.overview || "",
+                title: d.title || prev.title,
+                university_id: d.university_id || prev.university_id,
+                campus: d.campus || prev.campus,
+                degree_level: d.degree_level || prev.degree_level,
+                category: d.category || prev.category,
+                intake_months: Array.isArray(d.intake_months) ? d.intake_months.map(String) : prev.intake_months,
+                offer_letter: d.offer_letter || prev.offer_letter,
+                duration: d.duration || prev.duration,
+                entry_requirements: typeof d.entry_requirements === "object" && d.entry_requirements ? (d.entry_requirements as Record<string, string>) : prev.entry_requirements,
+                entry_requirements_text: d.entry_requirements_text || prev.entry_requirements_text,
+                class_type: d.class_type || prev.class_type,
+                yearly_fees: Array.isArray(d.yearly_fees) ? (d.yearly_fees as { year: string; fee: string }[]) : prev.yearly_fees,
+                other_fees: Array.isArray(d.other_fees) ? (d.other_fees as { description: string; fee: string }[]) : prev.other_fees,
+                overview: d.overview || prev.overview,
+                curriculum: Array.isArray(d.curriculum) ? (d.curriculum as { year: string; modules: string[] }[]) : prev.curriculum,
+                career_outcomes: Array.isArray(d.career_outcomes) ? d.career_outcomes.map(String) : prev.career_outcomes,
               }));
             }
           });
