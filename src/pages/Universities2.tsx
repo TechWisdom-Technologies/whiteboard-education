@@ -4,7 +4,7 @@ import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
 import { generateSlug } from "@/lib/utils";
-import { matchesCourseDepartment } from "@/lib/courseFilters";
+import { matchesCourseDepartment, COURSE_LIST_SELECT } from "@/lib/courseFilters";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -127,7 +127,7 @@ export default function Universities() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { data: universities = [], isLoading } = useTableData("universities", { orderBy: "name" });
-  const { data: courses = [], isLoading: loadingCourses } = useTableData("courses");
+  const { data: courses = [], isLoading: loadingCourses } = useTableData("courses", { select: COURSE_LIST_SELECT });
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [showFilters, setShowFilters] = useState(false);
   

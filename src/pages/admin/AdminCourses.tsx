@@ -3,12 +3,12 @@ import { useTableData, useInsertRow, useUpdateRow, useDeleteRow, useBulkUpsertRo
 import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import AdminCourseForm from "./AdminCourseForm";
-import { STUDY_AREAS, DEGREE_LEVELS, matchesCourseDepartment, matchesCourseLevel } from "@/lib/courseFilters";
+import { STUDY_AREAS, DEGREE_LEVELS, matchesCourseDepartment, matchesCourseLevel, COURSE_LIST_SELECT } from "@/lib/courseFilters";
 import { Building2, FolderTree, GraduationCap, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function AdminCourses() {
-  const { data, isLoading } = useTableData("courses");
+  const { data, isLoading } = useTableData("courses", { select: COURSE_LIST_SELECT });
   const { data: universities } = useTableData("universities", { orderBy: "name" });
   const { data: deptData } = useTableData("departments", { orderBy: "name" });
   const insert = useInsertRow("courses");

@@ -4,6 +4,8 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
+import { supabase } from "@/integrations/supabase/client";
+import { COURSE_LIST_SELECT } from "@/lib/courseFilters";
 import { courses as mockCourses, universities as mockUniversities } from "@/data/mockData";
 import { getActiveIntake, generateSlug } from "@/lib/utils";
 
@@ -18,15 +20,42 @@ export default function CourseDetail() {
   const { courseId } = useParams();
   const navigate = useNavigate();
   const { formatCurrency } = useCurrency();
-  const { data: liveCourses = [], isLoading: loadingC } = useTableData("courses");
+  const { data: liveCourses = [], isLoading: loadingC } = useTableData("courses", { select: COURSE_LIST_SELECT });
   const { data: liveUniversities = [] } = useTableData("universities");
   const courses = liveCourses.length > 0 ? liveCourses : (mockCourses as any[]);
   const universities = liveUniversities.length > 0 ? liveUniversities : (mockUniversities as any[]);
   const [activeSection, setActiveSection] = useState("key-info");
   const [copied, setCopied] = useState(false);
   const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
+  const [singleCourse, setSingleCourse] = useState<any | null>(null);
 
-  const course = courses.find((c: any) => generateSlug(c.title) === courseId || String(c.id) === String(courseId));
+  useEffect(() => {
+    if (!courseId) return;
+    let isMounted = true;
+    const fetchSingle = async () => {
+      try {
+        if (/^\d+$/.test(courseId)) {
+          const { data } = await supabase.from("courses").select("*").eq("id", Number(courseId)).maybeSingle();
+          if (isMounted && data) {
+            setSingleCourse(data);
+            return;
+          }
+        }
+        // Match slug
+        const clean = courseId.replace(/-/g, " ");
+        const { data } = await supabase.from("courses").select("*").ilike("title", clean).maybeSingle();
+        if (isMounted && data) {
+          setSingleCourse(data);
+        }
+      } catch (e) {
+        console.error("Error fetching single course:", e);
+      }
+    };
+    fetchSingle();
+    return () => { isMounted = false; };
+  }, [courseId]);
+
+  const course = singleCourse || courses.find((c: any) => generateSlug(c.title) === courseId || String(c.id) === String(courseId));
   const uni = course ? universities.find((u: any) => String(u.id) === String(course.university_id)) : null;
 
   useEffect(() => {

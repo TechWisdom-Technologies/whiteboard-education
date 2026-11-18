@@ -6,7 +6,7 @@ import { useTableData } from "@/hooks/useSupabaseData";
 import { useCourseCompare } from "@/contexts/CourseCompareContext";
 import { toast } from "sonner";
 import { getActiveIntake, generateSlug } from "@/lib/utils";
-import { matchesCourseDepartment, matchesCourseLevel } from "@/lib/courseFilters";
+import { matchesCourseDepartment, matchesCourseLevel, COURSE_LIST_SELECT } from "@/lib/courseFilters";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -117,7 +117,7 @@ export default function Courses2() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { addCourse, removeCourse, isComparing, compareList } = useCourseCompare();
   const { formatCurrency } = useCurrency();
-  const { data: courses = [], isLoading: loadingCourses } = useTableData("courses");
+  const { data: courses = [], isLoading: loadingCourses } = useTableData("courses", { select: COURSE_LIST_SELECT });
   const { data: universities = [], isLoading: loadingUnis } = useTableData("universities");
   const { data: deptData = [] } = useTableData("departments", { orderBy: "name" });
 

@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { matchesCourseDepartment, matchesCourseLevel } from "@/lib/courseFilters";
+import { matchesCourseDepartment, matchesCourseLevel, COURSE_LIST_SELECT } from "@/lib/courseFilters";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -151,7 +151,7 @@ export default function PartnerSearchPrograms() {
         const pageSize = 1000;
         const { data: firstBatch, count } = await supabase
           .from("courses")
-          .select("*", { count: "exact" })
+          .select(COURSE_LIST_SELECT, { count: "exact" })
           .range(0, pageSize - 1);
 
         let allCourses: Course[] = (firstBatch as any) || [];
@@ -163,7 +163,7 @@ export default function PartnerSearchPrograms() {
             batchPromises.push(
               supabase
                 .from("courses")
-                .select("*")
+                .select(COURSE_LIST_SELECT)
                 .range(start, start + pageSize - 1)
             );
           }

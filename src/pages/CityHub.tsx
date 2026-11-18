@@ -8,6 +8,7 @@ import {
   costOfLivingData,
 } from "@/data/mockData";
 import { useTableData } from "@/hooks/useSupabaseData";
+import { COURSE_LIST_SELECT } from "@/lib/courseFilters";
 import { generateSlug } from "@/lib/utils";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -111,7 +112,7 @@ export default function CityHub() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { data: liveUniversities = [] } = useTableData("universities");
-  const { data: liveCourses = [] } = useTableData("courses");
+  const { data: liveCourses = [] } = useTableData("courses", { select: COURSE_LIST_SELECT });
   const { data: liveAccommodations = [] } = useTableData("accommodations");
 
   const universities = useMemo(() => (liveUniversities.length > 0 ? liveUniversities : mockUniversities), [liveUniversities]);

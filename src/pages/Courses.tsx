@@ -10,7 +10,7 @@ import { useCurrency } from "@/contexts/CurrencyContext";
 import { toast } from "sonner";
 import { generateSlug } from "@/lib/utils";
 import { getActiveIntake } from "@/lib/utils";
-import { matchesCourseDepartment, matchesCourseLevel } from "@/lib/courseFilters";
+import { matchesCourseDepartment, matchesCourseLevel, COURSE_LIST_SELECT } from "@/lib/courseFilters";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -118,7 +118,7 @@ export default function Courses() {
   const [searchParams] = useSearchParams();
   const { addCourse, removeCourse, isComparing, compareList } = useCourseCompare();
   const { formatCurrency } = useCurrency();
-  const { data: courses = [], isLoading: loadingCourses } = useTableData("courses");
+  const { data: courses = [], isLoading: loadingCourses } = useTableData("courses", { select: COURSE_LIST_SELECT });
   const { data: universities = [], isLoading: loadingUnis } = useTableData("universities");
   const { data: deptData = [] } = useTableData("departments", { orderBy: "name" });
 

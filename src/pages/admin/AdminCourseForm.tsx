@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useTableData, useInsertRow, useUpdateRow } from "@/hooks/useSupabaseData";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -139,6 +140,32 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
         curriculum: Array.isArray(initialData.curriculum) ? initialData.curriculum : [],
         career_outcomes: Array.isArray(initialData.career_outcomes) ? initialData.career_outcomes : [],
       });
+
+      // If heavy fields (overview, curriculum, yearly fees) were omitted by lightweight list projection,
+      // load the full row for this single course in background (~50ms)
+      if (initialData.id && (initialData.overview === undefined || initialData.curriculum === undefined)) {
+        supabase
+          .from("courses")
+          .select("*")
+          .eq("id", initialData.id)
+          .single()
+          .then(({ data, error }) => {
+            if (data && !error) {
+              setForm(prev => ({
+                ...prev,
+                ...data,
+                intake_months: Array.isArray(data.intake_months) ? data.intake_months : prev.intake_months,
+                yearly_fees: Array.isArray(data.yearly_fees) ? data.yearly_fees : prev.yearly_fees,
+                other_fees: Array.isArray(data.other_fees) ? data.other_fees : prev.other_fees,
+                curriculum: Array.isArray(data.curriculum) ? data.curriculum : prev.curriculum,
+                career_outcomes: Array.isArray(data.career_outcomes) ? data.career_outcomes : prev.career_outcomes,
+                entry_requirements: typeof data.entry_requirements === "object" && data.entry_requirements ? data.entry_requirements : prev.entry_requirements,
+                entry_requirements_text: data.entry_requirements_text || prev.entry_requirements_text || "",
+                overview: data.overview || prev.overview || "",
+              }));
+            }
+          });
+      }
     }
   }, [initialData]);
 

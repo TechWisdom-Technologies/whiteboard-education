@@ -2,6 +2,7 @@ import { useCourseCompare } from "@/contexts/CourseCompareContext";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
+import { COURSE_LIST_SELECT } from "@/lib/courseFilters";
 import { X, ChevronRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -30,7 +31,7 @@ export default function CourseComparison() {
   const { compareList, removeCourse } = useCourseCompare();
   const { formatCurrency } = useCurrency();
   const navigate = useNavigate();
-  const { data: allCourses = [], isLoading: loadingCourses } = useTableData("courses");
+  const { data: allCourses = [], isLoading: loadingCourses } = useTableData("courses", { select: COURSE_LIST_SELECT });
   const { data: allUnis = [], isLoading: loadingUnis } = useTableData("universities");
 
   // Filter the selected courses

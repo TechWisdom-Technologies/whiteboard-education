@@ -4,6 +4,7 @@ import { generateSlug } from "@/lib/utils";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
+import { COURSE_LIST_SELECT } from "@/lib/courseFilters";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { sortUniversitiesWithPriority, mergePriorityUniversities } from "@/lib/universityPriority";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -17,7 +18,7 @@ import { UNIVERSITY_STATS } from "@/data/universityStats";
 export default function Compare() {
   const { data: liveUniversities = [] } = useTableData("universities", { orderBy: "name" });
   const universities = useMemo(() => mergePriorityUniversities(liveUniversities), [liveUniversities]);
-  const { data: liveCourses = [] } = useTableData("courses");
+  const { data: liveCourses = [] } = useTableData("courses", { select: COURSE_LIST_SELECT });
   const { currency, rates } = useCurrency();
 
   const [selected, setSelected] = useState<(string | null)[]>([null, null, null]);

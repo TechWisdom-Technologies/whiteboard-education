@@ -2,6 +2,7 @@ import { useState } from "react";
 import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
+import { COURSE_LIST_SELECT } from "@/lib/courseFilters";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -121,7 +122,7 @@ const chanceColors = {
 
 export default function EligibilityWizard() {
   const { data: universities = [] } = useTableData("universities");
-  const { data: courses = [] } = useTableData("courses");
+  const { data: courses = [] } = useTableData("courses", { select: COURSE_LIST_SELECT });
   const [step, setStep] = useState(1);
   const [expandedUniId, setExpandedUniId] = useState<string | null>(null);
   const { formatCurrency, currency, rates } = useCurrency();

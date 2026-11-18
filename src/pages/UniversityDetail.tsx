@@ -26,7 +26,7 @@ import { toast } from "sonner";
 import { useCourseCompare } from "@/contexts/CourseCompareContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { mergePriorityUniversities, ALL_PRIORITY_UNIVERSITIES } from "@/lib/universityPriority";
-import { matchesCourseDepartment } from "@/lib/courseFilters";
+import { matchesCourseDepartment, COURSE_LIST_SELECT } from "@/lib/courseFilters";
 
 const LOGOS: Record<string, string> = {
   "Multimedia University Malaysia (MMU)": "https://en.your-uni.com/assets/images/university/mmu-university.webp",
@@ -233,7 +233,7 @@ export default function UniversityDetail() {
   const location = useLocation();
   const { formatCurrency } = useCurrency();
   const { data: liveU = [], isLoading } = useTableData("universities");
-  const { data: liveC = [] } = useTableData("courses");
+  const { data: liveC = [] } = useTableData("courses", { select: COURSE_LIST_SELECT });
   const { data: liveA = [] } = useTableData("accommodations");
   const { addCourse, removeCourse, isComparing, compareList } = useCourseCompare();
 
