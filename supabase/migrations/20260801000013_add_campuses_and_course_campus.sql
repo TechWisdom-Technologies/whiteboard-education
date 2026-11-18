@@ -1,4 +1,4 @@
--- Migration: Add campuses to universities and campus to courses
+-- Migration: Add campuses to universities, and campus & category to courses
 -- Date: 2026-08-01
 
 -- 1. Add campuses jsonb to public.universities if it doesn't exist
@@ -25,7 +25,15 @@ WHERE (campuses IS NULL OR jsonb_array_length(campuses) = 0)
 ALTER TABLE public.courses 
 ADD COLUMN IF NOT EXISTS campus text DEFAULT '';
 
--- 4. Create index on courses campus and category for fast filtering
+-- 4. Add category text column to public.courses if it doesn't exist
+ALTER TABLE public.courses 
+ADD COLUMN IF NOT EXISTS category text DEFAULT '';
+
+-- 5. Create indexes for fast filtering
 CREATE INDEX IF NOT EXISTS idx_courses_university_id ON public.courses(university_id);
 CREATE INDEX IF NOT EXISTS idx_courses_degree_level ON public.courses(degree_level);
+CREATE INDEX IF NOT EXISTS idx_courses_campus ON public.courses(campus);
+CREATE INDEX IF NOT EXISTS idx_courses_category ON public.courses(category);
 
+-- 6. Notify PostgREST to reload its schema cache
+NOTIFY pgrst, 'reload schema';

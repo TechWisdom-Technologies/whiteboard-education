@@ -194,6 +194,19 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
     }
   };
 
+  const extractMissingColumn = (message?: string) => {
+    if (!message) return null;
+    const m1 = message.match(/Could not find the '([^']+)' column/i);
+    if (m1) return m1[1];
+    const m2 = message.match(/column "?([^"\s]+)"? of relation/i);
+    if (m2) return m2[1];
+    const m3 = message.match(/column [a-zA-Z0-9_]+\.([a-zA-Z0-9_]+) does not exist/i);
+    if (m3) return m3[1];
+    const m4 = message.match(/column "?([a-zA-Z0-9_]+)"? does not exist/i);
+    if (m4) return m4[1];
+    return null;
+  };
+
   const handleSave = async () => {
     if (!form.name || !form.country_id) {
       toast.error("Please fill in the required fields (Name and Country)");
@@ -207,40 +220,44 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
     }
 
     const computedCity = cleanCampuses.join(", ");
-    const payload = {
+    let payload: Record<string, any> = {
       ...form,
       city: computedCity,
       campuses: cleanCampuses,
     };
 
-    try {
-      if (isEditing) {
-        await updateRow.mutateAsync({ id: initialData.id, ...payload });
-        toast.success("University updated successfully");
-      } else {
-        await insertRow.mutateAsync(payload);
-        toast.success("University created successfully");
-      }
-      onSuccess();
-    } catch (error: any) {
-      // Gracefully handle if campuses column is not yet present in remote Supabase table
-      if (error?.message?.includes('column "campuses"') || error?.message?.includes("column universities.campuses")) {
-        const { campuses: _, ...rest } = payload;
-        try {
-          if (isEditing) {
-            await updateRow.mutateAsync({ id: initialData.id, ...rest });
-          } else {
-            await insertRow.mutateAsync(rest);
-          }
-          toast.success("University saved! (Run latest migration to store campuses column in DB)");
-          onSuccess();
-          return;
-        } catch (fallbackErr: any) {
-          toast.error(`Save failed: ${fallbackErr.message}`);
-          return;
+    const missingColumns: string[] = [];
+    const maxAttempts = 5;
+
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      try {
+        if (isEditing) {
+          await updateRow.mutateAsync({ id: initialData.id, ...payload });
+          toast.success(
+            missingColumns.length > 0
+              ? `University updated! (Run migration to persist ${missingColumns.join(", ")} column in DB)`
+              : "University updated successfully"
+          );
+        } else {
+          await insertRow.mutateAsync(payload);
+          toast.success(
+            missingColumns.length > 0
+              ? `University created! (Run migration to persist ${missingColumns.join(", ")} column in DB)`
+              : "University created successfully"
+          );
         }
+        onSuccess();
+        return;
+      } catch (error: any) {
+        const missingCol = extractMissingColumn(error?.message);
+        if (missingCol && missingCol in payload) {
+          delete payload[missingCol];
+          missingColumns.push(missingCol);
+          continue;
+        }
+        toast.error(`Save failed: ${error?.message || error}`);
+        return;
       }
-      toast.error(`Save failed: ${error.message}`);
     }
   };
 
