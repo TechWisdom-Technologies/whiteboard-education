@@ -10,6 +10,7 @@ import { useCurrency } from "@/contexts/CurrencyContext";
 import { toast } from "sonner";
 import { generateSlug } from "@/lib/utils";
 import { getActiveIntake } from "@/lib/utils";
+import { matchesCourseDepartment, matchesCourseLevel } from "@/lib/courseFilters";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -179,6 +180,36 @@ export default function Courses() {
     setCurrentPage(1);
   };
 
+  const handleSelectLevel = (val: string) => {
+    setSelectedLevel(val);
+    setAppliedFilters(prev => ({ ...prev, selectedLevel: val }));
+    setCurrentPage(1);
+  };
+
+  const handleSelectArea = (val: string) => {
+    setSelectedArea(val);
+    setAppliedFilters(prev => ({ ...prev, selectedArea: val }));
+    setCurrentPage(1);
+  };
+
+  const handleSelectLocation = (val: string) => {
+    setSelectedLocation(val);
+    setAppliedFilters(prev => ({ ...prev, selectedLocation: val }));
+    setCurrentPage(1);
+  };
+
+  const handleSelectIntake = (val: string) => {
+    setSelectedIntake(val);
+    setAppliedFilters(prev => ({ ...prev, selectedIntake: val }));
+    setCurrentPage(1);
+  };
+
+  const handleSelectFee = (val: string) => {
+    setSelectedFee(val);
+    setAppliedFilters(prev => ({ ...prev, selectedFee: val }));
+    setCurrentPage(1);
+  };
+
   const resetFilters = () => {
     setSearch("");
     setSelectedLevel("All Levels");
@@ -243,21 +274,12 @@ export default function Courses() {
 
       // 2. Degree / Qualification Level
       if (selectedLevel !== "All Levels") {
-        const lvlLower = selectedLevel.toLowerCase();
-        const effLower = effLevel.toLowerCase();
-        const rawLower = (c.degree_level || "").toLowerCase();
-        const matchesLevel = effLower.includes(lvlLower) || rawLower.includes(lvlLower) || titleLower.includes(lvlLower);
-        if (!matchesLevel) return false;
+        if (!matchesCourseLevel(c, selectedLevel)) return false;
       }
 
       // 3. Department / Study Area
       if (selectedArea !== "All Areas") {
-        const matchesExact = catLower === selectedArea.toLowerCase();
-        const keywords = AREA_KEYWORDS[selectedArea];
-        const matchesKeywords = keywords
-          ? keywords.some(kw => titleLower.includes(kw) || catLower.includes(kw))
-          : (titleLower.includes(selectedArea.toLowerCase()) || catLower.includes(selectedArea.toLowerCase()));
-        if (!matchesExact && !matchesKeywords) return false;
+        if (!matchesCourseDepartment(c, selectedArea)) return false;
       }
 
       // 4. Location / State
@@ -409,7 +431,7 @@ export default function Courses() {
                     {/* Degree Level */}
                     <div>
                       <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Level of Interest</label>
-                      <Select value={selectedLevel} onValueChange={setSelectedLevel} modal={false}>
+                      <Select value={selectedLevel} onValueChange={handleSelectLevel} modal={false}>
                         <SelectTrigger
                           className="h-11"
                           style={{
@@ -433,7 +455,7 @@ export default function Courses() {
                     {/* Study Area */}
                     <div>
                       <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Field of Study</label>
-                      <Select value={selectedArea} onValueChange={setSelectedArea} modal={false}>
+                      <Select value={selectedArea} onValueChange={handleSelectArea} modal={false}>
                         <SelectTrigger
                           className="h-11"
                           style={{
@@ -457,7 +479,7 @@ export default function Courses() {
                     {/* Locations Filter */}
                     <div>
                       <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Location</label>
-                      <Select value={selectedLocation} onValueChange={setSelectedLocation} modal={false}>
+                      <Select value={selectedLocation} onValueChange={handleSelectLocation} modal={false}>
                         <SelectTrigger
                           className="h-11"
                           style={{
@@ -495,7 +517,7 @@ export default function Courses() {
                     {/* Intake Filter */}
                     <div>
                       <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Intake</label>
-                      <Select value={selectedIntake} onValueChange={setSelectedIntake} modal={false}>
+                      <Select value={selectedIntake} onValueChange={handleSelectIntake} modal={false}>
                         <SelectTrigger
                           className="h-11"
                           style={{
@@ -529,7 +551,7 @@ export default function Courses() {
                     {/* Offer Letter Fee Filter */}
                     <div>
                       <label className="block text-[16px] font-medium text-[#1E293B] mb-1.5">Offer Letter Fee</label>
-                      <Select value={selectedFee} onValueChange={setSelectedFee} modal={false}>
+                      <Select value={selectedFee} onValueChange={handleSelectFee} modal={false}>
                         <SelectTrigger
                           className="h-11"
                           style={{

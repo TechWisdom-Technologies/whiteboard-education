@@ -2,7 +2,8 @@ import AdminCrudTable, { FieldConfig } from "@/components/admin/AdminCrudTable";
 import { useTableData, useInsertRow, useUpdateRow, useDeleteRow, useBulkUpsertRows } from "@/hooks/useSupabaseData";
 import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import AdminCourseForm, { STUDY_AREAS, DEGREE_LEVELS } from "./AdminCourseForm";
+import AdminCourseForm from "./AdminCourseForm";
+import { STUDY_AREAS, DEGREE_LEVELS, matchesCourseDepartment, matchesCourseLevel } from "@/lib/courseFilters";
 import { Building2, FolderTree, GraduationCap, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -77,10 +78,10 @@ export default function AdminCourses() {
       if (selectedUniversity !== "all" && course.university_id !== selectedUniversity) {
         return false;
       }
-      if (selectedDepartment !== "all" && course.category !== selectedDepartment) {
+      if (selectedDepartment !== "all" && !matchesCourseDepartment(course, selectedDepartment)) {
         return false;
       }
-      if (selectedLevel !== "all" && course.degree_level !== selectedLevel) {
+      if (selectedLevel !== "all" && !matchesCourseLevel(course, selectedLevel)) {
         return false;
       }
       return true;
@@ -114,7 +115,7 @@ export default function AdminCourses() {
         <select
           value={selectedUniversity}
           onChange={(e) => setSelectedUniversity(e.target.value)}
-          className="h-9 w-full sm:w-[240px] rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-700 font-medium shadow-sm hover:border-slate-300 focus:outline-none focus:ring-1 focus:ring-[#2F4F97]"
+          className="h-9 w-full sm:w-[240px] rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-700 font-medium shadow-sm hover:border-slate-300 focus:outline-none focus:ring-1 focus:ring-primary"
         >
           <option value="all">All Universities ({universities?.length || 0})</option>
           {universities?.map((u: any) => (
@@ -129,7 +130,7 @@ export default function AdminCourses() {
         <select
           value={selectedDepartment}
           onChange={(e) => setSelectedDepartment(e.target.value)}
-          className="h-9 w-full sm:w-[200px] rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-700 font-medium shadow-sm hover:border-slate-300 focus:outline-none focus:ring-1 focus:ring-[#2F4F97]"
+          className="h-9 w-full sm:w-[200px] rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-700 font-medium shadow-sm hover:border-slate-300 focus:outline-none focus:ring-1 focus:ring-primary"
         >
           <option value="all">All Departments ({allDepartments.length})</option>
           {allDepartments.map((dept) => (
@@ -144,7 +145,7 @@ export default function AdminCourses() {
         <select
           value={selectedLevel}
           onChange={(e) => setSelectedLevel(e.target.value)}
-          className="h-9 w-full sm:w-[170px] rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-700 font-medium shadow-sm hover:border-slate-300 focus:outline-none focus:ring-1 focus:ring-[#2F4F97]"
+          className="h-9 w-full sm:w-[170px] rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-700 font-medium shadow-sm hover:border-slate-300 focus:outline-none focus:ring-1 focus:ring-primary"
         >
           <option value="all">All Levels ({DEGREE_LEVELS.length})</option>
           {DEGREE_LEVELS.map((lvl) => (

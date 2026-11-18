@@ -6,6 +6,7 @@ import { useTableData } from "@/hooks/useSupabaseData";
 import { useCourseCompare } from "@/contexts/CourseCompareContext";
 import { toast } from "sonner";
 import { getActiveIntake, generateSlug } from "@/lib/utils";
+import { matchesCourseDepartment, matchesCourseLevel } from "@/lib/courseFilters";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -188,6 +189,24 @@ export default function Courses2() {
     setCurrentPage(1);
   };
 
+  const handleSelectLevel = (val: string) => {
+    setSelectedLevel(val);
+    setAppliedFilters(prev => ({ ...prev, selectedLevel: val }));
+    setCurrentPage(1);
+  };
+
+  const handleSelectArea = (val: string) => {
+    setSelectedArea(val);
+    setAppliedFilters(prev => ({ ...prev, selectedArea: val }));
+    setCurrentPage(1);
+  };
+
+  const handleSelectUniId = (val: string) => {
+    setSelectedUniId(val);
+    setAppliedFilters(prev => ({ ...prev, selectedUniId: val }));
+    setCurrentPage(1);
+  };
+
   const resetFilters = () => {
     setSearch("");
     setSelectedLevel("All Levels");
@@ -210,25 +229,11 @@ export default function Courses2() {
     const { search, selectedLevel, selectedArea, selectedUniId } = appliedFilters;
     return courses.filter((c: any) => {
       const titleLower = c.title?.toLowerCase() || "";
-      let effLevel = c.degree_level || "";
-      if (titleLower.includes("advanced diploma")) effLevel = "Advanced Diploma";
-      else if (titleLower.includes("diploma")) effLevel = "Diploma";
-      else if (titleLower.includes("certificate")) effLevel = "Certificate";
-      else if (titleLower.includes("foundation")) effLevel = "Foundation";
 
       if (search && !titleLower.includes(search.toLowerCase())) return false;
-      if (selectedLevel !== "All Levels" && !effLevel.includes(selectedLevel)) return false;
+      if (selectedLevel !== "All Levels" && !matchesCourseLevel(c, selectedLevel)) return false;
       if (selectedUniId !== "all" && String(c.university_id) !== selectedUniId) return false;
-      
-      if (selectedArea !== "All Areas") {
-        const keywords = AREA_KEYWORDS[selectedArea];
-        const title = c.title?.toLowerCase() || "";
-        const category = c.category?.toLowerCase() || "";
-        const matches = keywords
-          ? keywords.some(kw => title.includes(kw) || category.includes(kw))
-          : (category === selectedArea.toLowerCase() || title.includes(selectedArea.toLowerCase()));
-        if (!matches) return false;
-      }
+      if (selectedArea !== "All Areas" && !matchesCourseDepartment(c, selectedArea)) return false;
       
       return true;
     });
@@ -325,7 +330,7 @@ export default function Courses2() {
                     </div>
 
                     <div className="w-full">
-                      <Select value={selectedLevel} onValueChange={setSelectedLevel} modal={false}>
+                      <Select value={selectedLevel} onValueChange={handleSelectLevel} modal={false}>
                         <SelectTrigger className="h-11 text-[14px]" style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Poppins, sans-serif", color: selectedLevel === "All Levels" ? "#999999" : "#444444" }}>
                           <SelectValue placeholder="Degree Level" />
                         </SelectTrigger>
@@ -338,7 +343,7 @@ export default function Courses2() {
                     </div>
 
                     <div className="w-full">
-                      <Select value={selectedArea} onValueChange={setSelectedArea} modal={false}>
+                      <Select value={selectedArea} onValueChange={handleSelectArea} modal={false}>
                         <SelectTrigger className="h-11 text-[14px]" style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Poppins, sans-serif", color: selectedArea === "All Areas" ? "#999999" : "#444444" }}>
                           <SelectValue placeholder="Study Area" />
                         </SelectTrigger>
@@ -351,7 +356,7 @@ export default function Courses2() {
                     </div>
 
                     <div className="w-full">
-                      <Select value={selectedUniId} onValueChange={setSelectedUniId} modal={false}>
+                      <Select value={selectedUniId} onValueChange={handleSelectUniId} modal={false}>
                         <SelectTrigger className="h-11 text-[14px]" style={{ borderColor: "#cacdd4", borderRadius: "5px", fontFamily: "Poppins, sans-serif", color: selectedUniId === "all" ? "#999999" : "#444444" }}>
                           <SelectValue placeholder="Select University" />
                         </SelectTrigger>

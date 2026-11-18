@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { matchesCourseDepartment, matchesCourseLevel } from "@/lib/courseFilters";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -209,24 +210,11 @@ export default function PartnerSearchPrograms() {
       }
 
       if (appliedFilters.level !== "all") {
-        let matchLevel = appliedFilters.level;
-        if (appliedFilters.level === "Bachelor's Degree") matchLevel = "Bachelor";
-        if (appliedFilters.level === "Master's Degree") matchLevel = "Master";
-        if (appliedFilters.level === "Doctoral Degree (PhD)") matchLevel = "PhD";
-        if (appliedFilters.level === "Foundation / A-level") matchLevel = "Foundation";
-        if (!course.degree_level || !course.degree_level.includes(matchLevel)) return false;
+        if (!matchesCourseLevel(course, appliedFilters.level)) return false;
       }
 
       if (appliedFilters.studyArea !== "all") {
-        const titleLower = course.title.toLowerCase();
-        const areaLower = appliedFilters.studyArea.toLowerCase();
-        if (
-          !titleLower.includes(areaLower) &&
-          !(areaLower === "medicine & health" && (titleLower.includes("medicine") || titleLower.includes("health") || titleLower.includes("nursing"))) &&
-          !(areaLower === "computer science & it" && (titleLower.includes("computer") || titleLower.includes("software") || titleLower.includes("it") || titleLower.includes("information")))
-        ) {
-          return false;
-        }
+        if (!matchesCourseDepartment(course, appliedFilters.studyArea)) return false;
       }
 
       return true;

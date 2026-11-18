@@ -339,19 +339,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
           </div>
 
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label className="text-[13px] font-semibold text-gray-700">Department / Study Area</Label>
-              {!isAddingDept && (
-                <button
-                  type="button"
-                  onClick={() => setIsAddingDept(true)}
-                  className="text-xs text-[#2F4F97] hover:text-[#233d75] hover:underline font-medium inline-flex items-center gap-1"
-                >
-                  <Plus className="h-3 w-3" />
-                  Add New
-                </button>
-              )}
-            </div>
+            <Label className="text-[13px] font-semibold text-gray-700">Department / Study Area</Label>
 
             {isAddingDept ? (
               <div className="flex items-center gap-2 animate-in fade-in duration-150">
@@ -368,7 +356,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                     }
                   }}
                   placeholder="Type new department (e.g. Hospitality & Tourism)..."
-                  className="h-10 text-sm bg-white border-blue-300 focus:border-[#2F4F97]"
+                  className="h-10 text-sm bg-white"
                   autoFocus
                   disabled={isCreatingDept}
                 />
@@ -377,7 +365,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                   size="sm"
                   onClick={handleCreateDepartment}
                   disabled={isCreatingDept || !newDeptName.trim()}
-                  className="h-10 px-3.5 bg-[#2F4F97] hover:bg-[#233d75] text-white shrink-0 text-xs font-semibold"
+                  className="h-10 px-4 text-xs font-semibold"
                 >
                   {isCreatingDept ? "Adding..." : "Add"}
                 </Button>
@@ -412,10 +400,10 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                   variant="outline"
                   size="sm"
                   onClick={() => setIsAddingDept(true)}
-                  className="h-10 px-3 text-xs shrink-0 whitespace-nowrap border-slate-200 hover:border-[#2F4F97] hover:text-[#2F4F97] flex items-center gap-1 font-medium shadow-sm"
+                  className="h-10 px-3 text-xs shrink-0 whitespace-nowrap"
                   title="Add a new department"
                 >
-                  <Plus className="h-3.5 w-3.5" />
+                  <Plus className="h-3.5 w-3.5 mr-1" />
                   Add New
                 </Button>
               </div>

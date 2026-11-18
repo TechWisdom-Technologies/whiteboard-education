@@ -26,6 +26,7 @@ import { toast } from "sonner";
 import { useCourseCompare } from "@/contexts/CourseCompareContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { mergePriorityUniversities, ALL_PRIORITY_UNIVERSITIES } from "@/lib/universityPriority";
+import { matchesCourseDepartment } from "@/lib/courseFilters";
 
 const LOGOS: Record<string, string> = {
   "Multimedia University Malaysia (MMU)": "https://en.your-uni.com/assets/images/university/mmu-university.webp",
@@ -365,7 +366,7 @@ export default function UniversityDetail() {
       effLevel.toLowerCase().includes(cLevel) || 
       levelKey(effLevel).toLowerCase() === cLevel;
     // Aligning category filter with the Overview table's logic
-    const matchesCategory = cCategory === "all" || categoryKey(c.title).toLowerCase() === cCategory.toLowerCase();
+    const matchesCategory = cCategory === "all" || matchesCourseDepartment(c, cCategory) || categoryKey(c.title).toLowerCase() === cCategory.toLowerCase();
     return matchesSearch && matchesLevel && matchesCategory;
   });
 

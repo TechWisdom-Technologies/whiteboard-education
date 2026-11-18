@@ -4,6 +4,7 @@ import { MegaMenu } from "@/components/public/MegaMenu";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { useTableData } from "@/hooks/useSupabaseData";
 import { generateSlug } from "@/lib/utils";
+import { matchesCourseDepartment } from "@/lib/courseFilters";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -205,13 +206,7 @@ export default function Universities() {
       }
 
       if (selectedField !== "All Fields") {
-        const keywords = FIELD_KEYWORDS[selectedField];
-        const hasField = uniCourses.some((c: any) => {
-          const title = c.title?.toLowerCase() || "";
-          const cat = (c.category || "").toLowerCase();
-          if (cat === selectedField.toLowerCase()) return true;
-          return keywords ? keywords.some(kw => title.includes(kw) || cat.includes(kw)) : (title.includes(selectedField.toLowerCase()) || cat.includes(selectedField.toLowerCase()));
-        });
+        const hasField = uniCourses.some((c: any) => matchesCourseDepartment(c, selectedField));
         if (!hasField) return false;
       }
 
