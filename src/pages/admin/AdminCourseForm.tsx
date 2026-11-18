@@ -32,6 +32,12 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
   const insertRow = useInsertRow("courses");
   const updateRow = useUpdateRow("courses");
   const { data: universities } = useTableData("universities", { orderBy: "name" });
+  const { data: deptData } = useTableData("departments", { orderBy: "name" });
+  const insertDept = useInsertRow("departments");
+
+  const [isAddingDept, setIsAddingDept] = useState(false);
+  const [newDeptName, setNewDeptName] = useState("");
+  const [isCreatingDept, setIsCreatingDept] = useState(false);
 
   const [form, setForm] = useState({
     title: "",
@@ -71,6 +77,47 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
     }
     return [];
   }, [selectedUni]);
+
+  // Merge default study areas, departments table records, and current form value
+  const allDepartments = useMemo(() => {
+    const set = new Set<string>(STUDY_AREAS);
+    if (deptData && Array.isArray(deptData)) {
+      deptData.forEach((d: any) => {
+        if (d.name && typeof d.name === "string" && d.name.trim()) {
+          set.add(d.name.trim());
+        }
+      });
+    }
+    if (form.category && form.category.trim()) {
+      set.add(form.category.trim());
+    }
+    return Array.from(set).sort();
+  }, [deptData, form.category]);
+
+  const handleCreateDepartment = async () => {
+    const trimmed = newDeptName.trim();
+    if (!trimmed) {
+      toast.error("Please enter a department name");
+      return;
+    }
+
+    setIsCreatingDept(true);
+    try {
+      try {
+        await insertDept.mutateAsync({ name: trimmed });
+      } catch (dbErr: any) {
+        console.warn("Could not insert to departments table (migration may be pending):", dbErr);
+      }
+      setForm(prev => ({ ...prev, category: trimmed }));
+      setNewDeptName("");
+      setIsAddingDept(false);
+      toast.success(`Department "${trimmed}" added and selected`);
+    } catch (err: any) {
+      toast.error(`Failed to add department: ${err.message || err}`);
+    } finally {
+      setIsCreatingDept(false);
+    }
+  };
 
   useEffect(() => {
     if (initialData) {
@@ -292,17 +339,87 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
           </div>
 
           <div className="space-y-2">
-            <Label className="text-[13px] font-semibold text-gray-700">Department / Study Area</Label>
-            <select
-              className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm"
-              value={form.category}
-              onChange={(e) => setForm(prev => ({ ...prev, category: e.target.value }))}
-            >
-              <option value="">Select Department / Study Area...</option>
-              {STUDY_AREAS.map(area => (
-                <option key={area} value={area}>{area}</option>
-              ))}
-            </select>
+            <div className="flex items-center justify-between">
+              <Label className="text-[13px] font-semibold text-gray-700">Department / Study Area</Label>
+              {!isAddingDept && (
+                <button
+                  type="button"
+                  onClick={() => setIsAddingDept(true)}
+                  className="text-xs text-[#2F4F97] hover:text-[#233d75] hover:underline font-medium inline-flex items-center gap-1"
+                >
+                  <Plus className="h-3 w-3" />
+                  Add New
+                </button>
+              )}
+            </div>
+
+            {isAddingDept ? (
+              <div className="flex items-center gap-2 animate-in fade-in duration-150">
+                <Input
+                  value={newDeptName}
+                  onChange={(e) => setNewDeptName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleCreateDepartment();
+                    } else if (e.key === "Escape") {
+                      setIsAddingDept(false);
+                      setNewDeptName("");
+                    }
+                  }}
+                  placeholder="Type new department (e.g. Hospitality & Tourism)..."
+                  className="h-10 text-sm bg-white border-blue-300 focus:border-[#2F4F97]"
+                  autoFocus
+                  disabled={isCreatingDept}
+                />
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={handleCreateDepartment}
+                  disabled={isCreatingDept || !newDeptName.trim()}
+                  className="h-10 px-3.5 bg-[#2F4F97] hover:bg-[#233d75] text-white shrink-0 text-xs font-semibold"
+                >
+                  {isCreatingDept ? "Adding..." : "Add"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setIsAddingDept(false);
+                    setNewDeptName("");
+                  }}
+                  disabled={isCreatingDept}
+                  className="h-10 px-3 shrink-0 text-xs"
+                >
+                  Cancel
+                </Button>
+              </div>
+            ) : (
+              <div className="flex gap-2 items-center">
+                <select
+                  className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm"
+                  value={form.category}
+                  onChange={(e) => setForm(prev => ({ ...prev, category: e.target.value }))}
+                >
+                  <option value="">Select Department / Study Area...</option>
+                  {allDepartments.map((area) => (
+                    <option key={area} value={area}>{area}</option>
+                  ))}
+                </select>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsAddingDept(true)}
+                  className="h-10 px-3 text-xs shrink-0 whitespace-nowrap border-slate-200 hover:border-[#2F4F97] hover:text-[#2F4F97] flex items-center gap-1 font-medium shadow-sm"
+                  title="Add a new department"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Add New
+                </Button>
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">

@@ -123,6 +123,27 @@ export default function Universities() {
   const [searchParams] = useSearchParams();
   const { data: universities = [], isLoading } = useTableData("universities", { orderBy: "name" });
   const { data: courses = [], isLoading: loadingCourses } = useTableData("courses");
+  const { data: deptData = [] } = useTableData("departments", { orderBy: "name" });
+
+  const fieldsOfStudy = useMemo(() => {
+    const set = new Set<string>(FIELDS_OF_STUDY);
+    if (deptData && Array.isArray(deptData)) {
+      deptData.forEach((d: any) => {
+        if (d.name && typeof d.name === "string" && d.name.trim()) {
+          set.add(d.name.trim());
+        }
+      });
+    }
+    if (courses && Array.isArray(courses)) {
+      courses.forEach((c: any) => {
+        if (c.category && typeof c.category === "string" && c.category.trim()) {
+          set.add(c.category.trim());
+        }
+      });
+    }
+    const list = Array.from(set).filter(f => f !== "All Fields").sort();
+    return ["All Fields", ...list];
+  }, [deptData, courses]);
   const [search, setSearch] = useState(searchParams.get("search") || "");
 
   useEffect(() => {
@@ -185,13 +206,13 @@ export default function Universities() {
 
       if (selectedField !== "All Fields") {
         const keywords = FIELD_KEYWORDS[selectedField];
-        if (keywords) {
-          const hasField = uniCourses.some((c: any) => {
-            const title = c.title?.toLowerCase() || "";
-            return keywords.some(kw => title.includes(kw));
-          });
-          if (!hasField) return false;
-        }
+        const hasField = uniCourses.some((c: any) => {
+          const title = c.title?.toLowerCase() || "";
+          const cat = (c.category || "").toLowerCase();
+          if (cat === selectedField.toLowerCase()) return true;
+          return keywords ? keywords.some(kw => title.includes(kw) || cat.includes(kw)) : (title.includes(selectedField.toLowerCase()) || cat.includes(selectedField.toLowerCase()));
+        });
+        if (!hasField) return false;
       }
 
       return true;
@@ -346,7 +367,7 @@ export default function Universities() {
                         <SelectValue placeholder="Field of Study" />
                       </SelectTrigger>
                       <SelectContent>
-                        {FIELDS_OF_STUDY.map((f) => (
+                        {fieldsOfStudy.map((f) => (
                           <SelectItem key={f} value={f}>{f}</SelectItem>
                         ))}
                       </SelectContent>

@@ -9,10 +9,31 @@ import { Button } from "@/components/ui/button";
 export default function AdminCourses() {
   const { data, isLoading } = useTableData("courses");
   const { data: universities } = useTableData("universities", { orderBy: "name" });
+  const { data: deptData } = useTableData("departments", { orderBy: "name" });
   const insert = useInsertRow("courses");
   const update = useUpdateRow("courses");
   const del = useDeleteRow("courses");
   const bulkUpsert = useBulkUpsertRows("courses");
+
+  // Dynamic departments list
+  const allDepartments = useMemo(() => {
+    const set = new Set<string>(STUDY_AREAS);
+    if (deptData && Array.isArray(deptData)) {
+      deptData.forEach((d: any) => {
+        if (d.name && typeof d.name === "string" && d.name.trim()) {
+          set.add(d.name.trim());
+        }
+      });
+    }
+    if (data && Array.isArray(data)) {
+      data.forEach((c: any) => {
+        if (c.category && typeof c.category === "string" && c.category.trim()) {
+          set.add(c.category.trim());
+        }
+      });
+    }
+    return Array.from(set).sort();
+  }, [deptData, data]);
 
   // Filter states
   const [selectedUniversity, setSelectedUniversity] = useState<string>("all");
@@ -23,7 +44,7 @@ export default function AdminCourses() {
     { key: "title", label: "Course Title", showInTable: true },
     { key: "university_id", label: "University", type: "relation", showInTable: false, relationConfig: { data: universities || [], valueKey: "id", labelKey: "name" } },
     { key: "campus", label: "Campus", showInTable: true, placeholder: "e.g. Cyberjaya" },
-    { key: "category", label: "Department / Area", type: "select", options: STUDY_AREAS, showInTable: true },
+    { key: "category", label: "Department / Area", type: "select", options: allDepartments, showInTable: true },
     { key: "degree_level", label: "Qualification", type: "select", options: DEGREE_LEVELS, showInTable: true },
     { key: "duration", label: "Duration", showInTable: true, placeholder: "e.g. 3 years" },
     { key: "intake_months", label: "Intake", type: "tag_input", showInTable: false, placeholder: "e.g. January, May, September" },
@@ -110,8 +131,8 @@ export default function AdminCourses() {
           onChange={(e) => setSelectedDepartment(e.target.value)}
           className="h-9 w-full sm:w-[200px] rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-700 font-medium shadow-sm hover:border-slate-300 focus:outline-none focus:ring-1 focus:ring-[#2F4F97]"
         >
-          <option value="all">All Departments ({STUDY_AREAS.length})</option>
-          {STUDY_AREAS.map((dept) => (
+          <option value="all">All Departments ({allDepartments.length})</option>
+          {allDepartments.map((dept) => (
             <option key={dept} value={dept}>{dept}</option>
           ))}
         </select>

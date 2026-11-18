@@ -119,6 +119,27 @@ export default function Courses() {
   const { formatCurrency } = useCurrency();
   const { data: courses = [], isLoading: loadingCourses } = useTableData("courses");
   const { data: universities = [], isLoading: loadingUnis } = useTableData("universities");
+  const { data: deptData = [] } = useTableData("departments", { orderBy: "name" });
+
+  const studyAreas = useMemo(() => {
+    const set = new Set<string>(STUDY_AREAS);
+    if (deptData && Array.isArray(deptData)) {
+      deptData.forEach((d: any) => {
+        if (d.name && typeof d.name === "string" && d.name.trim()) {
+          set.add(d.name.trim());
+        }
+      });
+    }
+    if (courses && Array.isArray(courses)) {
+      courses.forEach((c: any) => {
+        if (c.category && typeof c.category === "string" && c.category.trim()) {
+          set.add(c.category.trim());
+        }
+      });
+    }
+    const list = Array.from(set).filter(a => a !== "All Areas").sort();
+    return ["All Areas", ...list];
+  }, [deptData, courses]);
 
   const [search, setSearch] = useState(searchParams.get("search") || "");
 
@@ -233,7 +254,9 @@ export default function Courses() {
       if (selectedArea !== "All Areas") {
         const matchesExact = catLower === selectedArea.toLowerCase();
         const keywords = AREA_KEYWORDS[selectedArea];
-        const matchesKeywords = keywords ? keywords.some(kw => titleLower.includes(kw) || catLower.includes(kw)) : false;
+        const matchesKeywords = keywords
+          ? keywords.some(kw => titleLower.includes(kw) || catLower.includes(kw))
+          : (titleLower.includes(selectedArea.toLowerCase()) || catLower.includes(selectedArea.toLowerCase()));
         if (!matchesExact && !matchesKeywords) return false;
       }
 
@@ -424,7 +447,7 @@ export default function Courses() {
                           <SelectValue placeholder="Select Field of Study" />
                         </SelectTrigger>
                         <SelectContent>
-                          {STUDY_AREAS.map((a) => (
+                          {studyAreas.map((a) => (
                             <SelectItem key={a} value={a}>{a}</SelectItem>
                           ))}
                         </SelectContent>
