@@ -28,6 +28,35 @@ export const STUDY_AREAS = [
   "Social Sciences"
 ];
 
+export const DURATION_NUMBERS = [
+  "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1",
+  "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "2",
+  "2.1", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7", "2.8", "2.9", "3",
+  "3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9", "4",
+];
+export const DURATION_UNITS = ["Years", "Months"];
+
+const parseDuration = (raw: string) => {
+  if (!raw || !raw.trim()) {
+    return { number: "", unit: "Years" };
+  }
+  const trimmed = raw.trim();
+  const match = trimmed.match(/^([\d.]+)\s*(.*)$/);
+  if (match) {
+    const rawNum = match[1];
+    const rawUnit = match[2]?.trim().toLowerCase();
+
+    const parsedFloat = parseFloat(rawNum);
+    const normalizedNum = isNaN(parsedFloat)
+      ? rawNum
+      : (parsedFloat % 1 === 0 ? parsedFloat.toString() : parsedFloat.toFixed(1));
+
+    const unit = rawUnit.startsWith("month") ? "Months" : "Years";
+    return { number: normalizedNum, unit };
+  }
+  return { number: "", unit: "Years" };
+};
+
 export default function AdminCourseForm({ initialData, onCancel, onSuccess }: AdminCourseFormProps) {
   const isEditing = !!initialData;
   const insertRow = useInsertRow("courses");
@@ -61,6 +90,28 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
 
   const [newTag, setNewTag] = useState("");
   const [newCareerTag, setNewCareerTag] = useState("");
+  const [selectedDurationUnit, setSelectedDurationUnit] = useState<string>("Years");
+
+  const { number: durationNumber, unit: parsedDurationUnit } = useMemo(() => {
+    return parseDuration(form.duration);
+  }, [form.duration]);
+
+  const durationUnit = parsedDurationUnit || selectedDurationUnit;
+
+  const handleDurationChange = (num: string, unit: string) => {
+    setSelectedDurationUnit(unit);
+    if (!num) {
+      setForm(prev => ({ ...prev, duration: "" }));
+      return;
+    }
+    const effectiveUnit = unit || "Years";
+    const formattedUnit = (effectiveUnit === "Years" && Number(num) === 1)
+      ? "Year"
+      : (effectiveUnit === "Months" && Number(num) === 1)
+        ? "Month"
+        : effectiveUnit;
+    setForm(prev => ({ ...prev, duration: `${num} ${formattedUnit}` }));
+  };
 
   const selectedUni = universities?.find((u: any) => u.id === form.university_id);
 
@@ -446,11 +497,35 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
 
           <div className="space-y-2">
             <Label className="text-[13px] font-semibold text-gray-700">Duration</Label>
-            <Input 
-              value={form.duration} 
-              onChange={(e) => setForm(prev => ({ ...prev, duration: e.target.value }))} 
-              placeholder="e.g. 3 Years, 4 Years" 
-            />
+            <div className="grid grid-cols-2 gap-3">
+              <select
+                className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700"
+                value={durationNumber}
+                onChange={(e) => handleDurationChange(e.target.value, durationUnit)}
+              >
+                <option value="">Select duration...</option>
+                {durationNumber && !DURATION_NUMBERS.includes(durationNumber) && (
+                  <option value={durationNumber}>{durationNumber}</option>
+                )}
+                {DURATION_NUMBERS.map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700"
+                value={durationUnit}
+                onChange={(e) => handleDurationChange(durationNumber, e.target.value)}
+              >
+                {DURATION_UNITS.map((u) => (
+                  <option key={u} value={u}>
+                    {u}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className="space-y-2">

@@ -1,14 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { Eye, CheckCircle, XCircle, Loader2, FileText, ExternalLink, Clock, Trash2 } from "lucide-react";
+import { Eye, CheckCircle, XCircle, Loader2, FileText, ExternalLink, Clock, Trash2, User, UserCheck, UserX, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -27,6 +29,7 @@ interface PartnerRegistration {
   trade_license_url: string;
   certificate_urls: any[];
   status: string;
+  account_manager_id?: string | null;
   admin_notes: string;
   created_at: string;
 }
@@ -44,6 +47,8 @@ export default function AdminPartners() {
   const { session, user } = useAuth();
   const navigate = useNavigate();
   const [registrations, setRegistrations] = useState<PartnerRegistration[]>([]);
+  const [accountManagers, setAccountManagers] = useState<any[]>([]);
+  const [selectedManagerFilter, setSelectedManagerFilter] = useState<string>("all");
   const [loading, setLoading] = useState(true);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<TabKey>("all");
@@ -52,19 +57,59 @@ export default function AdminPartners() {
     if (!user?.id) return;
     try {
       const token = session?.access_token || (await supabase.auth.getSession()).data.session?.access_token || SUPABASE_KEY;
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?select=*&order=created_at.desc`, {
-        headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${token}` },
-      });
+      const [res, amRes] = await Promise.all([
+        fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?select=*&order=created_at.desc`, {
+          headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${token}` },
+        }),
+        fetch(`${SUPABASE_URL}/rest/v1/account_managers?select=id,name,title,email,phone,photo_url&order=name.asc`, {
+          headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${token}` },
+        }),
+      ]);
       if (res.ok) {
         setRegistrations(await res.json());
+      }
+      if (amRes.ok) {
+        setAccountManagers(await amRes.json());
       }
     } catch { /* ignore */ } finally { setLoading(false); }
   };
 
   useEffect(() => { fetchRegistrations(); }, [user?.id]);
 
+  const managersMap = useMemo(() => {
+    const map = new Map<string, any>();
+    accountManagers.forEach(am => map.set(am.id, am));
+    return map;
+  }, [accountManagers]);
+
   const openDetail = (reg: PartnerRegistration) => {
     navigate(`/admin/partners/${reg.id}`);
+  };
+
+  const handleQuickAssignManager = async (partnerId: string, managerIdValue: string) => {
+    const newManagerId = managerIdValue === "none" ? null : managerIdValue;
+    try {
+      const token = session?.access_token || (await supabase.auth.getSession()).data.session?.access_token || SUPABASE_KEY;
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?id=eq.${partnerId}`, {
+        method: "PATCH",
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "Prefer": "return=minimal",
+        },
+        body: JSON.stringify({ account_manager_id: newManagerId }),
+      });
+      if (!res.ok) throw new Error("Failed to assign manager");
+
+      setRegistrations((prev) =>
+        prev.map((p) => (p.id === partnerId ? { ...p, account_manager_id: newManagerId } : p))
+      );
+      const managerName = newManagerId ? managersMap.get(newManagerId)?.name : null;
+      toast.success(managerName ? `Assigned to ${managerName}` : "Account manager unassigned");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update account manager");
+    }
   };
 
   const handleDelete = async (id: string, e: React.MouseEvent) => {
@@ -110,8 +155,17 @@ export default function AdminPartners() {
     }
   };
 
-  // Filtered data based on active tab
-  const filtered = activeTab === "all" ? registrations : registrations.filter(r => r.status === activeTab);
+  // Filtered data based on active tab and manager filter
+  const filtered = registrations.filter((r) => {
+    const matchesTab = activeTab === "all" || r.status === activeTab;
+    const matchesManager =
+      selectedManagerFilter === "all"
+        ? true
+        : selectedManagerFilter === "unassigned"
+        ? !r.account_manager_id
+        : r.account_manager_id === selectedManagerFilter;
+    return matchesTab && matchesManager;
+  });
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -196,8 +250,8 @@ export default function AdminPartners() {
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-slate-800">All B2B Partners</h1>
       </div>
-      {/* Tabs and Bulk Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 border-b">
+      {/* Tabs and Filters */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 border-b gap-3 pb-2 sm:pb-0">
         <div className="flex items-center gap-1 overflow-x-auto hide-scrollbar">
           {TABS.map(tab => (
             <button
@@ -222,14 +276,57 @@ export default function AdminPartners() {
           ))}
         </div>
 
-        {/* Bulk actions */}
-        {selectedIds.length > 0 && (
-          <div className="flex justify-end sm:pr-2 py-2 sm:py-0 sm:pb-1.5">
+        {/* Manager Filter & Bulk actions */}
+        <div className="flex items-center gap-2 justify-end sm:pr-2 pb-1.5 sm:pb-0">
+          <Select value={selectedManagerFilter} onValueChange={setSelectedManagerFilter}>
+            <SelectTrigger className="h-8 w-[185px] text-xs bg-white border-gray-200">
+              <div className="flex items-center gap-1.5 truncate">
+                <UserCheck className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                <SelectValue placeholder="All Managers" />
+              </div>
+            </SelectTrigger>
+            <SelectContent className="max-h-72">
+              <SelectItem
+                value="all"
+                className="text-xs py-1.5 cursor-pointer focus:bg-slate-100 focus:text-slate-900 data-[highlighted]:bg-slate-100 data-[highlighted]:text-slate-900"
+              >
+                All Account Managers
+              </SelectItem>
+              <SelectItem
+                value="unassigned"
+                className="text-xs py-1.5 cursor-pointer focus:bg-slate-100 focus:text-slate-900 data-[highlighted]:bg-slate-100 data-[highlighted]:text-slate-900"
+              >
+                <div className="flex items-center gap-2 text-slate-600">
+                  <UserX className="h-3.5 w-3.5 text-slate-400" />
+                  <span>Unassigned</span>
+                </div>
+              </SelectItem>
+              {accountManagers.map((am) => (
+                <SelectItem
+                  key={am.id}
+                  value={am.id}
+                  className="text-xs py-1.5 cursor-pointer focus:bg-slate-100 focus:text-slate-900 data-[highlighted]:bg-slate-100 data-[highlighted]:text-slate-900"
+                >
+                  <div className="flex items-center gap-2">
+                    <Avatar className="h-5 w-5 rounded-full shrink-0 border border-slate-200">
+                      <AvatarImage src={am.photo_url || ""} alt={am.name} className="object-cover" />
+                      <AvatarFallback className="text-[9px] bg-slate-100 font-semibold text-slate-700">
+                        {am.name?.charAt(0) || 'M'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="font-medium text-slate-800 text-xs">{am.name}</span>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {selectedIds.length > 0 && (
             <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-semibold rounded-lg text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors" onClick={handleBulkDelete}>
               <Trash2 className="h-4 w-4 mr-1.5" /> Delete Selected ({selectedIds.length})
             </Button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {filtered.length === 0 ? (
@@ -250,6 +347,7 @@ export default function AdminPartners() {
                 <TableHead className="h-10">Agency</TableHead>
                 <TableHead className="h-10">Representative</TableHead>
                 <TableHead className="h-10">Email</TableHead>
+                <TableHead className="h-10">Account Manager</TableHead>
                 <TableHead className="w-[80px] h-10">Status</TableHead>
                 <TableHead className="w-[100px] h-10">Documents</TableHead>
                 <TableHead className="w-[120px] h-10">Date</TableHead>
@@ -259,6 +357,7 @@ export default function AdminPartners() {
             <TableBody>
               {filtered.map((reg) => {
                 const docCount = (reg.nid_document_url ? 1 : 0) + (reg.trade_license_url ? 1 : 0) + ((reg.certificate_urls as any[])?.length || 0);
+                const assignedAm = reg.account_manager_id ? managersMap.get(reg.account_manager_id) : null;
                 return (
                   <TableRow key={reg.id} className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => openDetail(reg)}>
                     <TableCell className="text-center px-4 py-3" onClick={(e) => e.stopPropagation()}>
@@ -270,6 +369,63 @@ export default function AdminPartners() {
                     <TableCell className="py-3 font-semibold text-xs text-[#1E293B] uppercase md:text-[13px] max-w-[150px] truncate" title={reg.agency_name}>{reg.agency_name}</TableCell>
                     <TableCell className="max-w-[150px] truncate py-3 text-xs md:text-[13px]" title={`${reg.contact_first_name} ${reg.contact_last_name}`.trim()}>{`${reg.contact_first_name} ${reg.contact_last_name}`.trim()}</TableCell>
                     <TableCell className="text-[12px] max-w-[150px] truncate py-3 md:text-[13px]" title={reg.email}>{reg.email}</TableCell>
+                    <TableCell className="py-2" onClick={(e) => e.stopPropagation()}>
+                      <Select
+                        value={reg.account_manager_id || "none"}
+                        onValueChange={(val) => handleQuickAssignManager(reg.id, val)}
+                      >
+                        <SelectTrigger className="h-7 text-xs font-medium bg-slate-50 hover:bg-slate-100/80 border-slate-200 w-[150px] shadow-none py-0 px-2 rounded-lg">
+                          <div className="flex items-center gap-1.5 truncate">
+                            {assignedAm ? (
+                              <>
+                                <Avatar className="h-4 w-4 rounded-full shrink-0 border border-slate-200">
+                                  <AvatarImage src={assignedAm.photo_url || ""} alt={assignedAm.name} className="object-cover" />
+                                  <AvatarFallback className="text-[8px] bg-slate-200 font-semibold text-slate-700">
+                                    {assignedAm.name?.charAt(0) || 'M'}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <span className="truncate text-slate-800 text-[11px] font-medium">{assignedAm.name}</span>
+                              </>
+                            ) : (
+                              <>
+                                <UserPlus className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                                <span className="text-muted-foreground italic text-[11px]">Assign</span>
+                              </>
+                            )}
+                          </div>
+                        </SelectTrigger>
+                        <SelectContent className="max-h-72">
+                          <SelectItem
+                            value="none"
+                            className="text-xs py-1.5 cursor-pointer focus:bg-slate-100 focus:text-slate-900 data-[highlighted]:bg-slate-100 data-[highlighted]:text-slate-900"
+                          >
+                            <div className="flex items-center gap-2 text-slate-600">
+                              <div className="h-4 w-4 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0">
+                                <UserX className="h-2.5 w-2.5 text-slate-400" />
+                              </div>
+                              <span className="font-medium text-xs">Unassigned</span>
+                            </div>
+                          </SelectItem>
+                          {accountManagers.map((am) => (
+                            <SelectItem
+                              key={am.id}
+                              value={am.id}
+                              className="text-xs py-1.5 cursor-pointer focus:bg-slate-100 focus:text-slate-900 data-[highlighted]:bg-slate-100 data-[highlighted]:text-slate-900"
+                            >
+                              <div className="flex items-center gap-2">
+                                <Avatar className="h-5 w-5 rounded-full shrink-0 border border-slate-200">
+                                  <AvatarImage src={am.photo_url || ""} alt={am.name} className="object-cover" />
+                                  <AvatarFallback className="text-[9px] bg-slate-100 font-semibold text-slate-700">
+                                    {am.name?.charAt(0) || 'M'}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <span className="font-medium text-slate-800 text-xs">{am.name}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
                     <TableCell className="py-3">
                       {reg.status === 'approved' && <span title="Approved"><CheckCircle className="h-4 w-4 text-green-600" /></span>}
                       {reg.status === 'pending' && <span title="Pending"><Clock className="h-4 w-4 text-warning" /></span>}

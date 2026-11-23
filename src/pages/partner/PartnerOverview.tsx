@@ -134,6 +134,14 @@ export default function PartnerOverview() {
 
         if (partnerRes && partnerRes.length > 0) {
           setPartnerInfo(partnerRes[0]);
+        } else if (user?.email) {
+          // Fallback fetch by email if partner registration wasn't linked by user_id
+          const emailRes = await fetch(`${SUPABASE_URL}/rest/v1/partner_registrations?email=eq.${encodeURIComponent(user.email)}&select=*`, { headers })
+            .then(res => res.ok ? res.json() : [])
+            .catch(() => []);
+          if (emailRes && emailRes.length > 0) {
+            setPartnerInfo(emailRes[0]);
+          }
         }
 
         const localAvatar = localStorage.getItem(`partner_avatar_${user?.id}`) || "";
@@ -196,32 +204,25 @@ export default function PartnerOverview() {
           } catch (err) { console.error(err); }
         }
 
-        // Fetch account managers from account_managers table (single source of truth)
-        try {
-          const { data: amData, error: amError } = await (supabase.from as any)('account_managers')
-            .select('*')
-            .order('created_at', { ascending: true });
-
-          if (!amError && amData && amData.length > 0) {
-            setAccountManager(amData);
-          } else {
-            // Graceful fallback to platform_settings during migration transition
-            const { data: legacyAm } = await (supabase.from as any)('platform_settings')
+        // Fetch assigned account manager for this partner agency
+        const currentPartner = partnerRes && partnerRes.length > 0 ? partnerRes[0] : null;
+        if (currentPartner?.account_manager_id) {
+          try {
+            const { data: amData, error: amError } = await (supabase.from as any)('account_managers')
               .select('*')
-              .eq('key', 'account_manager')
+              .eq('id', currentPartner.account_manager_id)
               .maybeSingle();
 
-            if (legacyAm?.value) {
-              let val = legacyAm.value;
-              if (typeof val === 'string') {
-                try { val = JSON.parse(val); } catch (e) { console.error(e); }
-              }
-              setAccountManager(val);
+            if (!amError && amData) {
+              setAccountManager(amData);
             } else {
               setAccountManager(null);
             }
+          } catch {
+            setAccountManager(null);
           }
-        } catch {
+        } else {
+          // If no specific manager is assigned yet, fallback to null (unassigned)
           setAccountManager(null);
         }
 
@@ -338,11 +339,13 @@ export default function PartnerOverview() {
   };
 
   const getFullName = () => {
-    if (partnerInfo?.contact_first_name || partnerInfo?.contact_last_name) {
-      return `${partnerInfo.contact_first_name || ''} ${partnerInfo.contact_last_name || ''}`.trim();
-    }
-    if (profile?.display_name) return profile.display_name;
-    if (partnerInfo?.agency_name) return partnerInfo.agency_name;
+    const fromParts = `${partnerInfo?.contact_first_name || ''} ${partnerInfo?.contact_last_name || ''}`.trim();
+    if (fromParts) return fromParts;
+    if (partnerInfo?.contact_person?.trim()) return partnerInfo.contact_person.trim();
+    if (profile?.display_name?.trim()) return profile.display_name.trim();
+    if (user?.user_metadata?.full_name?.trim()) return user.user_metadata.full_name.trim();
+    if (user?.user_metadata?.name?.trim()) return user.user_metadata.name.trim();
+    if (partnerInfo?.agency_name?.trim()) return partnerInfo.agency_name.trim();
     return 'Partner';
   };
 
@@ -399,7 +402,7 @@ export default function PartnerOverview() {
           
           {/* Bangladesh Time */}
           <div className="flex flex-col items-end">
-            <span className="text-xs sm:text-sm font-bold text-theme uppercase tracking-wider mb-1">Bangladesh</span>
+            <span className="text-base sm:text-lg font-extrabold text-theme uppercase tracking-wide mb-1">Bangladesh</span>
             <p className="text-xl sm:text-2xl font-bold text-theme whitespace-nowrap drop-shadow-sm font-mono tracking-tight" style={{ fontVariantNumeric: 'tabular-nums' }}>
               {(() => {
                 const d = new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Dhaka' }));
@@ -416,11 +419,11 @@ export default function PartnerOverview() {
           </div>
 
           {/* Divider */}
-          <div className="w-px h-14 bg-slate-200" />
+          <div className="w-px h-16 bg-slate-200" />
 
           {/* Malaysia Time */}
           <div className="flex flex-col items-end">
-            <span className="text-xs sm:text-sm font-bold text-[#002B7F] uppercase tracking-wider mb-1">Malaysia</span>
+            <span className="text-base sm:text-lg font-extrabold text-[#002B7F] uppercase tracking-wide mb-1">Malaysia</span>
             <p className="text-xl sm:text-2xl font-bold text-[#002B7F] whitespace-nowrap drop-shadow-sm font-mono tracking-tight" style={{ fontVariantNumeric: 'tabular-nums' }}>
               {(() => {
                 const d = new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));

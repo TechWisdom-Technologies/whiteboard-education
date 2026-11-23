@@ -4,9 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Loader2, UploadCloud, FileText, CheckCircle2, X } from "lucide-react";
+import { ArrowLeft, Loader2, UploadCloud, CheckCircle2, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -146,191 +144,196 @@ export default function AdminDocumentForm({ initialData, onCancel, onSuccess }: 
   };
 
   return (
-    <div className="space-y-6 max-w-3xl animate-fade-in">
+    <div className="bg-white rounded-xl border shadow-sm flex flex-col h-full max-w-5xl mx-auto my-6 animate-fade-in">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" onClick={onCancel} className="h-9 w-9">
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <div>
-          <h1 className="text-2xl font-bold text-[#1E293B]">
-            {isEditing ? "Edit Partner Document" : "Upload Partner Document"}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            This document will be displayed in the partner portal's Documents section.
-          </p>
+      <div className="flex items-center justify-between p-6 border-b shrink-0">
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={onCancel}>
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h2 className="text-lg font-semibold text-[#1E293B]">
+            {isEditing ? "Edit Partner Document" : "Upload New Partner Document"}
+          </h2>
         </div>
-      </div>
-
-      {/* Form Card */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-6">
-        {/* File Upload Zone */}
-        <div className="space-y-2">
-          <Label className="text-sm font-semibold text-slate-800">
-            Upload Document File <span className="text-red-500">*</span>
-          </Label>
-          
-          <div className="border-2 border-dashed border-slate-200 hover:border-[#2F4F97]/40 rounded-xl p-6 text-center transition-colors bg-slate-50/50">
-            <input
-              type="file"
-              id="doc-upload"
-              className="hidden"
-              onChange={handleFileUpload}
-              disabled={uploading}
-              accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.png,.jpg,.jpeg,.webp,.zip"
-            />
-            
-            {uploading ? (
-              <div className="flex flex-col items-center justify-center py-4 gap-2">
-                <Loader2 className="w-8 h-8 animate-spin text-[#2F4F97]" />
-                <p className="text-sm font-medium text-slate-700">Uploading document to storage...</p>
-              </div>
-            ) : form.file_url ? (
-              <div className="flex flex-col items-center justify-center py-2 gap-2">
-                <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                  <CheckCircle2 className="w-6 h-6" />
-                </div>
-                <div className="text-center">
-                  <p className="text-sm font-semibold text-slate-800 truncate max-w-md">{form.title || "File Ready"}</p>
-                  <p className="text-xs text-muted-foreground">
-                    Format: {form.file_type.toUpperCase()} · Size: {form.file_size} MB
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 mt-2">
-                  <label
-                    htmlFor="doc-upload"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#2F4F97] bg-blue-50 hover:bg-blue-100 rounded-lg cursor-pointer transition-colors"
-                  >
-                    Replace File
-                  </label>
-                  <a
-                    href={form.file_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
-                  >
-                    Test Preview
-                  </a>
-                </div>
-              </div>
-            ) : (
-              <label htmlFor="doc-upload" className="flex flex-col items-center justify-center py-4 cursor-pointer group">
-                <div className="w-12 h-12 rounded-full bg-blue-50 group-hover:bg-blue-100 text-[#2F4F97] flex items-center justify-center mb-2 transition-colors">
-                  <UploadCloud className="w-6 h-6" />
-                </div>
-                <p className="text-sm font-semibold text-slate-800">
-                  Click to browse or drop file here
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Supports PDF, Word, Excel, Images, and ZIP archives (up to 50MB)
-                </p>
-              </label>
-            )}
-          </div>
-        </div>
-
-        {/* Or direct File URL */}
-        <div className="space-y-2">
-          <Label className="text-xs text-muted-foreground">
-            Or paste direct File URL (if hosted elsewhere):
-          </Label>
-          <Input
-            value={form.file_url}
-            onChange={(e) => setForm({ ...form, file_url: e.target.value })}
-            placeholder="https://..."
-            className="text-xs font-mono"
-          />
-        </div>
-
-        {/* Document Title */}
-        <div className="space-y-2">
-          <Label className="text-sm font-semibold text-slate-800">
-            Document Title / Name <span className="text-red-500">*</span>
-          </Label>
-          <Input
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-            placeholder="e.g. 2026 Malaysia University Admissions & Study Guide"
-            className="text-sm"
-          />
-        </div>
-
-        {/* File Type & File Size */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <Label className="text-sm font-semibold text-slate-800">File Type</Label>
-            <Select
-              value={form.file_type}
-              onValueChange={(val) => setForm({ ...form, file_type: val })}
-            >
-              <SelectTrigger className="text-sm">
-                <SelectValue placeholder="Select type" />
-              </SelectTrigger>
-              <SelectContent>
-                {DOCUMENT_TYPES.map((t) => (
-                  <SelectItem key={t.value} value={t.value}>
-                    {t.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label className="text-sm font-semibold text-slate-800">File Size (in MB)</Label>
-            <Input
-              type="number"
-              step="0.01"
-              min="0.01"
-              value={form.file_size}
-              onChange={(e) => setForm({ ...form, file_size: parseFloat(e.target.value) || 0.1 })}
-              className="text-sm"
-              placeholder="e.g. 4.2"
-            />
-          </div>
-        </div>
-
-        {/* Optional Description */}
-        <div className="space-y-2">
-          <Label className="text-sm font-semibold text-slate-800">
-            Description <span className="text-xs text-muted-foreground font-normal">(Optional)</span>
-          </Label>
-          <Textarea
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-            placeholder="Brief info or instructions regarding this document..."
-            rows={3}
-            className="text-sm"
-          />
-        </div>
-
-        {/* Active Toggle */}
-        <div className="flex items-center gap-3 pt-2">
-          <Switch
-            checked={form.is_active}
-            onCheckedChange={(checked) => setForm({ ...form, is_active: checked })}
-          />
-          <span className="text-sm font-medium text-slate-700">
-            {form.is_active ? "Visible to partners on portal" : "Hidden / Inactive"}
-          </span>
-        </div>
-
-        {/* Buttons */}
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+        <div className="flex gap-2">
           <Button variant="outline" onClick={onCancel} disabled={saving || uploading}>
             Cancel
           </Button>
-          <Button
-            onClick={handleSave}
-            disabled={saving || uploading}
-            className="bg-[#2F4F97] hover:bg-[#243d78] text-white flex items-center gap-2"
-          >
-            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
-            {isEditing ? "Save Changes" : "Save Document"}
+          <Button onClick={handleSave} disabled={saving || uploading}>
+            {saving ? (
+              <span className="flex items-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin" /> Saving...
+              </span>
+            ) : (
+              isEditing ? "Update Document" : "Upload Document"
+            )}
           </Button>
+        </div>
+      </div>
+
+      {/* Form Content */}
+      <div className="p-6 md:p-8 space-y-10 overflow-y-auto">
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            {/* File Upload Zone */}
+            <div className="space-y-2 md:col-span-2">
+              <Label className="text-[13px] font-semibold text-gray-700">
+                Document File <span className="text-red-500">*</span>
+              </Label>
+              
+              <div className="border-2 border-dashed border-slate-200 hover:border-slate-300 rounded-xl p-6 text-center transition-colors bg-slate-50/60">
+                <input
+                  type="file"
+                  id="doc-upload"
+                  className="hidden"
+                  onChange={handleFileUpload}
+                  disabled={uploading}
+                  accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.png,.jpg,.jpeg,.webp,.zip"
+                />
+                
+                {uploading ? (
+                  <div className="flex flex-col items-center justify-center py-6 gap-2">
+                    <Loader2 className="w-8 h-8 animate-spin text-slate-700" />
+                    <p className="text-sm font-medium text-slate-700">Uploading document to storage...</p>
+                    <p className="text-xs text-muted-foreground">Please wait a moment while the file uploads</p>
+                  </div>
+                ) : form.file_url ? (
+                  <div className="flex flex-col items-center justify-center py-3 gap-3">
+                    <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shadow-xs">
+                      <CheckCircle2 className="w-6 h-6" />
+                    </div>
+                    <div className="text-center space-y-1">
+                      <p className="text-sm font-semibold text-slate-800 truncate max-w-lg">{form.title || "File Ready"}</p>
+                      <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                        <span className="font-semibold uppercase tracking-wider bg-slate-200/70 text-slate-700 px-2 py-0.5 rounded">
+                          {form.file_type}
+                        </span>
+                        <span>•</span>
+                        <span>{form.file_size} MB</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 mt-1">
+                      <label
+                        htmlFor="doc-upload"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg cursor-pointer transition-colors shadow-xs"
+                      >
+                        Replace File
+                      </label>
+                      <a
+                        href={form.file_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors shadow-xs"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        Preview File
+                      </a>
+                    </div>
+                  </div>
+                ) : (
+                  <label htmlFor="doc-upload" className="flex flex-col items-center justify-center py-6 cursor-pointer group">
+                    <div className="w-12 h-12 rounded-full bg-slate-100 group-hover:bg-slate-200 text-slate-600 flex items-center justify-center mb-2 transition-colors">
+                      <UploadCloud className="w-6 h-6" />
+                    </div>
+                    <p className="text-sm font-semibold text-slate-800">
+                      Click to browse or drag and drop file here
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Supports PDF, Word, Excel, Images, and ZIP archives (up to 50MB)
+                    </p>
+                  </label>
+                )}
+              </div>
+            </div>
+
+            {/* Document Title */}
+            <div className="space-y-2 md:col-span-2">
+              <Label className="text-[13px] font-semibold text-gray-700">
+                Document Title / Name <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                value={form.title}
+                onChange={(e) => setForm(prev => ({ ...prev, title: e.target.value }))}
+                placeholder="e.g. 2026 Malaysia University Admissions & Study Guide"
+              />
+            </div>
+
+            {/* File Type */}
+            <div className="space-y-3">
+              <Label className="text-[13px] font-semibold text-gray-700">File Type / Format</Label>
+              <select
+                className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700"
+                value={form.file_type}
+                onChange={(e) => setForm(prev => ({ ...prev, file_type: e.target.value }))}
+              >
+                {DOCUMENT_TYPES.map((t) => (
+                  <option key={t.value} value={t.value}>
+                    {t.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* File Size */}
+            <div className="space-y-3">
+              <Label className="text-[13px] font-semibold text-gray-700">File Size (in MB)</Label>
+              <Input
+                type="number"
+                step="0.01"
+                min="0.01"
+                value={form.file_size}
+                onChange={(e) => setForm(prev => ({ ...prev, file_size: parseFloat(e.target.value) || 0.1 }))}
+                placeholder="e.g. 4.2"
+              />
+            </div>
+
+            {/* Visibility Status */}
+            <div className="space-y-3">
+              <Label className="text-[13px] font-semibold text-gray-700">Visibility Status</Label>
+              <select
+                className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700"
+                value={form.is_active ? "active" : "draft"}
+                onChange={(e) => setForm(prev => ({ ...prev, is_active: e.target.value === "active" }))}
+              >
+                <option value="active">Published & Visible</option>
+                <option value="draft">Draft / Hidden</option>
+              </select>
+            </div>
+
+            {/* Direct File URL */}
+            <div className="space-y-2">
+              <Label className="text-[13px] font-semibold text-gray-700">
+                Direct File URL <span className="text-xs text-muted-foreground font-normal">(Auto-filled or External)</span>
+              </Label>
+              <Input
+                value={form.file_url}
+                onChange={(e) => setForm(prev => ({ ...prev, file_url: e.target.value }))}
+                placeholder="https://..."
+                className="font-mono text-xs"
+              />
+            </div>
+
+            {/* Description */}
+            <div className="space-y-3 md:col-span-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-[13px] font-semibold text-gray-700">
+                  Description / Guidance <span className="text-xs text-muted-foreground font-normal">(Optional)</span>
+                </Label>
+                <span className="text-xs text-muted-foreground">Displayed alongside the document download</span>
+              </div>
+              <Textarea
+                value={form.description}
+                onChange={(e) => setForm(prev => ({ ...prev, description: e.target.value }))}
+                placeholder="Brief information, guidance notes, or instructions regarding this document..."
+                rows={4}
+                className="bg-gray-50 rounded-xl resize-y"
+              />
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
   );
 }
-

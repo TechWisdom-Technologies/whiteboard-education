@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -9,6 +9,8 @@ import {
   User,
   CheckCheck,
   Clock,
+  MessageSquare,
+  X,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -25,6 +27,7 @@ export function PartnerChatWidget({ partnerId, partnerName, session, user }: Par
   const [inputText, setInputText] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(true);
   const chatScrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -92,7 +95,7 @@ export function PartnerChatWidget({ partnerId, partnerName, session, user }: Par
     const adminName = "System Admin";
 
     try {
-      // 1. Insert chat message
+      // Insert chat message into partner_notes
       const { error } = await supabase.from("partner_notes" as any).insert({
         partner_id: partnerId,
         content: inputText.trim(),
@@ -156,151 +159,209 @@ export function PartnerChatWidget({ partnerId, partnerName, session, user }: Par
     }
   };
 
+  const unreadCount = !isMinimized ? 0 : messages.length;
+
   return (
-    <Card className="border border-gray-200 shadow-sm overflow-hidden flex flex-col h-[calc(100vh-170px)] min-h-[440px] max-h-[calc(100vh-170px)] bg-white">
-      {/* ── Chat Header ── */}
-      <CardHeader className="py-3 px-4 bg-[#1E293B] text-white flex flex-row items-center justify-between space-y-0 shrink-0 select-none shadow-sm">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 inline-block animate-pulse" />
-          <h3 className="text-xs font-semibold text-white tracking-wide">
-            Internal Admin History
-          </h3>
-        </div>
-      </CardHeader>
+    <>
+      {/* ── Floating Chat Panel (shown when open) ── */}
+      {!isMinimized && (
+        <div
+          className="fixed bottom-24 right-4 sm:right-6 z-50 w-[calc(100vw-32px)] sm:w-[460px] md:w-[500px] lg:w-[540px] h-[640px] max-h-[calc(100vh-130px)] shadow-2xl rounded-2xl overflow-hidden flex flex-col bg-white border border-gray-200 no-print transition-all animate-in fade-in zoom-in-95 duration-200"
+        >
+          {/* Panel Header */}
+          <CardHeader
+            className="py-3.5 px-5 bg-[#1E293B] text-white flex flex-row items-center justify-between space-y-0 shrink-0 select-none shadow-sm"
+          >
+            <div className="flex items-center gap-2.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0 inline-block shadow-xs animate-pulse" />
+              <div>
+                <h3 className="text-sm font-semibold text-white tracking-wide">
+                  Chat with Partner
+                </h3>
+                {partnerName && (
+                  <p className="text-[11px] text-slate-300 truncate max-w-[280px]">
+                    Agency: {partnerName}
+                  </p>
+                )}
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsMinimized(true)}
+              className="text-white/80 hover:text-white hover:bg-white/10 p-1.5 rounded-lg transition-colors focus:outline-none"
+              title="Close Chat"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </CardHeader>
 
-      {/* ── Message Stream ── */}
-      <CardContent ref={chatScrollRef} className="flex-1 p-3.5 overflow-y-auto space-y-3 bg-[#F8FAFC]/50 custom-scrollbar">
-        {loading ? (
-          <div className="flex flex-col items-center justify-center h-full gap-2 text-gray-400 py-10">
-            <Loader2 className="w-5 h-5 animate-spin text-[#1d283a]" />
-            <span className="text-xs">Loading...</span>
-          </div>
-        ) : messages.length === 0 ? (
-          <div className="flex items-center justify-center h-full text-xs text-gray-400 py-8">
-            No history yet
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {messages.map((msg, idx) => {
-              const { role, agencyName } = parseSender(msg.admin_name);
-              const own = isOwn(role);
-              const showDate =
-                idx === 0 ||
-                formatMsgDate(msg.created_at) !==
-                  formatMsgDate(messages[idx - 1].created_at);
+          {/* ── Message Stream ── */}
+          <CardContent
+            ref={chatScrollRef}
+            className="flex-1 p-4 overflow-y-auto space-y-3 bg-[#F8FAFC]/50 custom-scrollbar"
+          >
+            {loading ? (
+              <div className="flex flex-col items-center justify-center h-full gap-2 text-gray-400 py-10">
+                <Loader2 className="w-5 h-5 animate-spin text-[#1E293B]" />
+                <span className="text-xs">Loading chat history...</span>
+              </div>
+            ) : messages.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full text-center p-6 text-gray-400">
+                <MessageSquare className="w-8 h-8 text-gray-300 mb-2" />
+                <p className="text-xs font-medium text-gray-500">No messages yet</p>
+                <p className="text-[11px] text-gray-400 mt-0.5">
+                  Send a message to start communicating with this partner agency.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3.5">
+                {messages.map((msg, idx) => {
+                  const { role, agencyName } = parseSender(msg.admin_name);
+                  const own = isOwn(role);
+                  const showDate =
+                    idx === 0 ||
+                    formatMsgDate(msg.created_at) !==
+                      formatMsgDate(messages[idx - 1].created_at);
 
-              return (
-                <div key={msg.id || idx} className="space-y-1.5">
-                  {showDate && (
-                    <div className="flex items-center justify-center my-2">
-                      <span className="text-[10px] font-semibold text-gray-400 bg-white border border-gray-200/80 px-2.5 py-0.5 rounded-full shadow-2xs">
-                        {formatMsgDate(msg.created_at)}
-                      </span>
-                    </div>
-                  )}
-
-                  <div
-                    className={`flex flex-col ${
-                      own ? "items-end" : "items-start"
-                    }`}
-                  >
-                    {/* Sender badge header */}
-                    <div
-                      className={`flex items-center gap-1.5 mb-1 px-1 ${
-                        own ? "justify-end" : "justify-start"
-                      }`}
-                    >
-                      {role === "admin" ? (
-                        <Badge
-                          variant="outline"
-                          className="text-[9px] font-semibold h-4 px-1.5 bg-[#1E293B] text-white border-transparent flex items-center gap-1 shadow-2xs"
-                        >
-                          <Shield className="w-2.5 h-2.5" /> Admin
-                        </Badge>
-                      ) : (
-                        <div className="flex items-center gap-1.5">
-                          <Badge
-                            variant="outline"
-                            className="text-[9px] font-semibold h-4 px-1.5 bg-gray-500 text-white border-transparent flex items-center gap-1 shadow-2xs"
-                          >
-                            <User className="w-2.5 h-2.5" /> Partner
-                          </Badge>
-                          {agencyName && (
-                            <span className="text-[11px] font-semibold text-gray-700 truncate max-w-[170px]">
-                              {agencyName}
-                            </span>
-                          )}
+                  return (
+                    <div key={msg.id || idx} className="space-y-1.5">
+                      {showDate && (
+                        <div className="flex items-center justify-center my-2.5">
+                          <span className="text-[11px] font-semibold text-gray-500 bg-white border border-gray-200/80 px-3 py-0.5 rounded-full shadow-2xs">
+                            {formatMsgDate(msg.created_at)}
+                          </span>
                         </div>
                       )}
-                    </div>
 
-                    {/* Bubble */}
-                    <div
-                      className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 shadow-xs text-xs leading-relaxed break-words whitespace-pre-wrap text-white ${
-                        role === "admin"
-                          ? `bg-[#1E293B] ${own ? "rounded-br-xs" : "rounded-bl-xs"}`
-                          : `bg-gray-600 ${own ? "rounded-br-xs" : "rounded-bl-xs"}`
-                      }`}
-                    >
-                      {msg.content}
-                    </div>
+                      <div
+                        className={`flex flex-col ${
+                          own ? "items-end" : "items-start"
+                        }`}
+                      >
+                        {/* Sender badge header */}
+                        <div
+                          className={`flex items-center gap-1.5 mb-1 px-1 ${
+                            own ? "justify-end" : "justify-start"
+                          }`}
+                        >
+                          {role === "admin" ? (
+                            <Badge
+                              variant="outline"
+                              className="text-[10px] font-semibold h-4.5 px-2 bg-[#1E293B] text-white border-transparent flex items-center gap-1 shadow-2xs"
+                            >
+                              <Shield className="w-2.5 h-2.5" /> Admin
+                            </Badge>
+                          ) : (
+                            <div className="flex items-center gap-1.5">
+                              <Badge
+                                variant="outline"
+                                className="text-[10px] font-semibold h-4.5 px-2 bg-[#2F4F97] text-white border-transparent flex items-center gap-1 shadow-2xs"
+                              >
+                                <User className="w-2.5 h-2.5" /> Partner
+                              </Badge>
+                              {agencyName && (
+                                <span className="text-xs font-semibold text-gray-700 truncate max-w-[200px]">
+                                  {agencyName}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
 
-                    {/* Timestamp */}
-                    <div
-                      className={`flex items-center gap-1 mt-0.5 px-1 text-[10px] text-gray-400 ${
-                        own ? "justify-end" : "justify-start"
-                      }`}
-                    >
-                      <Clock className="w-2.5 h-2.5" />
-                      <span>{formatMsgTime(msg.created_at)}</span>
-                      {own && <CheckCheck className="w-3 h-3 text-[#1E293B]" />}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </CardContent>
+                        {/* Bubble */}
+                        <div
+                          className={`max-w-[85%] rounded-2xl px-4 py-3 shadow-xs text-[13px] sm:text-sm leading-relaxed break-words whitespace-pre-wrap text-white ${
+                            role === "admin"
+                              ? `bg-[#1E293B] ${own ? "rounded-br-xs" : "rounded-bl-xs"}`
+                              : `bg-[#2F4F97] ${own ? "rounded-br-xs" : "rounded-bl-xs"}`
+                          }`}
+                        >
+                          {msg.content}
+                        </div>
 
-      {/* ── Input Box ── */}
-      <div className="p-3 bg-white border-t border-gray-100 shrink-0">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSendMessage();
-          }}
-          className="flex items-center gap-2"
-        >
-          <textarea
-            ref={textareaRef}
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
+                        {/* Timestamp */}
+                        <div
+                          className={`flex items-center gap-1 mt-0.5 px-1 text-[11px] text-gray-400 ${
+                            own ? "justify-end" : "justify-start"
+                          }`}
+                        >
+                          <Clock className="w-2.5 h-2.5" />
+                          <span>{formatMsgTime(msg.created_at)}</span>
+                          {own && <CheckCheck className="w-3.5 h-3.5 text-[#1E293B]" />}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+
+          {/* ── Input Box ── */}
+          <div className="p-3.5 bg-white border-t border-gray-100 shrink-0">
+            <form
+              onSubmit={(e) => {
                 e.preventDefault();
                 handleSendMessage();
-              }
-            }}
-            placeholder="Type an internal note..."
-            rows={1}
-            className="flex-1 resize-none min-h-[38px] max-h-[72px] text-xs p-2 rounded-lg border border-gray-200 bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-gray-300 focus:bg-white focus:text-gray-900 focus:caret-gray-900 shadow-none transition-none"
-          />
-          <Button
-            type="submit"
-            size="icon"
-            disabled={sending || !inputText.trim()}
-            className="h-9 w-9 rounded-full text-white shrink-0 shadow-sm transition-all bg-[#1E293B] hover:bg-[#0f172a]"
-            title="Save Note"
-          >
-            {sending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <ArrowRight className="w-4 h-4" />
+              }}
+              className="flex items-center gap-2"
+            >
+              <textarea
+                ref={textareaRef}
+                value={inputText}
+                onChange={(e) => {
+                  setInputText(e.target.value);
+                  e.target.style.height = "auto";
+                  e.target.style.height = `${Math.min(e.target.scrollHeight, 100)}px`;
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                  }
+                }}
+                placeholder="Type a message to partner..."
+                rows={1}
+                className="flex-1 resize-none min-h-[42px] max-h-[100px] text-sm p-2.5 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-gray-300 shadow-none transition-none leading-relaxed"
+              />
+              <Button
+                type="submit"
+                size="icon"
+                disabled={sending || !inputText.trim()}
+                className="h-10 w-10 rounded-full text-white shrink-0 shadow-sm transition-all bg-[#1E293B] hover:bg-[#0f172a]"
+                title="Send Message"
+              >
+                {sending ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <ArrowRight className="w-4 h-4" />
+                )}
+              </Button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── Floating Bubble Button (always visible) ── */}
+      <button
+        type="button"
+        onClick={() => setIsMinimized(!isMinimized)}
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 no-print bg-[#1E293B] hover:bg-[#253247]"
+        title={isMinimized ? "Open Chat" : "Close Chat"}
+      >
+        {isMinimized ? (
+          <>
+            <MessageSquare className="w-6 h-6 text-white" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center shadow">
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
             )}
-          </Button>
-        </form>
-      </div>
-    </Card>
+          </>
+        ) : (
+          <X className="w-6 h-6 text-white" />
+        )}
+      </button>
+    </>
   );
 }

@@ -87,11 +87,32 @@ export default function AdminDashboard() {
   const [partnerLookup, setPartnerLookup] = useState<PartnerLookup[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [adminProfile, setAdminProfile] = useState<{ display_name?: string } | null>(null);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    supabase
+      .from("profiles")
+      .select("display_name")
+      .eq("user_id", user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data) setAdminProfile(data);
+      });
+  }, [user?.id]);
+
+  const getAdminFullName = () => {
+    if (adminProfile?.display_name?.trim()) return adminProfile.display_name.trim();
+    if (user?.user_metadata?.full_name?.trim()) return user.user_metadata.full_name.trim();
+    if (user?.user_metadata?.name?.trim()) return user.user_metadata.name.trim();
+    if (user?.user_metadata?.display_name?.trim()) return user.user_metadata.display_name.trim();
+    return "Admin";
+  };
 
   const getTimeOfDay = () => {
     const hour = currentTime.getHours();
@@ -223,7 +244,7 @@ export default function AdminDashboard() {
       {/* Greeting and Clock Banner */}
       <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-6 flex flex-col lg:flex-row justify-between items-center bg-gradient-to-r from-slate-50 to-white gap-6 lg:gap-0">
         <div className="text-center lg:text-left">
-          <h2 className="text-2xl font-bold text-[#1E293B]">Welcome, Admin!</h2>
+          <h2 className="text-2xl font-bold text-[#1E293B]">Welcome, {getAdminFullName()}!</h2>
           <p className="text-slate-500 mt-1">Here is the latest update on the platform</p>
         </div>
         
@@ -231,7 +252,7 @@ export default function AdminDashboard() {
           
           {/* Bangladesh Time */}
           <div className="flex flex-col items-end">
-            <span className="text-[11px] sm:text-xs font-bold text-[#1d283a] uppercase tracking-widest mb-1">Bangladesh</span>
+            <span className="text-base sm:text-lg font-extrabold text-[#1d283a] uppercase tracking-wide mb-1">Bangladesh</span>
             <p className="text-3xl sm:text-4xl font-bold text-[#1d283a] whitespace-nowrap drop-shadow-sm font-mono tracking-tight" style={{ fontVariantNumeric: 'tabular-nums' }}>
               {(() => {
                 const d = new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Dhaka' }));
@@ -252,7 +273,7 @@ export default function AdminDashboard() {
 
           {/* Malaysia Time */}
           <div className="flex flex-col items-end">
-            <span className="text-[11px] sm:text-xs font-bold text-[#CC0000] uppercase tracking-widest mb-1">Malaysia</span>
+            <span className="text-base sm:text-lg font-extrabold text-[#CC0000] uppercase tracking-wide mb-1">Malaysia</span>
             <p className="text-3xl sm:text-4xl font-bold text-[#CC0000] whitespace-nowrap drop-shadow-sm font-mono tracking-tight" style={{ fontVariantNumeric: 'tabular-nums' }}>
               {(() => {
                 const d = new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));

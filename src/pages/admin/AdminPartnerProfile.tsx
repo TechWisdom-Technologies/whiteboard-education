@@ -19,6 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   ArrowLeft,
   Loader2,
@@ -27,6 +28,9 @@ import {
   Save,
   Building2,
   User,
+  UserCheck,
+  UserX,
+  UserPlus,
   Globe,
   Mail,
   Phone,
@@ -82,6 +86,7 @@ interface PartnerRegistration {
   country: string;
   annual_students: number | null;
   status: string;
+  account_manager_id?: string | null;
   created_at: string;
 }
 
@@ -111,6 +116,10 @@ export default function AdminPartnerProfile() {
   const [currentStatus, setCurrentStatus] = useState<string>("pending");
   const [defaultTab] = useState("profile");
 
+  const [accountManagers, setAccountManagers] = useState<any[]>([]);
+  const [selectedManagerId, setSelectedManagerId] = useState<string>("none");
+  const [savingManager, setSavingManager] = useState(false);
+
   const [applications, setApplications] = useState<any[]>([]);
   const [studentsMap, setStudentsMap] = useState<Record<string, any>>({});
 
@@ -134,6 +143,16 @@ export default function AdminPartnerProfile() {
 
       setPartner(data as unknown as PartnerRegistration);
       setCurrentStatus(data.status);
+      setSelectedManagerId(data.account_manager_id || "none");
+
+      // Fetch account managers list
+      const { data: amList } = await supabase
+        .from("account_managers")
+        .select("id, name, title, email, phone, photo_url")
+        .order("name", { ascending: true });
+      if (amList) {
+        setAccountManagers(amList);
+      }
 
       if (data.user_id) {
         const { data: studentsData, error: studentsError } = await supabase
@@ -220,6 +239,30 @@ export default function AdminPartnerProfile() {
     }
   };
 
+  const handleSaveManager = async (managerIdValue: string) => {
+    if (!partner) return;
+    const newManagerId = managerIdValue === "none" ? null : managerIdValue;
+    setSavingManager(true);
+    try {
+      const { error: updateError } = await supabase
+        .from("partner_registrations")
+        .update({
+          account_manager_id: newManagerId,
+        })
+        .eq("id", partner.id);
+
+      if (updateError) throw updateError;
+
+      setSelectedManagerId(managerIdValue);
+      setPartner({ ...partner, account_manager_id: newManagerId });
+      toast.success(newManagerId ? "Account manager assigned successfully" : "Account manager unassigned");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update account manager");
+    } finally {
+      setSavingManager(false);
+    }
+  };
+
   if (loading) return <LoadingScreen fullScreen />;
 
   if (error || !partner) {
@@ -263,13 +306,10 @@ export default function AdminPartnerProfile() {
           </div>
         </div>
 
-        {/* Main Grid: Left (Agency Info + Tabs) | Right (Chat Widget) */}
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
-          
-          {/* Main Left Column (9 cols on XL) */}
-          <div className="xl:col-span-9 space-y-6 min-w-0">
+        {/* Agency Profile Details & Tabs */}
+        <div className="space-y-6 min-w-0">
 
-            {/* Global Agency Info Card / Brief Info Box */}
+          {/* Global Agency Info Card / Brief Info Box */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-5 no-print">
               <div className="flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-8 w-full">
                 
@@ -368,6 +408,55 @@ export default function AdminPartnerProfile() {
                         Save
                       </Button>
                     </div>
+
+                    <div className="flex items-center gap-2">
+                      <Select
+                        value={selectedManagerId}
+                        onValueChange={(val) => {
+                          setSelectedManagerId(val);
+                          handleSaveManager(val);
+                        }}
+                        disabled={savingManager}
+                      >
+                        <SelectTrigger className="h-8 min-w-[200px] max-w-[280px] text-xs font-medium bg-white border-slate-200">
+                          <div className="flex items-center gap-2 truncate">
+                            <UserCheck className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                            <SelectValue placeholder="Assign Account Manager" />
+                          </div>
+                        </SelectTrigger>
+                        <SelectContent className="max-h-72">
+                          <SelectItem
+                            value="none"
+                            className="text-xs py-2 cursor-pointer focus:bg-slate-100 focus:text-slate-900 data-[highlighted]:bg-slate-100 data-[highlighted]:text-slate-900"
+                          >
+                            <div className="flex items-center gap-2 text-slate-600">
+                              <div className="h-5 w-5 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0">
+                                <UserX className="h-3 w-3 text-slate-400" />
+                              </div>
+                              <span className="font-medium text-xs">Unassigned</span>
+                            </div>
+                          </SelectItem>
+                          {accountManagers.map((am) => (
+                            <SelectItem
+                              key={am.id}
+                              value={am.id}
+                              className="text-xs py-2 cursor-pointer focus:bg-slate-100 focus:text-slate-900 data-[highlighted]:bg-slate-100 data-[highlighted]:text-slate-900"
+                            >
+                              <div className="flex items-center gap-2">
+                                <Avatar className="h-5 w-5 rounded-full shrink-0 border border-slate-200">
+                                  <AvatarImage src={am.photo_url || ""} alt={am.name} className="object-cover" />
+                                  <AvatarFallback className="text-[9px] bg-slate-100 font-semibold text-slate-700">
+                                    {am.name?.charAt(0) || 'M'}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <span className="font-medium text-slate-800 text-xs">{am.name}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {savingManager && <Loader2 className="h-3.5 w-3.5 animate-spin text-slate-400" />}
+                    </div>
                   </div>
 
                 </div>
@@ -407,6 +496,30 @@ export default function AdminPartnerProfile() {
                         <InfoRow label="Agency Name" value={partner.agency_name} />
                         <InfoRow label="Country of Operation" value={partner.country} />
                         <InfoRow label="Annual Students Volume" value={partner.annual_students} />
+                        <div className="flex flex-col gap-1.5 py-1">
+                          <span className="text-xs font-semibold text-[#1E293B] uppercase tracking-wider">
+                            Dedicated Account Manager
+                          </span>
+                          {(() => {
+                            const am = accountManagers.find((m) => m.id === partner.account_manager_id);
+                            if (!am) {
+                              return <span className="text-sm text-muted-foreground italic">Unassigned</span>;
+                            }
+                            return (
+                              <div className="flex items-center gap-2 pt-0.5">
+                                <Avatar className="h-6 w-6 rounded-full shrink-0 border border-slate-200">
+                                  <AvatarImage src={am.photo_url || ""} alt={am.name} className="object-cover" />
+                                  <AvatarFallback className="text-[10px] bg-slate-100 font-semibold text-slate-700">
+                                    {am.name?.charAt(0) || 'M'}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <span className="text-sm text-[#1E293B] font-medium leading-tight">
+                                  {am.name}
+                                </span>
+                              </div>
+                            );
+                          })()}
+                        </div>
                       </div>
                     </div>
 
@@ -504,17 +617,13 @@ export default function AdminPartnerProfile() {
 
           </div>
 
-          {/* Right Column: Chat & Discussion Widget (3 cols on XL) */}
-          <div className="xl:col-span-3 xl:sticky xl:top-[76px] xl:self-start w-full no-print">
-            <PartnerChatWidget
-              partnerId={partner.id}
-              partnerName={partner.agency_name}
-              session={session}
-              user={user}
-            />
-          </div>
-
-        </div>
+        {/* Floating Chat Bubble Widget */}
+        <PartnerChatWidget
+          partnerId={partner.id}
+          partnerName={partner.agency_name}
+          session={session}
+          user={user}
+        />
       </div>
     </>
   );

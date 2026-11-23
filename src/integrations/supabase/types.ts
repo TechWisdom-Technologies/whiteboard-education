@@ -548,6 +548,7 @@ export type Database = {
       }
       partner_registrations: {
         Row: {
+          account_manager_id: string | null
           admin_notes: string | null
           agency_name: string
           annual_students: number | null
@@ -577,6 +578,7 @@ export type Database = {
             youtube_url: string | null
 }
         Insert: {
+          account_manager_id?: string | null
           admin_notes?: string | null
           agency_name: string
           annual_students?: number | null
@@ -606,6 +608,7 @@ export type Database = {
             youtube_url?: string | null
 }
         Update: {
+          account_manager_id?: string | null
           admin_notes?: string | null
           agency_name?: string
           annual_students?: number | null
@@ -634,7 +637,15 @@ export type Database = {
             instagram_url?: string | null
             youtube_url?: string | null
 }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "partner_registrations_account_manager_id_fkey"
+            columns: ["account_manager_id"]
+            isOneToOne: false
+            referencedRelation: "account_managers"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       profiles: {
         Row: {
