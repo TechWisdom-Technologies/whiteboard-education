@@ -34,6 +34,17 @@ export default function CourseDetail() {
     let isMounted = true;
     const fetchSingle = async () => {
       try {
+        // 1. Match by Supabase UUID
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(courseId);
+        if (isUUID) {
+          const { data } = await supabase.from("courses").select("*").eq("id", courseId).maybeSingle();
+          if (isMounted && data) {
+            setSingleCourse(data);
+            return;
+          }
+        }
+
+        // 2. Match numeric ID (legacy mock data)
         if (/^\d+$/.test(courseId)) {
           const { data } = await supabase.from("courses").select("*").eq("id", Number(courseId)).maybeSingle();
           if (isMounted && data) {
@@ -41,11 +52,23 @@ export default function CourseDetail() {
             return;
           }
         }
-        // Match slug
+
+        // 3. Match title directly
         const clean = courseId.replace(/-/g, " ");
-        const { data } = await supabase.from("courses").select("*").ilike("title", clean).maybeSingle();
-        if (isMounted && data) {
-          setSingleCourse(data);
+        const { data: titleMatch } = await supabase.from("courses").select("*").ilike("title", clean).maybeSingle();
+        if (isMounted && titleMatch) {
+          setSingleCourse(titleMatch);
+          return;
+        }
+
+        // 4. If slug stripped special characters (e.g. "Hons"), find ID from liveCourses list
+        const matchedFromList = liveCourses.find((c: any) => generateSlug(c.title) === courseId || String(c.id) === String(courseId));
+        if (matchedFromList?.id) {
+          const { data: fullById } = await supabase.from("courses").select("*").eq("id", matchedFromList.id).maybeSingle();
+          if (isMounted && fullById) {
+            setSingleCourse(fullById);
+            return;
+          }
         }
       } catch (e) {
         console.error("Error fetching single course:", e);
@@ -53,7 +76,7 @@ export default function CourseDetail() {
     };
     fetchSingle();
     return () => { isMounted = false; };
-  }, [courseId]);
+  }, [courseId, liveCourses]);
 
   const course = singleCourse || courses.find((c: any) => generateSlug(c.title) === courseId || String(c.id) === String(courseId));
   const uni = course ? universities.find((u: any) => String(u.id) === String(course.university_id)) : null;
@@ -141,6 +164,43 @@ export default function CourseDetail() {
       curriculum = (course.curriculum as any).data;
     }
   }
+
+  // Robustly parse yearly_fees to handle both Array and JSON string from database
+  let yearlyFees: { year: string; fee: string }[] = [];
+  if (Array.isArray(course.yearly_fees)) {
+    yearlyFees = course.yearly_fees;
+  } else if (typeof course.yearly_fees === "string") {
+    try {
+      const parsed = JSON.parse(course.yearly_fees);
+      yearlyFees = Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      console.error("Failed to parse yearly_fees string", e);
+    }
+  }
+
+  // Robustly parse other_fees to handle both Array and JSON string from database
+  let otherFeesList: { description: string; fee: string }[] = [];
+  if (Array.isArray(course.other_fees)) {
+    otherFeesList = course.other_fees;
+  } else if (typeof course.other_fees === "string") {
+    try {
+      const parsed = JSON.parse(course.other_fees);
+      otherFeesList = Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      console.error("Failed to parse other_fees string", e);
+    }
+  }
+
+  const scholarshipAmount = parseFloat(String(course.scholarship || "0").replace(/[^0-9.]/g, "")) || 0;
+
+  const totalYearlyFees = useMemo(() => {
+    const sum = yearlyFees.reduce((acc, item) => {
+      const clean = String(item.fee || "").replace(/[^0-9.]/g, "");
+      const val = parseFloat(clean);
+      return acc + (isNaN(val) ? 0 : val);
+    }, 0);
+    return Math.max(0, sum - scholarshipAmount);
+  }, [yearlyFees, scholarshipAmount]);
 
   // Handle both snake_case (DB) and camelCase (mockData) gracefully
   const careerOutcomes = Array.isArray(course.careerOutcomes || course.career_outcomes) ? (course.careerOutcomes || course.career_outcomes) : [];
@@ -445,13 +505,29 @@ ${window.location.href}`;
                           </tr>
                         </thead>
                         <tbody>
-                          {course.yearly_fees && course.yearly_fees.length > 0 ? (
-                            course.yearly_fees.map((yf: any, i: number) => (
-                              <tr key={i} className="border-b border-gray-100 last:border-0">
-                                <td className="py-3 text-gray-600">{yf.year}</td>
-                                <td className="py-3 text-gray-600">{formatCurrency(yf.fee)}</td>
-                              </tr>
-                            ))
+                          {yearlyFees && yearlyFees.length > 0 ? (
+                            <>
+                              {yearlyFees.map((yf: any, i: number) => (
+                                <tr key={i} className="border-b border-gray-100 last:border-0">
+                                  <td className="py-3 text-gray-600">{yf.year}</td>
+                                  <td className="py-3 text-gray-600">{formatCurrency(yf.fee)}</td>
+                                </tr>
+                              ))}
+                              {scholarshipAmount > 0 && (
+                                <tr className="border-b border-gray-100 last:border-0">
+                                  <td className="py-3 text-emerald-700 font-medium">Scholarship</td>
+                                  <td className="py-3 text-emerald-700 font-medium">- {formatCurrency(scholarshipAmount)}</td>
+                                </tr>
+                              )}
+                              {yearlyFees.length > 1 && (
+                                <tr className="border-t-2 border-gray-200 bg-slate-50/70 font-semibold text-gray-900">
+                                  <td className="py-3 text-gray-900 font-bold">Total Tuition Fees</td>
+                                  <td className="py-3 text-[#2F4F97] font-bold">
+                                    {formatCurrency(totalYearlyFees)}
+                                  </td>
+                                </tr>
+                              )}
+                            </>
                           ) : course.tuition_fee && Number(course.tuition_fee) > 0 ? (
                             <tr>
                               <td className="py-3 text-gray-600">1st Year</td>
@@ -481,7 +557,7 @@ ${window.location.href}`;
                         </thead>
                         <tbody>
                           {(() => {
-                            const filteredOtherFees = (course.other_fees || []).filter((of: any) => {
+                            const filteredOtherFees = (otherFeesList || []).filter((of: any) => {
                               const feeStr = String(of.fee || '').toUpperCase();
                               const descStr = String(of.description || '').toUpperCase();
                               

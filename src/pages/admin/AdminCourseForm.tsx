@@ -57,6 +57,11 @@ const parseDuration = (raw: string) => {
   return { number: "", unit: "Years" };
 };
 
+const cleanFeeValue = (feeStr: string | number | undefined | null) => {
+  if (!feeStr) return "";
+  return String(feeStr).replace(/^(MYR|RM)\s*/i, "").trim();
+};
+
 export default function AdminCourseForm({ initialData, onCancel, onSuccess }: AdminCourseFormProps) {
   const isEditing = !!initialData;
   const insertRow = useInsertRow("courses");
@@ -82,6 +87,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
     entry_requirements_text: "",
     class_type: "",
     yearly_fees: [] as { year: string; fee: string }[],
+    scholarship: 0 as number | string,
     other_fees: [] as { description: string; fee: string }[],
     overview: "",
     curriculum: [] as { year: string; modules: string[] }[],
@@ -91,12 +97,76 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
   const [newTag, setNewTag] = useState("");
   const [newCareerTag, setNewCareerTag] = useState("");
   const [selectedDurationUnit, setSelectedDurationUnit] = useState<string>("Years");
+  const [feeScheduleType, setFeeScheduleType] = useState<"yearly" | "semester">("yearly");
+
+  // Automatically detect if initial fees were semester-wise or yearly
+  useEffect(() => {
+    if (initialData?.yearly_fees && Array.isArray(initialData.yearly_fees)) {
+      const hasSemester = initialData.yearly_fees.some((yf: any) =>
+        String(yf.year || "").toLowerCase().includes("semester")
+      );
+      if (hasSemester) {
+        setFeeScheduleType("semester");
+      }
+    }
+  }, [initialData]);
+
+  const getFeePeriodLabel = (index: number, type: "yearly" | "semester") => {
+    const num = index + 1;
+    const suffix = num === 1 ? "1st" : num === 2 ? "2nd" : num === 3 ? "3rd" : `${num}th`;
+    const unit = type === "semester" ? "Semester" : "Year";
+    return `${suffix} ${unit}`;
+  };
+
+  const handleScheduleTypeChange = (newType: "yearly" | "semester") => {
+    setFeeScheduleType(newType);
+    setForm(prev => ({
+      ...prev,
+      yearly_fees: prev.yearly_fees.map((yf, idx) => ({
+        ...yf,
+        year: getFeePeriodLabel(idx, newType),
+      })),
+    }));
+  };
+
+  const addFeePeriod = () => {
+    setForm(p => ({
+      ...p,
+      yearly_fees: [
+        ...p.yearly_fees,
+        { year: getFeePeriodLabel(p.yearly_fees.length, feeScheduleType), fee: "" },
+      ],
+    }));
+  };
+
+  const removeYearlyFee = (idx: number) => {
+    setForm(prev => {
+      const filtered = prev.yearly_fees.filter((_, i) => i !== idx);
+      return {
+        ...prev,
+        yearly_fees: filtered.map((yf, i) => ({
+          ...yf,
+          year: getFeePeriodLabel(i, feeScheduleType),
+        })),
+      };
+    });
+  };
 
   const { number: durationNumber, unit: parsedDurationUnit } = useMemo(() => {
     return parseDuration(form.duration);
   }, [form.duration]);
 
   const durationUnit = parsedDurationUnit || selectedDurationUnit;
+
+  const totalYearlyFees = useMemo(() => {
+    const sum = form.yearly_fees.reduce((acc, item) => {
+      const clean = String(item.fee || "").replace(/[^0-9.]/g, "");
+      const val = parseFloat(clean);
+      return acc + (isNaN(val) ? 0 : val);
+    }, 0);
+    const scholarshipVal = parseFloat(String(form.scholarship || "0").replace(/[^0-9.]/g, "")) || 0;
+    return Math.max(0, sum - scholarshipVal);
+  }, [form.yearly_fees, form.scholarship]);
 
   const handleDurationChange = (num: string, unit: string) => {
     setSelectedDurationUnit(unit);
@@ -186,6 +256,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
         entry_requirements_text: initialData.entry_requirements_text || "",
         class_type: initialData.class_type || "",
         yearly_fees: Array.isArray(initialData.yearly_fees) ? initialData.yearly_fees : [],
+        scholarship: initialData.scholarship !== undefined ? initialData.scholarship : 0,
         other_fees: Array.isArray(initialData.other_fees) ? initialData.other_fees : [],
         overview: initialData.overview || "",
         curriculum: Array.isArray(initialData.curriculum) ? initialData.curriculum : [],
@@ -216,6 +287,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                 entry_requirements_text: d.entry_requirements_text || prev.entry_requirements_text,
                 class_type: d.class_type || prev.class_type,
                 yearly_fees: Array.isArray(d.yearly_fees) ? (d.yearly_fees as { year: string; fee: string }[]) : prev.yearly_fees,
+                scholarship: d.scholarship !== undefined ? d.scholarship : prev.scholarship,
                 other_fees: Array.isArray(d.other_fees) ? (d.other_fees as { description: string; fee: string }[]) : prev.other_fees,
                 overview: d.overview || prev.overview,
                 curriculum: Array.isArray(d.curriculum) ? (d.curriculum as { year: string; modules: string[] }[]) : prev.curriculum,
@@ -247,6 +319,18 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
     }
 
     let currentPayload: Record<string, any> = { ...form };
+
+    // Automatically sync tuition_fee with the 1st year fee so catalog cards,
+    // search filters, and sorting that query tuition_fee work seamlessly
+    const firstYearFee = form.yearly_fees?.[0]?.fee;
+    if (firstYearFee) {
+      const parsedNum = parseFloat(String(firstYearFee).replace(/[^0-9.]/g, ""));
+      if (!isNaN(parsedNum) && parsedNum > 0) {
+        currentPayload.tuition_fee = parsedNum;
+      }
+    }
+    currentPayload.scholarship = parseFloat(String(form.scholarship || "0").replace(/[^0-9.]/g, "")) || 0;
+
     const missingColumns: string[] = [];
     const maxAttempts = 5;
 
@@ -612,46 +696,146 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
         {/* Group 2: Course Fee Inputs */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Label className="text-[13px] font-semibold text-gray-700">Yearly Tuition Fees</Label>
-              <Button size="sm" className="h-7 px-3 text-xs" onClick={() => setForm(p => ({ ...p, yearly_fees: [...p.yearly_fees, { year: "", fee: "" }] }))}>
-                <Plus className="h-3 w-3 mr-1" /> Add Year
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-3">
+                <Label className="text-[13px] font-semibold text-gray-700">Tuition Fees</Label>
+                <div className="flex items-center gap-3 pl-3 border-l border-gray-200">
+                  <label className="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-slate-700 hover:text-slate-900">
+                    <input 
+                      type="radio" 
+                      name="feeScheduleType" 
+                      value="yearly" 
+                      checked={feeScheduleType === "yearly"} 
+                      onChange={() => handleScheduleTypeChange("yearly")}
+                      className="w-3.5 h-3.5 text-primary border-gray-300 focus:ring-primary cursor-pointer"
+                    />
+                    Yearly
+                  </label>
+                  <label className="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-slate-700 hover:text-slate-900">
+                    <input 
+                      type="radio" 
+                      name="feeScheduleType" 
+                      value="semester" 
+                      checked={feeScheduleType === "semester"} 
+                      onChange={() => handleScheduleTypeChange("semester")}
+                      className="w-3.5 h-3.5 text-primary border-gray-300 focus:ring-primary cursor-pointer"
+                    />
+                    Semester wise
+                  </label>
+                </div>
+              </div>
+              <Button 
+                type="button"
+                size="sm" 
+                className="h-7 px-3 text-xs shrink-0 self-start sm:self-auto" 
+                onClick={addFeePeriod}
+              >
+                <Plus className="h-3 w-3 mr-1" /> {feeScheduleType === "yearly" ? "Add Year" : "Add Semester"}
               </Button>
             </div>
+
             <div className="space-y-2">
-              {form.yearly_fees.length === 0 && <p className="text-xs text-muted-foreground italic">No yearly fees added.</p>}
+              {form.yearly_fees.length === 0 && <p className="text-xs text-muted-foreground italic">No tuition fees added.</p>}
               {form.yearly_fees.map((yf, i) => (
                 <div key={i} className="flex gap-2 items-center">
                   <Input 
-                    placeholder="e.g. 1st Year" 
-                    value={yf.year} 
-                    onChange={(e) => {
-                      const newArr = [...form.yearly_fees];
-                      newArr[i].year = e.target.value;
-                      setForm(prev => ({ ...prev, yearly_fees: newArr }));
-                    }}
+                    value={yf.year || getFeePeriodLabel(i, feeScheduleType)} 
+                    readOnly
+                    disabled
+                    className="w-1/3 min-w-[110px] bg-slate-50 text-slate-700 font-normal cursor-not-allowed select-none"
                   />
-                  <Input 
-                    placeholder="e.g. MYR 25,000" 
-                    value={yf.fee} 
-                    onChange={(e) => {
-                      const newArr = [...form.yearly_fees];
-                      newArr[i].fee = e.target.value;
-                      setForm(prev => ({ ...prev, yearly_fees: newArr }));
-                    }}
-                  />
-                  <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors shrink-0" onClick={() => setForm(p => ({ ...p, yearly_fees: p.yearly_fees.filter((_, idx) => idx !== i) }))}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                  <div className="flex items-center rounded-xl border border-gray-200 bg-white overflow-hidden shadow-xs focus-within:border-slate-400 focus-within:ring-1 focus-within:ring-slate-400 flex-1 h-10">
+                    <span className="bg-slate-100 border-r border-gray-200 px-3 py-2 text-xs font-bold text-slate-600 select-none shrink-0 h-full flex items-center">
+                      MYR
+                    </span>
+                    <input 
+                      type="text"
+                      placeholder="e.g. 25,000" 
+                      value={cleanFeeValue(yf.fee)} 
+                      onChange={(e) => {
+                        const rawVal = e.target.value;
+                        const newArr = [...form.yearly_fees];
+                        newArr[i].fee = rawVal ? `MYR ${rawVal.replace(/^(MYR|RM)\s*/i, '').trim()}` : "";
+                        setForm(prev => ({ ...prev, yearly_fees: newArr }));
+                      }}
+                      className="w-full px-3 py-2 text-sm text-gray-900 bg-transparent outline-none placeholder:text-muted-foreground"
+                    />
+                  </div>
+                  <Button 
+                    type="button"
+                    variant="outline" 
+                    size="icon" 
+                    className="h-10 w-10 rounded-xl text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors shrink-0" 
+                    onClick={() => removeYearlyFee(i)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
               ))}
+
+              {/* Scholarship & Total Tuition Fees - normal styling like other fields */}
+              {form.yearly_fees.length > 0 && (
+                <>
+                  <div className="flex gap-2 items-center">
+                    <Input 
+                      value="Scholarship" 
+                      readOnly
+                      disabled
+                      className="w-1/3 min-w-[110px] bg-slate-50 text-slate-700 font-normal cursor-not-allowed select-none"
+                    />
+                    <div className="flex items-center rounded-xl border border-gray-200 bg-white overflow-hidden shadow-xs focus-within:border-slate-400 focus-within:ring-1 focus-within:ring-slate-400 flex-1 h-10">
+                      <span className="bg-slate-100 border-r border-gray-200 px-3 py-2 text-xs font-bold text-slate-600 select-none shrink-0 h-full flex items-center">
+                        MYR
+                      </span>
+                      <input 
+                        type="text"
+                        placeholder="0" 
+                        value={form.scholarship ? cleanFeeValue(form.scholarship) : "0"} 
+                        onChange={(e) => {
+                          const rawVal = e.target.value.replace(/[^0-9.]/g, "");
+                          setForm(prev => ({ ...prev, scholarship: rawVal }));
+                        }}
+                        className="w-full px-3 py-2 text-sm text-gray-900 bg-transparent outline-none placeholder:text-muted-foreground"
+                      />
+                    </div>
+                    <div className="w-10 shrink-0" />
+                  </div>
+
+                  <div className="flex gap-2 items-center">
+                    <Input 
+                      value="Total Tuition Fees" 
+                      readOnly
+                      disabled
+                      className="w-1/3 min-w-[110px] bg-slate-50 text-slate-700 font-normal cursor-not-allowed select-none"
+                    />
+                    <div className="flex items-center rounded-xl border border-gray-200 bg-slate-50 overflow-hidden shadow-xs flex-1 h-10 cursor-not-allowed">
+                      <span className="bg-slate-100 border-r border-gray-200 px-3 py-2 text-xs font-bold text-slate-600 select-none shrink-0 h-full flex items-center">
+                        MYR
+                      </span>
+                      <input 
+                        type="text"
+                        readOnly
+                        disabled
+                        value={totalYearlyFees > 0 ? totalYearlyFees.toLocaleString() : "0"} 
+                        className="w-full px-3 py-2 text-sm text-gray-900 bg-transparent outline-none cursor-not-allowed select-none"
+                      />
+                    </div>
+                    <div className="w-10 shrink-0" />
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Label className="text-[13px] font-semibold text-gray-700">Other Fees</Label>
-              <Button size="sm" className="h-7 px-3 text-xs" onClick={() => setForm(p => ({ ...p, other_fees: [...p.other_fees, { description: "", fee: "" }] }))}>
+              <Button 
+                type="button"
+                size="sm" 
+                className="h-7 px-3 text-xs" 
+                onClick={() => setForm(p => ({ ...p, other_fees: [...p.other_fees, { description: "", fee: "" }] }))}
+              >
                 <Plus className="h-3 w-3 mr-1" /> Add Fee
               </Button>
             </div>
@@ -667,19 +851,34 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                       newArr[i].description = e.target.value;
                       setForm(prev => ({ ...prev, other_fees: newArr }));
                     }}
+                    className="flex-1 min-w-[130px]"
                   />
-                  <Input 
-                    placeholder="e.g. MYR 2,500" 
-                    value={of.fee} 
-                    onChange={(e) => {
-                      const newArr = [...form.other_fees];
-                      newArr[i].fee = e.target.value;
-                      setForm(prev => ({ ...prev, other_fees: newArr }));
-                    }}
-                  />
-                  <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors shrink-0" onClick={() => setForm(p => ({ ...p, other_fees: p.other_fees.filter((_, idx) => idx !== i) }))}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                  <div className="flex items-center rounded-xl border border-gray-200 bg-white overflow-hidden shadow-xs focus-within:border-slate-400 focus-within:ring-1 focus-within:ring-slate-400 w-44 shrink-0 h-10">
+                    <span className="bg-slate-100 border-r border-gray-200 px-3 py-2 text-xs font-bold text-slate-600 select-none shrink-0 h-full flex items-center">
+                      MYR
+                    </span>
+                    <input 
+                      type="text"
+                      placeholder="e.g. 2,500" 
+                      value={cleanFeeValue(of.fee)} 
+                      onChange={(e) => {
+                        const rawVal = e.target.value;
+                        const newArr = [...form.other_fees];
+                        newArr[i].fee = rawVal ? `MYR ${rawVal.replace(/^(MYR|RM)\s*/i, '').trim()}` : "";
+                        setForm(prev => ({ ...prev, other_fees: newArr }));
+                      }}
+                      className="w-full px-3 py-2 text-sm text-gray-900 bg-transparent outline-none placeholder:text-muted-foreground"
+                    />
+                  </div>
+                  <Button 
+                    type="button"
+                    variant="outline" 
+                    size="icon" 
+                    className="h-10 w-10 rounded-xl text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors shrink-0" 
+                    onClick={() => setForm(p => ({ ...p, other_fees: p.other_fees.filter((_, idx) => idx !== i) }))}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
               ))}
             </div>
