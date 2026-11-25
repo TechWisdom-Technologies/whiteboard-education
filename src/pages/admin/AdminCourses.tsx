@@ -53,6 +53,7 @@ export default function AdminCourses() {
     { key: "entry_requirements", label: "English Requirements", type: "json_object", showInTable: false, placeholder: '{"IELTS":"6.0"}' },
     { key: "entry_requirements_text", label: "Other Entry Requirements", type: "textarea", showInTable: false },
     { key: "class_type", label: "Class Type", placeholder: "e.g. Physical", showInTable: false },
+    { key: "course_type", label: "Course Type", placeholder: "e.g. Taught Course", showInTable: false },
     { key: "yearly_fees", label: "Yearly Tuition fees", type: "json_array", showInTable: false, placeholder: '[{"year":"1st Year","fee":"MYR 20,000"}]' },
     { key: "other_fees", label: "Other fees", type: "json_array", showInTable: false, placeholder: '[{"description":"Registration Fee","fee":"MYR 280"}]' },
     { key: "overview", label: "Course Overview", type: "richtext", showInTable: false },

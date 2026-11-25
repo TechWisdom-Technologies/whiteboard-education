@@ -10,7 +10,7 @@ import { useCurrency } from "@/contexts/CurrencyContext";
 import { toast } from "sonner";
 import { generateSlug } from "@/lib/utils";
 import { getActiveIntake } from "@/lib/utils";
-import { matchesCourseDepartment, matchesCourseLevel, COURSE_LIST_SELECT } from "@/lib/courseFilters";
+import { matchesCourseDepartment, matchesCourseLevel, COURSE_LIST_SELECT, getCourseTuitionFee } from "@/lib/courseFilters";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -702,7 +702,10 @@ export default function Courses() {
                                 <div className="flex items-start gap-3 text-[12px] md:text-[14px] text-[#475569] leading-loose">
                                   <Info className="h-[18px] w-[18px] shrink-0 text-[#475569] mt-1 md:mt-[5px]" />
                                   <span>
-                                    {formatCurrency(c.tuition_fee)}/Year &bull; {uni && PAID_OFFER_LETTER_UNIS.includes(uni.name) ? "Offer Letter Fees Applies" : "Free Offer Letter"} &bull; {c.duration || "N/A"} &bull;{" "}
+                                    {(() => {
+                                      const fee = getCourseTuitionFee(c);
+                                      return fee ? `${formatCurrency(fee)}/Year` : "Tuition Fee on Request";
+                                    })()} &bull; {uni && PAID_OFFER_LETTER_UNIS.includes(uni.name) ? "Offer Letter Fees Applies" : "Free Offer Letter"} &bull; {c.duration || "N/A"} &bull;{" "}
                                     {Array.isArray(c.intake_months) && c.intake_months.length > 0 ? (
                                       <>
                                         {c.intake_months.map((intake: string, idx: number) => {

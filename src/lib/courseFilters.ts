@@ -32,7 +32,53 @@ export const DEGREE_LEVELS = [
  * reducing network transfer by ~95% (from ~45MB down to ~1.5MB).
  */
 export const COURSE_LIST_SELECT =
-  "id,title,university_id,campus,category,degree_level,duration,intake_months,offer_letter,class_type,tuition_fee,entry_requirements,created_at";
+  "id,title,university_id,campus,category,degree_level,duration,intake_months,offer_letter,class_type,course_type,tuition_fee,yearly_fees,entry_requirements,created_at";
+
+/**
+ * Extracts the effective annual tuition fee from a course record,
+ * checking both numeric tuition_fee and yearly_fees schedule.
+ */
+export const getCourseTuitionFee = (c: any): number | null => {
+  if (!c) return null;
+  // 1. Direct numeric tuition_fee
+  if (typeof c.tuition_fee === "number" && c.tuition_fee > 0) {
+    return c.tuition_fee;
+  }
+  if (typeof c.tuition_fee === "string") {
+    const parsed = parseFloat(c.tuition_fee.replace(/[^0-9.]/g, ""));
+    if (!isNaN(parsed) && parsed > 0) return parsed;
+  }
+
+  // 2. Parse from yearly_fees JSON array
+  let feesArr: any[] = [];
+  if (Array.isArray(c.yearly_fees)) {
+    feesArr = c.yearly_fees;
+  } else if (typeof c.yearly_fees === "string") {
+    try {
+      const parsed = JSON.parse(c.yearly_fees);
+      if (Array.isArray(parsed)) feesArr = parsed;
+    } catch (e) {}
+  }
+
+  if (feesArr.length > 0) {
+    const firstPeriod = feesArr[0];
+    const isSemester = String(firstPeriod?.year || "").toLowerCase().includes("semester");
+    if (isSemester) {
+      const sem1 = parseFloat(String(feesArr[0]?.fee || "").replace(/[^0-9.]/g, "")) || 0;
+      const sem2 = parseFloat(String(feesArr[1]?.fee || "").replace(/[^0-9.]/g, "")) || 0;
+      const annual = sem1 + sem2;
+      if (annual > 0) return annual;
+    }
+
+    const firstFee = feesArr[0]?.fee;
+    if (firstFee) {
+      const parsed = parseFloat(String(firstFee).replace(/[^0-9.]/g, ""));
+      if (!isNaN(parsed) && parsed > 0) return parsed;
+    }
+  }
+
+  return null;
+};
 
 // Comprehensive keyword dictionary for standard study areas
 export const AREA_KEYWORDS: Record<string, string[]> = {

@@ -46,7 +46,7 @@ export default function CourseDetail() {
 
         // 2. Match numeric ID (legacy mock data)
         if (/^\d+$/.test(courseId)) {
-          const { data } = await supabase.from("courses").select("*").eq("id", Number(courseId)).maybeSingle();
+          const { data } = await (supabase.from("courses") as any).select("*").eq("id", courseId).maybeSingle();
           if (isMounted && data) {
             setSingleCourse(data);
             return;
@@ -193,14 +193,14 @@ export default function CourseDetail() {
 
   const scholarshipAmount = parseFloat(String(course.scholarship || "0").replace(/[^0-9.]/g, "")) || 0;
 
-  const totalYearlyFees = useMemo(() => {
+  const totalYearlyFees = (() => {
     const sum = yearlyFees.reduce((acc, item) => {
       const clean = String(item.fee || "").replace(/[^0-9.]/g, "");
       const val = parseFloat(clean);
       return acc + (isNaN(val) ? 0 : val);
     }, 0);
     return Math.max(0, sum - scholarshipAmount);
-  }, [yearlyFees, scholarshipAmount]);
+  })();
 
   // Handle both snake_case (DB) and camelCase (mockData) gracefully
   const careerOutcomes = Array.isArray(course.careerOutcomes || course.career_outcomes) ? (course.careerOutcomes || course.career_outcomes) : [];
@@ -237,6 +237,7 @@ export default function CourseDetail() {
 
 Duration: ${course.duration || 'Not Specified'}
 English requirement: ${engReq}
+Course Type: ${course.course_type || 'Taught Course'}
 
 Intake: ${intakeStr}
 
@@ -485,6 +486,14 @@ ${window.location.href}`;
                       <div className="text-gray-700 text-[12px] md:text-base font-semibold whitespace-nowrap">Class Type</div>
                     </div>
                     <div className="text-gray-900 font-normal text-[12px] md:text-base text-left">{course.class_type || "Physical"}</div>
+                  </div>
+
+                  <div className="py-2 flex items-center gap-4">
+                    <div className="flex items-center gap-2 w-40 md:w-56 shrink-0">
+                      <Info className="hidden md:block w-4 h-4 text-[#2F4F97] shrink-0" />
+                      <div className="text-gray-700 text-[12px] md:text-base font-semibold whitespace-nowrap">Course Type</div>
+                    </div>
+                    <div className="text-gray-900 font-normal text-[12px] md:text-base text-left">{course.course_type || "Taught Course"}</div>
                   </div>
                 </div>
               </div>

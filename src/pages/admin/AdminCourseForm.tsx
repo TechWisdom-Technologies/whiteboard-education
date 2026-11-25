@@ -28,13 +28,30 @@ export const STUDY_AREAS = [
   "Social Sciences"
 ];
 
-export const DURATION_NUMBERS = [
-  "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1",
-  "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "2",
-  "2.1", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7", "2.8", "2.9", "3",
-  "3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9", "4",
-];
 export const DURATION_UNITS = ["Years", "Months"];
+
+export const CLASS_TYPES = [
+  "Physical",
+  "Online",
+  "Hybrid (Online + Offline)",
+];
+
+export const COURSE_TYPES = [
+  "Taught Course",
+  "Research Type",
+];
+
+export const ENGLISH_TEST_OPTIONS = [
+  { value: "IELTS", label: "IELTS" },
+  { value: "TOEFL iBT", label: "TOEFL iBT" },
+  { value: "PTE Academic", label: "PTE Academic" },
+  { value: "Duolingo", label: "Duolingo" },
+  { value: "Cambridge English", label: "Cambridge English" },
+  { value: "Linguaskill", label: "Linguaskill" },
+  { value: "OET", label: "OET" },
+  { value: "MUET", label: "MUET" },
+  { value: "MOI", label: "MOI (Medium of Instruction)" },
+];
 
 const parseDuration = (raw: string) => {
   if (!raw || !raw.trim()) {
@@ -45,14 +62,8 @@ const parseDuration = (raw: string) => {
   if (match) {
     const rawNum = match[1];
     const rawUnit = match[2]?.trim().toLowerCase();
-
-    const parsedFloat = parseFloat(rawNum);
-    const normalizedNum = isNaN(parsedFloat)
-      ? rawNum
-      : (parsedFloat % 1 === 0 ? parsedFloat.toString() : parsedFloat.toFixed(1));
-
     const unit = rawUnit.startsWith("month") ? "Months" : "Years";
-    return { number: normalizedNum, unit };
+    return { number: rawNum, unit };
   }
   return { number: "", unit: "Years" };
 };
@@ -85,7 +96,8 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
     duration: "",
     entry_requirements: {} as Record<string, string>,
     entry_requirements_text: "",
-    class_type: "",
+    class_type: "Physical",
+    course_type: "Taught Course",
     yearly_fees: [] as { year: string; fee: string }[],
     scholarship: 0 as number | string,
     other_fees: [] as { description: string; fee: string }[],
@@ -98,6 +110,12 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
   const [newCareerTag, setNewCareerTag] = useState("");
   const [selectedDurationUnit, setSelectedDurationUnit] = useState<string>("Years");
   const [feeScheduleType, setFeeScheduleType] = useState<"yearly" | "semester">("yearly");
+
+  const isOfferLetterFree = useMemo(() => {
+    if (!form.offer_letter) return false;
+    const lower = String(form.offer_letter).trim().toLowerCase();
+    return lower === "free" || lower.startsWith("free");
+  }, [form.offer_letter]);
 
   // Automatically detect if initial fees were semester-wise or yearly
   useEffect(() => {
@@ -129,7 +147,37 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
     }));
   };
 
+  const { number: durationNumber, unit: parsedDurationUnit } = useMemo(() => {
+    return parseDuration(form.duration);
+  }, [form.duration]);
+
+  const durationUnit = parsedDurationUnit || selectedDurationUnit;
+
+  const maxFeePeriods = useMemo(() => {
+    if (!durationNumber) return null;
+    const num = parseFloat(durationNumber);
+    if (isNaN(num) || num <= 0) return null;
+
+    const isMonths = durationUnit.toLowerCase().startsWith("month");
+    if (feeScheduleType === "yearly") {
+      return isMonths ? Math.max(1, Math.ceil(num / 12)) : Math.max(1, Math.ceil(num));
+    } else {
+      // Semester wise (2 semesters per year / 6 months per semester)
+      return isMonths ? Math.max(1, Math.ceil(num / 6)) : Math.max(1, Math.ceil(num * 2));
+    }
+  }, [durationNumber, durationUnit, feeScheduleType]);
+
+  const isMaxPeriodsReached = Boolean(maxFeePeriods !== null && form.yearly_fees.length >= maxFeePeriods);
+
   const addFeePeriod = () => {
+    if (!form.duration || !durationNumber) {
+      toast.error("Please select course duration first.");
+      return;
+    }
+    if (maxFeePeriods !== null && form.yearly_fees.length >= maxFeePeriods) {
+      toast.error(`Cannot add more than ${maxFeePeriods} ${feeScheduleType === "yearly" ? "years" : "semesters"} for a ${form.duration} course.`);
+      return;
+    }
     setForm(p => ({
       ...p,
       yearly_fees: [
@@ -151,12 +199,6 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
       };
     });
   };
-
-  const { number: durationNumber, unit: parsedDurationUnit } = useMemo(() => {
-    return parseDuration(form.duration);
-  }, [form.duration]);
-
-  const durationUnit = parsedDurationUnit || selectedDurationUnit;
 
   const totalYearlyFees = useMemo(() => {
     const sum = form.yearly_fees.reduce((acc, item) => {
@@ -254,7 +296,8 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
         duration: initialData.duration || "",
         entry_requirements: typeof initialData.entry_requirements === "object" && initialData.entry_requirements !== null ? initialData.entry_requirements : {},
         entry_requirements_text: initialData.entry_requirements_text || "",
-        class_type: initialData.class_type || "",
+        class_type: initialData.class_type || "Physical",
+        course_type: initialData.course_type || "Taught Course",
         yearly_fees: Array.isArray(initialData.yearly_fees) ? initialData.yearly_fees : [],
         scholarship: initialData.scholarship !== undefined ? initialData.scholarship : 0,
         other_fees: Array.isArray(initialData.other_fees) ? initialData.other_fees : [],
@@ -285,7 +328,8 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                 duration: d.duration || prev.duration,
                 entry_requirements: typeof d.entry_requirements === "object" && d.entry_requirements ? (d.entry_requirements as Record<string, string>) : prev.entry_requirements,
                 entry_requirements_text: d.entry_requirements_text || prev.entry_requirements_text,
-                class_type: d.class_type || prev.class_type,
+                class_type: d.class_type || prev.class_type || "Physical",
+                course_type: d.course_type || prev.course_type || "Taught Course",
                 yearly_fees: Array.isArray(d.yearly_fees) ? (d.yearly_fees as { year: string; fee: string }[]) : prev.yearly_fees,
                 scholarship: d.scholarship !== undefined ? d.scholarship : prev.scholarship,
                 other_fees: Array.isArray(d.other_fees) ? (d.other_fees as { description: string; fee: string }[]) : prev.other_fees,
@@ -318,15 +362,31 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
       return;
     }
 
+    if (maxFeePeriods !== null && form.yearly_fees.length > maxFeePeriods) {
+      toast.error(`Course duration is ${form.duration}. You cannot have more than ${maxFeePeriods} ${feeScheduleType === "yearly" ? "years" : "semesters"} of tuition fees.`);
+      return;
+    }
+
     let currentPayload: Record<string, any> = { ...form };
 
     // Automatically sync tuition_fee with the 1st year fee so catalog cards,
     // search filters, and sorting that query tuition_fee work seamlessly
-    const firstYearFee = form.yearly_fees?.[0]?.fee;
-    if (firstYearFee) {
-      const parsedNum = parseFloat(String(firstYearFee).replace(/[^0-9.]/g, ""));
-      if (!isNaN(parsedNum) && parsedNum > 0) {
-        currentPayload.tuition_fee = parsedNum;
+    if (form.yearly_fees && form.yearly_fees.length > 0) {
+      if (feeScheduleType === "semester" && form.yearly_fees.length >= 2) {
+        const s1 = parseFloat(String(form.yearly_fees[0]?.fee || "").replace(/[^0-9.]/g, "")) || 0;
+        const s2 = parseFloat(String(form.yearly_fees[1]?.fee || "").replace(/[^0-9.]/g, "")) || 0;
+        const annual = s1 + s2;
+        if (annual > 0) {
+          currentPayload.tuition_fee = annual;
+        }
+      } else {
+        const firstYearFee = form.yearly_fees[0]?.fee;
+        if (firstYearFee) {
+          const parsedNum = parseFloat(String(firstYearFee).replace(/[^0-9.]/g, ""));
+          if (!isNaN(parsedNum) && parsedNum > 0) {
+            currentPayload.tuition_fee = parsedNum;
+          }
+        }
       }
     }
     currentPayload.scholarship = parseFloat(String(form.scholarship || "0").replace(/[^0-9.]/g, "")) || 0;
@@ -380,17 +440,43 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
 
   // English Requirements Handlers
   const addEnglishReq = () => {
-    setForm(prev => ({ ...prev, entry_requirements: { ...prev.entry_requirements, "": "" } }));
+    const existingKeys = Object.keys(form.entry_requirements);
+    const availableTest = ENGLISH_TEST_OPTIONS.find(t => !existingKeys.includes(t.value));
+    const newKey = availableTest ? availableTest.value : (existingKeys.includes("IELTS") ? `Test ${existingKeys.length + 1}` : "IELTS");
+    const initialVal = newKey === "MOI" ? "Accepted" : "";
+
+    setForm(prev => ({
+      ...prev,
+      entry_requirements: {
+        ...prev.entry_requirements,
+        [newKey]: initialVal,
+      },
+    }));
   };
-  const updateEnglishReq = (oldKey: string, newKey: string, val: string) => {
+  const updateEnglishReqKey = (oldKey: string, newKey: string) => {
+    if (oldKey === newKey) return;
     setForm(prev => {
       const newReqs = { ...prev.entry_requirements };
-      if (oldKey !== newKey) {
-        delete newReqs[oldKey];
-      }
-      newReqs[newKey] = val;
+      const currentVal = newReqs[oldKey];
+      delete newReqs[oldKey];
+      const isMOI = newKey === "MOI";
+      newReqs[newKey] = isMOI ? "Accepted" : (currentVal === "Accepted" ? "" : currentVal || "");
       return { ...prev, entry_requirements: newReqs };
     });
+  };
+  const updateEnglishReqScore = (key: string, rawScore: string) => {
+    let clean = rawScore.replace(/[^0-9.]/g, "");
+    const parts = clean.split(".");
+    if (parts.length > 2) {
+      clean = parts[0] + "." + parts.slice(1).join("");
+    }
+    setForm(prev => ({
+      ...prev,
+      entry_requirements: {
+        ...prev.entry_requirements,
+        [key]: clean,
+      },
+    }));
   };
   const removeEnglishReq = (key: string) => {
     setForm(prev => {
@@ -582,24 +668,22 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
           <div className="space-y-2">
             <Label className="text-[13px] font-semibold text-gray-700">Duration</Label>
             <div className="grid grid-cols-2 gap-3">
-              <select
-                className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700"
+              <Input
+                type="text"
+                inputMode="decimal"
+                placeholder="e.g. 3 or 1.5"
                 value={durationNumber}
-                onChange={(e) => handleDurationChange(e.target.value, durationUnit)}
-              >
-                <option value="">Select duration...</option>
-                {durationNumber && !DURATION_NUMBERS.includes(durationNumber) && (
-                  <option value={durationNumber}>{durationNumber}</option>
-                )}
-                {DURATION_NUMBERS.map((n) => (
-                  <option key={n} value={n}>
-                    {n}
-                  </option>
-                ))}
-              </select>
+                onChange={(e) => {
+                  const raw = e.target.value.replace(/[^0-9.]/g, "");
+                  const parts = raw.split(".");
+                  const sanitized = parts.length > 2 ? parts[0] + "." + parts.slice(1).join("") : raw;
+                  handleDurationChange(sanitized, durationUnit);
+                }}
+                className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-900 focus-visible:ring-1 focus-visible:ring-slate-400"
+              />
 
               <select
-                className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700"
+                className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-slate-400"
                 value={durationUnit}
                 onChange={(e) => handleDurationChange(durationNumber, e.target.value)}
               >
@@ -644,7 +728,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
           <div className="space-y-2">
             <div className="flex items-center justify-between mb-2">
               <Label className="text-[13px] font-semibold text-gray-700">English Requirements</Label>
-              <Button size="sm" onClick={addEnglishReq} className="h-7 px-3 text-xs">
+              <Button type="button" size="sm" onClick={addEnglishReq} className="h-7 px-3 text-xs">
                 <Plus className="h-3 w-3 mr-1" /> Add
               </Button>
             </div>
@@ -652,44 +736,142 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
               {Object.entries(form.entry_requirements).length === 0 && (
                 <p className="text-xs text-muted-foreground italic">No English requirements added.</p>
               )}
-              {Object.entries(form.entry_requirements).map(([key, val], i) => (
-                <div key={i} className="flex gap-2 items-center">
-                  <Input 
-                    placeholder="e.g. IELTS" 
-                    value={key} 
-                    className="w-1/2"
-                    onChange={(e) => updateEnglishReq(key, e.target.value, val)}
-                  />
-                  <Input 
-                    placeholder="e.g. 6.0" 
-                    value={val} 
-                    className="w-1/2"
-                    onChange={(e) => updateEnglishReq(key, key, e.target.value)}
-                  />
-                  <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors shrink-0" onClick={() => removeEnglishReq(key)}>
+              {Object.entries(form.entry_requirements).map(([key, val], i) => {
+                const isMOI = key.toUpperCase() === "MOI";
+                return (
+                  <div key={i} className="flex gap-2 items-center">
+                    <select
+                      className="w-1/2 rounded-md border border-input bg-background px-3 h-10 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                      value={key}
+                      onChange={(e) => updateEnglishReqKey(key, e.target.value)}
+                    >
+                      {ENGLISH_TEST_OPTIONS.map((t) => {
+                        const isAlreadyUsed = t.value !== key && form.entry_requirements[t.value] !== undefined;
+                        return (
+                          <option key={t.value} value={t.value} disabled={isAlreadyUsed}>
+                            {t.label} {isAlreadyUsed ? "(Already added)" : ""}
+                          </option>
+                        );
+                      })}
+                      {!ENGLISH_TEST_OPTIONS.some(t => t.value === key) && (
+                        <option value={key}>{key}</option>
+                      )}
+                    </select>
+                    <Input 
+                      type="text"
+                      inputMode="decimal"
+                      placeholder={isMOI ? "No score required" : "e.g. 6.0"} 
+                      value={isMOI ? "MOI (No Score Required)" : val} 
+                      disabled={isMOI}
+                      className={`w-1/2 h-10 ${isMOI ? "bg-slate-50 text-slate-400 cursor-not-allowed select-none" : ""}`}
+                      onChange={(e) => updateEnglishReqScore(key, e.target.value)}
+                    />
+                    <Button 
+                      type="button"
+                      variant="outline" 
+                      size="icon" 
+                      className="h-10 w-10 rounded-xl text-red-600 hover:text-white hover:bg-red-600 hover:border-red-600 border-gray-200 shadow-sm transition-colors shrink-0" 
+                      onClick={() => removeEnglishReq(key)}
+                    >
                       <Trash2 className="h-4 w-4" />
                     </Button>
-                </div>
-              ))}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label className="text-[13px] font-semibold text-gray-700">Offer Letter Fee</Label>
-            <Input 
-              value={form.offer_letter} 
-              onChange={(e) => setForm(prev => ({ ...prev, offer_letter: e.target.value }))} 
-              placeholder="e.g. Free, RM 250 Fees Applies" 
-            />
+            <div className="flex items-center justify-between">
+              <Label className="text-[13px] font-semibold text-gray-700">Offer Letter Fee</Label>
+              <div className="flex items-center gap-3">
+                <label className="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-slate-700 hover:text-slate-900">
+                  <input 
+                    type="radio" 
+                    name="offerLetterFeeType" 
+                    value="free" 
+                    checked={isOfferLetterFree} 
+                    onChange={() => setForm(prev => ({ ...prev, offer_letter: "Free" }))}
+                    className="w-3.5 h-3.5 text-primary border-gray-300 focus:ring-primary cursor-pointer"
+                  />
+                  Free
+                </label>
+                <label className="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-slate-700 hover:text-slate-900">
+                  <input 
+                    type="radio" 
+                    name="offerLetterFeeType" 
+                    value="fee_applies" 
+                    checked={!isOfferLetterFree} 
+                    onChange={() => {
+                      setForm(prev => ({
+                        ...prev,
+                        offer_letter: prev.offer_letter.trim().toLowerCase().startsWith("free") ? "" : prev.offer_letter,
+                      }));
+                    }}
+                    className="w-3.5 h-3.5 text-primary border-gray-300 focus:ring-primary cursor-pointer"
+                  />
+                  Fee Applies
+                </label>
+              </div>
+            </div>
+            <div className={`flex items-center rounded-xl border border-gray-200 overflow-hidden shadow-xs h-10 ${
+              isOfferLetterFree ? "bg-slate-50 cursor-not-allowed" : "bg-white focus-within:border-slate-400 focus-within:ring-1 focus-within:ring-slate-400"
+            }`}>
+              <span className="bg-slate-100 border-r border-gray-200 px-3 py-2 text-xs font-bold text-slate-600 select-none shrink-0 h-full flex items-center">
+                MYR
+              </span>
+              <input 
+                type="text"
+                inputMode="decimal"
+                disabled={isOfferLetterFree}
+                placeholder={isOfferLetterFree ? "0 (Free Offer Letter)" : "e.g. 250"}
+                value={isOfferLetterFree ? "0" : cleanFeeValue(form.offer_letter)}
+                onChange={(e) => {
+                  const rawVal = e.target.value.replace(/[^0-9.]/g, "");
+                  const parts = rawVal.split(".");
+                  const sanitized = parts.length > 2 ? parts[0] + "." + parts.slice(1).join("") : rawVal;
+                  setForm(prev => ({
+                    ...prev,
+                    offer_letter: sanitized ? `MYR ${sanitized}` : "",
+                  }));
+                }}
+                className={`w-full px-3 py-2 text-sm text-gray-900 bg-transparent outline-none placeholder:text-muted-foreground ${
+                  isOfferLetterFree ? "cursor-not-allowed text-slate-400 select-none" : ""
+                }`}
+              />
+            </div>
           </div>
 
           <div className="space-y-2">
             <Label className="text-[13px] font-semibold text-gray-700">Class Type</Label>
-            <Input 
-              value={form.class_type} 
-              onChange={(e) => setForm(prev => ({ ...prev, class_type: e.target.value }))} 
-              placeholder="e.g. Physical, Online, Blended" 
-            />
+            <select
+              className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+              value={form.class_type || "Physical"}
+              onChange={(e) => setForm(prev => ({ ...prev, class_type: e.target.value }))}
+            >
+              {CLASS_TYPES.map((ct) => (
+                <option key={ct} value={ct}>{ct}</option>
+              ))}
+              {form.class_type && !CLASS_TYPES.includes(form.class_type) && (
+                <option value={form.class_type}>{form.class_type}</option>
+              )}
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-[13px] font-semibold text-gray-700">Course Type</Label>
+            <select
+              className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+              value={form.course_type || "Taught Course"}
+              onChange={(e) => setForm(prev => ({ ...prev, course_type: e.target.value }))}
+            >
+              {COURSE_TYPES.map((ct) => (
+                <option key={ct} value={ct}>{ct}</option>
+              ))}
+              {form.course_type && !COURSE_TYPES.includes(form.course_type) && (
+                <option value={form.course_type}>{form.course_type}</option>
+              )}
+            </select>
           </div>
         </div>
 
@@ -727,12 +909,20 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
               <Button 
                 type="button"
                 size="sm" 
-                className="h-7 px-3 text-xs shrink-0 self-start sm:self-auto" 
+                disabled={isMaxPeriodsReached}
+                className="h-7 px-3 text-xs shrink-0 self-start sm:self-auto disabled:opacity-50 disabled:cursor-not-allowed" 
                 onClick={addFeePeriod}
+                title={isMaxPeriodsReached ? `Maximum ${maxFeePeriods} ${feeScheduleType === "yearly" ? "years" : "semesters"} reached for ${form.duration}` : undefined}
               >
                 <Plus className="h-3 w-3 mr-1" /> {feeScheduleType === "yearly" ? "Add Year" : "Add Semester"}
               </Button>
             </div>
+
+            {maxFeePeriods !== null && form.yearly_fees.length > maxFeePeriods && (
+              <div className="p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs">
+                Course duration is <strong>{form.duration}</strong> (max {maxFeePeriods} {feeScheduleType === "yearly" ? "years" : "semesters"}). Please remove {form.yearly_fees.length - maxFeePeriods} extra {form.yearly_fees.length - maxFeePeriods === 1 ? "period" : "periods"}.
+              </div>
+            )}
 
             <div className="space-y-2">
               {form.yearly_fees.length === 0 && <p className="text-xs text-muted-foreground italic">No tuition fees added.</p>}

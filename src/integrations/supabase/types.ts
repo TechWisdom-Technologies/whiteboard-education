@@ -185,6 +185,7 @@ export type Database = {
           career_outcomes: Json | null
           category: string | null
           class_type: string | null
+          course_type: string | null
           created_at: string
           curriculum: Json | null
           degree_level: string
@@ -207,6 +208,7 @@ export type Database = {
           career_outcomes?: Json | null
           category?: string | null
           class_type?: string | null
+          course_type?: string | null
           created_at?: string
           curriculum?: Json | null
           degree_level?: string
@@ -229,6 +231,7 @@ export type Database = {
           career_outcomes?: Json | null
           category?: string | null
           class_type?: string | null
+          course_type?: string | null
           created_at?: string
           curriculum?: Json | null
           degree_level?: string

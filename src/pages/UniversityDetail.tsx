@@ -26,7 +26,7 @@ import { toast } from "sonner";
 import { useCourseCompare } from "@/contexts/CourseCompareContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { mergePriorityUniversities, ALL_PRIORITY_UNIVERSITIES } from "@/lib/universityPriority";
-import { matchesCourseDepartment, COURSE_LIST_SELECT } from "@/lib/courseFilters";
+import { matchesCourseDepartment, COURSE_LIST_SELECT, getCourseTuitionFee } from "@/lib/courseFilters";
 
 const LOGOS: Record<string, string> = {
   "Multimedia University Malaysia (MMU)": "https://en.your-uni.com/assets/images/university/mmu-university.webp",
@@ -601,17 +601,22 @@ if (isLoading) return <div className="min-h-screen flex flex-col bg-white"><Mega
                                 </tr>
                               </thead>
                               <tbody>
-                                {gc.map((c: any, i: number) => (
-                                  <tr key={c.id} className="border-b border-gray-200 last:border-0 hover:bg-gray-50/50 transition-colors">
-                                    <td className="px-3 md:px-6 py-3 md:py-4">
-                                      <Link to={`/courses/${generateSlug(c.title)}`} className="text-black hover:text-[#2F4F97] transition-colors">
-                                        {c.title}
-                                      </Link>
-                                    </td>
-                                    <td className="px-3 md:px-6 py-3 md:py-4 text-black whitespace-normal md:whitespace-nowrap leading-tight">{c.tuition_fee ? formatCurrency(c.tuition_fee) : "-"}</td>
-                                    <td className="px-3 md:px-6 py-3 md:py-4 text-black whitespace-nowrap">{c.duration}</td>
-                                  </tr>
-                                ))}
+                                {gc.map((c: any, i: number) => {
+                                  const fee = getCourseTuitionFee(c);
+                                  return (
+                                    <tr key={c.id} className="border-b border-gray-200 last:border-0 hover:bg-gray-50/50 transition-colors">
+                                      <td className="px-3 md:px-6 py-3 md:py-4">
+                                        <Link to={`/courses/${generateSlug(c.title)}`} className="text-black hover:text-[#2F4F97] transition-colors">
+                                          {c.title}
+                                        </Link>
+                                      </td>
+                                      <td className="px-3 md:px-6 py-3 md:py-4 text-black whitespace-normal md:whitespace-nowrap leading-tight">
+                                        {fee ? formatCurrency(fee) : "-"}
+                                      </td>
+                                      <td className="px-3 md:px-6 py-3 md:py-4 text-black whitespace-nowrap">{c.duration}</td>
+                                    </tr>
+                                  );
+                                })}
                               </tbody>
                             </table>
                           </div>
@@ -893,7 +898,10 @@ if (isLoading) return <div className="min-h-screen flex flex-col bg-white"><Mega
                           <div className="flex items-center gap-2 text-[14px] text-gray-600 font-normal flex-wrap">
                             <span className="flex items-center justify-center w-4 h-4 bg-gray-500 text-white rounded-full text-[10px] font-bold shrink-0 italic font-serif">i</span>
                             <span>
-                              {formatCurrency(c.tuition_fee)}/Year • {isPaid ? "Paid Offer" : "Free Offer Letter"} • {c.duration} {c.intake_months?.length > 0 && `• ${c.intake_months.slice(0, 3).join(', ')} Intake`}
+                              {(() => {
+                                const fee = getCourseTuitionFee(c);
+                                return fee ? `${formatCurrency(fee)}/Year` : "Tuition Fee on Request";
+                              })()} • {isPaid ? "Paid Offer" : "Free Offer Letter"} • {c.duration} {c.intake_months?.length > 0 && `• ${c.intake_months.slice(0, 3).join(', ')} Intake`}
                             </span>
                           </div>
                         </div>

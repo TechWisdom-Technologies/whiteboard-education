@@ -220,18 +220,18 @@ export default function PartnerMarketing() {
         ) : (
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-slate-50/75 border-b border-slate-200">
-                <TableRow className="hover:bg-transparent">
-                  <TableHead className="w-[45%] text-xs font-bold text-slate-600 uppercase tracking-wider pl-6 py-3.5">
+              <TableHeader className="bg-primary border-b border-primary/20">
+                <TableRow className="hover:bg-primary border-none">
+                  <TableHead className="w-[45%] text-xs font-semibold text-white uppercase tracking-wider pl-6 py-3.5">
                     Document
                   </TableHead>
-                  <TableHead className="w-[15%] text-xs font-bold text-slate-600 uppercase tracking-wider py-3.5">
+                  <TableHead className="w-[15%] text-xs font-semibold text-white uppercase tracking-wider py-3.5">
                     Type
                   </TableHead>
-                  <TableHead className="w-[15%] text-xs font-bold text-slate-600 uppercase tracking-wider py-3.5">
+                  <TableHead className="w-[15%] text-xs font-semibold text-white uppercase tracking-wider py-3.5">
                     File Size
                   </TableHead>
-                  <TableHead className="w-[25%] text-xs font-bold text-slate-600 uppercase tracking-wider text-right pr-6 py-3.5">
+                  <TableHead className="w-[25%] text-xs font-semibold text-white uppercase tracking-wider text-right pr-6 py-3.5">
                     Actions
                   </TableHead>
                 </TableRow>
