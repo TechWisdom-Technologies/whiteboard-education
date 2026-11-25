@@ -42,17 +42,14 @@ import {
   FileText,
   Search,
   ExternalLink,
-  Video,
   Bell,
   Banknote,
   Clock,
   CreditCard,
   Info,
   CheckCircle2,
-  AlertTriangle,
   ArrowRight,
-  Megaphone,
-  Tag
+  Megaphone
 } from "lucide-react";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -603,66 +600,46 @@ export default function PartnerOverview() {
               <Megaphone className="w-4 h-4" />
               Recent Updates & Notices
             </CardTitle>
-            <span className="text-[11px] font-medium text-slate-500 bg-slate-50 border border-slate-200/70 px-2.5 py-0.5 rounded-full">
-              Official Admin Bulletins
-            </span>
           </CardHeader>
           <CardContent className="pt-4 flex-grow">
             {notices.length > 0 ? (
-              <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+              <div className="space-y-2.5 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
                 {notices.map((notice: any) => {
-                  const cat = (notice.category || "Update").toLowerCase();
-                  const isOffer = cat.includes("offer") || cat.includes("scholarship");
-                  const isCrucial = cat.includes("crucial") || cat.includes("urgent") || cat.includes("deadline") || cat.includes("warning");
-
-                  const bgClass = isOffer
-                    ? "bg-emerald-50/70 border-emerald-200 hover:bg-emerald-100/70"
-                    : isCrucial
-                    ? "bg-amber-50/70 border-amber-200 hover:bg-amber-100/70"
-                    : "bg-blue-50/70 border-blue-200 hover:bg-blue-100/70";
-
-                  const iconBg = isOffer
-                    ? "bg-emerald-100 text-emerald-700"
-                    : isCrucial
-                    ? "bg-amber-100 text-amber-700"
-                    : "bg-blue-100 text-blue-700";
-
-                  const badgeClass = isOffer
-                    ? "bg-emerald-100/90 text-emerald-800 border-emerald-300"
-                    : isCrucial
-                    ? "bg-amber-100/90 text-amber-800 border-amber-300"
-                    : "bg-blue-100/90 text-blue-800 border-blue-300";
+                  const d = notice.created_at ? new Date(notice.created_at) : null;
+                  const day = d ? d.getDate() : "--";
+                  const month = d ? d.toLocaleDateString("en-US", { month: "short" }) : "";
 
                   return (
                     <div
                       key={notice.id}
                       onClick={() => setSelectedNotice(notice)}
-                      className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-3 rounded-xl border transition-all cursor-pointer shadow-xs hover:shadow-md ${bgClass} w-full group`}
+                      className="flex items-center justify-between gap-3 p-2.5 sm:p-3 rounded-xl bg-blue-50/70 hover:bg-blue-100/70 transition-all cursor-pointer shadow-2xs hover:shadow-xs w-full group"
                     >
-                      <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 sm:mt-0 ${iconBg}`}>
-                          {isOffer ? <Tag className="w-4 h-4" /> : isCrucial ? <AlertTriangle className="w-4 h-4" /> : <Megaphone className="w-4 h-4" />}
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        {/* Date badge: Big day number up, Month below */}
+                        <div className="flex flex-col items-center justify-center min-w-[46px] h-12 rounded-lg bg-white text-[#2F4F97] shadow-2xs shrink-0 select-none px-2 py-0.5">
+                          <span className="text-lg sm:text-xl font-bold leading-none text-[#2F4F97]">
+                            {day}
+                          </span>
+                          <span className="text-[10px] font-bold uppercase text-[#2F4F97]/80 leading-tight mt-0.5">
+                            {month}
+                          </span>
                         </div>
+
+                        {/* Title and snippet */}
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2">
-                            <p className="text-sm font-semibold text-[#1E293B] truncate group-hover:text-[#2F4F97] transition-colors">
-                              {notice.title}
-                            </p>
-                            <Badge variant="outline" className={`text-[10px] uppercase font-bold tracking-wider shrink-0 hidden sm:inline-flex ${badgeClass}`}>
-                              {notice.category || "Update"}
-                            </Badge>
-                          </div>
-                          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
-                            {notice.content}
+                          <p className="text-sm font-semibold text-[#1E293B] truncate group-hover:text-[#2F4F97] transition-colors">
+                            {notice.title}
                           </p>
+                          {notice.content && (
+                            <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                              {notice.content}
+                            </p>
+                          )}
                         </div>
                       </div>
-                      <div className="flex items-center justify-between sm:justify-end gap-2.5 shrink-0 text-xs text-muted-foreground">
-                        <span className="text-[11px]">
-                          {notice.created_at ? new Date(notice.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : ""}
-                        </span>
-                        <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-[#2F4F97] transition-colors" />
-                      </div>
+
+                      <ArrowRight className="w-4 h-4 text-[#2F4F97]/40 group-hover:text-[#2F4F97] group-hover:translate-x-0.5 transition-all shrink-0 ml-1" />
                     </div>
                   );
                 })}
@@ -689,39 +666,92 @@ export default function PartnerOverview() {
               Upcoming Webinars
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-4">
+          <CardContent className="pt-4 flex-grow">
             {webinars.length > 0 ? (
-              <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+              <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
                 {webinars.map((w: any) => {
-                  const d = w.date ? new Date(w.date) : null;
-                  const dayName = d ? d.toLocaleDateString(undefined, { weekday: 'long' }) : '';
-                  const dateStr = d ? d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+                  const pubD = w.created_at ? new Date(w.created_at) : (w.date ? new Date(w.date) : null);
+                  const pubDay = pubD ? pubD.getDate() : "--";
+                  const pubMonth = pubD ? pubD.toLocaleDateString("en-US", { month: "short" }) : "";
+
+                  let eventD: Date | null = null;
+                  if (w.date) {
+                    if (String(w.date).includes("T")) {
+                      eventD = new Date(w.date);
+                    } else {
+                      const [y, m, dayNum] = String(w.date).split("-").map(Number);
+                      eventD = new Date(y, (m || 1) - 1, dayNum || 1);
+                    }
+                  }
+                  const eventDateStr = eventD ? eventD.toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "";
+                  const eventDayName = eventD ? eventD.toLocaleDateString("en-US", { weekday: "short" }) : "";
+
                   return (
-                    <div key={w.id} className="flex flex-col gap-1.5 p-3 rounded-lg bg-blue-50/60 border border-blue-100">
-                      <p className="text-sm font-semibold text-[#1E293B] truncate" title={w.title}>{w.title}</p>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Calendar className="w-3.5 h-3.5 text-[#2F4F97]" />
-                        <span>{dayName}{dayName && dateStr ? ', ' : ''}{dateStr}</span>
-                        {w.time && <span className="font-medium text-[#2F4F97]">· {w.time}</span>}
+                    <div
+                      key={w.id}
+                      className="flex flex-col gap-2.5 p-3 rounded-xl bg-blue-50/70 hover:bg-blue-100/70 transition-all shadow-2xs hover:shadow-xs group"
+                    >
+                      {/* 3 columns: 1. Publishing Date | 2. Title | 3. Date & Time */}
+                      <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 w-full">
+                        {/* 1st column: Publishing Date */}
+                        <div className="flex flex-col items-center justify-center min-w-[46px] h-12 rounded-lg bg-white text-[#2F4F97] shadow-2xs shrink-0 select-none px-2 py-0.5">
+                          <span className="text-lg sm:text-xl font-bold leading-none text-[#2F4F97]">
+                            {pubDay}
+                          </span>
+                          <span className="text-[10px] font-bold uppercase text-[#2F4F97]/80 leading-tight mt-0.5">
+                            {pubMonth}
+                          </span>
+                        </div>
+
+                        {/* 2nd column: Title */}
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-semibold text-[#1E293B] group-hover:text-[#2F4F97] transition-colors line-clamp-2" title={w.title}>
+                            {w.title}
+                          </p>
+                        </div>
+
+                        {/* 3rd column: Date & Time */}
+                        <div className="flex flex-col items-end justify-center shrink-0 text-right">
+                          <span className="text-xs font-semibold text-slate-700 whitespace-nowrap">
+                            {eventDateStr}{eventDayName ? ` (${eventDayName})` : ""}
+                          </span>
+                          {w.time && (
+                            <span className="text-[11px] font-medium text-[#2F4F97] whitespace-nowrap mt-0.5">
+                              {w.time}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      {w.meeting_link && (
+
+                      {/* Below: Button covering the whole width with NO icon */}
+                      {w.meeting_link ? (
                         <a
                           href={w.meeting_link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 mt-1 text-xs font-semibold text-white bg-[#2F4F97] hover:bg-[#243d78] rounded-md px-3 py-1.5 transition-colors w-fit"
+                          className="w-full flex items-center justify-center py-2 px-3 text-xs font-semibold text-white bg-[#2F4F97] hover:bg-[#243d78] rounded-lg transition-colors shadow-2xs"
                         >
-                          <Video className="w-3.5 h-3.5" />
                           Join Webinar
-                          <ExternalLink className="w-3 h-3" />
                         </a>
+                      ) : (
+                        <div className="w-full py-2 px-3 text-center text-xs font-medium text-slate-400 bg-white/70 rounded-lg">
+                          Link TBA
+                        </div>
                       )}
                     </div>
                   );
                 })}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground text-center py-6">No upcoming webinars</p>
+              <div className="flex flex-col items-center justify-center py-8 text-center">
+                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-[#2F4F97] mb-2">
+                  <Calendar className="w-5 h-5" />
+                </div>
+                <p className="text-sm font-semibold text-[#1E293B]">No upcoming webinars</p>
+                <p className="text-xs text-muted-foreground max-w-xs mt-0.5">
+                  Upcoming training sessions and university webinars will be listed here.
+                </p>
+              </div>
             )}
           </CardContent>
         </Card>
@@ -740,76 +770,88 @@ export default function PartnerOverview() {
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-4 flex-grow overflow-hidden">
-            {Array.isArray(accountManager) && accountManager.length > 0 ? (
-              <div className="space-y-6 h-[280px] overflow-y-auto pr-2 custom-scrollbar">
-                {accountManager.map((am: any, idx: number) => (
-                  <div key={idx} className={idx > 0 ? "pt-4 border-t border-slate-100 space-y-4" : "space-y-4"}>
-                    <div className="flex items-start gap-3">
-                      <Avatar className="w-12 h-12 rounded-full shrink-0 border-2 border-[#2F4F97]/20">
-                        <AvatarImage src={am.photo_url || ""} alt={am.name} className="object-cover" />
-                        <AvatarFallback className="bg-[#2F4F97]/10 text-[#2F4F97] font-bold text-base">
-                          {am.name?.charAt(0) || 'A'}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="text-sm font-bold text-[#1E293B]">{am.name || 'N/A'}</p>
-                        <p className="text-xs text-[#2F4F97] font-medium">{am.title || 'Account Manager'}</p>
+            {(() => {
+              const amList = Array.isArray(accountManager)
+                ? accountManager
+                : accountManager?.name
+                ? [accountManager]
+                : [];
+
+              if (amList.length === 0) {
+                return (
+                  <div className="flex flex-col items-center justify-center py-10 text-center">
+                    <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-[#2F4F97] mb-2.5">
+                      <User className="w-6 h-6" />
+                    </div>
+                    <p className="text-sm font-semibold text-[#1E293B]">Account Manager Unassigned</p>
+                    <p className="text-xs text-muted-foreground max-w-xs mt-1">
+                      Your dedicated partner account manager will be assigned to your agency shortly.
+                    </p>
+                  </div>
+                );
+              }
+
+              return (
+                <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+                  {amList.map((am: any, idx: number) => (
+                    <div
+                      key={am.id || idx}
+                      className="flex items-center gap-4 p-3.5 rounded-xl bg-blue-50/70 hover:bg-blue-100/70 transition-all shadow-2xs group"
+                    >
+                      {/* Column 1: Rounded square profile image */}
+                      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shrink-0 bg-white shadow-2xs border border-blue-100/80 flex items-center justify-center">
+                        {am.photo_url ? (
+                          <img
+                            src={am.photo_url}
+                            alt={am.name || "Account Manager"}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-[#2F4F97]/10 text-[#2F4F97] font-bold text-2xl">
+                            {am.name?.charAt(0) || "A"}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Column 2: Name, Designation, Email, Phone */}
+                      <div className="min-w-0 flex-1 flex flex-col justify-center gap-1">
+                        <h3 className="text-sm sm:text-base font-bold text-[#1E293B] truncate group-hover:text-[#2F4F97] transition-colors">
+                          {am.name || "N/A"}
+                        </h3>
+                        <p className="text-xs font-semibold text-[#2F4F97] truncate">
+                          {am.title || "Account Manager"}
+                        </p>
+                        {am.email && (
+                          <a
+                            href={`mailto:${am.email}`}
+                            className="flex items-center gap-1.5 text-xs text-slate-600 hover:text-[#2F4F97] transition-colors truncate mt-0.5"
+                            title={am.email}
+                          >
+                            <Mail className="w-3.5 h-3.5 text-[#2F4F97] shrink-0" />
+                            <span className="truncate">{am.email}</span>
+                          </a>
+                        )}
+                        {am.phone && (
+                          <a
+                            href={`tel:${am.phone}`}
+                            className="flex items-center gap-1.5 text-xs text-slate-600 hover:text-[#2F4F97] transition-colors truncate"
+                            title={am.phone}
+                          >
+                            <Phone className="w-3.5 h-3.5 text-[#2F4F97] shrink-0" />
+                            <span className="truncate">{am.phone}</span>
+                          </a>
+                        )}
                       </div>
                     </div>
-                    <div className="space-y-2 mt-4">
-                      {am.email && (
-                        <a href={`mailto:${am.email}`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-[#2F4F97] transition-colors">
-                          <Mail className="w-4 h-4" />
-                          {am.email}
-                        </a>
-                      )}
-                      {am.phone && (
-                        <a href={`tel:${am.phone}`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-[#2F4F97] transition-colors">
-                          <Phone className="w-4 h-4" />
-                          {am.phone}
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : !Array.isArray(accountManager) && accountManager?.name ? (
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <Avatar className="w-12 h-12 rounded-full shrink-0 border-2 border-[#2F4F97]/20">
-                    <AvatarImage src={accountManager.photo_url || ""} alt={accountManager.name} className="object-cover" />
-                    <AvatarFallback className="bg-[#2F4F97]/10 text-[#2F4F97] font-bold text-base">
-                      {accountManager.name?.charAt(0) || 'A'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="text-sm font-bold text-[#1E293B]">{accountManager.name || 'N/A'}</p>
-                    <p className="text-xs text-[#2F4F97] font-medium">{accountManager.title || 'Account Manager'}</p>
-                  </div>
+                  ))}
                 </div>
-                <div className="space-y-2 mt-4">
-                  {accountManager.email && (
-                    <a href={`mailto:${accountManager.email}`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-[#2F4F97] transition-colors">
-                      <Mail className="w-4 h-4" />
-                      {accountManager.email}
-                    </a>
-                  )}
-                  {accountManager.phone && (
-                    <a href={`tel:${accountManager.phone}`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-[#2F4F97] transition-colors">
-                      <Phone className="w-4 h-4" />
-                      {accountManager.phone}
-                    </a>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground text-center py-6">Account manager unassigned</p>
-            )}
+              );
+            })()}
           </CardContent>
         </Card>
 
         {/* Platform Tutorials */}
-        <Card className="bg-white border-[#2F4F97]/10 shadow-sm flex flex-col h-full">
+        <Card className="md:col-span-2 bg-white border-[#2F4F97]/10 shadow-sm flex flex-col h-full">
           <CardHeader className="pb-3 border-b">
             <CardTitle className="text-sm text-[#2F4F97] flex items-center gap-2 uppercase tracking-wider font-bold">
               <PlaySquare className="w-4 h-4" />
@@ -863,17 +905,8 @@ export default function PartnerOverview() {
         <DialogContent className="sm:max-w-[520px]">
           <DialogHeader>
             <div className="flex items-center gap-2 mb-1.5">
-              <Badge variant="outline" className={`text-[10px] uppercase font-bold tracking-wider ${
-                (selectedNotice?.category || "").toLowerCase().includes("offer")
-                  ? "bg-emerald-50 text-emerald-800 border-emerald-300"
-                  : (selectedNotice?.category || "").toLowerCase().includes("crucial") || (selectedNotice?.category || "").toLowerCase().includes("urgent") || (selectedNotice?.category || "").toLowerCase().includes("deadline")
-                  ? "bg-amber-50 text-amber-800 border-amber-300"
-                  : "bg-blue-50 text-blue-800 border-blue-300"
-              }`}>
-                {selectedNotice?.category || "Notice"}
-              </Badge>
               {selectedNotice?.created_at && (
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs font-semibold text-[#2F4F97] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-100">
                   Published: {new Date(selectedNotice.created_at).toLocaleDateString("en-US", {
                     month: "short",
                     day: "numeric",
