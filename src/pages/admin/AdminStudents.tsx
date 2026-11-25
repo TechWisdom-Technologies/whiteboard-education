@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -88,19 +88,31 @@ interface Partner {
 export default function AdminStudents() {
   const { session, user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const urlStatus = searchParams.get("status") || "all";
+  const urlPartner = searchParams.get("partner") || "all";
+
   const [students, setStudents] = useState<Student[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [filterPartner, setFilterPartner] = useState("all");
-  const [filterStatus, setFilterStatus] = useState("all");
+  const [filterPartner, setFilterPartner] = useState(urlPartner);
+  const [filterStatus, setFilterStatus] = useState(urlStatus);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const [appliedFilters, setAppliedFilters] = useState({
     search: "",
-    filterPartner: "all",
-    filterStatus: "all"
+    filterPartner: urlPartner,
+    filterStatus: urlStatus
   });
+
+  useEffect(() => {
+    const s = searchParams.get("status") || "all";
+    const p = searchParams.get("partner") || "all";
+    setFilterStatus(s);
+    setFilterPartner(p);
+    setAppliedFilters(prev => ({ ...prev, filterStatus: s, filterPartner: p }));
+  }, [searchParams]);
 
   const fetchData = async () => {
     if (!user?.id) return;

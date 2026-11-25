@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -120,29 +121,39 @@ export default function AdminNoticeForm({ initialData, onCancel, onSuccess }: Pr
 
             <div className="space-y-3">
               <Label className="text-[13px] font-semibold text-gray-700">Category / Type</Label>
-              <select
-                className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700"
-                value={form.category}
-                onChange={(e) => setForm(prev => ({ ...prev, category: e.target.value }))}
+              <Select
+                value={form.category || undefined}
+                onValueChange={(val) => setForm(prev => ({ ...prev, category: val }))}
+                modal={false}
               >
-                {NOTICE_CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700">
+                  <SelectValue placeholder="Select Category..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {NOTICE_CATEGORIES.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-3">
               <Label className="text-[13px] font-semibold text-gray-700">Visibility Status</Label>
-              <select
-                className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700"
+              <Select
                 value={form.is_active ? "active" : "draft"}
-                onChange={(e) => setForm(prev => ({ ...prev, is_active: e.target.value === "active" }))}
+                onValueChange={(val) => setForm(prev => ({ ...prev, is_active: val === "active" }))}
+                modal={false}
               >
-                <option value="active">Published & Visible</option>
-                <option value="draft">Draft / Hidden</option>
-              </select>
+                <SelectTrigger className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Published & Visible</SelectItem>
+                  <SelectItem value="draft">Draft / Hidden</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2 md:col-span-2">

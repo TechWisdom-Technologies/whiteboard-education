@@ -293,18 +293,22 @@ export default function AdminDashboard() {
       </div>
 
       {/* Dynamic Status Cards (from Partner Dashboard) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
         
         {/* Card 0: Total Students (Admin sees all, can filter by agency) */}
         <div 
-          className="bg-white border-2 border-[#1d283a] shadow-sm rounded-xl p-4 transition-shadow relative group flex flex-col justify-between"
+          onClick={() => navigate(card0Filter === "all" ? "/admin/students" : `/admin/students?partner=${card0Filter}`)}
+          className="bg-white border border-[#1d283a]/20 hover:border-[#1d283a] shadow-xs hover:shadow-md rounded-xl overflow-hidden cursor-pointer transition-all duration-200 flex flex-col justify-between group min-w-0"
         >
-          <div className="mb-4">
-            <Select value={card0Filter} onValueChange={setCard0Filter}>
-              <SelectTrigger className="h-8 w-full text-xs border-slate-200 bg-slate-50 focus:ring-[#1d283a]/20 focus:border-[#1d283a]/30">
+          <div 
+            className="bg-[#1d283a] px-2.5 py-1.5 flex items-center justify-between border-b border-[#1d283a] min-w-0"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Select value={card0Filter} onValueChange={setCard0Filter} modal={false}>
+              <SelectTrigger className="w-full h-8 bg-transparent border-0 text-white font-semibold text-xs shadow-none px-0 rounded-none focus:ring-0 focus:outline-none flex items-center justify-between [&>svg]:text-white [&>svg]:opacity-90 cursor-pointer [&>span]:truncate">
                 <SelectValue placeholder="All Students" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-72">
                 <SelectItem value="all" className="text-xs focus:bg-[#1d283a] focus:text-white">All Students</SelectItem>
                 {partnerLookup.map(p => (
                   <SelectItem key={p.user_id} value={p.user_id} className="text-xs focus:bg-[#1d283a] focus:text-white">{p.agency_name}</SelectItem>
@@ -312,19 +316,25 @@ export default function AdminDashboard() {
               </SelectContent>
             </Select>
           </div>
-          <p className="text-4xl font-bold text-[#1d283a]">{getCard0Count()}</p>
+          <div className="p-4 bg-white">
+            <p className="text-2xl sm:text-3xl font-bold text-[#1d283a] tracking-tight">{getCard0Count()}</p>
+          </div>
         </div>
 
         {/* Card 1: Total Applications */}
         <div 
-          className="bg-white border-2 border-[#1d283a] shadow-sm rounded-xl p-4 transition-shadow relative group flex flex-col justify-between"
+          onClick={() => navigate(card1Filter === "all" ? "/admin/students" : `/admin/students?status=${card1Filter}`)}
+          className="bg-white border border-[#1d283a]/20 hover:border-[#1d283a] shadow-xs hover:shadow-md rounded-xl overflow-hidden cursor-pointer transition-all duration-200 flex flex-col justify-between group min-w-0"
         >
-          <div className="mb-4">
-            <Select value={card1Filter} onValueChange={setCard1Filter}>
-              <SelectTrigger className="h-8 w-full text-xs border-slate-200 bg-slate-50 focus:ring-[#1d283a]/20 focus:border-[#1d283a]/30">
+          <div 
+            className="bg-[#1d283a] px-2.5 py-1.5 flex items-center justify-between border-b border-[#1d283a] min-w-0"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Select value={card1Filter} onValueChange={setCard1Filter} modal={false}>
+              <SelectTrigger className="w-full h-8 bg-transparent border-0 text-white font-semibold text-xs shadow-none px-0 rounded-none focus:ring-0 focus:outline-none flex items-center justify-between [&>svg]:text-white [&>svg]:opacity-90 cursor-pointer [&>span]:truncate">
                 <SelectValue placeholder="Filter" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-72">
                 <SelectItem value="all" className="text-xs focus:bg-[#1d283a] focus:text-white">All Applications</SelectItem>
                 {statusPhases[0].steps.filter(s => s.id !== 'new').map(step => (
                   <SelectItem key={step.id} value={step.id} className="text-xs focus:bg-[#1d283a] focus:text-white">{step.label}</SelectItem>
@@ -332,78 +342,104 @@ export default function AdminDashboard() {
               </SelectContent>
             </Select>
           </div>
-          <p className="text-4xl font-bold text-[#1d283a]">{getCard1Count()}</p>
+          <div className="p-4 bg-white">
+            <p className="text-2xl sm:text-3xl font-bold text-[#1d283a] tracking-tight">{getCard1Count()}</p>
+          </div>
         </div>
 
         {/* Card 2 */}
         <div 
-          className="bg-white border-2 border-[#1d283a] shadow-sm rounded-xl p-4 transition-shadow relative group flex flex-col justify-between"
+          onClick={() => navigate(`/admin/students?status=${card2Filter}`)}
+          className="bg-white border border-[#1d283a]/20 hover:border-[#1d283a] shadow-xs hover:shadow-md rounded-xl overflow-hidden cursor-pointer transition-all duration-200 flex flex-col justify-between group min-w-0"
         >
-          <div className="mb-4">
-            <Select value={card2Filter} onValueChange={setCard2Filter}>
-              <SelectTrigger className="h-8 w-full text-xs border-slate-200 bg-slate-50 focus:ring-[#1d283a]/20 focus:border-[#1d283a]/30">
+          <div 
+            className="bg-[#1d283a] px-2.5 py-1.5 flex items-center justify-between border-b border-[#1d283a] min-w-0"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Select value={card2Filter} onValueChange={setCard2Filter} modal={false}>
+              <SelectTrigger className="w-full h-8 bg-transparent border-0 text-white font-semibold text-xs shadow-none px-0 rounded-none focus:ring-0 focus:outline-none flex items-center justify-between [&>svg]:text-white [&>svg]:opacity-90 cursor-pointer [&>span]:truncate">
                 <SelectValue placeholder="Filter" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-72">
                 <SelectItem value="offer_letter_received_conditional" className="text-xs focus:bg-[#1d283a] focus:text-white">Offer Letter Received (Conditional)</SelectItem>
                 <SelectItem value="offer_letter_received_unconditional" className="text-xs focus:bg-[#1d283a] focus:text-white">Offer Letter Received (Unconditional)</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <p className="text-4xl font-bold text-[#1d283a]">{getCard2Count()}</p>
+          <div className="p-4 bg-white">
+            <p className="text-2xl sm:text-3xl font-bold text-[#1d283a] tracking-tight">{getCard2Count()}</p>
+          </div>
         </div>
 
         {/* Card 3: Visa Applications */}
         <div 
-          className="bg-white border-2 border-[#1d283a] shadow-sm rounded-xl p-4 transition-shadow relative group flex flex-col justify-between"
+          onClick={() => navigate(`/admin/students?status=${card3Filter}`)}
+          className="bg-white border border-[#1d283a]/20 hover:border-[#1d283a] shadow-xs hover:shadow-md rounded-xl overflow-hidden cursor-pointer transition-all duration-200 flex flex-col justify-between group min-w-0"
         >
-          <div className="mb-4">
-            <Select value={card3Filter} onValueChange={setCard3Filter}>
-              <SelectTrigger className="h-8 w-full text-xs border-slate-200 bg-slate-50 focus:ring-[#1d283a]/20 focus:border-[#1d283a]/30">
+          <div 
+            className="bg-[#1d283a] px-2.5 py-1.5 flex items-center justify-between border-b border-[#1d283a] min-w-0"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Select value={card3Filter} onValueChange={setCard3Filter} modal={false}>
+              <SelectTrigger className="w-full h-8 bg-transparent border-0 text-white font-semibold text-xs shadow-none px-0 rounded-none focus:ring-0 focus:outline-none flex items-center justify-between [&>svg]:text-white [&>svg]:opacity-90 cursor-pointer [&>span]:truncate">
                 <SelectValue placeholder="Filter" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-72">
                 <SelectItem value="ready_for_visa_application" className="text-xs focus:bg-[#1d283a] focus:text-white">Ready for Visa</SelectItem>
                 <SelectItem value="emgs_approval_pending" className="text-xs focus:bg-[#1d283a] focus:text-white">EMGS Pending</SelectItem>
                 <SelectItem value="rejected_by_visa_office" className="text-xs focus:bg-[#1d283a] focus:text-white">Rejected by Visa Office</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <p className="text-4xl font-bold text-[#1d283a]">{getCard3Count()}</p>
+          <div className="p-4 bg-white">
+            <p className="text-2xl sm:text-3xl font-bold text-[#1d283a] tracking-tight">{getCard3Count()}</p>
+          </div>
         </div>
 
         {/* Card 4: Rejected by University */}
         <div 
-          className="bg-white border-2 border-[#1d283a] shadow-sm rounded-xl p-4 transition-shadow relative group flex flex-col justify-between"
+          onClick={() => navigate(`/admin/students?status=${card4Filter}`)}
+          className="bg-white border border-[#1d283a]/20 hover:border-[#1d283a] shadow-xs hover:shadow-md rounded-xl overflow-hidden cursor-pointer transition-all duration-200 flex flex-col justify-between group min-w-0"
         >
-          <div className="mb-4">
-            <Select value={card4Filter} onValueChange={setCard4Filter}>
-              <SelectTrigger className="h-8 w-full text-xs border-slate-200 bg-slate-50 focus:ring-[#1d283a]/20 focus:border-[#1d283a]/30">
+          <div 
+            className="bg-[#1d283a] px-2.5 py-1.5 flex items-center justify-between border-b border-[#1d283a] min-w-0"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Select value={card4Filter} onValueChange={setCard4Filter} modal={false}>
+              <SelectTrigger className="w-full h-8 bg-transparent border-0 text-white font-semibold text-xs shadow-none px-0 rounded-none focus:ring-0 focus:outline-none flex items-center justify-between [&>svg]:text-white [&>svg]:opacity-90 cursor-pointer [&>span]:truncate">
                 <SelectValue placeholder="Filter" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-72">
                 <SelectItem value="rejected_by_university" className="text-xs focus:bg-[#1d283a] focus:text-white">Rejected by University</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <p className="text-4xl font-bold text-[#1d283a]">{getCard4Count()}</p>
+          <div className="p-4 bg-white">
+            <p className="text-2xl sm:text-3xl font-bold text-[#1d283a] tracking-tight">{getCard4Count()}</p>
+          </div>
         </div>
 
         {/* Card 5: Rejected by Visa */}
         <div 
-          className="bg-white border-2 border-[#1d283a] shadow-sm rounded-xl p-4 transition-shadow relative group flex flex-col justify-between"
+          onClick={() => navigate(`/admin/students?status=${card5Filter}`)}
+          className="bg-white border border-[#1d283a]/20 hover:border-[#1d283a] shadow-xs hover:shadow-md rounded-xl overflow-hidden cursor-pointer transition-all duration-200 flex flex-col justify-between group min-w-0"
         >
-          <div className="mb-4">
-            <Select value={card5Filter} onValueChange={setCard5Filter}>
-              <SelectTrigger className="h-8 w-full text-xs border-slate-200 bg-slate-50 focus:ring-[#1d283a]/20 focus:border-[#1d283a]/30">
+          <div 
+            className="bg-[#1d283a] px-2.5 py-1.5 flex items-center justify-between border-b border-[#1d283a] min-w-0"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Select value={card5Filter} onValueChange={setCard5Filter} modal={false}>
+              <SelectTrigger className="w-full h-8 bg-transparent border-0 text-white font-semibold text-xs shadow-none px-0 rounded-none focus:ring-0 focus:outline-none flex items-center justify-between [&>svg]:text-white [&>svg]:opacity-90 cursor-pointer [&>span]:truncate">
                 <SelectValue placeholder="Filter" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-72">
                 <SelectItem value="rejected_by_visa_office" className="text-xs focus:bg-[#1d283a] focus:text-white">Rejected by Visa Office</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <p className="text-4xl font-bold text-[#1d283a]">{getCard5Count()}</p>
+          <div className="p-4 bg-white">
+            <p className="text-2xl sm:text-3xl font-bold text-[#1d283a] tracking-tight">{getCard5Count()}</p>
+          </div>
         </div>
       </div>
 

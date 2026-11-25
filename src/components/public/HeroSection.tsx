@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Search, Star, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { useTableData } from "@/hooks/useSupabaseData";
 import {
@@ -106,10 +105,11 @@ export function HeroSection() {
 
                 {/* Search Input - Flex 1 */}
                 <div className="flex-1 relative min-w-0">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 hidden sm:block" />
-                  <Input
-                    placeholder="Search..."
-                    className="w-full h-12 pl-2 sm:pl-10 border-none bg-transparent focus:bg-transparent focus:text-[#1E293B] focus:placeholder:text-gray-400 focus:caret-[#1E293B] focus-visible:ring-0 text-sm md:text-base text-[#1E293B] placeholder:text-gray-400 shadow-none rounded-none"
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 hidden sm:block pointer-events-none" />
+                  <input
+                    type="text"
+                    placeholder={activeTab === "University" ? "Search university..." : "Search course..."}
+                    className="w-full h-12 pl-3 sm:pl-10 pr-3 border-none bg-transparent outline-none focus:outline-none focus:ring-0 text-sm md:text-base text-[#1E293B] placeholder:text-gray-400 shadow-none rounded-none caret-[#1E293B]"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}

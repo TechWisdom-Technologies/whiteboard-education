@@ -6,6 +6,7 @@ import AdminCourseForm from "./AdminCourseForm";
 import { STUDY_AREAS, DEGREE_LEVELS, matchesCourseDepartment, matchesCourseLevel, COURSE_LIST_SELECT } from "@/lib/courseFilters";
 import { Building2, FolderTree, GraduationCap, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function AdminCourses() {
   const { data, isLoading } = useTableData("courses", { select: COURSE_LIST_SELECT });
@@ -113,46 +114,49 @@ export default function AdminCourses() {
       {/* University Wise Filter */}
       <div className="flex items-center gap-1.5 min-w-[220px] flex-1 sm:flex-initial">
         <Building2 className="h-4 w-4 text-slate-500 shrink-0" />
-        <select
-          value={selectedUniversity}
-          onChange={(e) => setSelectedUniversity(e.target.value)}
-          className="h-9 w-full sm:w-[240px] rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-700 font-medium shadow-sm hover:border-slate-300 focus:outline-none focus:ring-1 focus:ring-primary"
-        >
-          <option value="all">All Universities ({universities?.length || 0})</option>
-          {universities?.map((u: any) => (
-            <option key={u.id} value={u.id}>{u.name}</option>
-          ))}
-        </select>
+        <Select value={selectedUniversity} onValueChange={setSelectedUniversity} modal={false}>
+          <SelectTrigger className="h-9 w-full sm:w-[240px] rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-700 font-medium shadow-sm hover:border-slate-300">
+            <SelectValue placeholder="All Universities" />
+          </SelectTrigger>
+          <SelectContent className="max-h-72">
+            <SelectItem value="all">All Universities ({universities?.length || 0})</SelectItem>
+            {universities?.map((u: any) => (
+              <SelectItem key={u.id} value={u.id}>{u.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Department Wise Filter */}
       <div className="flex items-center gap-1.5 min-w-[190px] flex-1 sm:flex-initial">
         <FolderTree className="h-4 w-4 text-slate-500 shrink-0" />
-        <select
-          value={selectedDepartment}
-          onChange={(e) => setSelectedDepartment(e.target.value)}
-          className="h-9 w-full sm:w-[200px] rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-700 font-medium shadow-sm hover:border-slate-300 focus:outline-none focus:ring-1 focus:ring-primary"
-        >
-          <option value="all">All Departments ({allDepartments.length})</option>
-          {allDepartments.map((dept) => (
-            <option key={dept} value={dept}>{dept}</option>
-          ))}
-        </select>
+        <Select value={selectedDepartment} onValueChange={setSelectedDepartment} modal={false}>
+          <SelectTrigger className="h-9 w-full sm:w-[200px] rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-700 font-medium shadow-sm hover:border-slate-300">
+            <SelectValue placeholder="All Departments" />
+          </SelectTrigger>
+          <SelectContent className="max-h-72">
+            <SelectItem value="all">All Departments ({allDepartments.length})</SelectItem>
+            {allDepartments.map((dept) => (
+              <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Level of Study Wise Filter */}
       <div className="flex items-center gap-1.5 min-w-[170px] flex-1 sm:flex-initial">
         <GraduationCap className="h-4 w-4 text-slate-500 shrink-0" />
-        <select
-          value={selectedLevel}
-          onChange={(e) => setSelectedLevel(e.target.value)}
-          className="h-9 w-full sm:w-[170px] rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-700 font-medium shadow-sm hover:border-slate-300 focus:outline-none focus:ring-1 focus:ring-primary"
-        >
-          <option value="all">All Levels ({DEGREE_LEVELS.length})</option>
-          {DEGREE_LEVELS.map((lvl) => (
-            <option key={lvl} value={lvl}>{lvl}</option>
-          ))}
-        </select>
+        <Select value={selectedLevel} onValueChange={setSelectedLevel} modal={false}>
+          <SelectTrigger className="h-9 w-full sm:w-[170px] rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-700 font-medium shadow-sm hover:border-slate-300">
+            <SelectValue placeholder="All Levels" />
+          </SelectTrigger>
+          <SelectContent className="max-h-72">
+            <SelectItem value="all">All Levels ({DEGREE_LEVELS.length})</SelectItem>
+            {DEGREE_LEVELS.map((lvl) => (
+              <SelectItem key={lvl} value={lvl}>{lvl}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Clear Filters Button */}

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, Loader2, UploadCloud, CheckCircle2, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -262,17 +263,22 @@ export default function AdminDocumentForm({ initialData, onCancel, onSuccess }: 
             {/* File Type */}
             <div className="space-y-3">
               <Label className="text-[13px] font-semibold text-gray-700">File Type / Format</Label>
-              <select
-                className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700"
-                value={form.file_type}
-                onChange={(e) => setForm(prev => ({ ...prev, file_type: e.target.value }))}
+              <Select
+                value={form.file_type || undefined}
+                onValueChange={(val) => setForm(prev => ({ ...prev, file_type: val }))}
+                modal={false}
               >
-                {DOCUMENT_TYPES.map((t) => (
-                  <option key={t.value} value={t.value}>
-                    {t.label}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700">
+                  <SelectValue placeholder="Select File Type..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {DOCUMENT_TYPES.map((t) => (
+                    <SelectItem key={t.value} value={t.value}>
+                      {t.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* File Size */}
@@ -291,14 +297,19 @@ export default function AdminDocumentForm({ initialData, onCancel, onSuccess }: 
             {/* Visibility Status */}
             <div className="space-y-3">
               <Label className="text-[13px] font-semibold text-gray-700">Visibility Status</Label>
-              <select
-                className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700"
+              <Select
                 value={form.is_active ? "active" : "draft"}
-                onChange={(e) => setForm(prev => ({ ...prev, is_active: e.target.value === "active" }))}
+                onValueChange={(val) => setForm(prev => ({ ...prev, is_active: val === "active" }))}
+                modal={false}
               >
-                <option value="active">Published & Visible</option>
-                <option value="draft">Draft / Hidden</option>
-              </select>
+                <SelectTrigger className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Published & Visible</SelectItem>
+                  <SelectItem value="draft">Draft / Hidden</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Direct File URL */}

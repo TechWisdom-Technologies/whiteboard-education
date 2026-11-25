@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import * as XLSX from "xlsx";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -419,18 +420,22 @@ function RelationArrayEditor({ value = [], onChange, relationConfig }: { value: 
         ))}
       </div>
       <div className="flex gap-2">
-        <select
-          className="flex-1 h-9 rounded-xl border border-input bg-background px-3 py-1.5 text-sm"
-          value={selectedId}
-          onChange={(e) => setSelectedId(e.target.value)}
+        <Select
+          value={selectedId || undefined}
+          onValueChange={setSelectedId}
+          modal={false}
         >
-          <option value="">Select university to add...</option>
-          {items.map((item: any) => (
-            <option key={item[relationConfig.valueKey]} value={item[relationConfig.valueKey]}>
-              {item[relationConfig.labelKey]}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="flex-1 h-9 rounded-xl border border-input bg-background px-3 py-1.5 text-sm">
+            <SelectValue placeholder="Select university to add..." />
+          </SelectTrigger>
+          <SelectContent className="max-h-72">
+            {items.map((item: any) => (
+              <SelectItem key={item[relationConfig.valueKey]} value={item[relationConfig.valueKey]}>
+                {item[relationConfig.labelKey]}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Button type="button" variant="outline" size="sm" className="h-9 font-medium" onClick={addRelation}>Add</Button>
       </div>
     </div>
@@ -785,31 +790,43 @@ export default function AdminCrudTable({
     }
     if (f.type === "select") {
       return (
-        <select
-          className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm"
-          value={form[f.key] || ""}
-          onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
+        <Select
+          value={form[f.key] || undefined}
+          onValueChange={(val) => setForm({ ...form, [f.key]: val === "none" ? "" : val })}
+          modal={false}
         >
-          <option value="">Select...</option>
-          {f.options?.map((o) => <option key={o} value={o}>{o}</option>)}
-        </select>
+          <SelectTrigger className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm">
+            <SelectValue placeholder="Select..." />
+          </SelectTrigger>
+          <SelectContent className="max-h-72">
+            <SelectItem value="none">None</SelectItem>
+            {f.options?.map((o) => (
+              <SelectItem key={o} value={o}>{o}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       );
     }
     if (f.type === "relation") {
       const cfg = f.relationConfig;
       return (
-        <select
-          className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm"
-          value={form[f.key] || ""}
-          onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
+        <Select
+          value={form[f.key] ? String(form[f.key]) : undefined}
+          onValueChange={(val) => setForm({ ...form, [f.key]: val === "none" ? "" : val })}
+          modal={false}
         >
-          <option value="">None</option>
-          {cfg?.data?.map((item: any) => (
-            <option key={item[cfg.valueKey]} value={item[cfg.valueKey]}>
-              {item[cfg.labelKey]}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm">
+            <SelectValue placeholder="None" />
+          </SelectTrigger>
+          <SelectContent className="max-h-72">
+            <SelectItem value="none">None</SelectItem>
+            {cfg?.data?.map((item: any) => (
+              <SelectItem key={String(item[cfg.valueKey])} value={String(item[cfg.valueKey])}>
+                {item[cfg.labelKey]}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       );
     }
     if (f.type === "tag_input") {

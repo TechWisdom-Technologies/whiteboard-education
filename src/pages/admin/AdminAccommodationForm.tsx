@@ -3,6 +3,7 @@ import { useTableData, useInsertRow, useUpdateRow } from "@/hooks/useSupabaseDat
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, UploadCloud, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -155,16 +156,38 @@ export default function AdminAccommodationForm({ initialData, onCancel, onSucces
 
             <div className="space-y-3">
               <Label className="text-[13px] font-semibold text-gray-700">Property Type</Label>
-              <select className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700" value={form.property_type} onChange={(e) => setForm(prev => ({ ...prev, property_type: e.target.value }))}>
-                {["Residential", "Commercial", "Mixed-Use", "Student Housing"].map(o => <option key={o} value={o}>{o}</option>)}
-              </select>
+              <Select
+                value={form.property_type || undefined}
+                onValueChange={(val) => setForm(prev => ({ ...prev, property_type: val }))}
+                modal={false}
+              >
+                <SelectTrigger className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700">
+                  <SelectValue placeholder="Select Property Type..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {["Residential", "Commercial", "Mixed-Use", "Student Housing"].map(o => (
+                    <SelectItem key={o} value={o}>{o}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-3">
               <Label className="text-[13px] font-semibold text-gray-700">Accommodation Type</Label>
-              <select className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700" value={form.type} onChange={(e) => setForm(prev => ({ ...prev, type: e.target.value }))}>
-                {["Apartment", "Hostel", "Condominium", "Studio", "Shared House", "Dormitory"].map(o => <option key={o} value={o}>{o}</option>)}
-              </select>
+              <Select
+                value={form.type || undefined}
+                onValueChange={(val) => setForm(prev => ({ ...prev, type: val }))}
+                modal={false}
+              >
+                <SelectTrigger className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700">
+                  <SelectValue placeholder="Select Accommodation Type..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {["Apartment", "Hostel", "Condominium", "Studio", "Shared House", "Dormitory"].map(o => (
+                    <SelectItem key={o} value={o}>{o}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">

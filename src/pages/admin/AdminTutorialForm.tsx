@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 
@@ -114,10 +115,19 @@ export default function AdminTutorialForm({ initialData, onCancel, onSuccess }: 
 
             <div className="space-y-3">
               <Label className="text-[13px] font-semibold text-gray-700">Status</Label>
-              <select className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700" value={form.is_active ? "true" : "false"} onChange={(e) => setForm(prev => ({ ...prev, is_active: e.target.value === "true" }))}>
-                <option value="true">Active</option>
-                <option value="false">Inactive</option>
-              </select>
+              <Select
+                value={form.is_active ? "true" : "false"}
+                onValueChange={(val) => setForm(prev => ({ ...prev, is_active: val === "true" }))}
+                modal={false}
+              >
+                <SelectTrigger className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="true">Active</SelectItem>
+                  <SelectItem value="false">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-3 md:col-span-2">

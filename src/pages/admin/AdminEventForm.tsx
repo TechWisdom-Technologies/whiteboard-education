@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 
@@ -85,9 +86,20 @@ export default function AdminEventForm({ initialData, onCancel, onSuccess }: Pro
 
             <div className="space-y-3">
               <Label className="text-[13px] font-semibold text-gray-700">Event Type</Label>
-              <select className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700" value={form.type} onChange={(e) => setForm(prev => ({ ...prev, type: e.target.value }))}>
-                {["Open Day", "Workshop", "Webinar", "Info Session"].map(o => <option key={o} value={o}>{o}</option>)}
-              </select>
+              <Select
+                value={form.type || undefined}
+                onValueChange={(val) => setForm(prev => ({ ...prev, type: val }))}
+                modal={false}
+              >
+                <SelectTrigger className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700">
+                  <SelectValue placeholder="Select Event Type..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {["Open Day", "Workshop", "Webinar", "Info Session"].map(o => (
+                    <SelectItem key={o} value={o}>{o}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">

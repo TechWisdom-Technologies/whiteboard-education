@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import ReactQuill from "react-quill";
@@ -520,23 +521,26 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
           
           <div className="space-y-2">
             <Label className="text-[13px] font-semibold text-gray-700">University *</Label>
-            <select
-              className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm"
-              value={form.university_id}
-              onChange={(e) => {
-                const newUniId = e.target.value;
+            <Select
+              value={form.university_id || undefined}
+              onValueChange={(newUniId) => {
                 setForm(prev => ({
                   ...prev,
                   university_id: newUniId,
                   campus: "", // reset campus when university changes
                 }));
               }}
+              modal={false}
             >
-              <option value="">Select University...</option>
-              {universities?.map((u: any) => (
-                <option key={u.id} value={u.id}>{u.name}</option>
-              ))}
-            </select>
+              <SelectTrigger className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm">
+                <SelectValue placeholder="Select University..." />
+              </SelectTrigger>
+              <SelectContent className="max-h-72">
+                {universities?.map((u: any) => (
+                  <SelectItem key={u.id} value={u.id}>{u.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Campus selection dropdown */}
@@ -549,29 +553,36 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                 </span>
               )}
             </div>
-            <select
-              className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm"
-              value={form.campus}
-              onChange={(e) => setForm(prev => ({ ...prev, campus: e.target.value }))}
+            <Select
+              value={form.campus || undefined}
+              onValueChange={(val) => setForm(prev => ({ ...prev, campus: val === "none" ? "" : val }))}
               disabled={!form.university_id}
+              modal={false}
             >
-              <option value="">
-                {!form.university_id
-                  ? "Select a university first..."
-                  : availableCampuses.length === 0
-                    ? "No campuses configured for this university"
-                    : "Select Campus..."}
-              </option>
-              {availableCampuses.map((camp: string) => (
-                <option key={camp} value={camp}>{camp}</option>
-              ))}
-              {availableCampuses.length > 1 && (
-                <option value="All Campuses">All Campuses</option>
-              )}
-              {form.campus && !availableCampuses.includes(form.campus) && form.campus !== "All Campuses" && (
-                <option value={form.campus}>{form.campus}</option>
-              )}
-            </select>
+              <SelectTrigger className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm">
+                <SelectValue
+                  placeholder={
+                    !form.university_id
+                      ? "Select a university first..."
+                      : availableCampuses.length === 0
+                        ? "No campuses configured for this university"
+                        : "Select Campus..."
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent className="max-h-72">
+                <SelectItem value="none">None / Default</SelectItem>
+                {availableCampuses.map((camp: string) => (
+                  <SelectItem key={camp} value={camp}>{camp}</SelectItem>
+                ))}
+                {availableCampuses.length > 1 && (
+                  <SelectItem value="All Campuses">All Campuses</SelectItem>
+                )}
+                {form.campus && !availableCampuses.includes(form.campus) && form.campus !== "All Campuses" && form.campus !== "none" && (
+                  <SelectItem value={form.campus}>{form.campus}</SelectItem>
+                )}
+              </SelectContent>
+            </Select>
             {form.university_id && availableCampuses.length === 0 && (
               <p className="text-[11px] text-amber-600">
                 Tip: Configure campuses for this university in the Universities section.
@@ -581,16 +592,20 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
           
           <div className="space-y-2">
             <Label className="text-[13px] font-semibold text-gray-700">Qualification Level</Label>
-            <select
-              className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm"
-              value={form.degree_level}
-              onChange={(e) => setForm(prev => ({ ...prev, degree_level: e.target.value }))}
+            <Select
+              value={form.degree_level || undefined}
+              onValueChange={(val) => setForm(prev => ({ ...prev, degree_level: val }))}
+              modal={false}
             >
-              <option value="">Select Qualification...</option>
-              {DEGREE_LEVELS.map(lvl => (
-                <option key={lvl} value={lvl}>{lvl}</option>
-              ))}
-            </select>
+              <SelectTrigger className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm">
+                <SelectValue placeholder="Select Qualification..." />
+              </SelectTrigger>
+              <SelectContent className="max-h-72">
+                {DEGREE_LEVELS.map(lvl => (
+                  <SelectItem key={lvl} value={lvl}>{lvl}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
@@ -640,16 +655,20 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
               </div>
             ) : (
               <div className="flex gap-2 items-center">
-                <select
-                  className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm"
-                  value={form.category}
-                  onChange={(e) => setForm(prev => ({ ...prev, category: e.target.value }))}
+                <Select
+                  value={form.category || undefined}
+                  onValueChange={(val) => setForm(prev => ({ ...prev, category: val }))}
+                  modal={false}
                 >
-                  <option value="">Select Department / Study Area...</option>
-                  {allDepartments.map((area) => (
-                    <option key={area} value={area}>{area}</option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm">
+                    <SelectValue placeholder="Select Department / Study Area..." />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-72">
+                    {allDepartments.map((area) => (
+                      <SelectItem key={area} value={area}>{area}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <Button
                   type="button"
                   variant="outline"
@@ -682,17 +701,22 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                 className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-900 focus-visible:ring-1 focus-visible:ring-slate-400"
               />
 
-              <select
-                className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-slate-400"
+              <Select
                 value={durationUnit}
-                onChange={(e) => handleDurationChange(durationNumber, e.target.value)}
+                onValueChange={(val) => handleDurationChange(durationNumber, val)}
+                modal={false}
               >
-                {DURATION_UNITS.map((u) => (
-                  <option key={u} value={u}>
-                    {u}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {DURATION_UNITS.map((u) => (
+                    <SelectItem key={u} value={u}>
+                      {u}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -704,17 +728,20 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
               </Button>
             </div>
             <div className="flex gap-2">
-              <select
-                className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm"
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTag("intake_months", newTag, setNewTag))}
+              <Select
+                value={newTag || undefined}
+                onValueChange={(val) => setNewTag(val)}
+                modal={false}
               >
-                <option value="">Select Month...</option>
-                {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map(m => (
-                  <option key={m} value={m}>{m}</option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm">
+                  <SelectValue placeholder="Select Month..." />
+                </SelectTrigger>
+                <SelectContent className="max-h-60">
+                  {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map(m => (
+                    <SelectItem key={m} value={m}>{m}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex flex-wrap gap-2 mt-2">
               {form.intake_months.map((m, i) => (
@@ -740,23 +767,28 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                 const isMOI = key.toUpperCase() === "MOI";
                 return (
                   <div key={i} className="flex gap-2 items-center">
-                    <select
-                      className="w-1/2 rounded-md border border-input bg-background px-3 h-10 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                    <Select
                       value={key}
-                      onChange={(e) => updateEnglishReqKey(key, e.target.value)}
+                      onValueChange={(newKey) => updateEnglishReqKey(key, newKey)}
+                      modal={false}
                     >
-                      {ENGLISH_TEST_OPTIONS.map((t) => {
-                        const isAlreadyUsed = t.value !== key && form.entry_requirements[t.value] !== undefined;
-                        return (
-                          <option key={t.value} value={t.value} disabled={isAlreadyUsed}>
-                            {t.label} {isAlreadyUsed ? "(Already added)" : ""}
-                          </option>
-                        );
-                      })}
-                      {!ENGLISH_TEST_OPTIONS.some(t => t.value === key) && (
-                        <option value={key}>{key}</option>
-                      )}
-                    </select>
+                      <SelectTrigger className="w-1/2 h-10 rounded-md border border-input bg-background px-3 text-sm">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-72">
+                        {ENGLISH_TEST_OPTIONS.map((t) => {
+                          const isAlreadyUsed = t.value !== key && form.entry_requirements[t.value] !== undefined;
+                          return (
+                            <SelectItem key={t.value} value={t.value} disabled={isAlreadyUsed}>
+                              {t.label} {isAlreadyUsed ? "(Already added)" : ""}
+                            </SelectItem>
+                          );
+                        })}
+                        {!ENGLISH_TEST_OPTIONS.some(t => t.value === key) && (
+                          <SelectItem key={key} value={key}>{key}</SelectItem>
+                        )}
+                      </SelectContent>
+                    </Select>
                     <Input 
                       type="text"
                       inputMode="decimal"
@@ -844,34 +876,44 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
 
           <div className="space-y-2">
             <Label className="text-[13px] font-semibold text-gray-700">Class Type</Label>
-            <select
-              className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+            <Select
               value={form.class_type || "Physical"}
-              onChange={(e) => setForm(prev => ({ ...prev, class_type: e.target.value }))}
+              onValueChange={(val) => setForm(prev => ({ ...prev, class_type: val }))}
+              modal={false}
             >
-              {CLASS_TYPES.map((ct) => (
-                <option key={ct} value={ct}>{ct}</option>
-              ))}
-              {form.class_type && !CLASS_TYPES.includes(form.class_type) && (
-                <option value={form.class_type}>{form.class_type}</option>
-              )}
-            </select>
+              <SelectTrigger className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm">
+                <SelectValue placeholder="Physical" />
+              </SelectTrigger>
+              <SelectContent>
+                {CLASS_TYPES.map((ct) => (
+                  <SelectItem key={ct} value={ct}>{ct}</SelectItem>
+                ))}
+                {form.class_type && !CLASS_TYPES.includes(form.class_type) && (
+                  <SelectItem key={form.class_type} value={form.class_type}>{form.class_type}</SelectItem>
+                )}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
             <Label className="text-[13px] font-semibold text-gray-700">Course Type</Label>
-            <select
-              className="w-full rounded-md border border-input bg-background px-3 h-10 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+            <Select
               value={form.course_type || "Taught Course"}
-              onChange={(e) => setForm(prev => ({ ...prev, course_type: e.target.value }))}
+              onValueChange={(val) => setForm(prev => ({ ...prev, course_type: val }))}
+              modal={false}
             >
-              {COURSE_TYPES.map((ct) => (
-                <option key={ct} value={ct}>{ct}</option>
-              ))}
-              {form.course_type && !COURSE_TYPES.includes(form.course_type) && (
-                <option value={form.course_type}>{form.course_type}</option>
-              )}
-            </select>
+              <SelectTrigger className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm">
+                <SelectValue placeholder="Taught Course" />
+              </SelectTrigger>
+              <SelectContent>
+                {COURSE_TYPES.map((ct) => (
+                  <SelectItem key={ct} value={ct}>{ct}</SelectItem>
+                ))}
+                {form.course_type && !COURSE_TYPES.includes(form.course_type) && (
+                  <SelectItem key={form.course_type} value={form.course_type}>{form.course_type}</SelectItem>
+                )}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 

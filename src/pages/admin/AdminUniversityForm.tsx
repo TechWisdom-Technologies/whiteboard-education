@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, UploadCloud, X, Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -361,15 +362,20 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
             {/* Country */}
             <div className="space-y-2 md:col-span-2">
               <Label className="text-[13px] font-semibold text-gray-700">Country *</Label>
-              <select
-                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 h-10 text-sm text-gray-500 cursor-not-allowed"
-                value={form.country_id}
+              <Select
+                value={form.country_id || undefined}
                 disabled
+                modal={false}
               >
-                {countries?.map((c: any) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 h-10 text-sm text-gray-500 cursor-not-allowed">
+                  <SelectValue placeholder="Malaysia" />
+                </SelectTrigger>
+                <SelectContent>
+                  {countries?.map((c: any) => (
+                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Campuses (Multiple campuses with cities dropdown) */}
@@ -398,19 +404,23 @@ export default function AdminUniversityForm({ initialData, onCancel, onSuccess }
                     <span className="text-xs font-semibold text-slate-500 w-20 shrink-0">
                       Campus {idx + 1}:
                     </span>
-                    <select
-                      className="flex-1 rounded-lg border border-slate-300 bg-white px-3 h-10 text-sm text-slate-800 shadow-sm focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97]"
-                      value={campus}
-                      onChange={(e) => handleUpdateCampus(idx, e.target.value)}
+                    <Select
+                      value={campus || undefined}
+                      onValueChange={(val) => handleUpdateCampus(idx, val)}
+                      modal={false}
                     >
-                      <option value="">Select City / Location...</option>
-                      {cityOptions.map((city) => (
-                        <option key={city} value={city}>{city}</option>
-                      ))}
-                      {campus && !cityOptions.includes(campus) && (
-                        <option value={campus}>{campus}</option>
-                      )}
-                    </select>
+                      <SelectTrigger className="flex-1 rounded-lg border border-slate-300 bg-white px-3 h-10 text-sm text-slate-800 shadow-sm focus:border-[#2F4F97] focus:ring-1 focus:ring-[#2F4F97]">
+                        <SelectValue placeholder="Select City / Location..." />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-72">
+                        {cityOptions.map((city) => (
+                          <SelectItem key={city} value={city}>{city}</SelectItem>
+                        ))}
+                        {campus && !cityOptions.includes(campus) && (
+                          <SelectItem key={campus} value={campus}>{campus}</SelectItem>
+                        )}
+                      </SelectContent>
+                    </Select>
                     {campuses.length > 1 && (
                       <Button
                         type="button"
