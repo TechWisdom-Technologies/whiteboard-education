@@ -29,8 +29,6 @@ export const STUDY_AREAS = [
   "Social Sciences"
 ];
 
-export const DURATION_UNITS = ["Years", "Months"];
-
 export const CLASS_TYPES = [
   "Physical",
   "Online",
@@ -54,24 +52,100 @@ export const ENGLISH_TEST_OPTIONS = [
   { value: "MOI", label: "MOI (Medium of Instruction)" },
 ];
 
-const parseDuration = (raw: string) => {
+export const YEAR_OPTIONS = [
+  { value: "0", label: "0" },
+  { value: "1", label: "1 Year" },
+  { value: "2", label: "2 Years" },
+  { value: "3", label: "3 Years" },
+  { value: "4", label: "4 Years" },
+  { value: "5", label: "5 Years" },
+  { value: "6", label: "6 Years" },
+];
+
+export const MONTH_OPTIONS = [
+  { value: "0", label: "0" },
+  { value: "1", label: "1 Month" },
+  { value: "2", label: "2 Months" },
+  { value: "3", label: "3 Months" },
+  { value: "4", label: "4 Months" },
+  { value: "5", label: "5 Months" },
+  { value: "6", label: "6 Months" },
+  { value: "7", label: "7 Months" },
+  { value: "8", label: "8 Months" },
+  { value: "9", label: "9 Months" },
+  { value: "10", label: "10 Months" },
+  { value: "11", label: "11 Months" },
+];
+
+export const parseDuration = (raw: string): { years: string; months: string } => {
   if (!raw || !raw.trim()) {
-    return { number: "", unit: "Years" };
+    return { years: "0", months: "0" };
   }
-  const trimmed = raw.trim();
-  const match = trimmed.match(/^([\d.]+)\s*(.*)$/);
-  if (match) {
-    const rawNum = match[1];
-    const rawUnit = match[2]?.trim().toLowerCase();
-    const unit = rawUnit.startsWith("month") ? "Months" : "Years";
-    return { number: rawNum, unit };
+  const str = raw.trim();
+
+  // Match years and months if present, e.g. "1 Year 5 Months", "2 Years", "6 Months"
+  const yearMatch = str.match(/([\d.]+)\s*(?:year|yr)s?/i);
+  const monthMatch = str.match(/([\d.]+)\s*(?:month|mo)s?/i);
+
+  if (yearMatch || monthMatch) {
+    return {
+      years: yearMatch ? yearMatch[1] : "0",
+      months: monthMatch ? monthMatch[1] : "0",
+    };
   }
-  return { number: "", unit: "Years" };
+
+  // If there's no unit keyword, check if it's just a number like "3" or "1.5"
+  const numMatch = str.match(/^([\d.]+)$/);
+  if (numMatch) {
+    return { years: numMatch[1], months: "0" };
+  }
+
+  return { years: "0", months: "0" };
+};
+
+export const formatDuration = (years: string, months: string): string => {
+  const yNum = parseFloat(years);
+  const mNum = parseFloat(months);
+
+  const hasY = !isNaN(yNum) && yNum > 0;
+  const hasM = !isNaN(mNum) && mNum > 0;
+
+  const parts: string[] = [];
+
+  if (hasY) {
+    const unit = yNum === 1 ? "Year" : "Years";
+    parts.push(`${years} ${unit}`);
+  }
+
+  if (hasM) {
+    const unit = mNum === 1 ? "Month" : "Months";
+    parts.push(`${months} ${unit}`);
+  }
+
+  return parts.join(" ");
 };
 
 const cleanFeeValue = (feeStr: string | number | undefined | null) => {
   if (!feeStr) return "";
   return String(feeStr).replace(/^(MYR|RM)\s*/i, "").trim();
+};
+
+const cleanEntryRequirements = (reqs: any): Record<string, string> => {
+  if (!reqs || typeof reqs !== "object") return {};
+  const cleaned: Record<string, string> = {};
+  for (const [k, v] of Object.entries(reqs)) {
+    if (k.toUpperCase() === "MOI" || String(v).toLowerCase() === "accepted") {
+      cleaned[k] = "Accepted";
+    } else {
+      let numStr = String(v ?? "").replace(/[^0-9.]/g, "");
+      const parts = numStr.split(".");
+      if (parts.length > 2) {
+        numStr = parts[0] + "." + parts.slice(1).join("");
+      }
+      cleaned[k] = numStr;
+    }
+  }
+  return cleaned;
 };
 
 export default function AdminCourseForm({ initialData, onCancel, onSuccess }: AdminCourseFormProps) {
@@ -109,8 +183,35 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
 
   const [newTag, setNewTag] = useState("");
   const [newCareerTag, setNewCareerTag] = useState("");
-  const [selectedDurationUnit, setSelectedDurationUnit] = useState<string>("Years");
+  const [durationYears, setDurationYears] = useState<string>(() => parseDuration(initialData?.duration || "").years || "0");
+  const [durationMonths, setDurationMonths] = useState<string>(() => parseDuration(initialData?.duration || "").months || "0");
   const [feeScheduleType, setFeeScheduleType] = useState<"yearly" | "semester">("yearly");
+
+  const allYearOptions = useMemo(() => {
+    if (durationYears && durationYears !== "0" && !YEAR_OPTIONS.some(o => o.value === durationYears)) {
+      return [...YEAR_OPTIONS, { value: durationYears, label: `${durationYears} ${Number(durationYears) === 1 ? "Year" : "Years"}` }];
+    }
+    return YEAR_OPTIONS;
+  }, [durationYears]);
+
+  const allMonthOptions = useMemo(() => {
+    if (durationMonths && durationMonths !== "0" && !MONTH_OPTIONS.some(o => o.value === durationMonths)) {
+      return [...MONTH_OPTIONS, { value: durationMonths, label: `${durationMonths} ${Number(durationMonths) === 1 ? "Month" : "Months"}` }];
+    }
+    return MONTH_OPTIONS;
+  }, [durationMonths]);
+
+  const handleYearsChange = (val: string) => {
+    setDurationYears(val);
+    const formatted = formatDuration(val, durationMonths);
+    setForm(prev => ({ ...prev, duration: formatted }));
+  };
+
+  const handleMonthsChange = (val: string) => {
+    setDurationMonths(val);
+    const formatted = formatDuration(durationYears, val);
+    setForm(prev => ({ ...prev, duration: formatted }));
+  };
 
   const isOfferLetterFree = useMemo(() => {
     if (!form.offer_letter) return false;
@@ -148,30 +249,28 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
     }));
   };
 
-  const { number: durationNumber, unit: parsedDurationUnit } = useMemo(() => {
-    return parseDuration(form.duration);
-  }, [form.duration]);
-
-  const durationUnit = parsedDurationUnit || selectedDurationUnit;
-
   const maxFeePeriods = useMemo(() => {
-    if (!durationNumber) return null;
-    const num = parseFloat(durationNumber);
-    if (isNaN(num) || num <= 0) return null;
+    const y = parseFloat(durationYears);
+    const m = parseFloat(durationMonths);
+    const hasY = !isNaN(y) && y > 0;
+    const hasM = !isNaN(m) && m > 0;
+    if (!hasY && !hasM) return null;
 
-    const isMonths = durationUnit.toLowerCase().startsWith("month");
+    const totalMonths = (hasY ? y * 12 : 0) + (hasM ? m : 0);
+    if (totalMonths <= 0) return null;
+
     if (feeScheduleType === "yearly") {
-      return isMonths ? Math.max(1, Math.ceil(num / 12)) : Math.max(1, Math.ceil(num));
+      return Math.max(1, Math.ceil(totalMonths / 12));
     } else {
-      // Semester wise (2 semesters per year / 6 months per semester)
-      return isMonths ? Math.max(1, Math.ceil(num / 6)) : Math.max(1, Math.ceil(num * 2));
+      // Semester wise (approx 6 months per semester)
+      return Math.max(1, Math.ceil(totalMonths / 6));
     }
-  }, [durationNumber, durationUnit, feeScheduleType]);
+  }, [durationYears, durationMonths, feeScheduleType]);
 
   const isMaxPeriodsReached = Boolean(maxFeePeriods !== null && form.yearly_fees.length >= maxFeePeriods);
 
   const addFeePeriod = () => {
-    if (!form.duration || !durationNumber) {
+    if (!form.duration || maxFeePeriods === null) {
       toast.error("Please select course duration first.");
       return;
     }
@@ -210,21 +309,6 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
     const scholarshipVal = parseFloat(String(form.scholarship || "0").replace(/[^0-9.]/g, "")) || 0;
     return Math.max(0, sum - scholarshipVal);
   }, [form.yearly_fees, form.scholarship]);
-
-  const handleDurationChange = (num: string, unit: string) => {
-    setSelectedDurationUnit(unit);
-    if (!num) {
-      setForm(prev => ({ ...prev, duration: "" }));
-      return;
-    }
-    const effectiveUnit = unit || "Years";
-    const formattedUnit = (effectiveUnit === "Years" && Number(num) === 1)
-      ? "Year"
-      : (effectiveUnit === "Months" && Number(num) === 1)
-        ? "Month"
-        : effectiveUnit;
-    setForm(prev => ({ ...prev, duration: `${num} ${formattedUnit}` }));
-  };
 
   const selectedUni = universities?.find((u: any) => u.id === form.university_id);
 
@@ -286,6 +370,10 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
 
   useEffect(() => {
     if (initialData) {
+      const parsed = parseDuration(initialData.duration || "");
+      setDurationYears(parsed.years || "0");
+      setDurationMonths(parsed.months || "0");
+
       setForm({
         title: initialData.title || "",
         university_id: initialData.university_id || "",
@@ -295,7 +383,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
         intake_months: Array.isArray(initialData.intake_months) ? initialData.intake_months : [],
         offer_letter: initialData.offer_letter || "",
         duration: initialData.duration || "",
-        entry_requirements: typeof initialData.entry_requirements === "object" && initialData.entry_requirements !== null ? initialData.entry_requirements : {},
+        entry_requirements: cleanEntryRequirements(initialData.entry_requirements),
         entry_requirements_text: initialData.entry_requirements_text || "",
         class_type: initialData.class_type || "Physical",
         course_type: initialData.course_type || "Taught Course",
@@ -318,6 +406,11 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
           .then(({ data, error }) => {
             if (data && !error) {
               const d = data as any;
+              if (d.duration !== undefined) {
+                const parsedFull = parseDuration(d.duration || "");
+                setDurationYears(parsedFull.years || "0");
+                setDurationMonths(parsedFull.months || "0");
+              }
               setForm(prev => ({
                 title: d.title || prev.title,
                 university_id: d.university_id || prev.university_id,
@@ -327,7 +420,7 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                 intake_months: Array.isArray(d.intake_months) ? d.intake_months.map(String) : prev.intake_months,
                 offer_letter: d.offer_letter || prev.offer_letter,
                 duration: d.duration || prev.duration,
-                entry_requirements: typeof d.entry_requirements === "object" && d.entry_requirements ? (d.entry_requirements as Record<string, string>) : prev.entry_requirements,
+                entry_requirements: cleanEntryRequirements(d.entry_requirements || prev.entry_requirements),
                 entry_requirements_text: d.entry_requirements_text || prev.entry_requirements_text,
                 class_type: d.class_type || prev.class_type || "Physical",
                 course_type: d.course_type || prev.course_type || "Taught Course",
@@ -685,38 +778,57 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
           </div>
 
           <div className="space-y-2">
-            <Label className="text-[13px] font-semibold text-gray-700">Duration</Label>
-            <div className="grid grid-cols-2 gap-3">
-              <Input
-                type="text"
-                inputMode="decimal"
-                placeholder="e.g. 3 or 1.5"
-                value={durationNumber}
-                onChange={(e) => {
-                  const raw = e.target.value.replace(/[^0-9.]/g, "");
-                  const parts = raw.split(".");
-                  const sanitized = parts.length > 2 ? parts[0] + "." + parts.slice(1).join("") : raw;
-                  handleDurationChange(sanitized, durationUnit);
-                }}
-                className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-900 focus-visible:ring-1 focus-visible:ring-slate-400"
-              />
+            <div className="flex items-center justify-between">
+              <Label className="text-[13px] font-semibold text-gray-700">Duration</Label>
+              {form.duration ? (
+                <span className="text-xs font-semibold text-[#2F4F97] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200/60">
+                  {form.duration}
+                </span>
+              ) : (
+                <span className="text-xs text-muted-foreground italic font-normal">Not selected</span>
+              )}
+            </div>
 
-              <Select
-                value={durationUnit}
-                onValueChange={(val) => handleDurationChange(durationNumber, val)}
-                modal={false}
-              >
-                <SelectTrigger className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {DURATION_UNITS.map((u) => (
-                    <SelectItem key={u} value={u}>
-                      {u}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <span className="text-xs text-gray-500 font-medium">Years</span>
+                <Select
+                  value={durationYears || "0"}
+                  onValueChange={handleYearsChange}
+                  modal={false}
+                >
+                  <SelectTrigger className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700">
+                    <SelectValue placeholder="0" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    {allYearOptions.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1">
+                <span className="text-xs text-gray-500 font-medium">Months</span>
+                <Select
+                  value={durationMonths || "0"}
+                  onValueChange={handleMonthsChange}
+                  modal={false}
+                >
+                  <SelectTrigger className="w-full rounded-xl border border-gray-200 bg-white px-3 h-10 text-sm text-gray-700">
+                    <SelectValue placeholder="0" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    {allMonthOptions.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
 
@@ -793,10 +905,59 @@ export default function AdminCourseForm({ initialData, onCancel, onSuccess }: Ad
                       type="text"
                       inputMode="decimal"
                       placeholder={isMOI ? "No score required" : "e.g. 6.0"} 
-                      value={isMOI ? "MOI (No Score Required)" : val} 
+                      value={isMOI ? "MOI (No Score Required)" : (val ?? "")} 
                       disabled={isMOI}
                       className={`w-1/2 h-10 ${isMOI ? "bg-slate-50 text-slate-400 cursor-not-allowed select-none" : ""}`}
-                      onChange={(e) => updateEnglishReqScore(key, e.target.value)}
+                      onKeyDown={(e) => {
+                        if (isMOI) return;
+                        if (
+                          ["Backspace", "Delete", "Tab", "Escape", "Enter", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(e.key) ||
+                          (e.ctrlKey || e.metaKey)
+                        ) {
+                          return;
+                        }
+                        if (e.key >= "0" && e.key <= "9") {
+                          return;
+                        }
+                        if (e.key === "." && !e.currentTarget.value.includes(".")) {
+                          return;
+                        }
+                        e.preventDefault();
+                      }}
+                      onPaste={(e) => {
+                        if (isMOI) return;
+                        e.preventDefault();
+                        const text = e.clipboardData.getData("text");
+                        let clean = text.replace(/[^0-9.]/g, "");
+                        const parts = clean.split(".");
+                        if (parts.length > 2) {
+                          clean = parts[0] + "." + parts.slice(1).join("");
+                        }
+                        if (clean) {
+                          const input = e.currentTarget;
+                          const start = input.selectionStart || 0;
+                          const end = input.selectionEnd || 0;
+                          const current = input.value;
+                          const next = current.slice(0, start) + clean + current.slice(end);
+                          let finalClean = next.replace(/[^0-9.]/g, "");
+                          const fParts = finalClean.split(".");
+                          if (fParts.length > 2) {
+                            finalClean = fParts[0] + "." + fParts.slice(1).join("");
+                          }
+                          input.value = finalClean;
+                          updateEnglishReqScore(key, finalClean);
+                        }
+                      }}
+                      onChange={(e) => {
+                        if (isMOI) return;
+                        let clean = e.target.value.replace(/[^0-9.]/g, "");
+                        const parts = clean.split(".");
+                        if (parts.length > 2) {
+                          clean = parts[0] + "." + parts.slice(1).join("");
+                        }
+                        e.target.value = clean;
+                        updateEnglishReqScore(key, clean);
+                      }}
                     />
                     <Button 
                       type="button"
