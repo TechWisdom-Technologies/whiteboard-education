@@ -97,7 +97,7 @@ function InfoTile({ icon: Icon, label, value }: { icon: any; label: string; valu
 
   return (
     <div className="p-4 sm:p-5 rounded-2xl border border-slate-200/80 bg-white flex items-start gap-4 shadow-2xs hover:border-slate-300 transition-colors">
-      <div className="p-2.5 rounded-xl bg-[#1E293B]/5 text-[#1E293B] shrink-0 mt-0.5">
+      <div className="p-2.5 rounded-xl bg-[#21438c]/10 text-[#21438c] shrink-0 mt-0.5">
         <Icon className="h-5 w-5" />
       </div>
       <div className="min-w-0 flex-1">
@@ -359,7 +359,7 @@ export default function AdminSettings() {
   const initials = (profile.display_name || user?.email || "A")
     .split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
 
-  const inputCls = "h-12 text-base bg-white text-black border border-slate-300 rounded-xl px-3.5 focus:bg-white focus:text-black focus:border-[#1E293B] focus:ring-2 focus:ring-[#1E293B]/20 focus:caret-black placeholder:text-gray-400 focus:placeholder:text-gray-400 transition-all shadow-none font-normal";
+  const inputCls = "h-12 text-base bg-white text-black border border-slate-300 rounded-xl px-3.5 focus:bg-white focus:text-black focus:border-[#21438c] focus:ring-2 focus:ring-[#21438c]/20 focus:caret-black placeholder:text-gray-400 focus:placeholder:text-gray-400 transition-all shadow-none font-normal";
 
   return (
     <div className="space-y-6 animate-fade-in pb-12 max-w-7xl mx-auto">
@@ -375,7 +375,7 @@ export default function AdminSettings() {
             <div className="relative group shrink-0">
               <Avatar className="w-[105px] h-[135px] rounded-lg border border-slate-200 shadow-sm bg-white overflow-hidden">
                 <AvatarImage src={profile.avatar_url} className="w-full h-full object-cover aspect-auto" />
-                <AvatarFallback className="text-3xl font-bold bg-[#1E293B]/10 text-[#1E293B] rounded-lg">{initials}</AvatarFallback>
+                <AvatarFallback className="text-3xl font-bold bg-[#21438c]/10 text-[#21438c] rounded-lg">{initials}</AvatarFallback>
               </Avatar>
               <button
                 type="button"
@@ -421,7 +421,7 @@ export default function AdminSettings() {
                   </div>
                 </div>
               </div>
-              <Badge variant="outline" className="bg-[#1E293B]/10 text-[#1E293B] border-[#1E293B]/30 px-3 py-1 text-xs font-semibold rounded-full uppercase shadow-sm flex items-center gap-1.5 shrink-0 mx-auto sm:mx-0 w-fit">
+              <Badge variant="outline" className="bg-[#21438c]/10 text-[#21438c] border-[#21438c]/30 px-3 py-1 text-xs font-semibold rounded-full uppercase shadow-sm flex items-center gap-1.5 shrink-0 mx-auto sm:mx-0 w-fit">
                 <ShieldCheck className="h-3.5 w-3.5" /> Super Admin
               </Badge>
             </div>

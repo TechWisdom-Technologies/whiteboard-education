@@ -36,8 +36,8 @@ export function AdminSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-[#1d283a] bg-[#1d283a] !top-[60px] !h-[calc(100svh-60px)] z-20">
-      <SidebarContent className="bg-[#1d283a]">
+    <Sidebar collapsible="icon" className="border-r border-[#21438c] bg-[#21438c] !top-[60px] !h-[calc(100svh-60px)] z-20">
+      <SidebarContent className="bg-[#21438c]">
         <SidebarGroup className={`pt-5 ${collapsed ? "px-1.5" : "px-3"}`}>
           <SidebarGroupContent>
             <SidebarMenu className="gap-0.5">
@@ -59,13 +59,13 @@ export function AdminSidebar() {
                           flex items-center rounded-lg transition-colors duration-150 cursor-pointer
                           ${collapsed ? "justify-center p-2" : "gap-3 px-3 py-2.5"}
                           ${isItemActive
-                            ? "bg-white text-[#1d283a] shadow-sm"
-                            : "text-slate-300 hover:bg-white/10 hover:text-white"
+                            ? "bg-white text-[#21438c] shadow-sm"
+                            : "text-white/85 hover:bg-white/10 hover:text-white"
                           }
                         `}
                       >
                         <item.icon
-                          className={`h-5 w-5 flex-shrink-0 ${isItemActive ? "text-[#1d283a]" : "text-slate-400"}`}
+                          className={`h-5 w-5 flex-shrink-0 ${isItemActive ? "text-[#21438c]" : "text-white/75"}`}
                           strokeWidth={isItemActive ? 2.2 : 1.8}
                         />
                         {!collapsed && (
@@ -83,16 +83,16 @@ export function AdminSidebar() {
               <SidebarMenuItem>
                 <div
                   onClick={() => setPartnerContentOpen(!partnerContentOpen)}
-                  className={`flex items-center rounded-lg text-slate-300 hover:bg-white/10 hover:text-white transition-colors duration-150 cursor-pointer ${collapsed ? "justify-center p-2" : "gap-3 px-3 py-2.5"}`}
+                  className={`flex items-center rounded-lg text-white/85 hover:bg-white/10 hover:text-white transition-colors duration-150 cursor-pointer ${collapsed ? "justify-center p-2" : "gap-3 px-3 py-2.5"}`}
                 >
-                  <PlaySquare className="h-5 w-5 flex-shrink-0 text-slate-400" strokeWidth={1.8} />
+                  <PlaySquare className="h-5 w-5 flex-shrink-0 text-white/75" strokeWidth={1.8} />
                   {!collapsed && (
                     <>
                       <span className="text-[15px] leading-5 font-medium">Partner Content</span>
                       {partnerContentOpen ? (
-                        <ChevronDown className="ml-auto h-4 w-4 text-slate-400" />
+                        <ChevronDown className="ml-auto h-4 w-4 text-white/75" />
                       ) : (
-                        <ChevronRight className="ml-auto h-4 w-4 text-slate-400" />
+                        <ChevronRight className="ml-auto h-4 w-4 text-white/75" />
                       )}
                     </>
                   )}
@@ -100,7 +100,7 @@ export function AdminSidebar() {
 
                 {/* Sub-menu */}
                 {!collapsed && partnerContentOpen && (
-                  <div className="mt-1 ml-4 pl-3 border-l border-slate-700/50 space-y-0.5">
+                  <div className="mt-1 ml-4 pl-3 border-l border-white/15 space-y-0.5">
                     {[
                       { title: "Partner Documents", icon: FolderDown, url: "/admin/partner-content/documents" },
                       { title: "Updates & Notices", icon: Megaphone, url: "/admin/partner-content/notices" },
@@ -114,10 +114,10 @@ export function AdminSidebar() {
                           key={subItem.title}
                           to={subItem.url}
                           className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg transition-colors duration-150 ${
-                            isSubActive ? "bg-white text-[#1d283a] shadow-sm" : "text-slate-400 hover:text-white hover:bg-white/10"
+                            isSubActive ? "bg-white text-[#21438c] shadow-sm" : "text-white/75 hover:text-white hover:bg-white/10"
                           }`}
                         >
-                          <subItem.icon className={`h-4 w-4 flex-shrink-0 ${isSubActive ? "text-[#1d283a]" : ""}`} strokeWidth={isSubActive ? 2.2 : 1.8} />
+                          <subItem.icon className={`h-4 w-4 flex-shrink-0 ${isSubActive ? "text-[#21438c]" : ""}`} strokeWidth={isSubActive ? 2.2 : 1.8} />
                           <span className={`text-[13px] ${isSubActive ? "font-semibold" : "font-medium"}`}>{subItem.title}</span>
                         </Link>
                       );
@@ -127,15 +127,15 @@ export function AdminSidebar() {
               </SidebarMenuItem>
 
               {/* Divider */}
-              <div className="my-2 border-t border-slate-700/50" />
+              <div className="my-2 border-t border-white/15" />
 
               {/* Go to Website */}
               <SidebarMenuItem>
                 <div
                   onClick={() => window.open("/", "_blank")}
-                  className={`flex items-center rounded-lg text-slate-300 hover:bg-white/10 hover:text-white transition-colors duration-150 cursor-pointer ${collapsed ? "justify-center p-2" : "gap-3 px-3 py-2.5"}`}
+                  className={`flex items-center rounded-lg text-white/85 hover:bg-white/10 hover:text-white transition-colors duration-150 cursor-pointer ${collapsed ? "justify-center p-2" : "gap-3 px-3 py-2.5"}`}
                 >
-                  <ExternalLink className="h-5 w-5 flex-shrink-0 text-slate-400" strokeWidth={1.8} />
+                  <ExternalLink className="h-5 w-5 flex-shrink-0 text-white/75" strokeWidth={1.8} />
                   {!collapsed && <span className="text-[15px] leading-5 font-medium">Go to Website</span>}
                 </div>
               </SidebarMenuItem>
@@ -144,7 +144,7 @@ export function AdminSidebar() {
               <SidebarMenuItem>
                 <div
                   onClick={handleSignOut}
-                  className={`flex items-center rounded-lg text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors duration-150 cursor-pointer ${collapsed ? "justify-center p-2" : "gap-3 px-3 py-2.5"}`}
+                  className={`flex items-center rounded-lg text-red-300 hover:bg-red-500/15 hover:text-red-200 transition-colors duration-150 cursor-pointer ${collapsed ? "justify-center p-2" : "gap-3 px-3 py-2.5"}`}
                 >
                   <LogOut className="h-5 w-5 flex-shrink-0" strokeWidth={1.8} />
                   {!collapsed && <span className="text-[15px] leading-5 font-medium">Sign Out</span>}

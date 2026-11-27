@@ -23,7 +23,7 @@ function AdminHeader({ profile }: { profile: any }) {
   const { user } = useAuth();
 
   return (
-    <header className="h-[60px] flex items-center bg-sidebar sticky top-0 z-30 w-full text-white shadow-sm border-b border-sidebar-border">
+    <header className="h-[60px] flex items-center bg-[#21438c] sticky top-0 z-30 w-full text-white shadow-sm border-b border-white/15">
       <div className="w-[16rem] flex items-center justify-center bg-transparent h-full flex-shrink-0">
         <img src="/logo-white.png" alt="Whiteboard Education" className="w-[180px] h-[50px] object-contain shrink-0 mx-auto" />
       </div>

@@ -651,11 +651,16 @@
 
 @layer base {
   .admin-theme {
-    --primary: 217 33% 17%;
+    --primary: 221 62% 34%;
     --primary-foreground: 0 0% 100%;
-    --accent: 217 33% 17%;
+    --accent: 221 62% 34%;
     --accent-foreground: 0 0% 100%;
-    --ring: 217 33% 17%;
+    --ring: 221 62% 34%;
+    --sidebar-background: 221 62% 34%;
+    --sidebar-border: 221 55% 28%;
+    --sidebar-primary: 221 62% 34%;
+    --sidebar-accent: 221 55% 42%;
+    --sidebar-ring: 221 62% 34%;
   }
 }
 

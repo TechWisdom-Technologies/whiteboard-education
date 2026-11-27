@@ -902,7 +902,7 @@ export default function AdminCrudTable({
             variant="ghost" 
             size="icon"
             onClick={() => setDialogOpen(false)} 
-            className="h-8 w-8 rounded-full bg-[#1d283a]/10 hover:bg-[#1d283a]/20 transition-colors"
+            className="h-8 w-8 rounded-full bg-[#21438c]/10 hover:bg-[#21438c]/20 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>

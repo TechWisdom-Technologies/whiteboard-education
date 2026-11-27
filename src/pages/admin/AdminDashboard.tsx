@@ -67,7 +67,7 @@ const statusTextColors: Record<string, string> = {
   application_on_hold_intake: "text-amber-600",
   application_on_hold_wb: "text-amber-600",
   application_on_hold_university: "text-amber-600",
-  application_submitted: "text-[#1d283a]",
+  application_submitted: "text-[#21438c]",
   offer_letter_received_conditional: "text-purple-600",
   offer_letter_received_unconditional: "text-purple-600",
   rejected_by_university: "text-destructive",
@@ -252,8 +252,8 @@ export default function AdminDashboard() {
           
           {/* Bangladesh Time */}
           <div className="flex flex-col items-end">
-            <span className="text-base sm:text-lg font-extrabold text-[#1d283a] uppercase tracking-wide mb-1">Bangladesh</span>
-            <p className="text-3xl sm:text-4xl font-bold text-[#1d283a] whitespace-nowrap drop-shadow-sm font-mono tracking-tight" style={{ fontVariantNumeric: 'tabular-nums' }}>
+            <span className="text-3xl sm:text-4xl font-extrabold text-[#21438c] uppercase tracking-wide mb-1">Bangladesh</span>
+            <p className="text-base sm:text-lg font-bold text-[#21438c] whitespace-nowrap drop-shadow-sm font-mono tracking-tight" style={{ fontVariantNumeric: 'tabular-nums' }}>
               {(() => {
                 const d = new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Dhaka' }));
                 const h = d.getHours() % 12 || 12;
@@ -263,7 +263,7 @@ export default function AdminDashboard() {
                 return <>{String(h).padStart(2, '0')}:{m}:{s} {ap}</>;
               })()}
             </p>
-            <p className="text-[11px] sm:text-xs font-semibold text-[#1d283a] tracking-wider mt-1">
+            <p className="text-[11px] sm:text-xs font-semibold text-[#21438c] tracking-wider mt-1">
               {currentTime.toLocaleDateString('en-US', { timeZone: 'Asia/Dhaka', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
             </p>
           </div>
@@ -273,8 +273,8 @@ export default function AdminDashboard() {
 
           {/* Malaysia Time */}
           <div className="flex flex-col items-end">
-            <span className="text-base sm:text-lg font-extrabold text-[#CC0000] uppercase tracking-wide mb-1">Malaysia</span>
-            <p className="text-3xl sm:text-4xl font-bold text-[#CC0000] whitespace-nowrap drop-shadow-sm font-mono tracking-tight" style={{ fontVariantNumeric: 'tabular-nums' }}>
+            <span className="text-3xl sm:text-4xl font-extrabold text-[#1A7DC1] uppercase tracking-wide mb-1">Malaysia</span>
+            <p className="text-base sm:text-lg font-bold text-[#CC0000] whitespace-nowrap drop-shadow-sm font-mono tracking-tight" style={{ fontVariantNumeric: 'tabular-nums' }}>
               {(() => {
                 const d = new Date(currentTime.toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
                 const h = d.getHours() % 12 || 12;
@@ -298,10 +298,10 @@ export default function AdminDashboard() {
         {/* Card 0: Total Students (Admin sees all, can filter by agency) */}
         <div 
           onClick={() => navigate(card0Filter === "all" ? "/admin/students" : `/admin/students?partner=${card0Filter}`)}
-          className="bg-white border border-[#1d283a]/20 hover:border-[#1d283a] shadow-xs hover:shadow-md rounded-xl overflow-hidden cursor-pointer transition-all duration-200 flex flex-col justify-between group min-w-0"
+          className="bg-white border border-[#21438c]/20 hover:border-[#21438c] shadow-xs hover:shadow-md rounded-xl overflow-hidden cursor-pointer transition-all duration-200 flex flex-col justify-between group min-w-0"
         >
           <div 
-            className="bg-[#1d283a] px-2.5 py-1.5 flex items-center justify-between border-b border-[#1d283a] min-w-0"
+            className="bg-[#21438c] px-2.5 py-1.5 flex items-center justify-between border-b border-[#21438c] min-w-0"
             onClick={(e) => e.stopPropagation()}
           >
             <Select value={card0Filter} onValueChange={setCard0Filter} modal={false}>
@@ -309,25 +309,25 @@ export default function AdminDashboard() {
                 <SelectValue placeholder="All Students" />
               </SelectTrigger>
               <SelectContent className="max-h-72">
-                <SelectItem value="all" className="text-xs focus:bg-[#1d283a] focus:text-white">All Students</SelectItem>
+                <SelectItem value="all" className="text-xs focus:bg-[#21438c] focus:text-white">All Students</SelectItem>
                 {partnerLookup.map(p => (
-                  <SelectItem key={p.user_id} value={p.user_id} className="text-xs focus:bg-[#1d283a] focus:text-white">{p.agency_name}</SelectItem>
+                  <SelectItem key={p.user_id} value={p.user_id} className="text-xs focus:bg-[#21438c] focus:text-white">{p.agency_name}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           <div className="p-4 bg-white">
-            <p className="text-2xl sm:text-3xl font-bold text-[#1d283a] tracking-tight">{getCard0Count()}</p>
+            <p className="text-2xl sm:text-3xl font-bold text-[#21438c] tracking-tight">{getCard0Count()}</p>
           </div>
         </div>
 
         {/* Card 1: Total Applications */}
         <div 
           onClick={() => navigate(card1Filter === "all" ? "/admin/students" : `/admin/students?status=${card1Filter}`)}
-          className="bg-white border border-[#1d283a]/20 hover:border-[#1d283a] shadow-xs hover:shadow-md rounded-xl overflow-hidden cursor-pointer transition-all duration-200 flex flex-col justify-between group min-w-0"
+          className="bg-white border border-[#21438c]/20 hover:border-[#21438c] shadow-xs hover:shadow-md rounded-xl overflow-hidden cursor-pointer transition-all duration-200 flex flex-col justify-between group min-w-0"
         >
           <div 
-            className="bg-[#1d283a] px-2.5 py-1.5 flex items-center justify-between border-b border-[#1d283a] min-w-0"
+            className="bg-[#21438c] px-2.5 py-1.5 flex items-center justify-between border-b border-[#21438c] min-w-0"
             onClick={(e) => e.stopPropagation()}
           >
             <Select value={card1Filter} onValueChange={setCard1Filter} modal={false}>
@@ -335,25 +335,25 @@ export default function AdminDashboard() {
                 <SelectValue placeholder="Filter" />
               </SelectTrigger>
               <SelectContent className="max-h-72">
-                <SelectItem value="all" className="text-xs focus:bg-[#1d283a] focus:text-white">All Applications</SelectItem>
+                <SelectItem value="all" className="text-xs focus:bg-[#21438c] focus:text-white">All Applications</SelectItem>
                 {statusPhases[0].steps.filter(s => s.id !== 'new').map(step => (
-                  <SelectItem key={step.id} value={step.id} className="text-xs focus:bg-[#1d283a] focus:text-white">{step.label}</SelectItem>
+                  <SelectItem key={step.id} value={step.id} className="text-xs focus:bg-[#21438c] focus:text-white">{step.label}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           <div className="p-4 bg-white">
-            <p className="text-2xl sm:text-3xl font-bold text-[#1d283a] tracking-tight">{getCard1Count()}</p>
+            <p className="text-2xl sm:text-3xl font-bold text-[#21438c] tracking-tight">{getCard1Count()}</p>
           </div>
         </div>
 
         {/* Card 2 */}
         <div 
           onClick={() => navigate(`/admin/students?status=${card2Filter}`)}
-          className="bg-white border border-[#1d283a]/20 hover:border-[#1d283a] shadow-xs hover:shadow-md rounded-xl overflow-hidden cursor-pointer transition-all duration-200 flex flex-col justify-between group min-w-0"
+          className="bg-white border border-[#21438c]/20 hover:border-[#21438c] shadow-xs hover:shadow-md rounded-xl overflow-hidden cursor-pointer transition-all duration-200 flex flex-col justify-between group min-w-0"
         >
           <div 
-            className="bg-[#1d283a] px-2.5 py-1.5 flex items-center justify-between border-b border-[#1d283a] min-w-0"
+            className="bg-[#21438c] px-2.5 py-1.5 flex items-center justify-between border-b border-[#21438c] min-w-0"
             onClick={(e) => e.stopPropagation()}
           >
             <Select value={card2Filter} onValueChange={setCard2Filter} modal={false}>
@@ -361,23 +361,23 @@ export default function AdminDashboard() {
                 <SelectValue placeholder="Filter" />
               </SelectTrigger>
               <SelectContent className="max-h-72">
-                <SelectItem value="offer_letter_received_conditional" className="text-xs focus:bg-[#1d283a] focus:text-white">Offer Letter Received (Conditional)</SelectItem>
-                <SelectItem value="offer_letter_received_unconditional" className="text-xs focus:bg-[#1d283a] focus:text-white">Offer Letter Received (Unconditional)</SelectItem>
+                <SelectItem value="offer_letter_received_conditional" className="text-xs focus:bg-[#21438c] focus:text-white">Offer Letter Received (Conditional)</SelectItem>
+                <SelectItem value="offer_letter_received_unconditional" className="text-xs focus:bg-[#21438c] focus:text-white">Offer Letter Received (Unconditional)</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="p-4 bg-white">
-            <p className="text-2xl sm:text-3xl font-bold text-[#1d283a] tracking-tight">{getCard2Count()}</p>
+            <p className="text-2xl sm:text-3xl font-bold text-[#21438c] tracking-tight">{getCard2Count()}</p>
           </div>
         </div>
 
         {/* Card 3: Visa Applications */}
         <div 
           onClick={() => navigate(`/admin/students?status=${card3Filter}`)}
-          className="bg-white border border-[#1d283a]/20 hover:border-[#1d283a] shadow-xs hover:shadow-md rounded-xl overflow-hidden cursor-pointer transition-all duration-200 flex flex-col justify-between group min-w-0"
+          className="bg-white border border-[#21438c]/20 hover:border-[#21438c] shadow-xs hover:shadow-md rounded-xl overflow-hidden cursor-pointer transition-all duration-200 flex flex-col justify-between group min-w-0"
         >
           <div 
-            className="bg-[#1d283a] px-2.5 py-1.5 flex items-center justify-between border-b border-[#1d283a] min-w-0"
+            className="bg-[#21438c] px-2.5 py-1.5 flex items-center justify-between border-b border-[#21438c] min-w-0"
             onClick={(e) => e.stopPropagation()}
           >
             <Select value={card3Filter} onValueChange={setCard3Filter} modal={false}>
@@ -385,24 +385,24 @@ export default function AdminDashboard() {
                 <SelectValue placeholder="Filter" />
               </SelectTrigger>
               <SelectContent className="max-h-72">
-                <SelectItem value="ready_for_visa_application" className="text-xs focus:bg-[#1d283a] focus:text-white">Ready for Visa</SelectItem>
-                <SelectItem value="emgs_approval_pending" className="text-xs focus:bg-[#1d283a] focus:text-white">EMGS Pending</SelectItem>
-                <SelectItem value="rejected_by_visa_office" className="text-xs focus:bg-[#1d283a] focus:text-white">Rejected by Visa Office</SelectItem>
+                <SelectItem value="ready_for_visa_application" className="text-xs focus:bg-[#21438c] focus:text-white">Ready for Visa</SelectItem>
+                <SelectItem value="emgs_approval_pending" className="text-xs focus:bg-[#21438c] focus:text-white">EMGS Pending</SelectItem>
+                <SelectItem value="rejected_by_visa_office" className="text-xs focus:bg-[#21438c] focus:text-white">Rejected by Visa Office</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="p-4 bg-white">
-            <p className="text-2xl sm:text-3xl font-bold text-[#1d283a] tracking-tight">{getCard3Count()}</p>
+            <p className="text-2xl sm:text-3xl font-bold text-[#21438c] tracking-tight">{getCard3Count()}</p>
           </div>
         </div>
 
         {/* Card 4: Rejected by University */}
         <div 
           onClick={() => navigate(`/admin/students?status=${card4Filter}`)}
-          className="bg-white border border-[#1d283a]/20 hover:border-[#1d283a] shadow-xs hover:shadow-md rounded-xl overflow-hidden cursor-pointer transition-all duration-200 flex flex-col justify-between group min-w-0"
+          className="bg-white border border-[#21438c]/20 hover:border-[#21438c] shadow-xs hover:shadow-md rounded-xl overflow-hidden cursor-pointer transition-all duration-200 flex flex-col justify-between group min-w-0"
         >
           <div 
-            className="bg-[#1d283a] px-2.5 py-1.5 flex items-center justify-between border-b border-[#1d283a] min-w-0"
+            className="bg-[#21438c] px-2.5 py-1.5 flex items-center justify-between border-b border-[#21438c] min-w-0"
             onClick={(e) => e.stopPropagation()}
           >
             <Select value={card4Filter} onValueChange={setCard4Filter} modal={false}>
@@ -410,22 +410,22 @@ export default function AdminDashboard() {
                 <SelectValue placeholder="Filter" />
               </SelectTrigger>
               <SelectContent className="max-h-72">
-                <SelectItem value="rejected_by_university" className="text-xs focus:bg-[#1d283a] focus:text-white">Rejected by University</SelectItem>
+                <SelectItem value="rejected_by_university" className="text-xs focus:bg-[#21438c] focus:text-white">Rejected by University</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="p-4 bg-white">
-            <p className="text-2xl sm:text-3xl font-bold text-[#1d283a] tracking-tight">{getCard4Count()}</p>
+            <p className="text-2xl sm:text-3xl font-bold text-[#21438c] tracking-tight">{getCard4Count()}</p>
           </div>
         </div>
 
         {/* Card 5: Rejected by Visa */}
         <div 
           onClick={() => navigate(`/admin/students?status=${card5Filter}`)}
-          className="bg-white border border-[#1d283a]/20 hover:border-[#1d283a] shadow-xs hover:shadow-md rounded-xl overflow-hidden cursor-pointer transition-all duration-200 flex flex-col justify-between group min-w-0"
+          className="bg-white border border-[#21438c]/20 hover:border-[#21438c] shadow-xs hover:shadow-md rounded-xl overflow-hidden cursor-pointer transition-all duration-200 flex flex-col justify-between group min-w-0"
         >
           <div 
-            className="bg-[#1d283a] px-2.5 py-1.5 flex items-center justify-between border-b border-[#1d283a] min-w-0"
+            className="bg-[#21438c] px-2.5 py-1.5 flex items-center justify-between border-b border-[#21438c] min-w-0"
             onClick={(e) => e.stopPropagation()}
           >
             <Select value={card5Filter} onValueChange={setCard5Filter} modal={false}>
@@ -433,12 +433,12 @@ export default function AdminDashboard() {
                 <SelectValue placeholder="Filter" />
               </SelectTrigger>
               <SelectContent className="max-h-72">
-                <SelectItem value="rejected_by_visa_office" className="text-xs focus:bg-[#1d283a] focus:text-white">Rejected by Visa Office</SelectItem>
+                <SelectItem value="rejected_by_visa_office" className="text-xs focus:bg-[#21438c] focus:text-white">Rejected by Visa Office</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="p-4 bg-white">
-            <p className="text-2xl sm:text-3xl font-bold text-[#1d283a] tracking-tight">{getCard5Count()}</p>
+            <p className="text-2xl sm:text-3xl font-bold text-[#21438c] tracking-tight">{getCard5Count()}</p>
           </div>
         </div>
       </div>
@@ -446,7 +446,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* Recent Students */}
         <Card className="flex flex-col h-[450px] overflow-hidden">
-          <CardHeader className="px-4 py-3 bg-[#1d283a] shrink-0 flex flex-row items-center justify-between h-[52px]">
+          <CardHeader className="px-4 py-3 bg-[#21438c] shrink-0 flex flex-row items-center justify-between h-[52px]">
             <CardTitle className="text-[13px] flex items-center gap-2 text-white font-medium">
               <UserCheck className="h-4 w-4 text-white" />
               Recent Students
@@ -474,7 +474,7 @@ export default function AdminDashboard() {
                   <div 
                     key={s.id} 
                     onClick={() => navigate(`/admin/students/${s.wb_student_id ? `WB-${s.wb_student_id}` : (s.wbe_student_id || s.id)}`)}
-                    className="flex flex-col gap-1 py-3 px-4 hover:bg-[#1d283a] group cursor-pointer transition-colors"
+                    className="flex flex-col gap-1 py-3 px-4 hover:bg-[#21438c] group cursor-pointer transition-colors"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
@@ -498,7 +498,7 @@ export default function AdminDashboard() {
 
         {/* Recent Partner Agents */}
         <Card className="flex flex-col h-[450px] overflow-hidden">
-          <CardHeader className="px-4 py-3 bg-[#1d283a] shrink-0 flex flex-row items-center justify-between h-[52px]">
+          <CardHeader className="px-4 py-3 bg-[#21438c] shrink-0 flex flex-row items-center justify-between h-[52px]">
             <CardTitle className="text-[13px] flex items-center gap-2 text-white font-medium">
               <Users className="h-4 w-4 text-white" />
               Recent Partner Agents
@@ -523,7 +523,7 @@ export default function AdminDashboard() {
             ) : (
               <div className="divide-y">
                 {(partnerStatusFilter === 'all' ? allPartners : allPartners.filter(p => p.status === partnerStatusFilter)).slice(0, 50).map(p => (
-                  <div key={p.id} className="flex flex-col gap-2 py-3 px-4 hover:bg-[#1d283a] group transition-colors">
+                  <div key={p.id} className="flex flex-col gap-2 py-3 px-4 hover:bg-[#21438c] group transition-colors">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
                         <p className="text-[14px] font-medium text-[#1E293B] group-hover:text-white">Agency: {p.agency_name}</p>
@@ -557,7 +557,7 @@ export default function AdminDashboard() {
 
         {/* Quick Actions */}
         <Card className="flex flex-col h-[450px] overflow-hidden">
-          <CardHeader className="px-4 py-3 bg-[#1d283a] shrink-0 flex flex-row items-center justify-between h-[52px]">
+          <CardHeader className="px-4 py-3 bg-[#21438c] shrink-0 flex flex-row items-center justify-between h-[52px]">
             <CardTitle className="text-[13px] flex items-center gap-2 text-white font-medium">
               <TrendingUp className="h-4 w-4 text-white" />
               Quick Actions
@@ -565,39 +565,39 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent className="overflow-y-auto flex-1 p-0 bg-white">
             <div className="divide-y">
-              <button onClick={() => navigate('/admin/partners?tab=pending')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
+              <button onClick={() => navigate('/admin/partners?tab=pending')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#21438c] hover:text-white transition-colors group">
                 <UserPlus className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
                 View pending partners
               </button>
-              <button onClick={() => navigate('/admin/students?filter=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
+              <button onClick={() => navigate('/admin/students?filter=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#21438c] hover:text-white transition-colors group">
                 <FilePlus className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
                 View new student applications
               </button>
-              <button onClick={() => navigate('/admin/partner-content/documents?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
+              <button onClick={() => navigate('/admin/partner-content/documents?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#21438c] hover:text-white transition-colors group">
                 <FolderDown className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
                 Upload a partner document
               </button>
-              <button onClick={() => navigate('/admin/partner-content/notices?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
+              <button onClick={() => navigate('/admin/partner-content/notices?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#21438c] hover:text-white transition-colors group">
                 <Megaphone className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
                 Post an update or notice
               </button>
-              <button onClick={() => navigate('/admin/partner-content/webinars?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
+              <button onClick={() => navigate('/admin/partner-content/webinars?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#21438c] hover:text-white transition-colors group">
                 <Video className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
                 Open a webinar
               </button>
-              <button onClick={() => navigate('/admin/partner-content/tutorials?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
+              <button onClick={() => navigate('/admin/partner-content/tutorials?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#21438c] hover:text-white transition-colors group">
                 <PlayCircle className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
                 Add a platform tutorial
               </button>
-              <button onClick={() => navigate('/admin/partner-content/account-managers?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
+              <button onClick={() => navigate('/admin/partner-content/account-managers?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#21438c] hover:text-white transition-colors group">
                 <UserCog className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
                 Add a manager
               </button>
-              <button onClick={() => navigate('/admin/universities?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
+              <button onClick={() => navigate('/admin/universities?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#21438c] hover:text-white transition-colors group">
                 <Building2 className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
                 Add a university
               </button>
-              <button onClick={() => navigate('/admin/courses?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#1d283a] hover:text-white transition-colors group">
+              <button onClick={() => navigate('/admin/courses?action=new')} className="w-full flex items-center gap-3 text-left px-4 py-3.5 text-[14px] font-medium text-slate-700 hover:bg-[#21438c] hover:text-white transition-colors group">
                 <Library className="h-4 w-4 text-slate-700 group-hover:text-white transition-colors" />
                 Add new course
               </button>

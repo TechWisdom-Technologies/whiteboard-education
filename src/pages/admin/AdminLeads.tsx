@@ -107,7 +107,7 @@ export default function AdminLeads() {
                   variant="ghost" 
                   size="icon"
                   onClick={() => setDetailOpen(false)} 
-                  className="h-8 w-8 rounded-full bg-[#1d283a]/10 hover:bg-[#1d283a]/20 transition-colors flex-shrink-0"
+                  className="h-8 w-8 rounded-full bg-[#21438c]/10 hover:bg-[#21438c]/20 transition-colors flex-shrink-0"
                 >
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
@@ -218,7 +218,7 @@ export default function AdminLeads() {
                       </TableCell>
                       <TableCell className="py-3 font-semibold text-xs text-[#1E293B] uppercase md:text-[13px]">{lead.full_name}</TableCell>
                       <TableCell className="py-3 text-xs md:text-[13px]">
-                        <a href={`mailto:${lead.email}`} className="text-[#1d283a] hover:underline">{lead.email}</a>
+                        <a href={`mailto:${lead.email}`} className="text-[#21438c] hover:underline">{lead.email}</a>
                       </TableCell>
                       <TableCell className="py-3 text-xs md:text-[13px] text-muted-foreground">{new Date(lead.created_at).toLocaleDateString()}</TableCell>
                       <TableCell className="py-3"><Badge className={`${statusColors[lead.status] || ""} border-0`}>{lead.status}</Badge></TableCell>

@@ -170,7 +170,7 @@ export function PartnerChatWidget({ partnerId, partnerName, session, user }: Par
         >
           {/* Panel Header */}
           <CardHeader
-            className="py-3.5 px-5 bg-[#1E293B] text-white flex flex-row items-center justify-between space-y-0 shrink-0 select-none shadow-sm"
+            className="py-3.5 px-5 bg-[#21438c] text-white flex flex-row items-center justify-between space-y-0 shrink-0 select-none shadow-sm"
           >
             <div className="flex items-center gap-2.5">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0 inline-block shadow-xs animate-pulse" />
@@ -179,7 +179,7 @@ export function PartnerChatWidget({ partnerId, partnerName, session, user }: Par
                   Chat with Partner
                 </h3>
                 {partnerName && (
-                  <p className="text-[11px] text-slate-300 truncate max-w-[280px]">
+                  <p className="text-[11px] text-blue-100/80 truncate max-w-[280px]">
                     Agency: {partnerName}
                   </p>
                 )}
@@ -202,7 +202,7 @@ export function PartnerChatWidget({ partnerId, partnerName, session, user }: Par
           >
             {loading ? (
               <div className="flex flex-col items-center justify-center h-full gap-2 text-gray-400 py-10">
-                <Loader2 className="w-5 h-5 animate-spin text-[#1E293B]" />
+                <Loader2 className="w-5 h-5 animate-spin text-[#21438c]" />
                 <span className="text-xs">Loading chat history...</span>
               </div>
             ) : messages.length === 0 ? (
@@ -328,7 +328,7 @@ export function PartnerChatWidget({ partnerId, partnerName, session, user }: Par
                 type="submit"
                 size="icon"
                 disabled={sending || !inputText.trim()}
-                className="h-10 w-10 rounded-full text-white shrink-0 shadow-sm transition-all bg-[#1E293B] hover:bg-[#0f172a]"
+                className="h-10 w-10 rounded-full text-white shrink-0 shadow-sm transition-all bg-[#21438c] hover:bg-[#193570]"
                 title="Send Message"
               >
                 {sending ? (
@@ -346,7 +346,7 @@ export function PartnerChatWidget({ partnerId, partnerName, session, user }: Par
       <button
         type="button"
         onClick={() => setIsMinimized(!isMinimized)}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 no-print bg-[#1E293B] hover:bg-[#253247]"
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 no-print bg-[#21438c] hover:bg-[#193570]"
         title={isMinimized ? "Open Chat" : "Close Chat"}
       >
         {isMinimized ? (

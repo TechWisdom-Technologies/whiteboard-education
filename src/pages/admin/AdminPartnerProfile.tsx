@@ -400,7 +400,7 @@ export default function AdminPartnerProfile() {
                       </Select>
                       <Button
                         size="sm"
-                        className="h-8 px-3 text-xs font-medium bg-[#1E293B] text-white hover:bg-[#0f172a]"
+                        className="h-8 px-3 text-xs font-medium bg-[#21438c] text-white hover:bg-[#193570]"
                         onClick={handleSaveStatus}
                         disabled={savingStatus || (currentStatus === partner.status)}
                       >
@@ -466,10 +466,10 @@ export default function AdminPartnerProfile() {
             
             <Tabs defaultValue={defaultTab} className="w-full space-y-6">
               <TabsList className="flex w-full h-12 bg-transparent p-0 no-print gap-8 rounded-none justify-start border-b border-transparent">
-                <TabsTrigger value="profile" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#1E293B] data-[state=active]:text-[#1E293B] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">
+                <TabsTrigger value="profile" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#21438c] data-[state=active]:text-[#21438c] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">
                   1. Profile
                 </TabsTrigger>
-                <TabsTrigger value="applications" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#1E293B] data-[state=active]:text-[#1E293B] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">
+                <TabsTrigger value="applications" className="text-[13px] font-semibold h-12 px-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#21438c] data-[state=active]:text-[#21438c] data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-500 uppercase tracking-wide">
                   2. Applications
                 </TabsTrigger>
               </TabsList>
@@ -479,9 +479,9 @@ export default function AdminPartnerProfile() {
                   <CardContent className="p-6 sm:p-7 print:p-0 space-y-6">
                     
                     {/* Profile Card Header */}
-                    <div className="bg-[#1E293B] p-4 sm:p-5 rounded-lg text-white no-print">
+                    <div className="bg-[#21438c] p-4 sm:p-5 rounded-lg text-white no-print">
                       <h3 className="text-base font-bold text-white">Agency Profile</h3>
-                      <p className="text-xs text-slate-300 mt-0.5">General, operational, and contact information</p>
+                      <p className="text-xs text-blue-100/80 mt-0.5">General, operational, and contact information</p>
                     </div>
 
                     {/* ── Section 1: Agency Information ──────────────── */}
@@ -552,7 +552,7 @@ export default function AdminPartnerProfile() {
                     <CardContent className="p-0">
                       <div className="rounded-xl overflow-x-auto">
                         <Table>
-                          <TableHeader className="[&_tr]:bg-[#1E293B] [&_tr:hover]:bg-[#1E293B] [&_th]:text-white">
+                          <TableHeader className="[&_tr]:bg-[#21438c] [&_tr:hover]:bg-[#21438c] [&_th]:text-white">
                             <TableRow>
                               <TableHead className="whitespace-nowrap font-medium text-xs">App ID</TableHead>
                               <TableHead className="font-medium text-xs">Date</TableHead>
